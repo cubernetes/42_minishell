@@ -6,16 +6,17 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 17:34:44 by tosuman           #+#    #+#             */
-/*   Updated: 2024/01/24 19:56:48 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/01/25 22:14:16 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 #include "../libft/libft.h"
-#include <stdio.h>
-#include <readline/history.h>
-#include <readline/readline.h>
-#include <stdlib.h>
+#include <stdio.h> /* needed for FILE typedef needed by readline */
+#include <readline/history.h> /* ... */
+#include <readline/readline.h> /* readline() */
+#include <stdlib.h> /* free() */
+#include <unistd.h> /* STDERR_FILENO */
 
 void	update_state(t_state *state)
 {
