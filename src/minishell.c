@@ -26,8 +26,9 @@ char	*expand_prompt(const char *prompt_string)
 
 void	update_state(t_state *state)
 {
-	state->ps0 = ft_strdup("> ");
-	state->ps1 = ft_strdup("$ ");
+	state->ps0 = expand_prompt(PS0);
+	state->ps1 = expand_prompt(PS1);
+}
 }
 
 void	free_state(t_state *state)
@@ -38,8 +39,8 @@ void	free_state(t_state *state)
 
 int	main(void)
 {
-	char			*line;
 	static t_state	state;
+	char			*line;
 
 	while (1)
 	{
