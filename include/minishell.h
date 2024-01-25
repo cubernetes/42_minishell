@@ -24,4 +24,37 @@ typedef struct s_state
 	char	*ps1;
 }			t_state;
 
+typedef enum e_token_type
+{
+	TOK_OVERRIDE,
+	TOK_INPUT,
+	TOK_APPEND,
+	TOK_HEREDOC,
+	TOK_PIPE,
+	TOK_AND,
+	TOK_OR,
+	TOK_L_PAREN,
+	TOK_R_PAREN,
+	TOK_SQOUTE_STR,
+	TOK_DQOUTE_STR,
+	TOK_WORD,
+	TOK_EOL,
+	TOK_ERROR
+}	t_token_type;
+
+typedef struct s_token
+{
+	t_token_type	token_type;
+	char			*token;
+}	t_token;
+
+typedef struct s_ast	t_ast;
+
+struct s_ast
+{
+	t_token	*token;
+	t_bool	is_terminal;
+	t_ast	**ast_children;
+};
+
 #endif /* minishell.h. */
