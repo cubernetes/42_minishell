@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 17:35:26 by tosuman           #+#    #+#             */
-/*   Updated: 2024/01/25 22:12:41 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/01/25 23:00:46 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ typedef struct s_ast	t_ast;
 struct s_ast
 {
 	t_token	*token;
-	t_bool	is_terminal;
+	t_bool	is_terminal_tok;
 	t_ast	**ast_children;
 };
 
