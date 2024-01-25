@@ -1,0 +1,6 @@
+# TODO: uncomment below
+# .gitignore
+obj
+# TODO: uncomment below
+# suppress_readline_leak.supp
+minishell
