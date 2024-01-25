@@ -6,7 +6,7 @@
 /*   By: tischmid <timo42@proton.me>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 20:37:07 by tischmid          #+#    #+#             */
-/*   Updated: 2023/11/22 04:48:26 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/01/25 22:16:32 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ char	**ft_split(char const *s, char c)
 	arr_len = split_arr_len(s, c);
 	arr = malloc(sizeof(*arr) * (arr_len + 1));
 	if (!arr)
-		return (0);
+		return (NULL);
 	idx = 0;
 	while (*s)
 	{
@@ -67,8 +67,8 @@ char	**ft_split(char const *s, char c)
 			++s;
 		arr[idx] = malloc(sizeof(**arr) * (size_t)(s - start + 1));
 		if (!save_strlcpy(arr, ++idx, start, (size_t)(s - start + 1)))
-			return (0);
+			return (NULL);
 	}
-	arr[idx] = (void *) 0;
+	arr[idx] = NULL;
 	return (arr);
 }

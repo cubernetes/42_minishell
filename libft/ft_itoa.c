@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 15:07:39 by tischmid          #+#    #+#             */
-/*   Updated: 2023/11/22 15:07:39 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/01/25 22:17:24 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ char	*ft_itoa(int n)
 	--n_len;
 	str = malloc(sizeof(*str) * (n_len + (size_t)is_neg + 1));
 	if (!str)
-		return (0);
+		return (NULL);
 	str += (int)n_len + is_neg;
 	n_cpy = ft_abs(n);
 	*str-- = 0;

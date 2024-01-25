@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 15:05:31 by tischmid          #+#    #+#             */
-/*   Updated: 2023/11/22 15:05:31 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/01/25 22:18:49 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void	*ft_memmove(void *dest, void const *src, size_t n)
 	char const	*s;
 
 	if (!src && !dest)
-		return (0);
+		return (NULL);
 	d = dest;
 	s = src;
 	if (src >= dest)

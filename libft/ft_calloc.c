@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 15:08:28 by tischmid          #+#    #+#             */
-/*   Updated: 2023/11/22 15:08:28 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/01/25 22:20:44 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,14 +23,14 @@ void	*ft_calloc(size_t nmemb, size_t size)
 	{
 		empty = malloc(0);
 		if (!empty)
-			return (0);
+			return (NULL);
 		return (empty);
 	}
 	if (UINT_MAX / nmemb < size)
-		return (0);
+		return (NULL);
 	ret = malloc(nmemb * size);
 	if (!ret)
-		return (0);
+		return (NULL);
 	ft_bzero(ret, nmemb * size);
 	return (ret);
 }

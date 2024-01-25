@@ -6,7 +6,7 @@
 /*   By: tischmid <timo42@proton.me>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 19:38:21 by tischmid          #+#    #+#             */
-/*   Updated: 2023/06/02 20:38:50 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/01/25 22:21:27 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ char	*ft_strtrim(char const *s1, char const *set)
 	trimmed_len = len_after_trim(s1, set);
 	trimmed_str = malloc(sizeof(*trimmed_str) * (trimmed_len + 1));
 	if (!trimmed_str)
-		return (0);
+		return (NULL);
 	while (ft_char_in_charset(*s1, set))
 		++s1;
 	ft_strlcpy(trimmed_str, s1, trimmed_len + 1);
