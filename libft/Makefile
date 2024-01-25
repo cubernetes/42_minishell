@@ -43,6 +43,7 @@ _SRC += ft_memmove.c
 _SRC += ft_memset.c
 _SRC += ft_strchr.c
 _SRC += ft_strdup.c
+_SRC += ft_strndup.c
 _SRC += ft_strlcat.c
 _SRC += ft_strlcpy.c
 _SRC += ft_strlen.c

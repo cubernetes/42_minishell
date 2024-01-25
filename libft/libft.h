@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 15:09:08 by tischmid          #+#    #+#             */
-/*   Updated: 2024/01/16 19:08:55 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/01/25 20:10:50 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,6 +115,7 @@ char							*ft_strnstr(char const *big, char const *little,
 char							*ft_strchr(char const *s, int c);
 char							*ft_strrchr(char const *s, int c);
 char							*ft_strdup(char const *s);
+char							*ft_strndup(char const *s, size_t len);
 int								ft_strncmp(char const *s1, char const *s2,
 									size_t n);
 int								ft_strcmp(char const *s1, char const *s2);
