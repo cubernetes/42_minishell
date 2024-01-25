@@ -13,8 +13,8 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H 1
 
-# define PS1 "$ "
-# define PS2 "> "
+# define PS0 "> "
+# define PS1 "\\u@\\h:\\w\\$ "
 
 typedef struct s_state
 {
