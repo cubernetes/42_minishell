@@ -48,6 +48,12 @@ typedef struct s_token
 	char			*token;
 }	t_token;
 
+typedef enum e_bool
+{
+	FALSE = 0,
+	TRUE
+}	t_bool;
+
 typedef struct s_ast	t_ast;
 
 struct s_ast
