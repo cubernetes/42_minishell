@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 17:35:26 by tosuman           #+#    #+#             */
-/*   Updated: 2024/01/24 19:52:42 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/01/25 22:12:41 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 
 # define PS0 "> "
 # define PS1 "\\u@\\h:\\w\\$ "
+
+# define ERR_NEW_TOKEN "Error while creating new token."
 
 typedef struct s_state
 {
