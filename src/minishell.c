@@ -154,6 +154,11 @@ t_ast	*parse(t_ddeque *tokens)
 	return (ast);
 }
 
+void	execute(t_ast *ast)
+{
+	(void)ast;
+}
+
 void	free_token(void *data)
 {
 	t_token	*token;
@@ -204,6 +209,7 @@ int	main(void)
 		line = readline(state.ps1);
 		tokens = tokenize(line);
 		ast = parse(tokens);
+		execute(ast);
 		free_datastructures(line, tokens, ast);
 		free_state(&state);
 	}
