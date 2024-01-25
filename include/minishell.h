@@ -6,13 +6,15 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 17:35:26 by tosuman           #+#    #+#             */
-/*   Updated: 2024/01/25 23:00:46 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/01/25 23:34:28 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H 1
 
+/* TODO: remove debug include */
+# include "minishell_debug.h"
 # define PS0 "> "
 # define PS1 "\\u@\\h:\\w\\$ "
 

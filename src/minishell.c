@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 17:34:44 by tosuman           #+#    #+#             */
-/*   Updated: 2024/01/25 22:14:16 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/01/25 23:41:33 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -195,6 +195,7 @@ void	free_datastructures(char *line, t_ddeque *tokens, t_ast *ast)
 }
 
 /* TODO: what if readline returns NULL? */
+/* TODO: remove DEBUG macros */
 int	main(void)
 {
 	static t_state	state;
@@ -205,13 +206,21 @@ int	main(void)
 
 	while (i--)
 	{
+		DEBUG(0, "%s", "begin loop");
 		update_state(&state);
+		DEBUG(0, "%s", "state updating done");
 		line = readline(state.ps1);
+		DEBUG(0, "%s", "readline done");
 		tokens = tokenize(line);
+		DEBUG(0, "%s", "tokenization done");
 		ast = parse(tokens);
+		DEBUG(0, "%s", "parsing done");
 		execute(ast);
+		DEBUG(0, "%s", "execution done");
 		free_datastructures(line, tokens, ast);
+		DEBUG(0, "%s", "datastructure freeing done");
 		free_state(&state);
+		DEBUG(0, "%s", "state freeing done");
 	}
 	(void)line;
 	return (0);
