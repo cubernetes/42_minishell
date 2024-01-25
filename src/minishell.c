@@ -18,6 +18,12 @@
 #include <stdlib.h> /* free() */
 #include <unistd.h> /* STDERR_FILENO */
 
+/* TODO: NOT REQUIRED: add basic prompt expansion */
+char	*expand_prompt(const char *prompt_string)
+{
+	return (ft_strdup(prompt_string));
+}
+
 void	update_state(t_state *state)
 {
 	state->ps0 = ft_strdup("> ");
