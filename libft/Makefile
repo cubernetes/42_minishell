@@ -6,14 +6,17 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:09:11 by tischmid          #+#    #+#              #
-#    Updated: 2024/01/16 17:00:55 by tosuman          ###   ########.fr        #
+#    Updated: 2024/01/25 22:28:27 by tosuman          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 CC = cc
 unexport CFLAGS
 unexport LDFLAGS
-CFLAGS += -O3 -Wall -Wextra -Werror -pedantic -std=c89 -Wconversion
+# TODO: change -O0 to -03 and remove -g3
+CFLAGS += -O0 -g3 -Wall -Wextra -Werror \
+          -pedantic -std=c89 -Wconversion \
+          -Wunused -Wunreachable-code -Wshadow
 AR = ar rcs
 RM = /bin/rm -f
 

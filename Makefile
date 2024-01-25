@@ -6,11 +6,11 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:02:16 by tischmid          #+#    #+#              #
-#    Updated: 2024/01/24 19:50:11 by tosuman          ###   ########.fr        #
+#    Updated: 2024/01/25 22:31:11 by tosuman          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-# Makefile for Linux systems
+# Makefile for [ "$(uname -s)" = "Linux" ]
 
 NAME            := minishell
 BONUS           := $(NAME)
@@ -33,8 +33,10 @@ INCLUDE        := $(addprefix $(INCLUDEDIR)/,$(_HEADERS))
 
 CC             := cc
 RM             := /bin/rm -f
+# TODO: Change -O0 to -O3 and remove -g3
 CFLAGS         := -O0 -g3 -Wall -Wextra -Werror \
-                  -std=c89 -pedantic -Wconversion
+                  -std=c89 -pedantic -Wconversion \
+                  -Wunused -Wunreachable-code -Wshadow
 CPPFLAGS       := -I$(LIBFT_DIR) -I$(INCLUDEDIR)
 LDFLAGS        := -L$(LIBFT_DIR)
 LDLIBS         := -l$(LIBFT_) -lreadline
