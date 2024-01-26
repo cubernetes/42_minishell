@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 17:34:44 by tosuman           #+#    #+#             */
-/*   Updated: 2024/01/26 15:19:14 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/01/26 23:31:39 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -226,32 +226,43 @@ void	free_token(void *data)
 {
 	t_token	*token;
 
+	if (!data)
+		return ;
 	token = (t_token *)data;
-	free(token->token);
-	free(token);
-}
-
-void	free_state(t_state *state)
-{
-	free(state->ps0);
-	free(state->ps1);
+	(free(token->token), token->token = NULL);
+	(free(token), token = NULL);
 }
 
 void	ast_free(t_ast *ast)
 {
-	free(ast->token);
+	t_ast	**orig_ast_children;
+
+	if (!ast)
+		return ;
+	(free(ast->token), ast->token = NULL);
+	orig_ast_children = ast->ast_children;
 	while (ast->ast_children)
 	{
 		ast_free(*ast->ast_children);
 		++ast->ast_children;
 	}
+	(free(orig_ast_children), ast->ast_children = NULL);
 }
 
-void	free_datastructures(char *line, t_ddeque *tokens, t_ast *ast)
+void	free_datastructures(char **line, t_ddeque **tokens, t_ast **ast)
 {
-	free(line);
-	ddeque_free(tokens, free_token);
-	ast_free(ast);
+	(free(*line), *line = NULL);
+	(ddeque_free(*tokens, free_token), *tokens = NULL);
+	(ast_free(*ast), free(*ast), *ast = NULL);
+}
+
+int	free_state(t_state *state, char **line, t_ddeque **tokens,
+	t_ast **ast)
+{
+	free_datastructures(line, tokens, ast);
+	(free(state->ps0), state->ps0 = NULL);
+	(free(state->ps1), state->ps1 = NULL);
+	return (1);
 }
 
 const char	*token_type_to_string(t_token_type token_type)
@@ -313,16 +324,19 @@ int	main(void)
 	t_ddeque		*tokens;
 	t_ast			*ast;
 
+	tokens = NULL;
+	ast = NULL;
 	while (i--)
 	{
 		update_state(&state);
 		line = readline(state.ps1);
+		if (!line && free_state(&state, &line, &tokens, &ast))
+			break ;
 		tokens = tokenize(line);
 		ddeque_print(tokens, print_token);
 		ast = parse(tokens);
 		execute(ast);
-		free_datastructures(line, tokens, ast);
-		free_state(&state);
+		(void)free_state(&state, &line, &tokens, &ast);
 	}
 	return (0);
 }

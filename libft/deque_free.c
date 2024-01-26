@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 14:37:19 by tischmid          #+#    #+#             */
-/*   Updated: 2024/01/15 18:42:09 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/01/26 23:32:52 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,14 +21,17 @@ void	deque_free(t_deque *deque)
 	if (!deque)
 		return ;
 	head = deque->head;
-	if (!head && (free(deque), 1))
+	if (!head)
+	{
+		(free(deque), deque = NULL);
 		return ;
+	}
 	tail = head->prev;
 	while (head != tail)
 	{
 		head = head->next;
-		free(head->prev);
+		(free(head->prev), head->prev = NULL);
 	}
-	free(head);
-	free(deque);
+	(free(head), head = NULL);
+	(free(deque), deque = NULL);
 }
