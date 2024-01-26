@@ -206,15 +206,20 @@ t_ddeque	*tokenize(const char *line)
 	return (tokens);
 }
 
-t_ast	*parse(t_ddeque *tokens)
+t_ast	*new_ast_node()
 {
 	t_ast	*ast;
 
-	(void)tokens;
 	ast = malloc(sizeof(*ast));
 	ast->token = NULL;
 	ast->ast_children = NULL;
 	return (ast);
+}
+
+t_ast	*parse(t_ddeque *tokens)
+{
+	(void)tokens;
+	return (new_ast_node());
 }
 
 void	execute(t_ast *ast)
