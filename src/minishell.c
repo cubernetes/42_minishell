@@ -153,7 +153,9 @@ t_ast	*parse(t_ddeque *tokens)
 	t_ast	*ast;
 
 	(void)tokens;
-	ast = NULL;
+	ast = malloc(sizeof(*ast));
+	ast->token = NULL;
+	ast->ast_children = NULL;
 	return (ast);
 }
 
@@ -177,13 +179,10 @@ void	free_state(t_state *state)
 	free(state->ps1);
 }
 
-void	ast_free(void *data)
+void	ast_free(t_ast *ast)
 {
-	t_ast	*ast;
-
-	ast = (t_ast *)data;
 	free(ast->token);
-	while (*ast->ast_children)
+	while (ast->ast_children)
 	{
 		ast_free(*ast->ast_children);
 		++ast->ast_children;
@@ -250,28 +249,22 @@ void	print_token(void *data, int first)
 int	main(void)
 {
 	static t_state	state;
-	static int		i = 2;
+	static int		i = 50;
 	char			*line;
 	t_ddeque		*tokens;
 	t_ast			*ast;
 
 	while (i--)
 	{
-		DEBUG(0, "%s", "begin loop");
 		update_state(&state);
-		DEBUG(0, "%s", "state updating done");
 		line = readline(state.ps1);
-		DEBUG(0, "%s", "readline done");
 		tokens = tokenize(line);
-		DEBUG(0, "%s", "tokenization done");
+		ddeque_print(tokens, print_token);
 		ast = parse(tokens);
-		DEBUG(0, "%s", "parsing done");
 		execute(ast);
-		DEBUG(0, "%s", "execution done");
 		free_datastructures(line, tokens, ast);
-		DEBUG(0, "%s", "datastructure freeing done");
 		free_state(&state);
-		DEBUG(0, "%s", "state freeing done");
+		(void)ast;
 	}
 	(void)line;
 	return (0);
