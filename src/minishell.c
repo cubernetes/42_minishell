@@ -51,8 +51,7 @@ void	*new_token(const char *line, size_t token_len, t_token_type token_type)
 	token = malloc(sizeof(*token));
 	if (!token)
 		internal_error(ERR_NEW_TOKEN, __LINE__);
-	token->token = ft_strndup(line, token_len + 1);
-	token->token[token_len] = 0;
+	token->token = ft_strndup(line, token_len);
 	token->token_type = token_type;
 	return (token);
 }
