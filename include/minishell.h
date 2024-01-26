@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 17:35:26 by tosuman           #+#    #+#             */
-/*   Updated: 2024/01/26 14:03:50 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/01/26 19:44:54 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,9 @@
 /* TODO: remove debug include */
 # include "minishell_debug.h"
 # define PS0 "> "
-# define PS1 "\\u@\\h:\\w\\$ "
+/* TODO: use advanced prompt */
+/* # define PS1 "\\u@\\h:\\w\\$ " */
+# define PS1 "$ "
 
 # define ERR_NEW_TOKEN      "Error while creating new token."
 
