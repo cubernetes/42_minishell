@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 17:34:44 by tosuman           #+#    #+#             */
-/*   Updated: 2024/01/26 02:02:31 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/01/26 02:18:29 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,32 +94,34 @@ int	tokenize_fixed_len_tokens(const char **line, t_ddeque *tokens)
 
 void	tokenize_variable_len_tokens(const char **line, t_ddeque *tokens)
 {
-	size_t	len;
+	size_t		len;
+	const char	*tmp;
 
-	len = 1;
-	if (**line == '\'')
+	len = 0;
+	tmp = *line;
+	if (*tmp == '\'' && ++tmp)
 	{
-		while (**line != '\'' && **line != '\0' && ++(*line))
+		while (*tmp != '\'' && *tmp != '\0' && ++(tmp))
 			++len;
-		if (**line == '\'')
-			push_token(line, tokens, len + 1, TOK_SQOUTE_STR);
+		if (*tmp == '\'')
+			push_token(line, tokens, len + 2, TOK_SQOUTE_STR);
 		else
-			push_token(line, tokens, len, TOK_ERROR);
+			push_token(line, tokens, len + 1, TOK_ERROR);
 	}
-	else if (**line == '"')
+	else if (*tmp == '"' && ++tmp)
 	{
-		while (**line != '"' && **line != '\0' && ++(*line))
+		while (*tmp != '"' && *tmp != '\0' && ++(tmp))
 			++len;
-		if (**line == '"')
-			push_token(line, tokens, len + 1, TOK_SQOUTE_STR);
+		if (*tmp == '"')
+			push_token(line, tokens, len + 2, TOK_SQOUTE_STR);
 		else
-			push_token(line, tokens, len, TOK_ERROR);
+			push_token(line, tokens, len + 1, TOK_ERROR);
 	}
-	else if (ft_isprint(**line) && !ft_isspace(**line)
-		&& !ft_strchr("><&|()'\"", **line))
+	else if (ft_isprint(*tmp) && !ft_isspace(*tmp)
+		&& !ft_strchr("><&|()'\"", *tmp))
 	{
-		while (ft_isprint(**line) && !ft_isspace(**line)
-			&& !ft_strchr("><&|()'\"", **line))
+		while (ft_isprint(*tmp) && !ft_isspace(*tmp)
+			&& !ft_strchr("><&|()'\"", *tmp) && ++(tmp))
 			++len;
 		push_token(line, tokens, len, TOK_WORD);
 	}
