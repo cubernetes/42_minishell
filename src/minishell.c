@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 17:34:44 by tosuman           #+#    #+#             */
-/*   Updated: 2024/01/26 14:49:38 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/01/26 15:02:21 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -304,6 +304,7 @@ void	print_token(void *data, int first)
 
 /* TODO: what if readline returns NULL? */
 /* TODO: remove DEBUG macros */
+/* TODO: remove ddeque_print(tokens, print_token); */
 int	main(void)
 {
 	static t_state	state;
@@ -322,8 +323,6 @@ int	main(void)
 		execute(ast);
 		free_datastructures(line, tokens, ast);
 		free_state(&state);
-		(void)ast;
 	}
-	(void)line;
 	return (0);
 }
