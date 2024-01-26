@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 17:34:44 by tosuman           #+#    #+#             */
-/*   Updated: 2024/01/26 15:02:21 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/01/26 15:19:14 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,15 +72,15 @@ int	tokenize_fixed_len_tokens(const char **line, t_ddeque *tokens)
 	if (**line == '\0')
 		pushed = push_token(line, tokens, 1, TOK_EOL);
 	else if (**line == '>' && *(*line + 1) == '>')
-		pushed = push_token(line, tokens, 2, TOK_OVERRIDE);
-	else if (**line == '<' && *(*line + 1) == '<')
 		pushed = push_token(line, tokens, 2, TOK_APPEND);
+	else if (**line == '<' && *(*line + 1) == '<')
+		pushed = push_token(line, tokens, 2, TOK_HEREDOC);
 	else if (**line == '&' && *(*line + 1) == '&')
 		pushed = push_token(line, tokens, 2, TOK_AND);
 	else if (**line == '|' && *(*line + 1) == '|')
 		pushed = push_token(line, tokens, 2, TOK_OR);
 	else if (**line == '>')
-		pushed = push_token(line, tokens, 1, TOK_HEREDOC);
+		pushed = push_token(line, tokens, 1, TOK_OVERRIDE);
 	else if (**line == '<')
 		pushed = push_token(line, tokens, 1, TOK_INPUT);
 	else if (**line == '|')
