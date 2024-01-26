@@ -1,6 +1,6 @@
-# TODO: uncomment below
+# TODO: uncomment below AND `git rm -f' it
 # .gitignore
 obj
-# TODO: uncomment below
+# TODO: uncomment below AND `git rm -f' it
 # suppress_readline_leak.supp
 minishell
