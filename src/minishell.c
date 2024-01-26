@@ -295,10 +295,10 @@ void	print_token(void *data, int first)
 
 	token = (t_token *)data;
 	if (first)
-		ft_printf("<%s> (%s)", token->token,
+		ft_printf("<\033[31m%s\033[m> (%s)", token->token,
 			token_type_to_string(token->token_type));
 	else
-		ft_printf(" -> <%s> (%s)", token->token,
+		ft_printf(" -> <\033[31m%s\033[m> (%s)", token->token,
 			token_type_to_string(token->token_type));
 }
 
