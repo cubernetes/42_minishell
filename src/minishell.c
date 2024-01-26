@@ -137,11 +137,13 @@ t_ddeque	*tokenize(const char *line)
 	t_ddeque		*tokens;
 
 	tokens = ddeque_init();
-	while (*line)
+	while (1)
 	{
 		skip_whitespace(&line);
 		if (!tokenize_fixed_len_tokens(&line, tokens))
 			tokenize_variable_len_tokens(&line, tokens);
+		if (((t_token *)tokens->head->prev->data)->token_type == TOK_EOL)
+			break ;
 	}
 	return (tokens);
 }
