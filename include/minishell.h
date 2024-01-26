@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 17:35:26 by tosuman           #+#    #+#             */
-/*   Updated: 2024/01/26 01:59:16 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/01/26 14:03:50 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,8 @@
 # define STR_TOK_OR         "TOK_OR"
 # define STR_TOK_L_PAREN    "TOK_L_PAREN"
 # define STR_TOK_R_PAREN    "TOK_R_PAREN"
-# define STR_TOK_SQOUTE_STR "TOK_SQOUTE_STR"
-# define STR_TOK_DQOUTE_STR "TOK_DQOUTE_STR"
+# define STR_TOK_SQUOTE_STR "TOK_SQUOTE_STR"
+# define STR_TOK_DQUOTE_STR "TOK_DQUOTE_STR"
 # define STR_TOK_WORD       "TOK_WORD"
 # define STR_TOK_EOL        "TOK_EOL"
 # define STR_TOK_ERROR      "TOK_ERROR"
@@ -53,8 +53,8 @@ typedef enum e_token_type
 	TOK_OR,
 	TOK_L_PAREN,
 	TOK_R_PAREN,
-	TOK_SQOUTE_STR,
-	TOK_DQOUTE_STR,
+	TOK_SQUOTE_STR,
+	TOK_DQUOTE_STR,
 	TOK_WORD,
 	TOK_EOL,
 	TOK_ERROR

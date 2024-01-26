@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 17:34:44 by tosuman           #+#    #+#             */
-/*   Updated: 2024/01/26 02:18:29 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/01/26 14:49:38 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -218,10 +218,10 @@ const char	*token_type_to_string(t_token_type token_type)
 		return (STR_TOK_L_PAREN);
 	else if (token_type == TOK_R_PAREN)
 		return (STR_TOK_R_PAREN);
-	else if (token_type == TOK_SQOUTE_STR)
-		return (STR_TOK_SQOUTE_STR);
-	else if (token_type == TOK_DQOUTE_STR)
-		return (STR_TOK_DQOUTE_STR);
+	else if (token_type == TOK_SQUOTE_STR)
+		return (STR_TOK_SQUOTE_STR);
+	else if (token_type == TOK_DQUOTE_STR)
+		return (STR_TOK_DQUOTE_STR);
 	else if (token_type == TOK_WORD)
 		return (STR_TOK_WORD);
 	else if (token_type == TOK_EOL)
