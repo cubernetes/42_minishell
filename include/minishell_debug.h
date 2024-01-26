@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 23:34:44 by tosuman           #+#    #+#             */
-/*   Updated: 2024/01/25 23:38:03 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/01/26 01:03:40 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,11 @@
 	REP##HUNDREDS(REP10(REP10(X))) \
 	REP##TENS(REP10(X)) \
 	REP##ONES(X)
+
+/* # define DEBUG(lvl, fmt, ...) \ */
+	/* ft_printf("<>"); ft_printf("\033[35m[DEBUG]\033[m " \ */
+	/* REP(0, 0, lvl, "\t") "\033[31m" \ */
+	/* fmt "\033[m\n", ##__VA_ARGS__); ft_printf("</>") */
 
 # define DEBUG(lvl, fmt, ...) \
 	ft_printf("\033[35m[DEBUG]\033[m " \
