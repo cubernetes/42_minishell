@@ -6,12 +6,11 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 15:07:15 by tischmid          #+#    #+#             */
-/*   Updated: 2024/01/25 20:10:27 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/01/26 01:39:35 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stddef.h>
-#include <stdio.h>
 
 int	ft_strncmp(char const *s1, char const *s2, size_t len)
 {
