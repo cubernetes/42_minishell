@@ -20,6 +20,22 @@
 
 # define ERR_NEW_TOKEN      "Error while creating new token."
 
+# define STR_TOK_OVERRIDE   "TOK_OVERRIDE"
+# define STR_TOK_INPUT      "TOK_INPUT"
+# define STR_TOK_APPEND     "TOK_APPEND"
+# define STR_TOK_HEREDOC    "TOK_HEREDOC"
+# define STR_TOK_PIPE       "TOK_PIPE"
+# define STR_TOK_AND        "TOK_AND"
+# define STR_TOK_OR         "TOK_OR"
+# define STR_TOK_L_PAREN    "TOK_L_PAREN"
+# define STR_TOK_R_PAREN    "TOK_R_PAREN"
+# define STR_TOK_SQOUTE_STR "TOK_SQOUTE_STR"
+# define STR_TOK_DQOUTE_STR "TOK_DQOUTE_STR"
+# define STR_TOK_WORD       "TOK_WORD"
+# define STR_TOK_EOL        "TOK_EOL"
+# define STR_TOK_ERROR      "TOK_ERROR"
+# define STR_TOK_UNKNOWN    "TOK_UNKNOWN"
+
 typedef struct s_state
 {
 	char	*ps0;

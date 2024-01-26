@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 17:34:44 by tosuman           #+#    #+#             */
-/*   Updated: 2024/01/25 23:41:33 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/01/26 02:02:31 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -192,6 +192,54 @@ void	free_datastructures(char *line, t_ddeque *tokens, t_ast *ast)
 	free(line);
 	ddeque_free(tokens, free_token);
 	ast_free(ast);
+}
+
+const char	*token_type_to_string(t_token_type token_type)
+{
+	if (token_type == TOK_OR)
+		return (STR_TOK_OR);
+	else if (token_type == TOK_OVERRIDE)
+		return (STR_TOK_OVERRIDE);
+	else if (token_type == TOK_INPUT)
+		return (STR_TOK_INPUT);
+	else if (token_type == TOK_APPEND)
+		return (STR_TOK_APPEND);
+	else if (token_type == TOK_HEREDOC)
+		return (STR_TOK_HEREDOC);
+	else if (token_type == TOK_PIPE)
+		return (STR_TOK_PIPE);
+	else if (token_type == TOK_AND)
+		return (STR_TOK_AND);
+	else if (token_type == TOK_OR)
+		return (STR_TOK_OR);
+	else if (token_type == TOK_L_PAREN)
+		return (STR_TOK_L_PAREN);
+	else if (token_type == TOK_R_PAREN)
+		return (STR_TOK_R_PAREN);
+	else if (token_type == TOK_SQOUTE_STR)
+		return (STR_TOK_SQOUTE_STR);
+	else if (token_type == TOK_DQOUTE_STR)
+		return (STR_TOK_DQOUTE_STR);
+	else if (token_type == TOK_WORD)
+		return (STR_TOK_WORD);
+	else if (token_type == TOK_EOL)
+		return (STR_TOK_EOL);
+	else if (token_type == TOK_ERROR)
+		return (STR_TOK_ERROR);
+	return (STR_TOK_UNKNOWN);
+}
+
+void	print_token(void *data, int first)
+{
+	t_token	*token;
+
+	token = (t_token *)data;
+	if (first)
+		ft_printf("<%s> (%s)", token->token,
+			token_type_to_string(token->token_type));
+	else
+		ft_printf(" -> <%s> (%s)", token->token,
+			token_type_to_string(token->token_type));
 }
 
 /* TODO: what if readline returns NULL? */
