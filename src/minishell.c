@@ -92,40 +92,98 @@ int	tokenize_fixed_len_tokens(const char **line, t_ddeque *tokens)
 	return (pushed);
 }
 
-void	tokenize_variable_len_tokens(const char **line, t_ddeque *tokens)
+int	tokenize_single_quoted_string(const char **line, t_ddeque *tokens)
 {
 	size_t		len;
 	const char	*tmp;
 
-	len = 0;
-	tmp = *line;
-	if (*tmp == '\'' && ++tmp)
+	if (**line == '\'')
 	{
-		while (*tmp != '\'' && *tmp != '\0' && ++(tmp))
+		len = 0;
+		tmp = *line + 1;
+		while (*tmp != '\'' && *tmp != '\0')
+		{
+			++tmp;
 			++len;
+		}
 		if (*tmp == '\'')
-			push_token(line, tokens, len + 2, TOK_SQOUTE_STR);
+		{
+			++(*line);
+			push_token(line, tokens, len, TOK_SQUOTE_STR);
+			++(*line);
+		}
 		else
 			push_token(line, tokens, len + 1, TOK_ERROR);
+		return (1);
 	}
-	else if (*tmp == '"' && ++tmp)
+	return (0);
+}
+
+int	tokenize_double_quoted_string(const char **line, t_ddeque *tokens)
+{
+	size_t		len;
+	const char	*tmp;
+
+	if (**line == '"')
 	{
-		while (*tmp != '"' && *tmp != '\0' && ++(tmp))
+		len = 0;
+		tmp = *line + 1;
+		while (*tmp != '"' && *tmp != '\0')
+		{
+			++tmp;
 			++len;
+		}
 		if (*tmp == '"')
-			push_token(line, tokens, len + 2, TOK_SQOUTE_STR);
+		{
+			++(*line);
+			push_token(line, tokens, len, TOK_DQUOTE_STR);
+			++(*line);
+		}
 		else
 			push_token(line, tokens, len + 1, TOK_ERROR);
+		return (1);
 	}
-	else if (ft_isprint(*tmp) && !ft_isspace(*tmp)
-		&& !ft_strchr("><&|()'\"", *tmp))
+	return (0);
+}
+
+int	is_word_char(char c)
+{
+	return (
+		ft_isprint(c)
+		&& !ft_isspace(c)
+		&& !ft_strchr("><&|()'\"", c)
+	);
+}
+
+int	tokenize_word(const char **line, t_ddeque *tokens)
+{
+	size_t		len;
+	const char	*tmp;
+
+	if (is_word_char(**line))
 	{
-		while (ft_isprint(*tmp) && !ft_isspace(*tmp)
-			&& !ft_strchr("><&|()'\"", *tmp) && ++(tmp))
+		len = 0;
+		tmp = *line;
+		while (is_word_char(*tmp))
+		{
+			++tmp;
 			++len;
+		}
 		push_token(line, tokens, len, TOK_WORD);
+		return (1);
 	}
-	else
+	return (0);
+}
+
+void	tokenize_variable_len_tokens(const char **line, t_ddeque *tokens)
+{
+	int	pushed;
+
+	pushed = 0;
+	pushed += tokenize_single_quoted_string(line, tokens);
+	pushed += tokenize_double_quoted_string(line, tokens);
+	pushed += tokenize_word(line, tokens);
+	if (!pushed)
 		internal_error("Lexingerror.", __LINE__);
 }
 
