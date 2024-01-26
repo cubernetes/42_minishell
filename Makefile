@@ -6,7 +6,7 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:02:16 by tischmid          #+#    #+#              #
-#    Updated: 2024/01/25 23:39:38 by tosuman          ###   ########.fr        #
+#    Updated: 2024/01/26 00:35:29 by tosuman          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -33,8 +33,8 @@ INCLUDE        := $(addprefix $(INCLUDEDIR)/,$(_HEADERS))
 
 CC             := cc
 RM             := /bin/rm -f
-# TODO: Change -O0 to -O3 and remove -g3
-# TODO: Change -std=c99 to -std=c89
+# TODO: change -O0 to -O3 and remove -g3
+# TODO: change -std=c99 to -std=c89
 CFLAGS         := -O0 -g3 -Wall -Wextra -Werror \
                   -std=c99 -pedantic -Wconversion \
                   -Wunused -Wunreachable-code -Wshadow
