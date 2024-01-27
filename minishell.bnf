@@ -1,7 +1,11 @@
 #! /bin/cat
-# https://pubs.opengroup.org/onlinepubs/9699919799/utilities/V3_chap02.html#tag_18_10_02
 
 # Simplified posix shell grammar for the minishell project
+
+# Raw BNF taken from <below>. productions not relevant for minishell are removed.
+# https://pubs.opengroup.org/onlinepubs/9699919799/utilities/V3_chap02.html#tag_18_10_02
+
+# Start symbol is complete_command
 
 complete_command : list
                  ;
@@ -40,9 +44,13 @@ cmd_word         : TOK_WORD
                  ;
 cmd_prefix       : io_redirect
                  | io_redirect cmd_prefix
+                 |            TOK_WORD
+                 | cmd_prefix TOK_WORD
                  ;
 cmd_suffix       : io_redirect
                  | io_redirect cmd_prefix
+                 |            TOK_WORD
+                 | cmd_suffix TOK_WORD
                  ;
 redirect_list    : io_redirect
                  | io_redirect redirect_list
