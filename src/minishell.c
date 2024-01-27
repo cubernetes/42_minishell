@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 17:34:44 by tosuman           #+#    #+#             */
-/*   Updated: 2024/01/26 23:31:39 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/01/27 19:51:39 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,8 +151,15 @@ int	is_word_char(char c)
 	return (
 		ft_isprint(c)
 		&& !ft_isspace(c)
-		&& !ft_strchr("><&|()'\"", c)
+		&& !ft_strchr("><()'\"|", c)
 	);
+}
+
+int	is_not_and_and(const char *line)
+{
+	if (line[0] == '&' && line[1] == '&')
+		return (0);
+	return (1);
 }
 
 int	tokenize_word(const char **line, t_ddeque *tokens)
@@ -160,11 +167,11 @@ int	tokenize_word(const char **line, t_ddeque *tokens)
 	size_t		len;
 	const char	*tmp;
 
-	if (is_word_char(**line))
+	if (is_word_char(**line) && is_not_and_and(*line))
 	{
 		len = 0;
 		tmp = *line;
-		while (is_word_char(*tmp))
+		while (is_word_char(*tmp) && is_not_and_and(tmp))
 		{
 			++tmp;
 			++len;
