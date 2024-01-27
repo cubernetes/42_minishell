@@ -1,0 +1,63 @@
+#! /bin/cat
+
+# Start symbol is complete_command
+# The grammar that is implemented in minishell is the one found at the bottom.
+
+# Tokens
+# TODO: what about TOK_SQUOTE_STR and TOK_DQUOTE_STR ???
+%token TOK_WORD
+
+%token TOK_AND TOK_OR TOK_PIPE TOK_L_PAREN TOK_R_PAREN
+/*     '&&'    '||'   '|'      '('         ')'      */
+
+%token TOK_OVERRIDE TOK_APPEND TOK_INPUT TOK_HEREDOC
+/*     '>'          '>>'       '<'       '<<'     */
+
+# Same grammar as minishell.bnf, but this time in EBNF
+complete_command = list ;
+list = and_or ;
+and_or = pipeline { ( TOK_AND | TOK_OR ) pipeline } ;
+pipeline = pipe_sequence ;
+pipe_sequence = command { TOK_PIPE command } ;
+command = simple_command | compound_command [ redirect_list ] ;
+compound_command = subshell ;
+subshell = TOK_L_PAREN compound_list TOK_R_PAREN ;
+compound_list = term ;
+term = and_or ;
+simple_command = cmd_prefix | [ cmd_prefix ] cmd_word [ cmd_suffix ] ;
+cmd_word = TOK_WORD ;
+cmd_prefix = ( cmd_word | io_redirect ) { cmd_word | io_redirect } ;
+cmd_suffix = ( cmd_word | io_redirect ) { cmd_word | io_redirect } ;
+io_redirect = io_file | io_here ;
+io_file = ( TOK_APPEND | TOK_OVERRIDE | TOK_INPUT ) filename ;
+filename = TOK_WORD ;
+io_here = TOK_HEREDOC here_end ;
+here_end = TOK_WORD ;
+
+# Compressed form (TODO: rigorously check correctness, maybe use some tool)
+complete_command = pipe_sequence { ( TOK_AND | TOK_OR ) pipe_sequence } ;
+pipe_sequence = command { TOK_PIPE command } ;
+command = simple_command | compound_command { io_redirect } ;
+compound_command = TOK_L_PAREN complete_command TOK_R_PAREN ; # aka subshell
+simple_command = ( TOK_WORD | io_redirect ) { TOK_WORD | io_redirect } ;
+io_redirect = ( TOK_APPEND | TOK_OVERRIDE | TOK_INPUT | TOK_HEREDOC ) TOK_WORD ;
+
+
+
+# Improved form, will be used. (shockingly similar to lmiehler's EBNF)
+# Uses the same names as https://pubs.opengroup.org/onlinepubs/9699919799/utilities/V3_chap02.html#tag_18_10_02
+# only TOK_WORD instead of WORD
+complete_command = pipe_sequence { ( '&&' | '||' ) pipe_sequence } ;
+pipe_sequence = command { '|' command } ;
+command = simple_command | compound_command ;
+compound_command = '(' complete_command ')' ; # aka subshell
+simple_command = ( TOK_WORD | io_redirect ) { TOK_WORD | io_redirect } ;
+io_redirect = ( '>' | '>>' | '<' | '<<' ) TOK_WORD ;
+# Remarks:
+# - TOK_WORD will never be an ASSIGMENT_WORD. ASSIGNMENT_WORD's are only used
+# as the arguments on the `export' builtin, but that 'simple' parsing is done
+# separately
+# - Since TOK_WORD is never an ASSIGMENT_WORD, it'll be either a builtin or
+# a program name, nothing else! Therefore, TOK_WORD can consist of any
+# character except NUL and the slash '/', all after wildcard expansion,
+# environment variable expansion, and quote handling.
