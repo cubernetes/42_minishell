@@ -213,12 +213,13 @@ t_ddeque	*tokenize(const char *line)
 	return (tokens);
 }
 
-t_ast	*new_ast_node()
+t_ast	*new_ast_node(t_token *token, t_token_type token_type,
+		t_ast *left, t_ast *right)
 {
 	t_ast	*ast;
 
 	ast = malloc(sizeof(*ast));
-	ast->token = NULL;
+	ast->token = token;
 	ast->ast_children = NULL;
 	return (ast);
 }
