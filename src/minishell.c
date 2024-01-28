@@ -44,7 +44,7 @@ void	internal_error(const char *err, int line_no)
 }
 
 /* TODO: change return type to t_token later */
-void	*new_token(const char *line, size_t token_len, t_token_type token_type)
+void	*new_token(char *str, t_token_type type)
 {
 	t_token	*token;
 
