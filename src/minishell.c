@@ -196,7 +196,7 @@ void	tokenize_variable_len_tokens(const char **line, t_ddeque *tokens)
 	pushed += tokenize_double_quoted_string(line, tokens);
 	pushed += tokenize_word(line, tokens);
 	if (!pushed)
-		internal_error("Lexingerror.", __LINE__);
+		internal_error("tokenize_variable_len_tokens: lexing", __LINE__);
 }
 
 /* environment variable expansion is NOT happening in the tokenization phase*/
@@ -223,6 +223,8 @@ t_ast	*new_ast_node(t_token *token, t_ast **children)
 	t_ast	*ast;
 
 	ast = malloc(sizeof(*ast));
+	if (!ast)
+		internal_error("new_ast_node: malloc", __LINE__);
 	ast->token = token;
 	ast->ast_children = NULL;
 	return (ast);
