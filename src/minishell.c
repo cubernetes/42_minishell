@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 17:34:44 by tosuman           #+#    #+#             */
-/*   Updated: 2024/01/28 01:45:00 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/01/28 02:12:44 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -232,8 +232,12 @@ t_ast	*new_ast_node(t_token *token, t_ast **children)
 
 t_ast	*parse(t_ddeque *tokens)
 {
-	(void)tokens;
-	return (new_ast_node());
+	t_ast	**children;
+
+	children[0] = new_ast_node(new_token(NULL, SIMPLE_COMMAND), NULL);
+	children[1] = new_ast_node(tokens->head->data, NULL);
+	children[2] = NULL;
+	return (new_ast_node(new_token(NULL, SIMPLE_COMMAND), children));
 }
 
 void	execute(t_ast *ast)
