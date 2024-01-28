@@ -349,6 +349,11 @@ void	print_token(void *data, int first)
 		ft_printf(" -> <\033[31m%s\033[m> (%s)", token->str,
 			token_type_to_string(token->type));
 }
+
+void	ast_print(t_ast *ast)
+{
+	print_token(ast->token, 1);
+	ft_printf("\n");
 }
 
 /* TODO: what if readline returns NULL? */
@@ -373,6 +378,7 @@ int	main(void)
 		tokens = tokenize(line);
 		ddeque_print(tokens, print_token);
 		ast = parse(tokens);
+		ast_print(ast);
 		execute(ast);
 		(void)free_state(&state, &line, &tokens, &ast);
 	}
