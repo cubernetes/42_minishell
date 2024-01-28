@@ -59,7 +59,12 @@ void	*new_token(char *str, t_token_type type)
 int	push_token(const char **line, t_ddeque *tokens, size_t token_len,
 	t_token_type token_type)
 {
-	ddeque_push_value_bottom(tokens, new_token(*line, token_len, token_type));
+	char	*str;
+
+	str = ft_strndup(*line, token_len);
+	if (!str)
+		internal_error("push_token: ft_strndup", __LINE__);
+	ddeque_push_value_bottom(tokens, new_token(str, token_type));
 	*line += token_len;
 	return (1);
 }
