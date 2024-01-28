@@ -226,7 +226,7 @@ t_ast	*new_ast_node(t_token *token, t_ast **children)
 	if (!ast)
 		internal_error("new_ast_node: malloc", __LINE__);
 	ast->token = token;
-	ast->ast_children = NULL;
+	ast->children = children;
 	return (ast);
 }
 
