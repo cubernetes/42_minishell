@@ -245,6 +245,11 @@ void	execute(t_ast *ast)
 	(void)ast;
 }
 
+void	dont_free(void *data)
+{
+	(void)data;
+}
+
 void	free_token(void *data)
 {
 	t_token	*token;
