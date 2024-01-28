@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 17:35:26 by tosuman           #+#    #+#             */
-/*   Updated: 2024/01/27 20:03:52 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/01/27 22:15:45 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,6 @@
 /* TODO: use advanced prompt */
 /* # define PS1 "\\u@\\h:\\w\\$ " */
 # define PS1 "$ "
-
-# define ERR_NEW_TOKEN      "Error while creating new token."
 
 # define STR_TOK_OVERRIDE   "TOK_OVERRIDE"
 # define STR_TOK_INPUT      "TOK_INPUT"
