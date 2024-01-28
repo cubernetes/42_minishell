@@ -357,8 +357,15 @@ void	ast_print(t_ast *ast)
 }
 
 /* TODO: what if readline returns NULL? */
+/* TODO: use/think about rl_end (and other rl vars) */
 /* TODO: remove DEBUG macros */
 /* TODO: remove ddeque_print(tokens, print_token); */
+/* TODO: glob expansion, env var expansion, and quote handling */
+/* TOOD: parsing */
+/* TODO: execution */
+/* TODO: signal handling */
+/* TODO: protect all mallocs */
+/* TODO: check for NULL when using any function that returns a malloced ptr */
 int	main(void)
 {
 	static t_state	state;
