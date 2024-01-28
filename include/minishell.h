@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 17:35:26 by tosuman           #+#    #+#             */
-/*   Updated: 2024/01/27 22:15:45 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/01/28 02:12:51 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,16 @@ typedef enum e_token_type
 	TOK_EOL,
 	TOK_ERROR
 }	t_token_type;
+
+typedef enum e_nonterm
+{
+	COMPLETE_COMMAND,
+	PIPE_SEQUENCE,
+	COMMAND,
+	COMPOUND_COMMAND,
+	SIMPLE_COMMAND,
+	IO_REDIRECT,
+}	t_nonterm;
 
 typedef struct s_token
 {
