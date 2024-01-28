@@ -230,12 +230,14 @@ t_ast_node	*new_ast_node(t_token *token, t_ast_node **children)
 	return (ast);
 }
 
-t_ast	*parse(t_ddeque *tokens)
+/* TODO: Rethink ast structure!!! */
+t_ast_node	*parse(t_ddeque *tokens)
 {
-	t_ast	**children;
+	t_ast_node	**children;
 
-	children[0] = new_ast_node(new_token(NULL, SIMPLE_COMMAND), NULL);
-	children[1] = new_ast_node(tokens->head->data, NULL);
+	children = malloc(sizeof(*children) * 3);
+	children[0] = new_ast_node(tokens->head->data, NULL);
+	children[1] = new_ast_node(tokens->head->next->data, NULL);
 	children[2] = NULL;
 	return (new_ast_node(new_token(NULL, SIMPLE_COMMAND), children));
 }
