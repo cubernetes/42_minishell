@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 17:34:44 by tosuman           #+#    #+#             */
-/*   Updated: 2024/01/28 02:12:44 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/01/28 02:23:27 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -218,9 +218,9 @@ t_ddeque	*tokenize(const char *line)
 	return (tokens);
 }
 
-t_ast	*new_ast_node(t_token *token, t_ast **children)
+t_ast_node	*new_ast_node(t_token *token, t_ast_node **children)
 {
-	t_ast	*ast;
+	t_ast_node	*ast;
 
 	ast = malloc(sizeof(*ast));
 	if (!ast)
@@ -240,7 +240,7 @@ t_ast	*parse(t_ddeque *tokens)
 	return (new_ast_node(new_token(NULL, SIMPLE_COMMAND), children));
 }
 
-void	execute(t_ast *ast)
+void	execute(t_ast_node *ast)
 {
 	(void)ast;
 }
@@ -271,9 +271,9 @@ void	free_token(void *data)
  * 'destructor' function).
  */
 /* (free_token(ast->token), ast->token = NULL); */ /* <- don't add this */
-void	ast_free(t_ast *ast)
+void	ast_free(t_ast_node *ast)
 {
-	t_ast	**orig_children;
+	t_ast_node	**orig_children;
 
 	if (!ast)
 		return ;
@@ -286,7 +286,7 @@ void	ast_free(t_ast *ast)
 	(free(orig_children), ast->children = NULL);
 }
 
-void	free_datastructures(char **line, t_ddeque **tokens, t_ast **ast)
+void	free_datastructures(char **line, t_ddeque **tokens, t_ast_node **ast)
 {
 	(free(*line), *line = NULL);
 	(ddeque_free(*tokens, free_token), *tokens = NULL);
@@ -294,7 +294,7 @@ void	free_datastructures(char **line, t_ddeque **tokens, t_ast **ast)
 }
 
 int	free_state(t_state *state, char **line, t_ddeque **tokens,
-	t_ast **ast)
+	t_ast_node **ast)
 {
 	free_datastructures(line, tokens, ast);
 	(free(state->ps0), state->ps0 = NULL);
@@ -350,7 +350,7 @@ void	print_token(void *data, int first)
 			token_type_to_string(token->type));
 }
 
-void	ast_print(t_ast *ast)
+void	ast_print(t_ast_node *ast)
 {
 	print_token(ast->token, 1);
 	ft_printf("\n");
@@ -372,7 +372,7 @@ int	main(void)
 	static int		i = 50;
 	char			*line;
 	t_ddeque		*tokens;
-	t_ast			*ast;
+	t_ast_node			*ast;
 
 	tokens = NULL;
 	ast = NULL;

@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 17:35:26 by tosuman           #+#    #+#             */
-/*   Updated: 2024/01/28 02:12:51 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/01/28 02:17:22 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,13 +82,13 @@ typedef enum e_bool
 	TRUE
 }	t_bool;
 
-typedef struct s_ast	t_ast;
+typedef struct s_ast_node	t_ast_node;
 
 /* If children == NULL, then token is a terminal symbol/leaf node */
-struct s_ast
+struct s_ast_node
 {
-	t_token	*token;
-	t_ast	**children;
+	t_token		*token;
+	t_ast_node	**children;
 };
 
 #endif /* minishell.h. */
