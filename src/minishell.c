@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 17:34:44 by tosuman           #+#    #+#             */
-/*   Updated: 2024/01/27 19:51:39 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/01/28 01:45:00 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,9 +50,9 @@ void	*new_token(const char *line, size_t token_len, t_token_type token_type)
 
 	token = malloc(sizeof(*token));
 	if (!token)
-		internal_error(ERR_NEW_TOKEN, __LINE__);
-	token->token = ft_strndup(line, token_len);
-	token->token_type = token_type;
+		internal_error("new_token: malloc", __LINE__);
+	token->str = str;
+	token->type = type;
 	return (token);
 }
 
@@ -207,14 +207,13 @@ t_ddeque	*tokenize(const char *line)
 		skip_whitespace(&line);
 		if (!tokenize_fixed_len_tokens(&line, tokens))
 			tokenize_variable_len_tokens(&line, tokens);
-		if (((t_token *)tokens->head->prev->data)->token_type == TOK_EOL)
+		if (((t_token *)tokens->head->prev->data)->type == TOK_EOL)
 			break ;
 	}
 	return (tokens);
 }
 
-t_ast	*new_ast_node(t_token *token, t_token_type token_type,
-		t_ast *left, t_ast *right)
+t_ast	*new_ast_node(t_token *token, t_ast **children)
 {
 	t_ast	*ast;
 
@@ -242,24 +241,33 @@ void	free_token(void *data)
 	if (!data)
 		return ;
 	token = (t_token *)data;
-	(free(token->token), token->token = NULL);
+	DEBUG(0, "token->str: %s", token->str);
+	DEBUG(0, "%s", "freeing token->str");
+	(free(token->str), token->str = NULL);
+	DEBUG(0, "%s", "freeing token");
 	(free(token), token = NULL);
+	DEBUG(0, "%s", "done");
 }
 
+/* ast_free DOES NOT free it's tokens, since the tokens are bookkept through
+ * the linear token datastructure (t_ddeque *tokens), which does the freeing
+ * through the function ddeque_free (which in turn takes the free_token
+ * 'destructor' function).
+ */
+/* (free_token(ast->token), ast->token = NULL); */ /* <- don't add this */
 void	ast_free(t_ast *ast)
 {
-	t_ast	**orig_ast_children;
+	t_ast	**orig_children;
 
 	if (!ast)
 		return ;
-	(free(ast->token), ast->token = NULL);
-	orig_ast_children = ast->ast_children;
-	while (ast->ast_children)
+	orig_children = ast->children;
+	while (ast->children)
 	{
-		ast_free(*ast->ast_children);
-		++ast->ast_children;
+		ast_free(*ast->children);
+		++ast->children;
 	}
-	(free(orig_ast_children), ast->ast_children = NULL);
+	(free(orig_children), ast->children = NULL);
 }
 
 void	free_datastructures(char **line, t_ddeque **tokens, t_ast **ast)

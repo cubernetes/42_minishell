@@ -62,8 +62,8 @@ typedef enum e_token_type
 
 typedef struct s_token
 {
-	t_token_type	token_type;
-	char			*token;
+	t_token_type	type;
+	char			*str;
 }	t_token;
 
 typedef enum e_bool
@@ -74,11 +74,11 @@ typedef enum e_bool
 
 typedef struct s_ast	t_ast;
 
+/* If children == NULL, then token is a terminal symbol/leaf node */
 struct s_ast
 {
 	t_token	*token;
-	t_bool	is_terminal_tok;
-	t_ast	**ast_children;
+	t_ast	**children;
 };
 
 #endif /* minishell.h. */
