@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 17:34:44 by tosuman           #+#    #+#             */
-/*   Updated: 2024/01/29 07:06:53 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/01/29 07:39:25 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,38 @@ const char	*ast_node_type_to_string(t_ast_node_type type)
 		return (STR_IO_REDIRECT);
 	else
 		return (STR_AST_NODE_TYPE_UNKNOWN);
+}
+
+t_bool	free_token(void *data)
+{
+	t_token	*token;
+
+	if (!data)
+		return (TRUE);
+	token = (t_token *)data;
+	(free(token->str), token->str = NULL);
+	(free(token), token = NULL);
+	return (TRUE);
+}
+
+t_bool	ast_free(t_ast_node *ast_node)
+{
+	t_ast_node	**orig_children;
+
+	if (!ast_node)
+		return (TRUE);
+	if (ast_node->type == TOKEN)
+	{
+		((void)free_token(ast_node->data.token), ast_node->data.token = NULL);
+		(free(ast_node), ast_node = NULL);
+		return (TRUE);
+	}
+	orig_children = ast_node->data.children;
+	while (*ast_node->data.children)
+		(void)ast_free(*ast_node->data.children++);
+	(free(orig_children), ast_node->data.children = NULL);
+	(free(ast_node), ast_node = NULL);
+	return (TRUE);
 }
 
 /* TODO: NOT REQUIRED: add basic prompt expansion */
@@ -409,7 +441,8 @@ t_bool	fully_consumed(t_tokens *tokens)
 	return (FALSE);
 }
 
-t_bool	accept(t_tokens *tokens, t_token_type type, t_bool expect)
+t_bool	accept(t_ast_node *ast_node, t_tokens *tokens, t_token_type type,
+	t_bool expect)
 {
 	if (fully_consumed(tokens))
 		return (FALSE);
@@ -424,14 +457,15 @@ void	revert(t_tokens *tokens, size_t n)
 		tokens->tokens->head = tokens->tokens->head->prev;
 }
 
-t_bool	accept_io_redirect(t_tokens *tokens, t_bool expect)
+t_bool	accept_io_redirect(t_ast_node *ast_node, t_tokens *tokens,
+	t_bool expect)
 {
-	if (accept(tokens, TOK_OVERRIDE, FALSE)
-		|| accept(tokens, TOK_APPEND, FALSE)
-		|| accept(tokens, TOK_INPUT, FALSE)
-		|| accept(tokens, TOK_HEREDOC, expect))
+	if (accept(ast_node, tokens, TOK_OVERRIDE, FALSE)
+		|| accept(ast_node, tokens, TOK_APPEND, FALSE)
+		|| accept(ast_node, tokens, TOK_INPUT, FALSE)
+		|| accept(ast_node, tokens, TOK_HEREDOC, expect))
 	{
-		if (accept(tokens, TOK_WORD, expect))
+		if (accept(ast_node, tokens, TOK_WORD, expect))
 		{
 			return (TRUE);
 		}
@@ -444,40 +478,53 @@ t_bool	accept_io_redirect(t_tokens *tokens, t_bool expect)
 	return (throw_on_expect(tokens, expect));
 }
 
-t_bool	accept_simple_command(t_tokens *tokens, t_bool expect)
+/* TODO: NOT SO IMPORTANT: malloc the right amount for children */
+/* TODO: tischmid: continue here */
+t_bool	accept_simple_command(t_ast_node *ast_node, t_tokens *tokens,
+	t_bool expect)
 {
-	if (accept_io_redirect(tokens, FALSE))
-	{
-	}
-	else if (accept(tokens, TOK_WORD, expect))
+	size_t	i;
+
+	i = 0;
+	ast_node = malloc(sizeof(*ast_node));
+	ast_node->type = SIMPLE_COMMAND;
+	ast_node->data.children = malloc(sizeof(*ast_node->data.children)
+			* (tokens->tokens->size + 1));
+	if (accept_io_redirect(ast_node->data.children[i], tokens, FALSE))
+		;
+	else if (accept(ast_node->data.children[i], tokens, TOK_WORD, expect))
 	{
 	}
 	else
-		return (throw_on_expect(tokens, expect));
+		return (ast_free(ast_node), throw_on_expect(tokens, expect));
 	while (TRUE)
 	{
-		if (accept_io_redirect(tokens, FALSE))
+		++i;
+		if (accept_io_redirect(ast_node->data.children[i], tokens, FALSE))
 		{
 		}
-		else if (accept(tokens, TOK_WORD, FALSE))
+		else if (accept(ast_node->data.children[i], tokens, TOK_WORD, FALSE))
 		{
 		}
 		else
 			break ;
 	}
+	ast_node->data.children[++i] = NULL;
 	return (TRUE);
 }
 
-t_bool	accept_complete_command(t_tokens *tokens, t_bool expect);
+t_bool	accept_complete_command(t_ast_node *ast_node, t_tokens *tokens,
+				t_bool expect);
 
-t_bool	accept_compound_command(t_tokens *tokens, t_bool expect)
+t_bool	accept_compound_command(t_ast_node *ast_node, t_tokens *tokens,
+	t_bool expect)
 {
 	if (accept(tokens, TOK_L_PAREN, expect))
 	{
 	}
 	else
 		return (throw_on_expect(tokens, expect));
-	if (accept_complete_command(tokens, FALSE))
+	if (accept_complete_command(ast_node, tokens, FALSE))
 	{
 	}
 	if (accept(tokens, TOK_R_PAREN, expect))
@@ -488,29 +535,30 @@ t_bool	accept_compound_command(t_tokens *tokens, t_bool expect)
 	return (TRUE);
 }
 
-t_bool	accept_command(t_tokens *tokens, t_bool expect)
+t_bool	accept_command(t_ast_node *ast_node, t_tokens *tokens, t_bool expect)
 {
-	if (accept_compound_command(tokens, FALSE))
+	if (accept_compound_command(ast_node, tokens, FALSE))
 	{
 		return (TRUE);
 	}
-	else if (accept_simple_command(tokens, expect))
+	else if (accept_simple_command(ast_node, tokens, expect))
 	{
 		return (TRUE);
 	}
 	return (throw_on_expect(tokens, expect));
 }
 
-t_bool	accept_pipe_sequence(t_tokens *tokens, t_bool expect)
+t_bool	accept_pipe_sequence(t_ast_node *ast_node, t_tokens *tokens,
+	t_bool expect)
 {
-	if (accept_command(tokens, expect))
+	if (accept_command(ast_node, tokens, expect))
 	{
 	}
 	else
 		return (throw_on_expect(tokens, expect));
 	while (accept(tokens, TOK_PIPE, FALSE))
 	{
-		if (accept_command(tokens, expect))
+		if (accept_command(ast_node, tokens, expect))
 		{
 		}
 		else
@@ -519,9 +567,10 @@ t_bool	accept_pipe_sequence(t_tokens *tokens, t_bool expect)
 	return (TRUE);
 }
 
-t_bool	accept_complete_command(t_tokens *tokens, t_bool expect)
+t_bool	accept_complete_command(t_ast_node *ast_node, t_tokens *tokens,
+	t_bool expect)
 {
-	if (accept_pipe_sequence(tokens, expect))
+	if (accept_pipe_sequence(ast_node, tokens, expect))
 	{
 	}
 	else
@@ -530,7 +579,7 @@ t_bool	accept_complete_command(t_tokens *tokens, t_bool expect)
 	{
 		if (accept(tokens, TOK_AND, FALSE))
 		{
-			if (accept_pipe_sequence(tokens, expect))
+			if (accept_pipe_sequence(ast_node, tokens, expect))
 			{
 			}
 			else
@@ -538,7 +587,7 @@ t_bool	accept_complete_command(t_tokens *tokens, t_bool expect)
 		}
 		else if (accept(tokens, TOK_OR, expect))
 		{
-			if (accept_pipe_sequence(tokens, expect))
+			if (accept_pipe_sequence(ast_node, tokens, expect))
 			{
 			}
 			else
@@ -560,10 +609,11 @@ t_ast_node	*parse(t_ddeque *_tokens)
 	tokens->tokens = _tokens;
 	tokens->orig_head = _tokens->head;
 	tokens->err_token = NULL;
-	accept_complete_command(tokens, TRUE);
+	/* accept_complete_command(ast_node, tokens, TRUE); */
+	accept_simple_command(ast_node, tokens, TRUE);
 	tokens->tokens->head = tokens->orig_head;
 	free(tokens);
-	ast_node = return_example_ast();
+	/* ast_node = return_example_ast(); */
 	return (ast_node);
 }
 
@@ -577,38 +627,6 @@ t_bool	dont_free(void *data)
 {
 	(void)data;
 	return (1);
-}
-
-t_bool	free_token(void *data)
-{
-	t_token	*token;
-
-	if (!data)
-		return (TRUE);
-	token = (t_token *)data;
-	(free(token->str), token->str = NULL);
-	(free(token), token = NULL);
-	return (TRUE);
-}
-
-t_bool	ast_free(t_ast_node *ast_node)
-{
-	t_ast_node	**orig_children;
-
-	if (!ast_node)
-		return (TRUE);
-	if (ast_node->type == TOKEN)
-	{
-		((void)free_token(ast_node->data.token), ast_node->data.token = NULL);
-		(free(ast_node), ast_node = NULL);
-		return (TRUE);
-	}
-	orig_children = ast_node->data.children;
-	while (*ast_node->data.children)
-		(void)ast_free(*ast_node->data.children++);
-	(free(orig_children), ast_node->data.children = NULL);
-	(free(ast_node), ast_node = NULL);
-	return (TRUE);
 }
 
 t_bool	free_datastructures(char **line, t_ddeque **tokens,
