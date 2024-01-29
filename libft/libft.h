@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 15:09:08 by tischmid          #+#    #+#             */
-/*   Updated: 2024/01/29 01:33:05 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/01/29 03:42:01 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,12 @@
 # ifndef BUFFER_SIZE
 #  define BUFFER_SIZE 1
 # endif
+
+typedef enum e_bool
+{
+	FALSE = 0,
+	TRUE
+}	t_bool;
 
 typedef struct s_gnl_vars
 {
@@ -201,11 +207,11 @@ void							deque_rotate(t_deque *deque, int n);
 t_deque							*deque_copy(t_deque *deque);
 size_t							deque_size(t_deque *deque);
 void							deque_sort(t_deque *deque,
-									int (cmp)(t_deque_type, t_deque_type));
+									t_bool (cmp)(t_deque_type, t_deque_type));
 t_deque							*array_list_to_deque(char **array_list,
 									int *status);
 void							deque_print(t_deque *deque);
-int								deque_free(t_deque *deque);
+t_bool							deque_free(t_deque *deque);
 t_deque							*deque_init(void);
 t_deque							*deque_slice(t_deque *deque, int start, int end,
 									int step);
@@ -233,24 +239,24 @@ size_t							ddeque_size(t_ddeque *ddeque);
 void							ddeque_sort(t_ddeque *ddeque, int (cmp)(void *,
 										void *));
 void							ddeque_print(t_ddeque *ddeque,
-									void (print)(void *data, int first));
-int								ddeque_free(t_ddeque *ddeque,
-									int (free_data)(void *));
+									void (print)(void *data, t_bool first));
+t_bool							ddeque_free(t_ddeque *ddeque,
+									t_bool (free_data)(void *));
 t_ddeque						*ddeque_init(void);
 t_ddeque						*ddeque_shallow_slice(t_ddeque *ddeque,
 									int start, int end, int step);
 int								ddeque_index(t_ddeque *ddeque, void *data,
-									int (cmp)(void *, void *));
+									t_bool (cmp)(void *, void *));
 void							ddeque_extend_free(t_ddeque *ddeque_a,
 									t_ddeque *ddeque_b,
-									int (free_data)(void *));
-int								ddeque_equal(t_ddeque *ddeque_a,
+									t_bool (free_data)(void *));
+t_bool							ddeque_equal(t_ddeque *ddeque_a,
 									t_ddeque *ddeque_b,
-									int (cmp)(void *, void *));
+									t_bool (cmp)(void *, void *));
 
 /* misc */
-int								cmp_int_asc(int a, int b);
-int								cmp_int_desc(int a, int b);
+t_bool							cmp_int_asc(int a, int b);
+t_bool							cmp_int_desc(int a, int b);
 char							*get_next_line(int fd);
 
 #endif

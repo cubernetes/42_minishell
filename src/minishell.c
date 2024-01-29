@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 17:34:44 by tosuman           #+#    #+#             */
-/*   Updated: 2024/01/29 03:27:57 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/01/29 03:34:09 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,7 +113,7 @@ void	*new_token(char *str, t_token_type type)
 	return (token);
 }
 
-int	push_token(const char **line, t_ddeque *tokens, size_t token_len,
+t_bool	push_token(const char **line, t_ddeque *tokens, size_t token_len,
 	t_token_type type)
 {
 	char	*str;
@@ -123,14 +123,14 @@ int	push_token(const char **line, t_ddeque *tokens, size_t token_len,
 		internal_error("push_token: ft_strndup", __LINE__);
 	ddeque_push_value_bottom(tokens, new_token(str, type));
 	*line += token_len;
-	return (1);
+	return (TRUE);
 }
 
-int	tokenize_fixed_len_tokens(const char **line, t_ddeque *tokens)
+t_bool	tokenize_fixed_len_tokens(const char **line, t_ddeque *tokens)
 {
-	int	pushed;
+	t_bool	pushed;
 
-	pushed = 0;
+	pushed = FALSE;
 	if (**line == '\0')
 		pushed = push_token(line, tokens, 1, TOK_EOL);
 	else if (**line == '>' && *(*line + 1) == '>')
@@ -154,7 +154,7 @@ int	tokenize_fixed_len_tokens(const char **line, t_ddeque *tokens)
 	return (pushed);
 }
 
-int	tokenize_single_quoted_string(const char **line, t_ddeque *tokens)
+t_bool	tokenize_single_quoted_string(const char **line, t_ddeque *tokens)
 {
 	size_t		len;
 	const char	*tmp;
@@ -176,12 +176,12 @@ int	tokenize_single_quoted_string(const char **line, t_ddeque *tokens)
 		}
 		else
 			push_token(line, tokens, len + 1, TOK_ERROR);
-		return (1);
+		return (TRUE);
 	}
-	return (0);
+	return (FALSE);
 }
 
-int	tokenize_double_quoted_string(const char **line, t_ddeque *tokens)
+t_bool	tokenize_double_quoted_string(const char **line, t_ddeque *tokens)
 {
 	size_t		len;
 	const char	*tmp;
@@ -203,28 +203,28 @@ int	tokenize_double_quoted_string(const char **line, t_ddeque *tokens)
 		}
 		else
 			push_token(line, tokens, len + 1, TOK_ERROR);
-		return (1);
+		return (TRUE);
 	}
-	return (0);
+	return (FALSE);
 }
 
-int	is_word_char(char c)
+t_bool	is_word_char(char c)
 {
-	return (
+	return ((t_bool)(
 		ft_isprint(c)
 		&& !ft_isspace(c)
 		&& !ft_strchr("><()'\"|", c)
-	);
+	));
 }
 
-int	is_not_and_and(const char *line)
+t_bool	is_not_and_and(const char *line)
 {
 	if (line[0] == '&' && line[1] == '&')
-		return (0);
-	return (1);
+		return (FALSE);
+	return (TRUE);
 }
 
-int	tokenize_word(const char **line, t_ddeque *tokens)
+t_bool	tokenize_word(const char **line, t_ddeque *tokens)
 {
 	size_t		len;
 	const char	*tmp;
@@ -239,16 +239,16 @@ int	tokenize_word(const char **line, t_ddeque *tokens)
 			++len;
 		}
 		push_token(line, tokens, len, TOK_WORD);
-		return (1);
+		return (TRUE);
 	}
-	return (0);
+	return (FALSE);
 }
 
 void	tokenize_variable_len_tokens(const char **line, t_ddeque *tokens)
 {
-	int	pushed;
+	t_bool	pushed;
 
-	pushed = 0;
+	pushed = FALSE;
 	pushed += tokenize_single_quoted_string(line, tokens);
 	pushed += tokenize_double_quoted_string(line, tokens);
 	pushed += tokenize_word(line, tokens);
@@ -264,7 +264,7 @@ t_ddeque	*tokenize(const char *line)
 	t_ddeque		*tokens;
 
 	tokens = ddeque_init();
-	while (1)
+	while (TRUE)
 	{
 		skip_whitespace(&line);
 		if (!tokenize_fixed_len_tokens(&line, tokens))
@@ -391,22 +391,22 @@ void	throw_syntax_error(t_ddeque *tokens)
 	exit(42);
 }
 
-int	accept(t_ddeque *tokens, t_token_type type)
+t_bool	accept(t_ddeque *tokens, t_token_type type)
 {
 	if (get_token_type(tokens) == type)
 	{
 		tokens->head = tokens->head->next;
-		return (1);
+		return (TRUE);
 	}
-	return (0);
+	return (FALSE);
 }
 
-int	expect(t_ddeque *tokens, t_token_type type)
+t_bool	expect(t_ddeque *tokens, t_token_type type)
 {
 	if (accept(tokens, type))
-		return (1);
+		return (TRUE);
 	throw_syntax_error(tokens);
-	return (0);
+	return (FALSE);
 }
 
 t_ast_node	*parse_complete_command(t_ddeque *tokens)
@@ -432,16 +432,16 @@ void	parse_simple_command(t_ddeque *tokens)
 {
 	if (!accept(tokens, TOK_WORD))
 		parse_io_redirect(tokens);
-	while (1)
+	while (TRUE)
 	{
 	}
 }
 
-int	fully_consumed(t_ddeque *tokens)
+t_bool	fully_consumed(t_ddeque *tokens)
 {
 	if (get_token_type(tokens) == TOK_EOL)
-		return (1);
-	return (0);
+		return (TRUE);
+	return (FALSE);
 }
 
 /* return (return_example_ast()); */
@@ -462,63 +462,63 @@ void	execute(t_ast_node *ast_node)
 	(void)ast_node;
 }
 
-int	dont_free(void *data)
+t_bool	dont_free(void *data)
 {
 	(void)data;
 	return (1);
 }
 
-int	free_token(void *data)
+t_bool	free_token(void *data)
 {
 	t_token	*token;
 
 	if (!data)
-		return (1);
+		return (TRUE);
 	token = (t_token *)data;
 	(free(token->str), token->str = NULL);
 	(free(token), token = NULL);
-	return (1);
+	return (TRUE);
 }
 
-int	ast_free(t_ast_node *ast_node)
+t_bool	ast_free(t_ast_node *ast_node)
 {
 	t_ast_node	**orig_children;
 
 	if (!ast_node)
-		return (1);
+		return (TRUE);
 	if (ast_node->type == TOKEN)
 	{
 		((void)free_token(ast_node->data.token), ast_node->data.token = NULL);
 		(free(ast_node), ast_node = NULL);
-		return (1);
+		return (TRUE);
 	}
 	orig_children = ast_node->data.children;
 	while (*ast_node->data.children)
 		(void)ast_free(*ast_node->data.children++);
 	(free(orig_children), ast_node->data.children = NULL);
 	(free(ast_node), ast_node = NULL);
-	return (1);
+	return (TRUE);
 }
 
-int	free_datastructures(char **line, t_ddeque **tokens,
+t_bool	free_datastructures(char **line, t_ddeque **tokens,
 	t_ast_node **ast_node)
 {
 	(free(*line), *line = NULL);
 	((void)ddeque_free(*tokens, free_token), *tokens = NULL);
 	((void)ast_free(*ast_node), *ast_node = NULL);
-	return (1);
+	return (TRUE);
 }
 
-int	free_state(t_state *state, char **line, t_ddeque **tokens,
+t_bool	free_state(t_state *state, char **line, t_ddeque **tokens,
 	t_ast_node **ast_node)
 {
 	(void)free_datastructures(line, tokens, ast_node);
 	(free(state->ps0), state->ps0 = NULL);
 	(free(state->ps1), state->ps1 = NULL);
-	return (1);
+	return (TRUE);
 }
 
-void	print_token(void *data, int first)
+void	print_token(void *data, t_bool first)
 {
 	t_token	*token;
 

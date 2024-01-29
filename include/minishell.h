@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 17:35:26 by tosuman           #+#    #+#             */
-/*   Updated: 2024/01/29 01:50:26 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/01/29 03:36:03 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,12 +74,6 @@ typedef struct s_token
 	t_token_type	type;
 	char			*str;
 }	t_token;
-
-typedef enum e_bool
-{
-	FALSE = 0,
-	TRUE
-}	t_bool;
 
 typedef struct s_ast_node	t_ast_node;
 typedef t_ast_node			*t_children[];

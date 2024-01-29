@@ -6,14 +6,14 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 14:38:41 by tischmid          #+#    #+#             */
-/*   Updated: 2024/01/15 15:44:10 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/01/29 03:42:19 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
 /* cmp must return 0 if values are not equal */
-int	ddeque_index(t_ddeque *ddeque, void *data, int (cmp)(void *, void *))
+int	ddeque_index(t_ddeque *ddeque, void *data, t_bool (cmp)(void *, void *))
 {
 	t_ddeque_node	*orig_head;
 	t_ddeque_node	*head;

@@ -6,13 +6,13 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 14:39:32 by tischmid          #+#    #+#             */
-/*   Updated: 2023/11/22 14:51:06 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/01/29 03:41:19 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void	deque_sort(t_deque *deque, int (cmp)(t_deque_type, t_deque_type))
+void	deque_sort(t_deque *deque, t_bool (cmp)(t_deque_type, t_deque_type))
 {
 	size_t	n;
 	size_t	orig_n;
