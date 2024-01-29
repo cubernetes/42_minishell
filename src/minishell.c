@@ -471,30 +471,32 @@ void	setup_signals(void)
 /* TOOD: parsing */
 /* TODO: execution */
 /* TODO: signal handling */
-/* TODO: protect all mallocs */
+/* TODO: protect all mallocs (e.g. xmalloc(size_t n, int lineno), etc.) */
 /* TODO: check for NULL when using any function that returns a malloced ptr */
 int	main(void)
 {
 	static t_state	state;
-	static int		i = 50;
+	static int		i = 10;
 	char			*line;
 	t_ddeque		*tokens;
-	t_ast_node			*ast;
+	t_ast_node		*ast_root_node;
 
 	tokens = NULL;
-	ast = NULL;
+	ast_root_node = NULL;
+	setup_signals();
 	while (i--)
 	{
 		update_state(&state);
 		line = readline(state.ps1);
-		if (!line && free_state(&state, &line, &tokens, &ast))
+		if (!line && free_state(&state, &line, &tokens, &ast_root_node))
 			break ;
 		tokens = tokenize(line);
 		ddeque_print(tokens, print_token);
-		ast = parse(tokens);
-		ast_print(ast);
-		execute(ast);
-		(void)free_state(&state, &line, &tokens, &ast);
+		ft_printf("\n");
+		ast_root_node = parse(tokens);
+		ast_print(ast_root_node);
+		execute(ast_root_node);
+		(void)free_state(&state, &line, &tokens, &ast_root_node);
 	}
 	return (0);
 }
