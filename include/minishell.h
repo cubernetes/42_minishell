@@ -84,11 +84,12 @@ typedef enum e_bool
 typedef struct s_ast_node	t_ast_node;
 typedef t_ast_node			*t_children[];
 
-/* If children == NULL, then token is a terminal symbol/leaf node */
-struct s_ast_node
+/* children is a NULL terminated array of t_ast_node ptrs */
+typedef union u_ast_node_data
 {
-	t_token		*token;
 	t_ast_node	**children;
+	t_token		*token;
+}	t_ast_node_data;
 
 /* TOKEN is a TERMINAL, every other member is a NONTERMINAL */
 typedef enum e_ast_node_type

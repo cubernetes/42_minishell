@@ -240,16 +240,16 @@ t_ddeque	*tokenize(const char *line)
 	return (tokens);
 }
 
-t_ast_node	*new_ast_node(t_token *token, t_ast_node **children)
+t_ast_node	*new_ast_node(t_ast_node_type type, t_ast_node_data data)
 {
-	t_ast_node	*ast;
+	t_ast_node	*ast_node;
 
-	ast = malloc(sizeof(*ast));
-	if (!ast)
+	ast_node = malloc(sizeof(*ast_node));
+	if (!ast_node)
 		internal_error("new_ast_node: malloc", __LINE__);
-	ast->token = token;
-	ast->children = children;
-	return (ast);
+	ast_node->type = type;
+	ast_node->data = data;
+	return (ast_node);
 }
 
 t_ast_node	*new_ast_token(t_token_type type, char *str)
