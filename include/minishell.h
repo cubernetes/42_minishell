@@ -82,6 +82,7 @@ typedef enum e_bool
 }	t_bool;
 
 typedef struct s_ast_node	t_ast_node;
+typedef t_ast_node			*t_children[];
 
 /* If children == NULL, then token is a terminal symbol/leaf node */
 struct s_ast_node

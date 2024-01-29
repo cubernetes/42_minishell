@@ -252,16 +252,68 @@ t_ast_node	*new_ast_node(t_token *token, t_ast_node **children)
 	return (ast);
 }
 
-/* TODO: Rethink ast structure!!! */
+t_ast_node	*new_ast_token(t_token_type type, char *str)
+{
+	t_ast_node	*ast_node;
+
+	ast_node = malloc(sizeof(*ast_node));
+	ast_node->type = TOKEN;
+	ast_node->data.token = new_token(str, type);
+	return (ast_node);
+}
+
+t_ast_node	*new_ast_m_token(t_token_type type, const char *str)
+{
+	return (new_ast_token(type, ft_strdup(str)));
+}
+
+/* children must be allocated on heap */
+t_ast_node	*new_ast_nonterm(t_ast_node_type type, t_ast_node **children)
+{
+	t_ast_node	*ast_node;
+
+	ast_node = malloc(sizeof(*ast_node));
+	ast_node->type = type;
+	ast_node->data.children = children;
+	return (ast_node);
+}
+
+t_ast_node	**new_children(t_ast_node **children)
+{
+	t_ast_node	**new_children;
+	size_t		i;
+
+	i = 0;
+	while (children[i])
+		++i;
+	new_children = malloc(sizeof(*new_children) * (++i));
+	while (i--)
+		new_children[i] = children[i];
+	return (new_children);
+}
+
 t_ast_node	*parse(t_ddeque *tokens)
 {
-	t_ast_node	**children;
+	t_ast_node	*ast_node;
 
-	children = malloc(sizeof(*children) * 3);
-	children[0] = new_ast_node(tokens->head->data, NULL);
-	children[1] = new_ast_node(tokens->head->next->data, NULL);
-	children[2] = NULL;
-	return (new_ast_node(new_token(NULL, SIMPLE_COMMAND), children));
+	(void)tokens;
+	ast_node = \
+	new_ast_nonterm(PIPE_SEQUENCE, new_children((t_children){
+		new_ast_nonterm(COMMAND, new_children((t_children){
+			new_ast_nonterm(SIMPLE_COMMAND, new_children((t_children){
+				new_ast_m_token(TOK_WORD, "echo"),
+				new_ast_m_token(TOK_WORD, "hi"),
+			NULL})),
+		NULL})),
+		new_ast_m_token(TOK_PIPE, "|"),
+		new_ast_nonterm(COMMAND, new_children((t_children){
+			new_ast_nonterm(SIMPLE_COMMAND, new_children((t_children){
+				new_ast_m_token(TOK_WORD, "grep"),
+				new_ast_m_token(TOK_WORD, "^h"),
+			NULL})),
+		NULL})),
+	NULL}));
+	return (ast_node);
 }
 
 void	execute(t_ast_node *ast)
