@@ -426,10 +426,38 @@ void	print_token(void *data, int first)
 			token_type_to_string(token->type));
 }
 
-void	ast_print(t_ast_node *ast)
+void	repeat_string(const char *str, size_t n)
 {
-	print_token(ast->token, 1);
-	ft_printf("\n");
+	while (n--)
+		ft_printf("%s", str);
+}
+
+void	ast_print_with_depth(t_ast_node *ast_node, size_t n)
+{
+	t_ast_node	**tmp_children;
+
+	repeat_string("    ", n);
+	if (ast_node->type != TOKEN)
+	{
+		ft_printf("- <%s>\n", ast_node_type_to_string(ast_node->type));
+		tmp_children = ast_node->data.children;
+		while (*tmp_children)
+		{
+			ast_print_with_depth(*tmp_children, n + 1);
+			++tmp_children;
+		}
+	}
+	else
+		ft_printf("- %s (\033[31m%s\033[m)\n",
+			token_type_to_string(ast_node->data.token->type),
+			ast_node->data.token->str);
+}
+
+void	ast_print(t_ast_node *ast_node)
+{
+	ast_print_with_depth(ast_node, 0);
+}
+{
 }
 
 /* TODO: what if readline returns NULL? */
