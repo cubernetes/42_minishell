@@ -322,24 +322,22 @@ void	execute(t_ast_node *ast_node)
 	(void)ast_node;
 }
 
-void	dont_free(void *data)
+int	dont_free(void *data)
 {
 	(void)data;
+	return (1);
 }
 
-void	free_token(void *data)
+int	free_token(void *data)
 {
 	t_token	*token;
 
 	if (!data)
-		return ;
+		return (1);
 	token = (t_token *)data;
-	DEBUG(0, "token->str: %s", token->str);
-	DEBUG(0, "%s", "freeing token->str");
 	(free(token->str), token->str = NULL);
-	DEBUG(0, "%s", "freeing token");
 	(free(token), token = NULL);
-	DEBUG(0, "%s", "done");
+	return (1);
 }
 
 /* ast_free DOES NOT free it's tokens, since the tokens are bookkept through
