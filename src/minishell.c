@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 17:34:44 by tosuman           #+#    #+#             */
-/*   Updated: 2024/01/29 03:34:09 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/01/29 06:56:49 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -370,89 +370,200 @@ void	cleanup(void)
 {
 }
 
-char	*get_token_str(t_ddeque *tokens)
+char	*get_token_str(t_tokens *tokens)
 {
-	return (((t_token *)tokens->head->data)->str);
+	return (((t_token *)tokens->tokens->head->data)->str);
 }
 
-t_token_type	get_token_type(t_ddeque *tokens)
+t_token_type	get_token_type(t_tokens *tokens)
 {
-	return (((t_token *)tokens->head->data)->type);
+	return (((t_token *)tokens->tokens->head->data)->type);
 }
 
-void	throw_syntax_error(t_ddeque *tokens)
+/* Not sure about TOK_EOL == newline, think e.g. about heredocs */
+void	throw_syntax_error(t_tokens *tokens)
 {
-	if (get_token_type(tokens) != TOK_EOL)
+	if (tokens->err_token && tokens->err_token->type != TOK_EOL)
+		ft_printf("minishell: syntax error near unexpected token `%s'\n",
+			tokens->err_token->str);
+	else if (get_token_type(tokens) == TOK_EOL || tokens->err_token)
+		ft_printf("minishell: syntax error near unexpected token `newline'\n");
+	else
 		ft_printf("minishell: syntax error near unexpected token `%s'\n",
 			get_token_str(tokens));
-	else
-		ft_printf("minishell: syntax error near unexpected token `newline'\n");
 	cleanup();
 	exit(42);
 }
 
-t_bool	accept(t_ddeque *tokens, t_token_type type)
+t_bool	throw_on_expect(t_tokens *tokens, t_bool expect)
 {
-	if (get_token_type(tokens) == type)
-	{
-		tokens->head = tokens->head->next;
-		return (TRUE);
-	}
-	return (FALSE);
-}
-
-t_bool	expect(t_ddeque *tokens, t_token_type type)
-{
-	if (accept(tokens, type))
-		return (TRUE);
-	throw_syntax_error(tokens);
-	return (FALSE);
-}
-
-t_ast_node	*parse_complete_command(t_ddeque *tokens)
-{
-	t_ast_node	*ast_node;
-
-	(void)tokens;
-	ast_node = malloc(sizeof(*ast_node));
-	return (ast_node);
-}
-
-/* change return type to t_ast_node* */
-void	parse_io_redirect(t_ddeque *tokens)
-{
-	if (accept(tokens, TOK_OVERRIDE) || accept(tokens, TOK_APPEND)
-		|| accept(tokens, TOK_INPUT) || accept(tokens, TOK_HEREDOC))
-		expect(tokens, TOK_WORD);
-	else
+	if (expect)
 		throw_syntax_error(tokens);
+	return (FALSE);
 }
 
-void	parse_simple_command(t_ddeque *tokens)
-{
-	if (!accept(tokens, TOK_WORD))
-		parse_io_redirect(tokens);
-	while (TRUE)
-	{
-	}
-}
-
-t_bool	fully_consumed(t_ddeque *tokens)
+t_bool	fully_consumed(t_tokens *tokens)
 {
 	if (get_token_type(tokens) == TOK_EOL)
 		return (TRUE);
 	return (FALSE);
 }
 
+t_bool	accept(t_tokens *tokens, t_token_type type, t_bool expect)
+{
+	if (fully_consumed(tokens))
+		return (FALSE);
+	if (get_token_type(tokens) == type)
+		return (tokens->tokens->head = tokens->tokens->head->next, TRUE);
+	return (throw_on_expect(tokens, expect));
+}
+
+void	revert(t_tokens *tokens, size_t n)
+{
+	while (n--)
+		tokens->tokens->head = tokens->tokens->head->prev;
+}
+
+t_bool	accept_io_redirect(t_tokens *tokens, t_bool expect)
+{
+	if (accept(tokens, TOK_OVERRIDE, FALSE)
+		|| accept(tokens, TOK_APPEND, FALSE)
+		|| accept(tokens, TOK_INPUT, FALSE)
+		|| accept(tokens, TOK_HEREDOC, expect))
+	{
+		if (accept(tokens, TOK_WORD, expect))
+		{
+			return (TRUE);
+		}
+		else
+		{
+			tokens->err_token = tokens->tokens->head->data;
+			revert(tokens, 1);
+		}
+	}
+	return (throw_on_expect(tokens, expect));
+}
+
+t_bool	accept_simple_command(t_tokens *tokens, t_bool expect)
+{
+	if (accept_io_redirect(tokens, FALSE))
+	{
+	}
+	else if (accept(tokens, TOK_WORD, expect))
+	{
+	}
+	else
+		return (throw_on_expect(tokens, expect));
+	while (TRUE)
+	{
+		if (accept_io_redirect(tokens, FALSE))
+		{
+		}
+		else if (accept(tokens, TOK_WORD, FALSE))
+		{
+		}
+		else
+			break ;
+	}
+	return (TRUE);
+}
+
+t_bool	accept_complete_command(t_tokens *tokens, t_bool expect);
+
+t_bool	accept_compound_command(t_tokens *tokens, t_bool expect)
+{
+	if (accept(tokens, TOK_L_PAREN, expect))
+	{
+	}
+	else
+		return (throw_on_expect(tokens, expect));
+	if (accept_complete_command(tokens, FALSE))
+	{
+	}
+	if (accept(tokens, TOK_R_PAREN, expect))
+	{
+	}
+	else
+		return (throw_on_expect(tokens, expect));
+	return (TRUE);
+}
+
+t_bool	accept_command(t_tokens *tokens, t_bool expect)
+{
+	if (accept_compound_command(tokens, FALSE))
+	{
+		return (TRUE);
+	}
+	else if (accept_simple_command(tokens, expect))
+	{
+		return (TRUE);
+	}
+	return (throw_on_expect(tokens, expect));
+}
+
+t_bool	accept_pipe_sequence(t_tokens *tokens, t_bool expect)
+{
+	if (accept_command(tokens, expect))
+	{
+	}
+	else
+		return (throw_on_expect(tokens, expect));
+	while (accept(tokens, TOK_PIPE, FALSE))
+	{
+		if (accept_command(tokens, expect))
+		{
+		}
+		else
+			return (throw_on_expect(tokens, expect));
+	}
+	return (TRUE);
+}
+
+t_bool	accept_complete_command(t_tokens *tokens, t_bool expect)
+{
+	if (accept_pipe_sequence(tokens, expect))
+	{
+	}
+	else
+		return (throw_on_expect(tokens, expect));
+	while (TRUE)
+	{
+		if (accept(tokens, TOK_AND, FALSE))
+		{
+			if (accept_pipe_sequence(tokens, expect))
+			{
+			}
+			else
+				return (throw_on_expect(tokens, expect));
+		}
+		else if (accept(tokens, TOK_OR, expect))
+		{
+			if (accept_pipe_sequence(tokens, expect))
+			{
+			}
+			else
+				return (throw_on_expect(tokens, expect));
+		}
+		else
+			break ;
+	}
+	return (TRUE);
+}
+
 /* return (return_example_ast()); */
-t_ast_node	*parse(t_ddeque *tokens)
+t_ast_node	*parse(t_ddeque *_tokens)
 {
 	t_ast_node	*ast_node;
+	t_tokens	*tokens;
 
-	ast_node = parse_complete_command(tokens);
-	/* ast_node = parse_io_redirect(tokens); */
-	if (!fully_consumed(tokens))
-		throw_syntax_error(tokens);
+	tokens = malloc(sizeof(*tokens));
+	tokens->tokens = _tokens;
+	tokens->orig_head = _tokens->head;
+	tokens->err_token = NULL;
+	accept_complete_command(tokens, TRUE);
+	tokens->tokens->head = tokens->orig_head;
+	free(tokens);
+	ast_node = return_example_ast();
 	return (ast_node);
 }
 
@@ -606,29 +717,29 @@ int	actual_main(void)
 	return (0);
 }
 
-int	test_main(void)
-{
-	char		*line;
-	t_ddeque	*tokens;
-
-	tokens = NULL;
-	line = readline("$ ");
-	if (line)
-	{
-		tokens = tokenize(line);
-		ddeque_print(tokens, print_token);
-		parse_simple_command(tokens);
-		free(line);
-		ddeque_free(tokens, free_token);
-	}
-	return (0);
-}
+/* int	test_main(void) */
+/* { */
+	/* char		*line; */
+	/* t_ddeque	*tokens; */
+/*  */
+	/* tokens = NULL; */
+	/* line = readline("$ "); */
+	/* if (line) */
+	/* { */
+		/* tokens = tokenize(line); */
+		/* ddeque_print(tokens, print_token); */
+		/* accept_simple_command(tokens); */
+		/* free(line); */
+		/* ddeque_free(tokens, free_token); */
+	/* } */
+	/* return (0); */
+/* } */
 
 int	main(void)
 {
 	int	ret;
 
-	/* ret = actual_main(); */
-	ret = test_main();
+	ret = actual_main();
+	/* ret = test_main(); */
 	return (ret);
 }
