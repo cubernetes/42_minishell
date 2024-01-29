@@ -79,14 +79,14 @@ void	*new_token(char *str, t_token_type type)
 }
 
 int	push_token(const char **line, t_ddeque *tokens, size_t token_len,
-	t_token_type token_type)
+	t_token_type type)
 {
 	char	*str;
 
 	str = ft_strndup(*line, token_len);
 	if (!str)
 		internal_error("push_token: ft_strndup", __LINE__);
-	ddeque_push_value_bottom(tokens, new_token(str, token_type));
+	ddeque_push_value_bottom(tokens, new_token(str, type));
 	*line += token_len;
 	return (1);
 }
@@ -316,9 +316,10 @@ t_ast_node	*parse(t_ddeque *tokens)
 	return (ast_node);
 }
 
-void	execute(t_ast_node *ast)
+/* ast_node should be the root of the ast */
+void	execute(t_ast_node *ast_node)
 {
-	(void)ast;
+	(void)ast_node;
 }
 
 void	dont_free(void *data)
@@ -362,7 +363,8 @@ void	ast_free(t_ast_node *ast)
 	(free(orig_children), ast->children = NULL);
 }
 
-void	free_datastructures(char **line, t_ddeque **tokens, t_ast_node **ast)
+int	free_datastructures(char **line, t_ddeque **tokens,
+	t_ast_node **ast_node)
 {
 	(free(*line), *line = NULL);
 	(ddeque_free(*tokens, free_token), *tokens = NULL);
@@ -370,45 +372,45 @@ void	free_datastructures(char **line, t_ddeque **tokens, t_ast_node **ast)
 }
 
 int	free_state(t_state *state, char **line, t_ddeque **tokens,
-	t_ast_node **ast)
+	t_ast_node **ast_node)
 {
-	free_datastructures(line, tokens, ast);
+	(void)free_datastructures(line, tokens, ast_node);
 	(free(state->ps0), state->ps0 = NULL);
 	(free(state->ps1), state->ps1 = NULL);
 	return (1);
 }
 
-const char	*token_type_to_string(t_token_type token_type)
+const char	*token_type_to_string(t_token_type type)
 {
-	if (token_type == TOK_OR)
+	if (type == TOK_OR)
 		return (STR_TOK_OR);
-	else if (token_type == TOK_OVERRIDE)
+	else if (type == TOK_OVERRIDE)
 		return (STR_TOK_OVERRIDE);
-	else if (token_type == TOK_INPUT)
+	else if (type == TOK_INPUT)
 		return (STR_TOK_INPUT);
-	else if (token_type == TOK_APPEND)
+	else if (type == TOK_APPEND)
 		return (STR_TOK_APPEND);
-	else if (token_type == TOK_HEREDOC)
+	else if (type == TOK_HEREDOC)
 		return (STR_TOK_HEREDOC);
-	else if (token_type == TOK_PIPE)
+	else if (type == TOK_PIPE)
 		return (STR_TOK_PIPE);
-	else if (token_type == TOK_AND)
+	else if (type == TOK_AND)
 		return (STR_TOK_AND);
-	else if (token_type == TOK_OR)
+	else if (type == TOK_OR)
 		return (STR_TOK_OR);
-	else if (token_type == TOK_L_PAREN)
+	else if (type == TOK_L_PAREN)
 		return (STR_TOK_L_PAREN);
-	else if (token_type == TOK_R_PAREN)
+	else if (type == TOK_R_PAREN)
 		return (STR_TOK_R_PAREN);
-	else if (token_type == TOK_SQUOTE_STR)
+	else if (type == TOK_SQUOTE_STR)
 		return (STR_TOK_SQUOTE_STR);
-	else if (token_type == TOK_DQUOTE_STR)
+	else if (type == TOK_DQUOTE_STR)
 		return (STR_TOK_DQUOTE_STR);
-	else if (token_type == TOK_WORD)
+	else if (type == TOK_WORD)
 		return (STR_TOK_WORD);
-	else if (token_type == TOK_EOL)
+	else if (type == TOK_EOL)
 		return (STR_TOK_EOL);
-	else if (token_type == TOK_ERROR)
+	else if (type == TOK_ERROR)
 		return (STR_TOK_ERROR);
 	return (STR_TOK_UNKNOWN);
 }
