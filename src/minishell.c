@@ -340,33 +340,33 @@ int	free_token(void *data)
 	return (1);
 }
 
-/* ast_free DOES NOT free it's tokens, since the tokens are bookkept through
- * the linear token datastructure (t_ddeque *tokens), which does the freeing
- * through the function ddeque_free (which in turn takes the free_token
- * 'destructor' function).
- */
-/* (free_token(ast->token), ast->token = NULL); */ /* <- don't add this */
-void	ast_free(t_ast_node *ast)
+int	ast_free(t_ast_node *ast_node)
 {
 	t_ast_node	**orig_children;
 
-	if (!ast)
-		return ;
-	orig_children = ast->children;
-	while (ast->children)
+	if (!ast_node)
+		return (1);
+	if (ast_node->type == TOKEN)
 	{
-		ast_free(*ast->children);
-		++ast->children;
+		((void)free_token(ast_node->data.token), ast_node->data.token = NULL);
+		(free(ast_node), ast_node = NULL);
+		return (1);
 	}
-	(free(orig_children), ast->children = NULL);
+	orig_children = ast_node->data.children;
+	while (*ast_node->data.children)
+		(void)ast_free(*ast_node->data.children++);
+	(free(orig_children), ast_node->data.children = NULL);
+	(free(ast_node), ast_node = NULL);
+	return (1);
 }
 
 int	free_datastructures(char **line, t_ddeque **tokens,
 	t_ast_node **ast_node)
 {
 	(free(*line), *line = NULL);
-	(ddeque_free(*tokens, free_token), *tokens = NULL);
-	(ast_free(*ast), free(*ast), *ast = NULL);
+	((void)ddeque_free(*tokens, free_token), *tokens = NULL);
+	((void)ast_free(*ast_node), *ast_node = NULL);
+	return (1);
 }
 
 int	free_state(t_state *state, char **line, t_ddeque **tokens,
