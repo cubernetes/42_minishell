@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 17:35:26 by tosuman           #+#    #+#             */
-/*   Updated: 2024/01/29 03:36:03 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/01/29 06:24:34 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define MINISHELL_H 1
 
 /* TODO: remove debug include */
+# include "../libft/libft.h"
 # include "minishell_debug.h"
 # define PS0 "> "
 /* TODO: use advanced prompt */
@@ -74,6 +75,13 @@ typedef struct s_token
 	t_token_type	type;
 	char			*str;
 }	t_token;
+
+typedef struct s_tokens
+{
+	t_ddeque		*tokens;
+	t_ddeque_node	*orig_head;
+	t_token			*err_token;
+}	t_tokens;
 
 typedef struct s_ast_node	t_ast_node;
 typedef t_ast_node			*t_children[];
