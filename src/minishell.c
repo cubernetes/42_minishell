@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 17:34:44 by tosuman           #+#    #+#             */
-/*   Updated: 2024/01/29 06:56:49 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/01/29 07:06:53 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -689,7 +689,7 @@ void	setup_signals(void)
 /* TODO: signal handling */
 /* TODO: protect all mallocs (e.g. xmalloc(size_t n, int lineno), etc.) */
 /* TODO: check for NULL when using any function that returns a malloced ptr */
-int	actual_main(void)
+int	main(void)
 {
 	static t_state	state;
 	static int		i = 10;
@@ -715,31 +715,4 @@ int	actual_main(void)
 		(void)free_state(&state, &line, &tokens, &ast_root_node);
 	}
 	return (0);
-}
-
-/* int	test_main(void) */
-/* { */
-	/* char		*line; */
-	/* t_ddeque	*tokens; */
-/*  */
-	/* tokens = NULL; */
-	/* line = readline("$ "); */
-	/* if (line) */
-	/* { */
-		/* tokens = tokenize(line); */
-		/* ddeque_print(tokens, print_token); */
-		/* accept_simple_command(tokens); */
-		/* free(line); */
-		/* ddeque_free(tokens, free_token); */
-	/* } */
-	/* return (0); */
-/* } */
-
-int	main(void)
-{
-	int	ret;
-
-	ret = actual_main();
-	/* ret = test_main(); */
-	return (ret);
 }
