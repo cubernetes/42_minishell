@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 17:34:44 by tosuman           #+#    #+#             */
-/*   Updated: 2024/01/29 02:15:50 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/01/29 03:27:57 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,41 @@
 #include <readline/readline.h> /* readline() */
 #include <stdlib.h> /* free() */
 #include <unistd.h> /* STDERR_FILENO */
+
+const char	*token_type_to_string(t_token_type type)
+{
+	if (type == TOK_OR)
+		return (STR_TOK_OR);
+	else if (type == TOK_OVERRIDE)
+		return (STR_TOK_OVERRIDE);
+	else if (type == TOK_INPUT)
+		return (STR_TOK_INPUT);
+	else if (type == TOK_APPEND)
+		return (STR_TOK_APPEND);
+	else if (type == TOK_HEREDOC)
+		return (STR_TOK_HEREDOC);
+	else if (type == TOK_PIPE)
+		return (STR_TOK_PIPE);
+	else if (type == TOK_AND)
+		return (STR_TOK_AND);
+	else if (type == TOK_OR)
+		return (STR_TOK_OR);
+	else if (type == TOK_L_PAREN)
+		return (STR_TOK_L_PAREN);
+	else if (type == TOK_R_PAREN)
+		return (STR_TOK_R_PAREN);
+	else if (type == TOK_SQUOTE_STR)
+		return (STR_TOK_SQUOTE_STR);
+	else if (type == TOK_DQUOTE_STR)
+		return (STR_TOK_DQUOTE_STR);
+	else if (type == TOK_WORD)
+		return (STR_TOK_WORD);
+	else if (type == TOK_EOL)
+		return (STR_TOK_EOL);
+	else if (type == TOK_ERROR)
+		return (STR_TOK_ERROR);
+	return (STR_TOK_UNKNOWN);
+}
 
 const char	*ast_node_type_to_string(t_ast_node_type type)
 {
@@ -292,27 +327,132 @@ t_ast_node	**new_children(t_ast_node **children)
 	return (new_children);
 }
 
-t_ast_node	*parse(t_ddeque *tokens)
+t_ast_node	*return_example_ast(void)
+{
+	return (\
+	new_ast_nonterm(COMPLETE_COMMAND, new_children((t_children){
+		new_ast_nonterm(PIPE_SEQUENCE, new_children((t_children){
+			new_ast_nonterm(COMMAND, new_children((t_children){
+				new_ast_nonterm(SIMPLE_COMMAND, new_children((t_children){
+					new_ast_m_token(TOK_WORD, "echo"),
+					new_ast_m_token(TOK_WORD, "hi"),
+				NULL})),
+			NULL})),
+			new_ast_m_token(TOK_PIPE, "|"),
+			new_ast_nonterm(COMMAND, new_children((t_children){
+				new_ast_nonterm(SIMPLE_COMMAND, new_children((t_children){
+					new_ast_m_token(TOK_WORD, "grep"),
+					new_ast_m_token(TOK_WORD, "^h"),
+				NULL})),
+			NULL})),
+		NULL})),
+		new_ast_m_token(TOK_AND, "&&"),
+		new_ast_nonterm(PIPE_SEQUENCE, new_children((t_children){
+			new_ast_nonterm(COMMAND, new_children((t_children){
+				new_ast_nonterm(SIMPLE_COMMAND, new_children((t_children){
+					new_ast_m_token(TOK_WORD, "echo"),
+					new_ast_m_token(TOK_SQUOTE_STR, "hello world"),
+				NULL})),
+			NULL})),
+			new_ast_m_token(TOK_PIPE, "|"),
+			new_ast_nonterm(COMMAND, new_children((t_children){
+				new_ast_nonterm(SIMPLE_COMMAND, new_children((t_children){
+					new_ast_m_token(TOK_WORD, "grep"),
+					new_ast_m_token(TOK_DQUOTE_STR, "^hello world"),
+				NULL})),
+			NULL})),
+		NULL})),
+	NULL}))
+	);
+}
+
+void	cleanup(void)
+{
+}
+
+char	*get_token_str(t_ddeque *tokens)
+{
+	return (((t_token *)tokens->head->data)->str);
+}
+
+t_token_type	get_token_type(t_ddeque *tokens)
+{
+	return (((t_token *)tokens->head->data)->type);
+}
+
+void	throw_syntax_error(t_ddeque *tokens)
+{
+	if (get_token_type(tokens) != TOK_EOL)
+		ft_printf("minishell: syntax error near unexpected token `%s'\n",
+			get_token_str(tokens));
+	else
+		ft_printf("minishell: syntax error near unexpected token `newline'\n");
+	cleanup();
+	exit(42);
+}
+
+int	accept(t_ddeque *tokens, t_token_type type)
+{
+	if (get_token_type(tokens) == type)
+	{
+		tokens->head = tokens->head->next;
+		return (1);
+	}
+	return (0);
+}
+
+int	expect(t_ddeque *tokens, t_token_type type)
+{
+	if (accept(tokens, type))
+		return (1);
+	throw_syntax_error(tokens);
+	return (0);
+}
+
+t_ast_node	*parse_complete_command(t_ddeque *tokens)
 {
 	t_ast_node	*ast_node;
 
 	(void)tokens;
-	ast_node = \
-	new_ast_nonterm(PIPE_SEQUENCE, new_children((t_children){
-		new_ast_nonterm(COMMAND, new_children((t_children){
-			new_ast_nonterm(SIMPLE_COMMAND, new_children((t_children){
-				new_ast_m_token(TOK_WORD, "echo"),
-				new_ast_m_token(TOK_WORD, "hi"),
-			NULL})),
-		NULL})),
-		new_ast_m_token(TOK_PIPE, "|"),
-		new_ast_nonterm(COMMAND, new_children((t_children){
-			new_ast_nonterm(SIMPLE_COMMAND, new_children((t_children){
-				new_ast_m_token(TOK_WORD, "grep"),
-				new_ast_m_token(TOK_WORD, "^h"),
-			NULL})),
-		NULL})),
-	NULL}));
+	ast_node = malloc(sizeof(*ast_node));
+	return (ast_node);
+}
+
+/* change return type to t_ast_node* */
+void	parse_io_redirect(t_ddeque *tokens)
+{
+	if (accept(tokens, TOK_OVERRIDE) || accept(tokens, TOK_APPEND)
+		|| accept(tokens, TOK_INPUT) || accept(tokens, TOK_HEREDOC))
+		expect(tokens, TOK_WORD);
+	else
+		throw_syntax_error(tokens);
+}
+
+void	parse_simple_command(t_ddeque *tokens)
+{
+	if (!accept(tokens, TOK_WORD))
+		parse_io_redirect(tokens);
+	while (1)
+	{
+	}
+}
+
+int	fully_consumed(t_ddeque *tokens)
+{
+	if (get_token_type(tokens) == TOK_EOL)
+		return (1);
+	return (0);
+}
+
+/* return (return_example_ast()); */
+t_ast_node	*parse(t_ddeque *tokens)
+{
+	t_ast_node	*ast_node;
+
+	ast_node = parse_complete_command(tokens);
+	/* ast_node = parse_io_redirect(tokens); */
+	if (!fully_consumed(tokens))
+		throw_syntax_error(tokens);
 	return (ast_node);
 }
 
@@ -378,41 +518,6 @@ int	free_state(t_state *state, char **line, t_ddeque **tokens,
 	return (1);
 }
 
-const char	*token_type_to_string(t_token_type type)
-{
-	if (type == TOK_OR)
-		return (STR_TOK_OR);
-	else if (type == TOK_OVERRIDE)
-		return (STR_TOK_OVERRIDE);
-	else if (type == TOK_INPUT)
-		return (STR_TOK_INPUT);
-	else if (type == TOK_APPEND)
-		return (STR_TOK_APPEND);
-	else if (type == TOK_HEREDOC)
-		return (STR_TOK_HEREDOC);
-	else if (type == TOK_PIPE)
-		return (STR_TOK_PIPE);
-	else if (type == TOK_AND)
-		return (STR_TOK_AND);
-	else if (type == TOK_OR)
-		return (STR_TOK_OR);
-	else if (type == TOK_L_PAREN)
-		return (STR_TOK_L_PAREN);
-	else if (type == TOK_R_PAREN)
-		return (STR_TOK_R_PAREN);
-	else if (type == TOK_SQUOTE_STR)
-		return (STR_TOK_SQUOTE_STR);
-	else if (type == TOK_DQUOTE_STR)
-		return (STR_TOK_DQUOTE_STR);
-	else if (type == TOK_WORD)
-		return (STR_TOK_WORD);
-	else if (type == TOK_EOL)
-		return (STR_TOK_EOL);
-	else if (type == TOK_ERROR)
-		return (STR_TOK_ERROR);
-	return (STR_TOK_UNKNOWN);
-}
-
 void	print_token(void *data, int first)
 {
 	t_token	*token;
@@ -473,7 +578,7 @@ void	setup_signals(void)
 /* TODO: signal handling */
 /* TODO: protect all mallocs (e.g. xmalloc(size_t n, int lineno), etc.) */
 /* TODO: check for NULL when using any function that returns a malloced ptr */
-int	main(void)
+int	actual_main(void)
 {
 	static t_state	state;
 	static int		i = 10;
@@ -499,4 +604,31 @@ int	main(void)
 		(void)free_state(&state, &line, &tokens, &ast_root_node);
 	}
 	return (0);
+}
+
+int	test_main(void)
+{
+	char		*line;
+	t_ddeque	*tokens;
+
+	tokens = NULL;
+	line = readline("$ ");
+	if (line)
+	{
+		tokens = tokenize(line);
+		ddeque_print(tokens, print_token);
+		parse_simple_command(tokens);
+		free(line);
+		ddeque_free(tokens, free_token);
+	}
+	return (0);
+}
+
+int	main(void)
+{
+	int	ret;
+
+	/* ret = actual_main(); */
+	ret = test_main();
+	return (ret);
 }
