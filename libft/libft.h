@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 15:09:08 by tischmid          #+#    #+#             */
-/*   Updated: 2024/01/26 00:34:13 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/01/29 01:33:05 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -205,7 +205,7 @@ void							deque_sort(t_deque *deque,
 t_deque							*array_list_to_deque(char **array_list,
 									int *status);
 void							deque_print(t_deque *deque);
-void							deque_free(t_deque *deque);
+int								deque_free(t_deque *deque);
 t_deque							*deque_init(void);
 t_deque							*deque_slice(t_deque *deque, int start, int end,
 									int step);
@@ -234,8 +234,8 @@ void							ddeque_sort(t_ddeque *ddeque, int (cmp)(void *,
 										void *));
 void							ddeque_print(t_ddeque *ddeque,
 									void (print)(void *data, int first));
-void							ddeque_free(t_ddeque *ddeque,
-									void (free_data)(void *));
+int								ddeque_free(t_ddeque *ddeque,
+									int (free_data)(void *));
 t_ddeque						*ddeque_init(void);
 t_ddeque						*ddeque_shallow_slice(t_ddeque *ddeque,
 									int start, int end, int step);
@@ -243,7 +243,7 @@ int								ddeque_index(t_ddeque *ddeque, void *data,
 									int (cmp)(void *, void *));
 void							ddeque_extend_free(t_ddeque *ddeque_a,
 									t_ddeque *ddeque_b,
-									void (free_data)(void *));
+									int (free_data)(void *));
 int								ddeque_equal(t_ddeque *ddeque_a,
 									t_ddeque *ddeque_b,
 									int (cmp)(void *, void *));

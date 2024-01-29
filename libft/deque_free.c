@@ -6,25 +6,25 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 14:37:19 by tischmid          #+#    #+#             */
-/*   Updated: 2024/01/26 23:32:52 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/01/29 01:31:45 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 #include <stdlib.h>
 
-void	deque_free(t_deque *deque)
+int	deque_free(t_deque *deque)
 {
 	t_deque_node	*head;
 	t_deque_node	*tail;
 
 	if (!deque)
-		return ;
+		return (1);
 	head = deque->head;
 	if (!head)
 	{
 		(free(deque), deque = NULL);
-		return ;
+		return (1);
 	}
 	tail = head->prev;
 	while (head != tail)
@@ -34,4 +34,5 @@ void	deque_free(t_deque *deque)
 	}
 	(free(head), head = NULL);
 	(free(deque), deque = NULL);
+	return (1);
 }
