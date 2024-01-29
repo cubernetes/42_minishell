@@ -18,6 +18,28 @@
 #include <stdlib.h> /* free() */
 #include <unistd.h> /* STDERR_FILENO */
 
+const char	*ast_node_type_to_string(t_ast_node_type type)
+{
+	if (type == TOKEN)
+		return (STR_TOKEN);
+	else if (type == SIMPLE_COMMAND)
+		return (STR_SIMPLE_COMMAND);
+	else if (type == COMPLETE_COMMAND)
+		return (STR_COMPLETE_COMMAND);
+	else if (type == PIPE_SEQUENCE)
+		return (STR_PIPE_SEQUENCE);
+	else if (type == COMMAND)
+		return (STR_COMMAND);
+	else if (type == COMPOUND_COMMAND)
+		return (STR_COMPOUND_COMMAND);
+	else if (type == SIMPLE_COMMAND)
+		return (STR_SIMPLE_COMMAND);
+	else if (type == IO_REDIRECT)
+		return (STR_IO_REDIRECT);
+	else
+		return (STR_AST_NODE_TYPE_UNKNOWN);
+}
+
 /* TODO: NOT REQUIRED: add basic prompt expansion */
 char	*expand_prompt(const char *prompt_string)
 {

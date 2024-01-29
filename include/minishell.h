@@ -36,6 +36,15 @@
 # define STR_TOK_ERROR      "TOK_ERROR"
 # define STR_TOK_UNKNOWN    "TOK_UNKNOWN"
 
+# define STR_COMPLETE_COMMAND      "COMPLETE_COMMAND"
+# define STR_PIPE_SEQUENCE         "PIPE_SEQUENCE"
+# define STR_COMMAND               "COMMAND"
+# define STR_COMPOUND_COMMAND      "COMPOUND_COMMAND"
+# define STR_SIMPLE_COMMAND        "SIMPLE_COMMAND"
+# define STR_IO_REDIRECT           "IO_REDIRECT"
+# define STR_TOKEN                 "TOKEN"
+# define STR_AST_NODE_TYPE_UNKNOWN "AST_NODE_TYPE_UNKNOWN"
+
 typedef struct s_state
 {
 	char	*ps0;
@@ -60,16 +69,6 @@ typedef enum e_token_type
 	TOK_ERROR
 }	t_token_type;
 
-typedef enum e_nonterm
-{
-	COMPLETE_COMMAND,
-	PIPE_SEQUENCE,
-	COMMAND,
-	COMPOUND_COMMAND,
-	SIMPLE_COMMAND,
-	IO_REDIRECT,
-}	t_nonterm;
-
 typedef struct s_token
 {
 	t_token_type	type;
@@ -89,6 +88,26 @@ struct s_ast_node
 {
 	t_token		*token;
 	t_ast_node	**children;
+
+/* TOKEN is a TERMINAL, every other member is a NONTERMINAL */
+typedef enum e_ast_node_type
+{
+	COMPLETE_COMMAND,
+	PIPE_SEQUENCE,
+	COMMAND,
+	COMPOUND_COMMAND,
+	SIMPLE_COMMAND,
+	IO_REDIRECT,
+	TOKEN
+}	t_ast_node_type;
+
+/* if t_ast_node.type == TOKEN, then t_ast_node.data.token shall be used */
+/* if t_ast_node.type != TOKEN, then t_ast_node.data.children
+ * shall be used */
+struct s_ast_node
+{
+	t_ast_node_type	type;
+	t_ast_node_data	data;
 };
 
 #endif /* minishell.h. */
