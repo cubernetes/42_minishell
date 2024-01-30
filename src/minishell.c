@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 17:34:44 by tosuman           #+#    #+#             */
-/*   Updated: 2024/01/30 09:39:44 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/01/30 17:06:25 by pgrussin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -763,6 +763,9 @@ void	ast_print(t_ast_node *ast_node)
 /* TODO: pgrussin */
 void	setup_signals(void)
 {
+	int	i;
+	
+	i = 0;
 }
 
 /* TODO: what if readline returns NULL? */
