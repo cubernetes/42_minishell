@@ -539,7 +539,6 @@ void	ast_print(t_ast_node *ast_node)
 	ast_print_with_depth(ast_node, 0);
 }
 
-/* TODO: pgrussin */
 void	setup_signals(void)
 {
 	int	i;
