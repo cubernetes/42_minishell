@@ -216,6 +216,7 @@ io_redirect           |                              |                          
 # of the production itself
 ```c
 Nonterminal           | $  | && | || | |  | (  | )  | TOK_WORD | >> | << | >  | <
+----------------------|----|----|----|----|----|----|----------|----|----|----|--
 complete_command      |    |    |    |    | 0  |    | 0        | 0  | 0  | 0  | 0
 complete_command_tail | 1  | 2  | 2  |    |    | 1  |          |    |    |    |
 and_or                |    | 3  | 4  |    |    |    |          |    |    |    |
