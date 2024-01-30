@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 17:34:44 by tosuman           #+#    #+#             */
-/*   Updated: 2024/01/30 17:24:14 by pgrussin         ###   ########.fr       */
+/*   Updated: 2024/01/30 18:33:49 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,8 @@ const char	*token_type_to_string(t_token_type type)
 		return (STR_TOK_WORD);
 	else if (type == TOK_EOL)
 		return (STR_TOK_EOL);
+	else if (type == TOK_EPSILON)
+		return (STR_TOK_EPSILON);
 	else if (type == TOK_ERROR)
 		return (STR_TOK_ERROR);
 	return (STR_TOK_UNKNOWN);
@@ -55,22 +57,28 @@ const char	*token_type_to_string(t_token_type type)
 
 const char	*ast_node_type_to_string(t_ast_node_type type)
 {
-	if (type == TOKEN)
-		return (STR_TOKEN);
-	else if (type == SIMPLE_COMMAND)
-		return (STR_SIMPLE_COMMAND);
-	else if (type == COMPLETE_COMMAND)
+	if (type == COMPLETE_COMMAND)
 		return (STR_COMPLETE_COMMAND);
+	else if (type == COMPLETE_COMMAND_TAIL)
+		return (STR_COMPLETE_COMMAND_TAIL);
+	else if (type == AND_OR)
+		return (STR_AND_OR);
 	else if (type == PIPE_SEQUENCE)
 		return (STR_PIPE_SEQUENCE);
+	else if (type == PIPE_SEQUENCE_TAIL)
+		return (STR_PIPE_SEQUENCE_TAIL);
 	else if (type == COMMAND)
 		return (STR_COMMAND);
 	else if (type == COMPOUND_COMMAND)
 		return (STR_COMPOUND_COMMAND);
 	else if (type == SIMPLE_COMMAND)
 		return (STR_SIMPLE_COMMAND);
+	else if (type == SIMPLE_COMMAND_TAIL)
+		return (STR_SIMPLE_COMMAND_TAIL);
 	else if (type == IO_REDIRECT)
 		return (STR_IO_REDIRECT);
+	else if (type == TOKEN)
+		return (STR_TOKEN);
 	else
 		return (STR_AST_NODE_TYPE_UNKNOWN);
 }
