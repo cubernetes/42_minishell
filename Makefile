@@ -6,7 +6,7 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:02:16 by tischmid          #+#    #+#              #
-#    Updated: 2024/01/29 07:15:08 by tosuman          ###   ########.fr        #
+#    Updated: 2024/01/30 16:27:18 by pgrussin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -36,8 +36,9 @@ RM             := /bin/rm -f
 # TODO: change -O0 to -O3 and remove -g3
 # TODO: change -std=c99 to -std=c89 (used for variadic macro)
 # TOOD: add back -Werror
+# TODO: add back -pedantic flag
 CFLAGS         := -O0 -g3 -Wall -Wextra \
-                  -std=c99 -pedantic -Wconversion \
+                  -std=c99 -Wconversion \
                   -Wunused -Wunreachable-code -Wshadow
 CPPFLAGS       := -I$(LIBFT_DIR) -I$(INCLUDEDIR)
 LDFLAGS        := -L$(LIBFT_DIR)
