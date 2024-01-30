@@ -35,13 +35,18 @@
 # define STR_TOK_WORD       "TOK_WORD"
 # define STR_TOK_EOL        "TOK_EOL"
 # define STR_TOK_ERROR      "TOK_ERROR"
+# define STR_TOK_EPSILON    "TOK_EPSILON"
 # define STR_TOK_UNKNOWN    "TOK_UNKNOWN"
 
 # define STR_COMPLETE_COMMAND      "COMPLETE_COMMAND"
+# define STR_COMPLETE_COMMAND_TAIL "COMPLETE_COMMAND_TAIL"
+# define STR_AND_OR                "AND_OR"
 # define STR_PIPE_SEQUENCE         "PIPE_SEQUENCE"
+# define STR_PIPE_SEQUENCE_TAIL    "PIPE_SEQUENCE_TAIL"
 # define STR_COMMAND               "COMMAND"
 # define STR_COMPOUND_COMMAND      "COMPOUND_COMMAND"
 # define STR_SIMPLE_COMMAND        "SIMPLE_COMMAND"
+# define STR_SIMPLE_COMMAND_TAIL   "SIMPLE_COMMAND_TAIL"
 # define STR_IO_REDIRECT           "IO_REDIRECT"
 # define STR_TOKEN                 "TOKEN"
 # define STR_AST_NODE_TYPE_UNKNOWN "AST_NODE_TYPE_UNKNOWN"
@@ -93,8 +98,8 @@ typedef t_ast_node			*t_children[];
 /* children is a NULL terminated array of t_ast_node ptrs */
 typedef union u_ast_node_data
 {
-	t_ast_node	**children;
 	t_token		*token;
+	t_ast_node	**children;
 }	t_ast_node_data;
 
 /* TOKEN is a TERMINAL, every other member is a NONTERMINAL */
