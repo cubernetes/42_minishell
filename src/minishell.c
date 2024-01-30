@@ -709,6 +709,7 @@ void	setup_signals(void)
 /* TODO: signal handling */
 /* TODO: protect all mallocs (e.g. xmalloc(size_t n, int lineno), etc.) */
 /* TODO: check for NULL when using any function that returns a malloced ptr */
+/* TODO: make functions static where needed */
 int	main(void)
 {
 	static t_state	state;
