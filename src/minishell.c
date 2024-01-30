@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 17:34:44 by tosuman           #+#    #+#             */
-/*   Updated: 2024/01/30 18:33:49 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/01/30 18:59:30 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@
 #include <readline/readline.h> /* readline() */
 #include <stdlib.h> /* free() */
 #include <unistd.h> /* STDERR_FILENO */
+
+typedef t_ast_node	t_production;
 
 const char	*token_type_to_string(t_token_type type)
 {
@@ -95,6 +97,16 @@ t_bool	free_token(void *data)
 	return (TRUE);
 }
 
+char	*get_token_str(t_ddeque *tokens)
+{
+	return (((t_token *)tokens->head->data)->str);
+}
+
+t_token_type	get_token_type(t_ddeque *tokens)
+{
+	return (((t_token *)tokens->head->data)->type);
+}
+
 t_bool	ast_free(t_ast_node *ast_node)
 {
 	t_ast_node	**orig_children;
@@ -113,6 +125,37 @@ t_bool	ast_free(t_ast_node *ast_node)
 	(free(orig_children), ast_node->data.children = NULL);
 	(free(ast_node), ast_node = NULL);
 	return (TRUE);
+}
+
+void   push_productions(t_ddeque *stack, t_production *productions)
+{
+	if (productions->type == 0 && productions->data.token == NULL
+		&& productions->data.children == NULL)
+		return ;
+	push_productions(stack, productions + 1);
+	ddeque_push_value_top(stack, productions);
+}
+
+void   print_production(void *data, t_bool first)
+{
+	t_production	*production;
+	const char		*second;
+
+	production = (t_production *)data;
+	if (first)
+		second = "";
+	else
+		production = (t_production *)data;
+	if (first)
+		second = "";
+	else
+		second = ", ";
+	if (production->type == TOKEN)
+		ft_printf("%s\033[32m%s\033[m (\033[31m%s\033[m)", second,
+			token_type_to_string(production->data.token->type),
+			production->data.token->str);
+	else
+		ft_printf("%s\033[32m%s\033[m", second, ast_node_type_to_string(production->type));
 }
 
 /* TODO: NOT REQUIRED: add basic prompt expansion */
@@ -425,32 +468,37 @@ int	get_production_idx(t_ast_node_type nonterm, t_token_type token)
 	return (transition_table[nonterm][token]);
 }
 
-char	**get_production(t_ast_node_type nonterm, t_token_type token)
+/* TODO: Refactor */
+/* TODO: Don't use 0 as NULL */
+t_production   *get_production(t_ast_node_type nonterm, t_token_type token)
 {
-	static char	*productions[][4] = {\
-		{"PIPE_SEQUENCE", "COMPLETE_COMMAND_TAIL", NULL}, \
-		{"TOK_EPSILON", NULL}, \
-		{"AND_OR", "PIPE_SEQUENCE", "COMPLETE_COMMAND_TAIL", NULL}, \
-		{"TOK_AND", NULL}, \
-		{"TOK_OR", NULL}, \
-		{"COMMAND", "PIPE_SEQUENCE_TAIL", NULL}, \
-		{"TOK_EPSILON", NULL}, \
-		{"TOK_PIPE", "COMMAND", "PIPE_SEQUENCE_TAIL", NULL}, \
-		{"SIMPLE_COMMAND", NULL}, \
-		{"COMPOUND_COMMAND", NULL}, \
-		{"TOK_L_PAREN", "COMPLETE_COMMAND", "TOK_R_PAREN", NULL}, \
-		{"IO_REDIRECT", "TOK_WORD", "SIMPLE_COMMAND_TAIL", NULL}, \
-		{"TOK_EPSILON", NULL}, \
-		{"IO_REDIRECT", "TOK_WORD", "SIMPLE_COMMAND_TAIL", NULL}, \
-		{"TOK_EPSILON", NULL}, \
-		{"TOK_APPEND", NULL}, \
-		{"TOK_HEREDOC", NULL}, \
-		{"TOK_OVERRIDE", NULL}, \
-		{"TOK_INPUT", NULL}, \
-		{NULL}};
+	static t_token		tokens[] = {{TOK_EOL, 0}, {TOK_AND, 0}, {TOK_OR, 0}, \
+		{TOK_PIPE, 0}, {TOK_L_PAREN, 0}, {TOK_R_PAREN, 0}, {TOK_WORD, 0}, \
+		{TOK_OVERRIDE, 0}, {TOK_APPEND, 0}, {TOK_INPUT, 0}, {TOK_HEREDOC, 0}, \
+		{TOK_EPSILON, 0}, {TOK_SQUOTE_STR, 0}, {TOK_DQUOTE_STR, 0}, \
+		{TOK_ERROR, 0}};
+	static t_production	productions[][4] = {\
+		{{PIPE_SEQUENCE, {0}}, {COMPLETE_COMMAND_TAIL, {0}}, {0}}, \
+		{{TOKEN, {&tokens[TOK_EPSILON]}}, {0}}, \
+		{{AND_OR, {0}}, {PIPE_SEQUENCE, {0}}, {COMPLETE_COMMAND_TAIL, {0}}, {0}}, \
+		{{TOKEN, {&tokens[TOK_AND]}}, {0}}, {{TOKEN, {&tokens[TOK_OR]}}, {0}}, \
+		{{COMMAND, {0}}, {PIPE_SEQUENCE_TAIL, {0}}, {0}}, \
+		{{TOKEN, {&tokens[TOK_EPSILON]}}, {0}}, \
+		{{TOKEN, {&tokens[TOK_PIPE]}}, {COMMAND, {0}}, {PIPE_SEQUENCE_TAIL, {0}}, {0}}, \
+		{{SIMPLE_COMMAND, {0}}, {0}}, {{COMPOUND_COMMAND, {0}}, {0}}, \
+		{{TOKEN, {&tokens[TOK_L_PAREN]}}, {COMPLETE_COMMAND, {0}}, {TOKEN, {&tokens[TOK_R_PAREN]}}, {0}}, \
+		{{IO_REDIRECT, {0}}, {TOKEN, {&tokens[TOK_WORD]}}, {SIMPLE_COMMAND_TAIL, {0}}, {0}}, \
+		{{TOKEN, {&tokens[TOK_EPSILON]}}, {0}}, \
+		{{IO_REDIRECT, {0}}, {TOKEN, {&tokens[TOK_WORD]}}, {SIMPLE_COMMAND_TAIL, {0}}, {0}}, \
+		{{TOKEN, {&tokens[TOK_EPSILON]}}, {0}}, \
+		{{TOKEN, {&tokens[TOK_APPEND]}}, {0}}, \
+		{{TOKEN, {&tokens[TOK_HEREDOC]}}, {0}}, \
+		{{TOKEN, {&tokens[TOK_OVERRIDE]}}, {0}}, \
+		{{TOKEN, {&tokens[TOK_INPUT]}}, {0}}};
 
-	return (productions[get_production_idx(nonterm, token)]);
+		return (productions[get_production_idx(nonterm, token)]);
 }
+
 
 t_bool	dont_free(void *data)
 {
@@ -458,20 +506,36 @@ t_bool	dont_free(void *data)
 	return (1);
 }
 
-t_ast_node	*build_ast(t_ddeque *tokens)
+t_ast_node     *build_ast(t_ddeque *tokens)
 {
-	t_ast_node	*ast_node;
-	t_ddeque	*stack;
-	const char	*top;
+	t_ast_node		*ast_node;
+	t_ddeque		*stack;
+	t_ast_node		*top;
+	t_production	*productions;
 
-	(void)tokens;
 	stack = ddeque_init();
-	ddeque_push_value_top(stack, (void *)ast_node_type_to_string(COMPLETE_COMMAND));
-	while (stack->size)
+	ddeque_push_value_top(stack, &(t_production){TOKEN, {&(t_token){TOK_EOL, NULL}}});
+	ddeque_push_value_top(stack, &(t_production){COMPLETE_COMMAND, {0}});
+	while (1)
 	{
 		top = stack->head->data;
+		ddeque_print(stack, print_production);
 		free(ddeque_pop_top(stack));
-		DEBUG(0, "%s", top);
+		if (get_token_type(tokens) == TOK_EOL)
+		{
+			if (top->type == TOKEN && top->data.token->type == TOK_EOL)
+				break ;
+			internal_error("build_ast: Stack not empty", __LINE__);
+		}
+		else if (top->type == TOKEN && get_token_type(tokens) == top->data.token->type)
+			tokens->head = tokens->head->next;
+		else if (top->type != TOKEN)
+		{
+			productions = get_production(top->type, get_token_type(tokens));
+			push_productions(stack, productions);
+		}
+		else
+			internal_error("build_ast: Stacks don't match", __LINE__);
 	}
 	ddeque_free(stack, dont_free);
 	ast_node = return_example_ast();
