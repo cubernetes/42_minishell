@@ -6,7 +6,7 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:09:11 by tischmid          #+#    #+#              #
-#    Updated: 2024/01/30 18:27:47 by tosuman          ###   ########.fr        #
+#    Updated: 2024/01/30 19:12:04 by tosuman          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,7 +24,7 @@ RM = /bin/rm -f
 MKDIR = /bin/mkdir -p
 
 NAME = libft.a
-OBJDIR = obj
+OBJDIR = ./obj
 SRCDIR = .
 INCDIR = .
 
@@ -154,14 +154,14 @@ OBJ = $(addprefix $(OBJDIR)/,$(_OBJ))
 OBJ_BONUS = $(addprefix $(OBJDIR)/,$(_OBJ_BONUS))
 SRC = $(addprefix $(SRCDIR)/,$(_SRC))
 SRC_BONUS = $(addprefix $(SRCDIR)/,$(_SRC_BONUS))
-DEPS = $(addprefix $(INCDIR)/,$(_DEPS))
+INCLUDE = $(addprefix $(INCDIR)/,$(_DEPS))
 
-all: $(NAME)
+all: $(NAME) bonus
 
 $(NAME): $(OBJ)
 	$(AR) $@ $^
 
-$(OBJDIR)/%.o: %c $(DEPS) | $(OBJDIR)
+$(OBJDIR)/%.o: $(SRCDIR)/%.c $(INCLUDE) | $(OBJDIR)
 	$(CC) $(CFLAGS) -c -o $@ -I$(INCDIR) $<
 
 $(OBJDIR):
