@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 17:34:44 by tosuman           #+#    #+#             */
-/*   Updated: 2024/01/29 23:00:11 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/01/30 09:39:44 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -362,20 +362,20 @@ t_ast_node	**new_children(t_ast_node **children)
 t_ast_node	*return_example_ast(void)
 {
 	return (\
-	new_ast_nonterm(COMPLETE_COMMAND, new_children((t_children){
-		new_ast_nonterm(PIPE_SEQUENCE, new_children((t_children){
-			new_ast_nonterm(COMMAND, new_children((t_children){
-				new_ast_nonterm(SIMPLE_COMMAND, new_children((t_children){
-					new_ast_m_token(TOK_WORD, "echo"),
-					new_ast_m_token(TOK_WORD, "hi"),
-				NULL})),
-			NULL})),
-			new_ast_m_token(TOK_PIPE, "|"),
-			new_ast_nonterm(COMMAND, new_children((t_children){
-				new_ast_nonterm(SIMPLE_COMMAND, new_children((t_children){
-					new_ast_m_token(TOK_WORD, "grep"),
-					new_ast_m_token(TOK_WORD, "^h"),
-				NULL})),
+	new_ast_nonterm(COMPLETE_COMMAND, new_children((t_children){\
+		new_ast_nonterm(PIPE_SEQUENCE, new_children((t_children){\
+			new_ast_nonterm(COMMAND, new_children((t_children){\
+				new_ast_nonterm(SIMPLE_COMMAND, new_children((t_children){\
+					new_ast_m_token(TOK_WORD, "echo"), \
+					new_ast_m_token(TOK_WORD, "hi"), \
+				NULL})), \
+			NULL})), \
+			new_ast_m_token(TOK_PIPE, "|"), \
+			new_ast_nonterm(COMMAND, new_children((t_children){\
+				new_ast_nonterm(SIMPLE_COMMAND, new_children((t_children){\
+					new_ast_m_token(TOK_WORD, "grep"), \
+					new_ast_m_token(TOK_WORD, "^h"), \
+				NULL})), \
 			NULL})),
 		NULL})),
 		new_ast_m_token(TOK_AND, "&&"),
@@ -599,14 +599,60 @@ t_ast_node	*return_example_ast(void)
 	/* return (TRUE); */
 /* } */
 
+/* return the index of the production to use */
+int	get_production_idx(t_ast_node_type nonterm, t_token_type token)
+{
+	static int	transition_table[NUM_NONTERMS][NUM_TOKENS] = {
+	{-1, -1, -1, -1, 0, -1, 0, 0, 0, 0, 0},
+	{1, 2, 2, -1, -1, 1, -1, -1, -1, -1, -1},
+	{-1, 3, 4, -1, -1, -1, -1, -1, -1, -1, -1},
+	{-1, -1, -1, -1, 5, -1, 5, 5, 5, 5, 5},
+	{6, 6, 6, 7, -1, 6, -1, -1, -1, -1, -1},
+	{-1, -1, -1, -1, 9, -1, 8, 8, 8, 8, 8},
+	{-1, -1, -1, -1, 10, -1, -1, -1, -1, -1, -1},
+	{-1, -1, -1, -1, -1, -1, 11, 11, 11, 11, 11},
+	{12, 12, 12, 12, -1, 12, 13, 13, 13, 13, 13},
+	{-1, -1, -1, -1, -1, -1, 14, 17, 15, 18, 16}
+	};
+
+	return (transition_table[nonterm][token]);
+}
+
+char	**get_production(t_ast_node_type nonterm, t_token_type token)
+{
+	static char	*productions[][4] = {\
+		{"PIPE_SEQUENCE", "COMPLETE_COMMAND_TAIL", NULL}, \
+		{"TOK_EPSILON", NULL}, \
+		{"AND_OR", "PIPE_SEQUENCE", "COMPLETE_COMMAND_TAIL", NULL}, \
+		{"TOK_AND", NULL}, \
+		{"TOK_OR", NULL}, \
+		{"COMMAND", "PIPE_SEQUENCE_TAIL", NULL}, \
+		{"TOK_EPSILON", NULL}, \
+		{"TOK_PIPE", "COMMAND", "PIPE_SEQUENCE_TAIL", NULL}, \
+		{"SIMPLE_COMMAND", NULL}, \
+		{"COMPOUND_COMMAND", NULL}, \
+		{"TOK_L_PAREN", "COMPLETE_COMMAND", "TOK_R_PAREN", NULL}, \
+		{"IO_REDIRECT", "TOK_WORD", "SIMPLE_COMMAND_TAIL", NULL}, \
+		{"TOK_EPSILON", NULL}, \
+		{"IO_REDIRECT", "TOK_WORD", "SIMPLE_COMMAND_TAIL", NULL}, \
+		{"TOK_EPSILON", NULL}, \
+		{"TOK_APPEND", NULL}, \
+		{"TOK_HEREDOC", NULL}, \
+		{"TOK_OVERRIDE", NULL}, \
+		{"TOK_INPUT", NULL}, \
+		{NULL}};
+
+	return (productions[get_production_idx(nonterm, token)]);
+}
+
 /* return (return_example_ast()); */
 /* t_ast_node	*build_ast(t_ddeque *_tokens) */
-t_ast_node	*build_ast(t_ddeque *tokens)
-{
-	t_ast_node	*ast_node;
+/* t_ast_node	*build_ast(t_ddeque *tokens) */
+/* { */
+	/* t_ast_node	*ast_node; */
 	/* t_tokens	*tokens; */
-
-	(void)tokens;
+/*  */
+	/* (void)tokens; */
 	/* tokens = malloc(sizeof(*tokens)); */
 	/* tokens->tokens = _tokens; */
 	/* tokens->orig_head = _tokens->head; */
@@ -615,6 +661,32 @@ t_ast_node	*build_ast(t_ddeque *tokens)
 	/* accept_simple_command(ast_node, tokens, TRUE); */
 	/* tokens->tokens->head = tokens->orig_head; */
 	/* free(tokens); */
+	/* ast_node = return_example_ast(); */
+	/* return (ast_node); */
+/* } */
+
+t_bool	dont_free(void *data)
+{
+	(void)data;
+	return (1);
+}
+
+t_ast_node	*build_ast(t_ddeque *tokens)
+{
+	t_ast_node	*ast_node;
+	t_ddeque	*stack;
+	const char	*top;
+
+	(void)tokens;
+	stack = ddeque_init();
+	ddeque_push_value_top(stack, (void *)ast_node_type_to_string(COMPLETE_COMMAND));
+	while (stack->size)
+	{
+		top = stack->head->data;
+		free(ddeque_pop_top(stack));
+		DEBUG(0, "%s", top);
+	}
+	ddeque_free(stack, dont_free);
 	ast_node = return_example_ast();
 	return (ast_node);
 }
@@ -623,12 +695,6 @@ t_ast_node	*build_ast(t_ddeque *tokens)
 void	execute(t_ast_node *ast_node)
 {
 	(void)ast_node;
-}
-
-t_bool	dont_free(void *data)
-{
-	(void)data;
-	return (1);
 }
 
 t_bool	free_datastructures(char **line, t_ddeque **tokens,

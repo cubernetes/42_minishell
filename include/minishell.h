@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 17:35:26 by tosuman           #+#    #+#             */
-/*   Updated: 2024/01/29 06:24:34 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/01/30 08:18:54 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,9 @@
 # define STR_TOKEN                 "TOKEN"
 # define STR_AST_NODE_TYPE_UNKNOWN "AST_NODE_TYPE_UNKNOWN"
 
+# define NUM_NONTERMS 10
+# define NUM_TOKENS   11
+
 typedef struct s_state
 {
 	char	*ps0;
@@ -54,19 +57,20 @@ typedef struct s_state
 
 typedef enum e_token_type
 {
-	TOK_OVERRIDE,
-	TOK_INPUT,
-	TOK_APPEND,
-	TOK_HEREDOC,
-	TOK_PIPE,
+	TOK_EOL,
 	TOK_AND,
 	TOK_OR,
+	TOK_PIPE,
 	TOK_L_PAREN,
 	TOK_R_PAREN,
+	TOK_WORD,
+	TOK_OVERRIDE,
+	TOK_APPEND,
+	TOK_INPUT,
+	TOK_HEREDOC,
+	TOK_EPSILON,
 	TOK_SQUOTE_STR,
 	TOK_DQUOTE_STR,
-	TOK_WORD,
-	TOK_EOL,
 	TOK_ERROR
 }	t_token_type;
 
@@ -96,11 +100,15 @@ typedef union u_ast_node_data
 /* TOKEN is a TERMINAL, every other member is a NONTERMINAL */
 typedef enum e_ast_node_type
 {
-	COMPLETE_COMMAND,
+	COMPLETE_COMMAND = 0,
+	COMPLETE_COMMAND_TAIL,
+	AND_OR,
 	PIPE_SEQUENCE,
+	PIPE_SEQUENCE_TAIL,
 	COMMAND,
 	COMPOUND_COMMAND,
 	SIMPLE_COMMAND,
+	SIMPLE_COMMAND_TAIL,
 	IO_REDIRECT,
 	TOKEN
 }	t_ast_node_type;
