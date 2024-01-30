@@ -4,5 +4,7 @@
 # suppress_readline_leak.supp
 # TODO: uncomment below AND `git rm -f' it
 # minishell.bnf
+# TODO: uncomment below AND `git rm -f' it
+# gen_table.py
 minishell
 obj
