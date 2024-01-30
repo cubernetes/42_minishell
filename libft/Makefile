@@ -6,24 +6,25 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:09:11 by tischmid          #+#    #+#              #
-#    Updated: 2024/01/30 16:27:29 by pgrussin         ###   ########.fr        #
+#    Updated: 2024/01/30 18:24:20 by tosuman          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 CC = cc
 unexport CFLAGS
-unexport LDFLAGS
 # TODO: change -O0 to -03 and remove -g3
 # TODO: change -std=c99 to -std=c89 (used for variadic macro)
 # TODO: add back -pedantic flag
 CFLAGS += -O0 -g3 -Wall -Wextra -Werror \
           -std=c99 -Wconversion \
           -Wunused -Wunreachable-code -Wshadow
+unexport LDFLAGS
 AR = ar rcs
 RM = /bin/rm -f
+MKDIR = /bin/mkdir -p
 
 NAME = libft.a
-OBJDIR = .
+OBJDIR = obj
 SRCDIR = .
 INCDIR = .
 
@@ -160,18 +161,22 @@ all: $(NAME)
 $(NAME): $(OBJ)
 	$(AR) $@ $^
 
-$(OBJDIR)/%.o: %c $(DEPS)
+$(OBJDIR)/%.o: %c $(DEPS) | $(OBJDIR)
 	$(CC) $(CFLAGS) -c -o $@ -I$(INCDIR) $<
+
+$(OBJDIR):
+	$(MKDIR) $@
+
+bonus: $(OBJ) $(OBJ_BONUS)
+	$(AR) $(NAME) $^
 
 clean:
 	$(RM) $(OBJ) $(OBJ_BONUS)
+	$(RM) -r $(OBJDIR)
 
 fclean: clean
 	$(RM) $(NAME)
 
 re: fclean all
-
-bonus: $(OBJ) $(OBJ_BONUS)
-	$(AR) $(NAME) $^
 
 .PHONY: re fclean clean all bonus
