@@ -1,13 +1,11 @@
-#! /bin/cat
-
 # Simplified posix shell grammar for the minishell project
+# Start symbol is complete_command
 
 # Raw yacc BNF taken from:
 # https://pubs.opengroup.org/onlinepubs/9699919799/utilities/V3_chap02.html#tag_18_10_02
 # Productions not relevant for minishell are removed.
-
-# Tokens
 # TODO: what about TOK_SQUOTE_STR and TOK_DQUOTE_STR ???
+```c yacc
 %token TOK_WORD
 /* %token TOK_SQUOTE_STR TOK_DQUOTE_STR */
 
@@ -17,7 +15,6 @@
 %token TOK_OVERRIDE TOK_APPEND TOK_INPUT TOK_HEREDOC
 /*     '>'          '>>'       '<'       '<<'     */
 
-# Start symbol is complete_command
 complete_command : list
                  ;
 list             : and_or
@@ -79,8 +76,10 @@ io_here          : TOK_HEREDOC here_end
                  ;
 here_end         : WORD
                  ;
+```
 
 # Same grammar as but this time in EBNF
+```c
 complete_command = list ;
 list = and_or ;
 and_or = pipeline { ( TOK_AND | TOK_OR ) pipeline } ;
@@ -100,22 +99,27 @@ io_file = ( TOK_APPEND | TOK_OVERRIDE | TOK_INPUT ) filename ;
 filename = TOK_WORD ;
 io_here = TOK_HEREDOC here_end ;
 here_end = TOK_WORD ;
+```
 
 # Compressed form
+```c
 complete_command = pipe_sequence { ( TOK_AND | TOK_OR ) pipe_sequence } ;
 pipe_sequence = command { TOK_PIPE command } ;
 command = simple_command | compound_command { io_redirect } ;
 compound_command = TOK_L_PAREN complete_command TOK_R_PAREN ; # aka subshell
 simple_command = ( TOK_WORD | io_redirect ) { TOK_WORD | io_redirect } ;
 io_redirect = ( TOK_APPEND | TOK_OVERRIDE | TOK_INPUT | TOK_HEREDOC ) TOK_WORD ;
+```
 
 # Improved form. (shockingly similar to lmiehler's EBNF)
+```c
 complete_command = pipe_sequence { ( '&&' | '||' ) pipe_sequence } ;
 pipe_sequence = command { '|' command } ;
 command = simple_command | compound_command ;
 compound_command = '(' complete_command ')' ; # aka subshell
 simple_command = [ io_redirect ] TOK_WORD { [ io_redirect ] TOK_WORD } ;
 io_redirect = '>' | '>>' | '<' | '<<' ;
+```
 # Remarks:
 # - TOK_WORD will never be an ASSIGMENT_WORD. ASSIGNMENT_WORD's are only used
 # as the arguments on the `export' builtin, but that 'simple' parsing is done
@@ -131,6 +135,7 @@ io_redirect = '>' | '>>' | '<' | '<<' ;
 # '' represents empty string (epsilon)
 # whitespace delimited tokens found on the right, which are not found on the left
 # are terminal symbols. Every other symbol, except '', is a non-terminal.
+```c
 complete_command ::= pipe_sequence complete_command_tail
 complete_command_tail ::= ''
 complete_command_tail ::= and_or pipe_sequence complete_command_tail
@@ -150,8 +155,10 @@ io_redirect ::= >>
 io_redirect ::= <<
 io_redirect ::= >
 io_redirect ::= <
+```
 
 # This yields the following first & follow sets:
+```c
 Nonterminal           | Nullable? | First set                 | Follow set
 ----------------------|-----------|---------------------------|-----------
 complete_command      | no        | TOK_WORD, (, >, >>, <, << | ), $
@@ -164,8 +171,10 @@ compound_command      | no        | (                         | &&, ||, |, ), $
 simple_command        | no        | TOK_WORD, >, >>, <, <<    | &&, ||, |, ), $
 simple_command_tail   | yes       | TOK_WORD, >, >>, <, <<    | &&, ||, |, ), $
 io_redirect           | yes       | >, >>, <, <<              | TOK_WORD
+```
 
 # And it yields the following transition table (generated from the link above)
+```c
 Nonterminal           | $                            | &&                                                                   | ||                                                                   | |                                                   | (                                                        | )                            | TOK_WORD                                                         | >                                                                | >>                                                               | <                                                                | <<
 ----------------------|------------------------------|----------------------------------------------------------------------|----------------------------------------------------------------------|-----------------------------------------------------|----------------------------------------------------------|------------------------------|------------------------------------------------------------------|------------------------------------------------------------------|------------------------------------------------------------------|------------------------------------------------------------------|-----------------------------------------------------------------
 complete_command      |                              |                                                                      |                                                                      |                                                     | complete_command ::= pipe_sequence complete_command_tail |                              | complete_command ::= pipe_sequence complete_command_tail         | complete_command ::= pipe_sequence complete_command_tail         | complete_command ::= pipe_sequence complete_command_tail         | complete_command ::= pipe_sequence complete_command_tail         | complete_command ::= pipe_sequence complete_command_tail
@@ -178,8 +187,10 @@ compound_command      |                              |                          
 simple_command        |                              |                                                                      |                                                                      |                                                     |                                                          |                              | simple_command ::= io_redirect TOK_WORD simple_command_tail      | simple_command ::= io_redirect TOK_WORD simple_command_tail      | simple_command ::= io_redirect TOK_WORD simple_command_tail      | simple_command ::= io_redirect TOK_WORD simple_command_tail      | simple_command ::= io_redirect TOK_WORD simple_command_tail
 simple_command_tail   | simple_command_tail ::= ''   | simple_command_tail ::= ''                                           | simple_command_tail ::= ''                                           | simple_command_tail ::= ''                          |                                                          | simple_command_tail ::= ''   | simple_command_tail ::= io_redirect TOK_WORD simple_command_tail | simple_command_tail ::= io_redirect TOK_WORD simple_command_tail | simple_command_tail ::= io_redirect TOK_WORD simple_command_tail | simple_command_tail ::= io_redirect TOK_WORD simple_command_tail | simple_command_tail ::= io_redirect TOK_WORD simple_command_tail
 io_redirect           |                              |                                                                      |                                                                      |                                                     |                                                          |                              | io_redirect ::= ''                                               | io_redirect ::= >                                                | io_redirect ::= >>                                               | io_redirect ::= <                                                | io_redirect ::= <<
+```
 
 # Let's index the production rules
+```c
  0. complete_command ::= pipe_sequence complete_command_tail
  1. complete_command_tail ::= ''
  2. complete_command_tail ::= and_or pipe_sequence complete_command_tail
@@ -199,11 +210,12 @@ io_redirect           |                              |                          
 16. io_redirect ::= <<
 17. io_redirect ::= >
 18. io_redirect ::= <
+```
 
 # This yields the same transition table, this time with the rule index instead
 # of the production itself
-Nonterminal           | $  | && | || | |  | (  | )  | TOK_WORD | >  | >> | <  | <<
-----------------------|----|----|----|----|----|----|----------|----|----|----|---
+```c
+Nonterminal           | $  | && | || | |  | (  | )  | TOK_WORD | >> | << | >  | <
 complete_command      |    |    |    |    | 0  |    | 0        | 0  | 0  | 0  | 0
 complete_command_tail | 1  | 2  | 2  |    |    | 1  |          |    |    |    |
 and_or                |    | 3  | 4  |    |    |    |          |    |    |    |
@@ -211,20 +223,25 @@ pipe_sequence         |    |    |    |    | 5  |    | 5        | 5  | 5  | 5  | 
 pipe_sequence_tail    | 6  | 6  | 6  | 7  |    | 6  |          |    |    |    |
 command               |    |    |    |    | 9  |    | 8        | 8  | 8  | 8  | 8
 compound_command      |    |    |    |    | 10 |    |          |    |    |    |
-simple_command        |    |    |    |    |    |    | 11       | 11 | 11 | 11 | 11
-simple_command_tail   | 12 | 12 | 12 | 12 |    | 12 | 13       | 13 | 13 | 13 | 13
-io_redirect           |    |    |    |    |    |    | 14       | 17 | 15 | 18 | 16
+simple_command        |    |    |    |    |    |    | 11       | 11 | 11 | 11 | 1
+simple_command_tail   | 12 | 12 | 12 | 12 |    | 12 | 13       | 13 | 13 | 13 | 1
+io_redirect           |    |    |    |    |    |    | 14       | 15 | 16 | 17 | 1
+```
 
 # Let's place in the original enum identifiers
-Nonterminal           | TOK_EOL | TOK_AND | TOK_OR | TOK_PIPE | TOK_L_PAREN | TOK_R_PAREN | TOK_WORD | TOK_OVERRIDE | TOK_APPEND | TOK_INPUT | TOK_HEREDOC
-----------------------|---------|---------|--------|----------|-------------|-------------|----------|--------------|------------|-----------|------------
-COMPLETE_COMMAND      |         |         |        |          | 0           |             | 0        | 0            | 0          | 0         | 0
-COMPLETE_COMMAND_TAIL | 1       | 2       | 2      |          |             | 1           |          |              |            |           |
-AND_OR                |         | 3       | 4      |          |             |             |          |              |            |           |
-PIPE_SEQUENCE         |         |         |        |          | 5           |             | 5        | 5            | 5          | 5         | 5
-PIPE_SEQUENCE_TAIL    | 6       | 6       | 6      | 7        |             | 6           |          |              |            |           |
-COMMAND               |         |         |        |          | 9           |             | 8        | 8            | 8          | 8         | 8
-COMPOUND_COMMAND      |         |         |        |          | 10          |             |          |              |            |           |
-SIMPLE_COMMAND        |         |         |        |          |             |             | 11       | 11           | 11         | 11        | 11
-SIMPLE_COMMAND_TAIL   | 12      | 12      | 12     | 12       |             | 12          | 13       | 13           | 13         | 13        | 13
-IO_REDIRECT           |         |         |        |          |             |             | 14       | 17           | 15         | 18        | 16
+```c
+Nonterminal           | TOK_EOL | TOK_AND | TOK_OR | TOK_PIPE | TOK_L_PAREN | TOK_R_PAREN | TOK_WORD | TOK_APPEND | TOK_HEREDOC | TOK_OVERRIDE | TOK_INPUT
+----------------------|---------|---------|--------|----------|-------------|-------------|----------|------------|-------------|--------------|----------
+COMPLETE_COMMAND      |         |         |        |          | 0           |             | 0        | 0          | 0           | 0            | 0
+COMPLETE_COMMAND_TAIL | 1       | 2       | 2      |          |             | 1           |          |            |             |              |
+AND_OR                |         | 3       | 4      |          |             |             |          |            |             |              |
+PIPE_SEQUENCE         |         |         |        |          | 5           |             | 5        | 5          | 5           | 5            | 5
+PIPE_SEQUENCE_TAIL    | 6       | 6       | 6      | 7        |             | 6           |          |            |             |              |
+COMMAND               |         |         |        |          | 9           |             | 8        | 8          | 8           | 8            | 8
+COMPOUND_COMMAND      |         |         |        |          | 10          |             |          |            |             |              |
+SIMPLE_COMMAND        |         |         |        |          |             |             | 11       | 11         | 11          | 11           | 1
+SIMPLE_COMMAND_TAIL   | 12      | 12      | 12     | 12       |             | 12          | 13       | 13         | 13          | 13           | 1
+IO_REDIRECT           |         |         |        |          |             |             | 14       | 15         | 16          | 17           | 1
+```
+
+# The table can now be used to build a lookup table.
