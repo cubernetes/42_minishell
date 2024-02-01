@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 17:35:26 by tosuman           #+#    #+#             */
-/*   Updated: 2024/01/30 18:21:43 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/01 06:41:16 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ typedef struct s_state
 
 typedef enum e_token_type
 {
-	TOK_EOL,
+	TOK_EOL = 1,
 	TOK_AND,
 	TOK_OR,
 	TOK_PIPE,
@@ -105,7 +105,7 @@ typedef union u_ast_node_data
 /* TOKEN is a TERMINAL, every other member is a NONTERMINAL */
 typedef enum e_ast_node_type
 {
-	COMPLETE_COMMAND = 0,
+	COMPLETE_COMMAND = 1,
 	COMPLETE_COMMAND_TAIL,
 	AND_OR,
 	PIPE_SEQUENCE,
@@ -126,5 +126,7 @@ struct s_ast_node
 	t_ast_node_type	type;
 	t_ast_node_data	data;
 };
+
+typedef t_ast_node			t_production;
 
 #endif /* minishell.h. */

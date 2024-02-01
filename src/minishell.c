@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 17:34:44 by tosuman           #+#    #+#             */
-/*   Updated: 2024/02/01 03:59:16 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/01 07:30:20 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,6 @@
 #include <readline/readline.h> /* readline() */
 #include <stdlib.h> /* free() */
 #include <unistd.h> /* STDERR_FILENO */
-
-typedef t_ast_node	t_production;
 
 const char	*token_type_to_string(t_token_type type)
 {
@@ -85,6 +83,75 @@ const char	*ast_node_type_to_string(t_ast_node_type type)
 		return (STR_AST_NODE_TYPE_UNKNOWN);
 }
 
+void	repeat_string(const char *str, size_t n)
+{
+	while (n--)
+		ft_printf("%s", str);
+}
+
+/* TODO: should not be used anywhere for submission!!! */
+void	internal_error(const char *err, int line_no)
+{
+	ft_dprintf(STDERR_FILENO, "\033[31mLine %d: %s\033[m\n", line_no, err);
+	exit(42);
+}
+
+t_bool	ast_node_is_null(t_ast_node *ast_node)
+{
+	if (!ast_node)
+		return (TRUE);
+	if (ast_node->type == 0)
+		if (ast_node->data.token == NULL && ast_node->data.children == NULL)
+			return (TRUE);
+	return (FALSE);
+}
+
+void	ast_print_with_depth(t_ast_node *ast_node, size_t n)
+{
+	t_ast_node	**tmp_children;
+
+	DEBUG(2, "%s", "ENTRY AST PRINT");
+	if (!ast_node)
+		internal_error("ast_print_with_depth: ast_node is NULL", __LINE__);
+	repeat_string("    ", n);
+	DEBUG(2, "%s", "BEFORE CHECK");
+	if (ast_node->type != TOKEN)
+	{
+		DEBUG(2, "%s", "NONTERMINAL");
+		ft_printf("- <%s>\n", ast_node_type_to_string(ast_node->type));
+		DEBUG(2, "getting children:%s", "");
+		DEBUG(2, "children: %p", ast_node->data.children);
+		DEBUG(2, "%s", "ok");
+		if (ast_node->data.children)
+		{
+			DEBUG(2, "%s", "path 1");
+			DEBUG(2, "children[0]: %p", ast_node->data.children[0]);
+			DEBUG(2, "children[0].type: %s", ast_node_type_to_string(ast_node->data.children[0]->type));
+		}
+		tmp_children = ast_node->data.children;
+		DEBUG(2, "tmp_children: %p", tmp_children);
+		while (tmp_children && *tmp_children && !ast_node_is_null(*tmp_children))
+		{
+			DEBUG(2, "%s", "path 2");
+			ast_print_with_depth(*tmp_children, n + 1);
+			++tmp_children;
+		}
+		DEBUG(2, "after", tmp_children);
+	}
+	else
+	{
+		DEBUG(2, "%s", "TOKEN");
+		ft_printf("- %s (\033[31m%s\033[m)\n",
+			token_type_to_string(ast_node->data.token->type),
+			ast_node->data.token->str);
+	}
+}
+
+void	ast_print(t_ast_node *ast_node)
+{
+	ast_print_with_depth(ast_node, 0);
+}
+
 t_bool	free_token(void *data)
 {
 	t_token	*token;
@@ -127,16 +194,7 @@ t_bool	ast_free(t_ast_node *ast_node)
 	return (TRUE);
 }
 
-void   push_productions(t_ddeque *stack, t_production *productions)
-{
-	if (productions->type == 0 && productions->data.token == NULL
-		&& productions->data.children == NULL)
-		return ;
-	push_productions(stack, productions + 1);
-	ddeque_push_value_top(stack, productions);
-}
-
-void   print_production(void *data, t_bool first)
+void	print_production(void *data, t_bool first)
 {
 	t_production	*production;
 	const char		*second;
@@ -145,17 +203,46 @@ void   print_production(void *data, t_bool first)
 	if (first)
 		second = "";
 	else
-		production = (t_production *)data;
-	if (first)
-		second = "";
-	else
 		second = ", ";
+	if (!production)
+	{
+		DEBUG(2, "production is NULL %s", "");
+		return ;
+	}
 	if (production->type == TOKEN)
 		ft_printf("%s\033[32m%s\033[m (\033[31m%s\033[m)", second,
 			token_type_to_string(production->data.token->type),
 			production->data.token->str);
 	else
 		ft_printf("%s\033[32m%s\033[m", second, ast_node_type_to_string(production->type));
+}
+
+void	push_productions(t_ast_node *ast_node, t_ddeque *stack, t_production **productions)
+{
+	DEBUG(1, "%s", "STACK0");
+	ddeque_print(stack, print_production);
+	DEBUG(1, "%s", "AST0");
+	ast_print(ast_node);
+	if (ast_node_is_null(*productions))
+		return ;
+	DEBUG(1, "%s", "STACK1");
+	ddeque_print(stack, print_production);
+	DEBUG(1, "%s", "AST1");
+	ast_print(ast_node);
+	push_productions(ast_node, stack, productions + 1);
+	DEBUG(1, "%s", "STACK2");
+	ddeque_print(stack, print_production);
+	DEBUG(1, "%s", "AST2");
+	ast_print(ast_node);
+	ddeque_push_value_top(stack, *productions);
+	DEBUG(2, "productions: %p", productions);
+	DEBUG(2, "*productions: %p", *productions);
+	DEBUG(2, "productions[0]->data: %p", productions[0]->data);
+	DEBUG(1, "%s", "STACK3");
+	ddeque_print(stack, print_production);
+	DEBUG(1, "%s", "AST3");
+	ast_print(ast_node);
+	DEBUG(1, "%s", "DONE PUSHING PRODUCTIONS");
 }
 
 /* TODO: NOT REQUIRED: add basic prompt expansion */
@@ -174,13 +261,6 @@ void	skip_whitespace(const char **line)
 {
 	while (ft_isspace(**line))
 		++(*line);
-}
-
-/* TODO: should not be used anywhere for submission!!! */
-void	internal_error(const char *err, int line_no)
-{
-	ft_dprintf(STDERR_FILENO, "\033[31mLine %d: %s\033[m\n", line_no, err);
-	exit(42);
 }
 
 /* TODO: change return type to t_token later */
@@ -450,7 +530,8 @@ t_ast_node	*return_example_ast(void)
 }
 
 /* return the index of the production to use */
-int	get_production_idx(t_ast_node_type nonterm, t_token_type token)
+/* TODO: fix error handling */
+int	get_production_idx(t_ast_node_type nonterm, t_token *token)
 {
 	static int	transition_table[NUM_NONTERMS][NUM_TOKENS] = {
 	{-1, -1, -1, -1, 0, -1, 0, 0, 0, 0, 0},
@@ -464,19 +545,26 @@ int	get_production_idx(t_ast_node_type nonterm, t_token_type token)
 	{12, 12, 12, 12, -1, 12, 13, 13, 13, 13, 13},
 	{-1, -1, -1, -1, -1, -1, 14, 17, 15, 18, 16}
 	};
+	int			production_idx;
 
-	return (transition_table[nonterm][token]);
+	production_idx = transition_table[nonterm - 1][token->type - 1];
+	if (production_idx == -1)
+	{
+		ft_printf("minishell: syntax error near unexpected token `%s'\n", token->str);
+		internal_error("get_production_idx: Syntax error", __LINE__);
+	}
+	return (production_idx);
 }
 
 /* TODO: Refactor */
 /* TODO: Don't use 0 as NULL */
-t_production   *get_production(t_ast_node_type nonterm, t_token_type token)
+t_production	*get_production(t_ast_node_type nonterm, t_token *token)
 {
-	static t_token		tokens[] = {{TOK_EOL, 0}, {TOK_AND, 0}, {TOK_OR, 0}, \
-		{TOK_PIPE, 0}, {TOK_L_PAREN, 0}, {TOK_R_PAREN, 0}, {TOK_WORD, 0}, \
-		{TOK_OVERRIDE, 0}, {TOK_APPEND, 0}, {TOK_INPUT, 0}, {TOK_HEREDOC, 0}, \
-		{TOK_EPSILON, 0}, {TOK_SQUOTE_STR, 0}, {TOK_DQUOTE_STR, 0}, \
-		{TOK_ERROR, 0}};
+	static t_token		tokens[] = {{0}, {TOK_EOL, 0}, {TOK_AND, 0}, \
+		{TOK_OR, 0}, {TOK_PIPE, 0}, {TOK_L_PAREN, 0}, {TOK_R_PAREN, 0}, \
+		{TOK_WORD, 0}, {TOK_OVERRIDE, 0}, {TOK_APPEND, 0}, {TOK_INPUT, 0}, \
+		{TOK_HEREDOC, 0}, {TOK_EPSILON, 0}, {TOK_SQUOTE_STR, 0}, \
+		{TOK_DQUOTE_STR, 0}, {TOK_ERROR, 0}};
 	static t_production	productions[][4] = {\
 		{{PIPE_SEQUENCE, {0}}, {COMPLETE_COMMAND_TAIL, {0}}, {0}}, \
 		{{TOKEN, {&tokens[TOK_EPSILON]}}, {0}}, \
@@ -496,9 +584,8 @@ t_production   *get_production(t_ast_node_type nonterm, t_token_type token)
 		{{TOKEN, {&tokens[TOK_OVERRIDE]}}, {0}}, \
 		{{TOKEN, {&tokens[TOK_INPUT]}}, {0}}};
 
-		return (productions[get_production_idx(nonterm, token)]);
+	return (productions[get_production_idx(nonterm, token)]);
 }
-
 
 t_bool	dont_free(void *data)
 {
@@ -506,40 +593,164 @@ t_bool	dont_free(void *data)
 	return (1);
 }
 
-t_ast_node     *build_ast(t_ddeque *tokens)
+void	print_token(void *data, t_bool first)
+{
+	t_token	*token;
+
+	token = (t_token *)data;
+	if (first)
+		ft_printf("<\033[31m%s\033[m> (%s)", token->str,
+			token_type_to_string(token->type));
+	else
+		ft_printf(" -> <\033[31m%s\033[m> (%s)", token->str,
+			token_type_to_string(token->type));
+}
+
+t_ast_node	*production_to_child(t_production prodcution)
+{
+	t_ast_node	*child;
+
+	child = malloc(sizeof(*child));
+	if (sizeof(*child) != sizeof(t_production))
+		internal_error("production_to_child: different sizes", __LINE__);
+	ft_memcpy(child, &prodcution, sizeof(prodcution));
+	if (prodcution.type == TOKEN)
+		child->data.token = new_token(child->data.token->str, child->data.token->type);
+	return (child);
+}
+
+t_ast_node	**productions_to_children(t_production *productions)
+{
+	int			size;
+	t_ast_node	**children;
+
+	size = 0;
+	while (!ast_node_is_null(productions + size))
+	{
+		DEBUG(0, "production[%d]: %s", size, ast_node_type_to_string(productions[size].type));
+		++size;
+	}
+	DEBUG(0, "size is %d", size);
+	children = malloc(sizeof(*children) * (size_t)(size + 1));
+	size = 0;
+	while (!ast_node_is_null(productions + size))
+	{
+		children[size] = production_to_child(productions[size]);
+		++size;
+	}
+	DEBUG(0, "size end is %d", size);
+	children[size] = NULL;
+	return (children);
+}
+
+t_bool	ft_free(void *ptr)
+{
+	free(ptr);
+	return (TRUE);
+}
+
+void	print_children(t_ast_node **children)
+{
+	while (!ast_node_is_null(*children))
+	{
+		ft_printf("[[%s]], ", ast_node_type_to_string((*children)->type));
+		++children;
+	}
+	ft_printf("\n");
+}
+
+/* LL(1) parser */
+/* TODO: improve error handling */
+t_ast_node	*build_ast(t_ddeque *tokens)
 {
 	t_ast_node		*ast_node;
+	t_ast_node		*ast_root_node;
 	t_ddeque		*stack;
 	t_ast_node		*top;
-	t_production	*productions;
+	t_ast_node		**children;
 
 	stack = ddeque_init();
-	ddeque_push_value_top(stack, &(t_production){TOKEN, {&(t_token){TOK_EOL, NULL}}});
-	ddeque_push_value_top(stack, &(t_production){COMPLETE_COMMAND, {0}});
+	ddeque_push_value_top(stack, production_to_child((t_production){TOKEN, {&(t_token){TOK_EOL, NULL}}}));
+	ddeque_push_value_top(stack, production_to_child((t_production){COMPLETE_COMMAND, {0}}));
+	ast_node = new_ast_nonterm(COMPLETE_COMMAND, NULL);
+	ast_root_node = ast_node;
 	while (1)
 	{
+		DEBUG(0, "Ast before 0 :", "");
+		ast_print(ast_root_node);
 		top = stack->head->data;
+		DEBUG(0, "Ast before 1 :", "");
+		ast_print(ast_root_node);
+		DEBUG(0, "printing stack %s", "");
 		ddeque_print(stack, print_production);
+		DEBUG(0, "Ast before 2 :", "");
+		ast_print(ast_root_node);
+		ddeque_print(tokens, print_token);
+		DEBUG(0, "Ast before 3 :", "");
+		ast_print(ast_root_node);
+		ast_print(ast_root_node);
+		DEBUG(0, "Ast before 4 :", "");
+		ast_print(ast_root_node);
+		ast_print(ast_node);
+		DEBUG(0, "Ast before 5 :", "");
+		ast_print(ast_root_node);
+		ft_printf("\n");
+		DEBUG(0, "Ast before 6 :", "");
+		ast_print(ast_root_node);
 		free(ddeque_pop_top(stack));
-		if (get_token_type(tokens) == TOK_EOL)
+		DEBUG(0, "Ast before 7 :", "");
+		ast_print(ast_root_node);
+		if (top->type != TOKEN)
 		{
-			if (top->type == TOKEN && top->data.token->type == TOK_EOL)
-				break ;
-			internal_error("build_ast: Stack not empty", __LINE__);
-		}
-		else if (top->type == TOKEN && get_token_type(tokens) == top->data.token->type)
-			tokens->head = tokens->head->next;
-		else if (top->type != TOKEN)
-		{
-			productions = get_production(top->type, get_token_type(tokens));
-			push_productions(stack, productions);
+			DEBUG(0, "Ast before 8 :", "");
+			ast_print(ast_root_node);
+			children = productions_to_children(get_production(top->type, tokens->head->data));
+			DEBUG(0, "Ast before 9 :", "");
+			ast_print(ast_root_node);
+			DEBUG(0, "Pushing these children:", "");
+			print_children(children);
+			DEBUG(0, "Stack again:%s", "");
+			ddeque_print(stack, print_production);
+			DEBUG(0, "Ast before 10 :", "");
+			ast_print(ast_root_node);
+			DEBUG(0, "Ast before 11 :", "");
+			ast_print(ast_root_node);
+			DEBUG(0, "Ast before 12 :", "");
+			ast_print(ast_root_node);
+			push_productions(ast_root_node, stack, children);
+			DEBUG(0, "Ast before:", "");
+			ast_print(ast_root_node);
+			ast_node->data.children = children;
+			DEBUG(0, "Ast middle", "");
+			ast_print(ast_root_node);
+			ast_node = ast_node->data.children[0];
+			DEBUG(0, "Ast after", "");
+			ast_print(ast_root_node);
 		}
 		else
-			internal_error("build_ast: Stacks don't match", __LINE__);
+		{
+			if (top->data.token->type == TOK_EPSILON)
+			{
+				ast_node = stack->head->data;
+				continue ;
+			}
+			else if (get_token_type(tokens) == TOK_EOL && top->data.token->type == TOK_EOL)
+				break ;
+			else if (get_token_type(tokens) == top->data.token->type)
+			{
+				ast_node->data.token->str = get_token_str(tokens);
+				ast_node = stack->head->data;
+				ddeque_rotate(tokens, 1);
+			}
+			else if (get_token_type(tokens) == TOK_EOL)
+				internal_error("build_ast: Stack not empty", __LINE__);
+			else
+				internal_error("build_ast: Stacks don't match", __LINE__);
+		}
 	}
-	ddeque_free(stack, dont_free);
-	ast_node = return_example_ast();
-	return (ast_node);
+	ddeque_free(stack, ft_free);
+	/* ast_node = return_example_ast(); */
+	return (ast_root_node);
 }
 
 /* ast_node should be the root of the ast */
@@ -564,51 +775,6 @@ t_bool	free_state(t_state *state, char **line, t_ddeque **tokens,
 	(free(state->ps0), state->ps0 = NULL);
 	(free(state->ps1), state->ps1 = NULL);
 	return (TRUE);
-}
-
-void	print_token(void *data, t_bool first)
-{
-	t_token	*token;
-
-	token = (t_token *)data;
-	if (first)
-		ft_printf("<\033[31m%s\033[m> (%s)", token->str,
-			token_type_to_string(token->type));
-	else
-		ft_printf(" -> <\033[31m%s\033[m> (%s)", token->str,
-			token_type_to_string(token->type));
-}
-
-void	repeat_string(const char *str, size_t n)
-{
-	while (n--)
-		ft_printf("%s", str);
-}
-
-void	ast_print_with_depth(t_ast_node *ast_node, size_t n)
-{
-	t_ast_node	**tmp_children;
-
-	repeat_string("    ", n);
-	if (ast_node->type != TOKEN)
-	{
-		ft_printf("- <%s>\n", ast_node_type_to_string(ast_node->type));
-		tmp_children = ast_node->data.children;
-		while (*tmp_children)
-		{
-			ast_print_with_depth(*tmp_children, n + 1);
-			++tmp_children;
-		}
-	}
-	else
-		ft_printf("- %s (\033[31m%s\033[m)\n",
-			token_type_to_string(ast_node->data.token->type),
-			ast_node->data.token->str);
-}
-
-void	ast_print(t_ast_node *ast_node)
-{
-	ast_print_with_depth(ast_node, 0);
 }
 
 void	setup_signals(void)
