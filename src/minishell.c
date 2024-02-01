@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 17:34:44 by tosuman           #+#    #+#             */
-/*   Updated: 2024/02/01 07:30:20 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/01 07:34:19 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,37 +110,24 @@ void	ast_print_with_depth(t_ast_node *ast_node, size_t n)
 {
 	t_ast_node	**tmp_children;
 
-	DEBUG(2, "%s", "ENTRY AST PRINT");
 	if (!ast_node)
 		internal_error("ast_print_with_depth: ast_node is NULL", __LINE__);
 	repeat_string("    ", n);
-	DEBUG(2, "%s", "BEFORE CHECK");
 	if (ast_node->type != TOKEN)
 	{
-		DEBUG(2, "%s", "NONTERMINAL");
 		ft_printf("- <%s>\n", ast_node_type_to_string(ast_node->type));
-		DEBUG(2, "getting children:%s", "");
-		DEBUG(2, "children: %p", ast_node->data.children);
-		DEBUG(2, "%s", "ok");
 		if (ast_node->data.children)
 		{
-			DEBUG(2, "%s", "path 1");
-			DEBUG(2, "children[0]: %p", ast_node->data.children[0]);
-			DEBUG(2, "children[0].type: %s", ast_node_type_to_string(ast_node->data.children[0]->type));
 		}
 		tmp_children = ast_node->data.children;
-		DEBUG(2, "tmp_children: %p", tmp_children);
 		while (tmp_children && *tmp_children && !ast_node_is_null(*tmp_children))
 		{
-			DEBUG(2, "%s", "path 2");
 			ast_print_with_depth(*tmp_children, n + 1);
 			++tmp_children;
 		}
-		DEBUG(2, "after", tmp_children);
 	}
 	else
 	{
-		DEBUG(2, "%s", "TOKEN");
 		ft_printf("- %s (\033[31m%s\033[m)\n",
 			token_type_to_string(ast_node->data.token->type),
 			ast_node->data.token->str);
@@ -206,7 +193,6 @@ void	print_production(void *data, t_bool first)
 		second = ", ";
 	if (!production)
 	{
-		DEBUG(2, "production is NULL %s", "");
 		return ;
 	}
 	if (production->type == TOKEN)
@@ -219,30 +205,10 @@ void	print_production(void *data, t_bool first)
 
 void	push_productions(t_ast_node *ast_node, t_ddeque *stack, t_production **productions)
 {
-	DEBUG(1, "%s", "STACK0");
-	ddeque_print(stack, print_production);
-	DEBUG(1, "%s", "AST0");
-	ast_print(ast_node);
 	if (ast_node_is_null(*productions))
 		return ;
-	DEBUG(1, "%s", "STACK1");
-	ddeque_print(stack, print_production);
-	DEBUG(1, "%s", "AST1");
-	ast_print(ast_node);
 	push_productions(ast_node, stack, productions + 1);
-	DEBUG(1, "%s", "STACK2");
-	ddeque_print(stack, print_production);
-	DEBUG(1, "%s", "AST2");
-	ast_print(ast_node);
 	ddeque_push_value_top(stack, *productions);
-	DEBUG(2, "productions: %p", productions);
-	DEBUG(2, "*productions: %p", *productions);
-	DEBUG(2, "productions[0]->data: %p", productions[0]->data);
-	DEBUG(1, "%s", "STACK3");
-	ddeque_print(stack, print_production);
-	DEBUG(1, "%s", "AST3");
-	ast_print(ast_node);
-	DEBUG(1, "%s", "DONE PUSHING PRODUCTIONS");
 }
 
 /* TODO: NOT REQUIRED: add basic prompt expansion */
@@ -626,11 +592,7 @@ t_ast_node	**productions_to_children(t_production *productions)
 
 	size = 0;
 	while (!ast_node_is_null(productions + size))
-	{
-		DEBUG(0, "production[%d]: %s", size, ast_node_type_to_string(productions[size].type));
 		++size;
-	}
-	DEBUG(0, "size is %d", size);
 	children = malloc(sizeof(*children) * (size_t)(size + 1));
 	size = 0;
 	while (!ast_node_is_null(productions + size))
@@ -638,7 +600,6 @@ t_ast_node	**productions_to_children(t_production *productions)
 		children[size] = production_to_child(productions[size]);
 		++size;
 	}
-	DEBUG(0, "size end is %d", size);
 	children[size] = NULL;
 	return (children);
 }
@@ -676,56 +637,15 @@ t_ast_node	*build_ast(t_ddeque *tokens)
 	ast_root_node = ast_node;
 	while (1)
 	{
-		DEBUG(0, "Ast before 0 :", "");
-		ast_print(ast_root_node);
 		top = stack->head->data;
-		DEBUG(0, "Ast before 1 :", "");
-		ast_print(ast_root_node);
-		DEBUG(0, "printing stack %s", "");
-		ddeque_print(stack, print_production);
-		DEBUG(0, "Ast before 2 :", "");
-		ast_print(ast_root_node);
-		ddeque_print(tokens, print_token);
-		DEBUG(0, "Ast before 3 :", "");
-		ast_print(ast_root_node);
-		ast_print(ast_root_node);
-		DEBUG(0, "Ast before 4 :", "");
-		ast_print(ast_root_node);
-		ast_print(ast_node);
-		DEBUG(0, "Ast before 5 :", "");
-		ast_print(ast_root_node);
-		ft_printf("\n");
-		DEBUG(0, "Ast before 6 :", "");
-		ast_print(ast_root_node);
 		free(ddeque_pop_top(stack));
-		DEBUG(0, "Ast before 7 :", "");
-		ast_print(ast_root_node);
 		if (top->type != TOKEN)
 		{
-			DEBUG(0, "Ast before 8 :", "");
-			ast_print(ast_root_node);
 			children = productions_to_children(get_production(top->type, tokens->head->data));
-			DEBUG(0, "Ast before 9 :", "");
-			ast_print(ast_root_node);
-			DEBUG(0, "Pushing these children:", "");
 			print_children(children);
-			DEBUG(0, "Stack again:%s", "");
-			ddeque_print(stack, print_production);
-			DEBUG(0, "Ast before 10 :", "");
-			ast_print(ast_root_node);
-			DEBUG(0, "Ast before 11 :", "");
-			ast_print(ast_root_node);
-			DEBUG(0, "Ast before 12 :", "");
-			ast_print(ast_root_node);
 			push_productions(ast_root_node, stack, children);
-			DEBUG(0, "Ast before:", "");
-			ast_print(ast_root_node);
 			ast_node->data.children = children;
-			DEBUG(0, "Ast middle", "");
-			ast_print(ast_root_node);
 			ast_node = ast_node->data.children[0];
-			DEBUG(0, "Ast after", "");
-			ast_print(ast_root_node);
 		}
 		else
 		{
