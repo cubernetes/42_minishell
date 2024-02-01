@@ -6,7 +6,7 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:09:11 by tischmid          #+#    #+#              #
-#    Updated: 2024/01/30 19:12:04 by tosuman          ###   ########.fr        #
+#    Updated: 2024/02/01 10:42:55 by tosuman          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,161 +22,178 @@ unexport LDFLAGS
 AR = ar rcs
 RM = /bin/rm -f
 MKDIR = /bin/mkdir -p
+LN = /bin/ln -f
 
 NAME = libft.a
+SRCDIR = ./src
 OBJDIR = ./obj
-SRCDIR = .
 INCDIR = .
 
-unexport _SRC
-_SRC += ft_atoi.c
-_SRC += ft_atoi_status.c
-_SRC += ft_atof.c
-_SRC += ft_bzero.c
-_SRC += ft_calloc.c
-_SRC += ft_isalnum.c
-_SRC += ft_isalpha.c
-_SRC += ft_isascii.c
-_SRC += ft_isdigit.c
-_SRC += ft_isprint.c
-_SRC += ft_memchr.c
-_SRC += ft_memcmp.c
-_SRC += ft_memcpy.c
-_SRC += ft_memmove.c
-_SRC += ft_memset.c
-_SRC += ft_strchr.c
-_SRC += ft_strdup.c
-_SRC += ft_strndup.c
-_SRC += ft_strlcat.c
-_SRC += ft_strlcpy.c
-_SRC += ft_strlen.c
-_SRC += ft_strncmp.c
-_SRC += ft_strcmp.c
-_SRC += ft_streq.c
-_SRC += ft_strnstr.c
-_SRC += ft_strrchr.c
-_SRC += ft_tolower.c
-_SRC += ft_toupper.c
-_SRC += ft_putchar_fd.c
-_SRC += ft_putendl_fd.c
-_SRC += ft_putnbr_fd.c
-_SRC += ft_putstr_fd.c
-_SRC += ft_putendl.c
-_SRC += ft_putstr.c
-_SRC += ft_putnbr.c
-_SRC += ft_putchar.c
+unexport SUBDIRS
+SUBDIRS += string
+SUBDIRS += memory
+SUBDIRS += print
+SUBDIRS += list
+SUBDIRS += deque
+SUBDIRS += io
 
-_SRC += ft_itoa.c
-_SRC += ft_strtrim.c
-_SRC += ft_substr.c
-_SRC += ft_strjoin.c
-_SRC += ft_split.c
-_SRC += ft_striteri.c
-_SRC += ft_strmapi.c
+vpath %.c $(SUBDIRS)
 
-_SRC += ft_putfmt.c
-_SRC += ft_putfmt_fd.c
-_SRC += ft_puthex_fd.c
-_SRC += ft_putptr_fd.c
-_SRC += ft_puthex.c
-_SRC += ft_putptr.c
-_SRC += ft_printf.c
-_SRC += ft_dprintf.c
+unexport SRC
+SRC += string/ft_atoi.c
+SRC += string/ft_atoi_status.c
+SRC += string/ft_atof.c
+SRC += string/ft_isalnum.c
+SRC += string/ft_isalpha.c
+SRC += string/ft_isascii.c
+SRC += string/ft_isdigit.c
+SRC += string/ft_isprint.c
+SRC += string/ft_strchr.c
+SRC += string/ft_strdup.c
+SRC += string/ft_strndup.c
+SRC += string/ft_strlcat.c
+SRC += string/ft_strlcpy.c
+SRC += string/ft_strlen.c
+SRC += string/ft_strncmp.c
+SRC += string/ft_strcmp.c
+SRC += string/ft_streq.c
+SRC += string/ft_strnstr.c
+SRC += string/ft_strrchr.c
+SRC += string/ft_tolower.c
+SRC += string/ft_toupper.c
+SRC += string/ft_itoa.c
+SRC += string/ft_strtrim.c
+SRC += string/ft_substr.c
+SRC += string/ft_strjoin.c
+SRC += string/ft_split.c
+SRC += string/ft_striteri.c
+SRC += string/ft_strmapi.c
+SRC += string/ft_char_in_charset.c
+SRC += string/ft_isspace.c
 
-_SRC_BONUS += ft_lstnew.c
-_SRC_BONUS += ft_lstadd_front.c
-_SRC_BONUS += ft_lstsize.c
-_SRC_BONUS += ft_lstlast.c
-_SRC_BONUS += ft_lstadd_back.c
-_SRC_BONUS += ft_lstclear.c
-_SRC_BONUS += ft_lstdelone.c
-_SRC_BONUS += ft_lstiter.c
-_SRC_BONUS += ft_lstmap.c
+SRC += memory/ft_bzero.c
+SRC += memory/ft_calloc.c
+SRC += memory/ft_memchr.c
+SRC += memory/ft_memcmp.c
+SRC += memory/ft_memcpy.c
+SRC += memory/ft_memmove.c
+SRC += memory/ft_memset.c
 
-_SRC += ft_char_in_charset.c
-_SRC += ft_isspace.c
-_SRC += ft_abs.c
-_SRC += ft_max.c
-_SRC += ft_min.c
+SRC += print/ft_putchar_fd.c
+SRC += print/ft_putendl_fd.c
+SRC += print/ft_putnbr_fd.c
+SRC += print/ft_putstr_fd.c
+SRC += print/ft_putendl.c
+SRC += print/ft_putstr.c
+SRC += print/ft_putnbr.c
+SRC += print/ft_putchar.c
+SRC += print/ft_putfmt.c
+SRC += print/ft_putfmt_fd.c
+SRC += print/ft_puthex_fd.c
+SRC += print/ft_putptr_fd.c
+SRC += print/ft_puthex.c
+SRC += print/ft_putptr.c
+SRC += print/ft_printf.c
+SRC += print/ft_dprintf.c
 
-_SRC += deque_init.c
-_SRC += deque_free.c
-_SRC += deque_print.c
-_SRC += array_list_to_deque.c
-_SRC += deque_index.c
-_SRC += deque_slice.c
-_SRC += deque_sort.c
-_SRC += deque_copy.c
-_SRC += deque_size.c
-_SRC += deque_extend_free.c
-_SRC += deque_swap.c
-_SRC += deque_rotate.c
-_SRC += deque_pop_top.c
-_SRC += deque_pop_bottom.c
-_SRC += deque_push_node_bottom.c
-_SRC += deque_push_value_bottom.c
-_SRC += deque_push_node_top.c
-_SRC += deque_push_value_top.c
-_SRC += deque_equal.c
-_SRC += deque_argmax.c
+SRC += list/ft_lstnew.c
+SRC += list/ft_lstadd_front.c
+SRC += list/ft_lstsize.c
+SRC += list/ft_lstlast.c
+SRC += list/ft_lstadd_back.c
+SRC += list/ft_lstclear.c
+SRC += list/ft_lstdelone.c
+SRC += list/ft_lstiter.c
+SRC += list/ft_lstmap.c
 
-_SRC += ddeque_init.c
-_SRC += ddeque_free.c
-_SRC += ddeque_print.c
-_SRC += ddeque_index.c
-_SRC += ddeque_slice.c
-_SRC += ddeque_sort.c
-_SRC += ddeque_shallow_copy.c
-_SRC += ddeque_size.c
-_SRC += ddeque_extend_free.c
-_SRC += ddeque_swap.c
-_SRC += ddeque_rotate.c
-_SRC += ddeque_pop_top.c
-_SRC += ddeque_pop_bottom.c
-_SRC += ddeque_push_node_bottom.c
-_SRC += ddeque_push_value_bottom.c
-_SRC += ddeque_push_node_top.c
-_SRC += ddeque_push_value_top.c
-_SRC += ddeque_equal.c
+SRC += math/ft_abs.c
+SRC += math/ft_max.c
+SRC += math/ft_min.c
+SRC += math/cmp_int_desc.c
+SRC += math/cmp_int_asc.c
 
-_SRC += cmp_int_desc.c
-_SRC += cmp_int_asc.c
+SRC += deque/deque_init.c
+SRC += deque/deque_free.c
+SRC += deque/deque_print.c
+SRC += deque/array_list_to_deque.c
+SRC += deque/deque_index.c
+SRC += deque/deque_slice.c
+SRC += deque/deque_sort.c
+SRC += deque/deque_copy.c
+SRC += deque/deque_size.c
+SRC += deque/deque_extend_free.c
+SRC += deque/deque_swap.c
+SRC += deque/deque_rotate.c
+SRC += deque/deque_pop_top.c
+SRC += deque/deque_pop_bottom.c
+SRC += deque/deque_push_node_bottom.c
+SRC += deque/deque_push_value_bottom.c
+SRC += deque/deque_push_node_top.c
+SRC += deque/deque_push_value_top.c
+SRC += deque/deque_equal.c
+SRC += deque/deque_argmax.c
 
-_SRC += get_next_line.c
+SRC += deque/ddeque_init.c
+SRC += deque/ddeque_free.c
+SRC += deque/ddeque_print.c
+SRC += deque/ddeque_index.c
+SRC += deque/ddeque_slice.c
+SRC += deque/ddeque_sort.c
+SRC += deque/ddeque_shallow_copy.c
+SRC += deque/ddeque_size.c
+SRC += deque/ddeque_extend_free.c
+SRC += deque/ddeque_swap.c
+SRC += deque/ddeque_rotate.c
+SRC += deque/ddeque_pop_top.c
+SRC += deque/ddeque_pop_bottom.c
+SRC += deque/ddeque_push_node_bottom.c
+SRC += deque/ddeque_push_value_bottom.c
+SRC += deque/ddeque_push_node_top.c
+SRC += deque/ddeque_push_value_top.c
+SRC += deque/ddeque_equal.c
+
+SRC += io/get_next_line.c
+
+SSRC = $(wilcard $(SUBDIRS)/*)
 
 unexport _DEPS
 _DEPS += libft.h
 
-_OBJ = $(_SRC:.c=.o)
-_OBJ_BONUS = $(_SRC_BONUS:.c=.o)
+OBJ = $(SRC:.c=.o)
 
-OBJ = $(addprefix $(OBJDIR)/,$(_OBJ))
-OBJ_BONUS = $(addprefix $(OBJDIR)/,$(_OBJ_BONUS))
-SRC = $(addprefix $(SRCDIR)/,$(_SRC))
-SRC_BONUS = $(addprefix $(SRCDIR)/,$(_SRC_BONUS))
 INCLUDE = $(addprefix $(INCDIR)/,$(_DEPS))
 
-all: $(NAME) bonus
+all: $(NAME)
 
-$(NAME): $(OBJ)
-	$(AR) $@ $^
+$(NAME): $(OBJ) | $(SUBDIRS)
+	$(AR) $@ $(OBJ)
 
-$(OBJDIR)/%.o: $(SRCDIR)/%.c $(INCLUDE) | $(OBJDIR)
+$(OBJDIR)/%.o: %.c $(INCLUDE) | $(OBJDIR)
 	$(CC) $(CFLAGS) -c -o $@ -I$(INCDIR) $<
+
+$(SUBDIRS): | $(SRCDIR)
+	$(MKDIR) $(subdir)
+	$(LN) -s $(subdir)/*.c $(SRCDIR)/
+
+$(SRCDIR):
+	$(MKDIR) $@
 
 $(OBJDIR):
 	$(MKDIR) $@
 
-bonus: $(OBJ) $(OBJ_BONUS)
-	$(AR) $(NAME) $^
+bonus: $(NAME)
 
 clean:
-	$(RM) $(OBJ) $(OBJ_BONUS)
+	$(RM) $(OBJ)
 	$(RM) -r $(OBJDIR)
+	$(RM) -r $(SRCDIR)
 
 fclean: clean
 	$(RM) $(NAME)
 
 re: fclean all
 
-.PHONY: re fclean clean all bonus
+var-%:
+	@echo $($*)
+
+.PHONY: re fclean clean all bonus links

@@ -6,11 +6,12 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 07:38:36 by tosuman           #+#    #+#             */
-/*   Updated: 2024/02/01 07:43:27 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/01 09:48:53 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
+#include "../../include/memory.h"
 #include <stdlib.h>
 
 t_bool	free_token(void *data)
@@ -96,9 +97,7 @@ void	*new_token(char *str, t_token_type type)
 {
 	t_token	*token;
 
-	token = malloc(sizeof(*token));
-	if (!token)
-		internal_error("new_token: malloc", __LINE__);
+	token = ft_malloc(sizeof(*token));
 	token->str = str;
 	token->type = type;
 	return (token);

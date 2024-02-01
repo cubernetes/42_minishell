@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 07:40:13 by tosuman           #+#    #+#             */
-/*   Updated: 2024/02/01 07:49:10 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/01 09:49:46 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,9 +112,7 @@ t_ast_node	*new_ast_node(t_ast_node_type type, t_ast_node_data data)
 {
 	t_ast_node	*ast_node;
 
-	ast_node = malloc(sizeof(*ast_node));
-	if (!ast_node)
-		internal_error("new_ast_node: malloc", __LINE__);
+	ast_node = ft_malloc(sizeof(*ast_node));
 	ast_node->type = type;
 	ast_node->data = data;
 	return (ast_node);
@@ -124,7 +122,7 @@ t_ast_node	*new_ast_token(t_token_type type, char *str)
 {
 	t_ast_node	*ast_node;
 
-	ast_node = malloc(sizeof(*ast_node));
+	ast_node = ft_malloc(sizeof(*ast_node));
 	ast_node->type = TOKEN;
 	ast_node->data.token = new_token(str, type);
 	return (ast_node);
@@ -140,7 +138,7 @@ t_ast_node	*new_ast_nonterm(t_ast_node_type type, t_ast_node **children)
 {
 	t_ast_node	*ast_node;
 
-	ast_node = malloc(sizeof(*ast_node));
+	ast_node = ft_malloc(sizeof(*ast_node));
 	ast_node->type = type;
 	ast_node->data.children = children;
 	return (ast_node);
@@ -197,7 +195,7 @@ t_ast_node	**new_children(t_ast_node **children)
 	i = 0;
 	while (children[i])
 		++i;
-	new_children = malloc(sizeof(*new_children) * (++i));
+	new_children = ft_malloc(sizeof(*new_children) * (++i));
 	while (i--)
 		new_children[i] = children[i];
 	return (new_children);
@@ -304,7 +302,7 @@ t_ast_node	*production_to_child(t_production prodcution)
 {
 	t_ast_node	*child;
 
-	child = malloc(sizeof(*child));
+	child = ft_malloc(sizeof(*child));
 	if (sizeof(*child) != sizeof(t_production))
 		internal_error("production_to_child: different sizes", __LINE__);
 	ft_memcpy(child, &prodcution, sizeof(prodcution));
@@ -321,7 +319,7 @@ t_ast_node	**productions_to_children(t_production *productions)
 	size = 0;
 	while (!ast_node_is_null(productions + size))
 		++size;
-	children = malloc(sizeof(*children) * (size_t)(size + 1));
+	children = ft_malloc(sizeof(*children) * (size_t)(size + 1));
 	size = 0;
 	while (!ast_node_is_null(productions + size))
 	{

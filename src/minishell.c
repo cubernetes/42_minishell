@@ -6,16 +6,16 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 17:34:44 by tosuman           #+#    #+#             */
-/*   Updated: 2024/02/01 07:49:24 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/01 09:46:15 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 #include "../libft/libft.h"
+#include "../include/memory.h"
 #include <stdio.h> /* needed for FILE typedef needed by readline */
 #include <readline/history.h> /* ... */
 #include <readline/readline.h> /* readline() */
-#include <stdlib.h> /* free(), malloc() */
 #include <unistd.h> /* STDERR_FILENO */
 
 /* TODO: should not be used anywhere for submission!!! */
@@ -46,7 +46,6 @@ void	execute(t_ast_node *ast_node)
 t_bool	free_datastructures(char **line, t_ddeque **tokens,
 	t_ast_node **ast_node)
 {
-	(free(*line), *line = NULL);
 	((void)ddeque_free(*tokens, free_token), *tokens = NULL);
 	((void)ast_free(*ast_node), *ast_node = NULL);
 	return (TRUE);
@@ -56,8 +55,6 @@ t_bool	free_state(t_state *state, char **line, t_ddeque **tokens,
 	t_ast_node **ast_node)
 {
 	(void)free_datastructures(line, tokens, ast_node);
-	(free(state->ps0), state->ps0 = NULL);
-	(free(state->ps1), state->ps1 = NULL);
 	return (TRUE);
 }
 
@@ -97,5 +94,6 @@ int	main(void)
 		execute(ast_root_node);
 		(void)free_state(&state, &line, &tokens, &ast_root_node);
 	}
+	free_all_ptrs();
 	return (0);
 }
