@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 17:35:26 by tosuman           #+#    #+#             */
-/*   Updated: 2024/02/01 11:48:29 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/02 05:31:41 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,8 +136,9 @@ void			ast_print(t_ast_node *ast_node);
 void			print_token(void *data, t_bool first);
 const char		*token_type_to_string(t_token_type type);
 void			*new_token(char *str, t_token_type type);
-void			internal_error(const char *err, int line_no);
 char			*get_token_str(t_ddeque *tokens);
+char			*get_token_str_nl(t_ddeque *tokens);
 t_token_type	get_token_type(t_ddeque *tokens);
+void			minishell_error(int exit_code, const char *fmt, ...);
 
 #endif /* minishell.h. */

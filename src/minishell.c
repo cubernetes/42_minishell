@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 17:34:44 by tosuman           #+#    #+#             */
-/*   Updated: 2024/02/02 04:59:01 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/02 05:27:52 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,17 @@
 #include <unistd.h> /* STDERR_FILENO */
 #include <stdlib.h> /* exit(), DONT USE free or malloc! */
 
-/* TODO: should not be used anywhere for submission!!! */
-void	internal_error(const char *err, int line_no)
+/* TODO: use argv[0] instead of hardcoded minishell */
+void	minishell_error(int exit_code, const char *fmt, ...)
 {
-	ft_dprintf(STDERR_FILENO, "\033[31mLine %d: %s\033[m\n", line_no, err);
-	exit(42);
+	va_list	ap;
+
+	va_start(ap, fmt);
+	ft_vdprintf(STDERR_FILENO, ft_strjoin(ft_strjoin("minishell: ", fmt),
+			"\n"), ap);
+	va_end(ap);
+	free_all_ptrs();
+	exit(exit_code);
 }
 
 /* TODO: NOT REQUIRED: add basic prompt expansion */

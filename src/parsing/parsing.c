@@ -6,11 +6,12 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 07:40:13 by tosuman           #+#    #+#             */
-/*   Updated: 2024/02/02 03:57:42 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/02 05:31:18 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
+#include <stdlib.h>
 
 const char	*ast_node_type_to_string(t_ast_node_type type)
 {
@@ -149,8 +150,6 @@ void	ast_print_with_depth(t_ast_node *ast_node, int n)
 {
 	t_ast_node	**tmp_children;
 
-	if (!ast_node)
-		internal_error("ast_print_with_depth: ast_node is NULL", __LINE__);
 	repeat_string("|   ", n, TRUE);
 	if (ast_node->type != TOKEN)
 	{
@@ -252,8 +251,10 @@ int	get_production_idx(t_ast_node_type nonterm, t_token *token)
 	production_idx = transition_table[nonterm - 1][token->type - 1];
 	if (production_idx == -1)
 	{
-		ft_printf("minishell: syntax error near unexpected token `%s'\n", token->str);
-		internal_error("get_production_idx: Syntax error", __LINE__);
+		if (!*token->str)
+			minishell_error(2, "syntax error near unexpected token `newline'");
+		minishell_error(2, "syntax error near unexpected token `%s'",
+			token->str);
 	}
 	return (production_idx);
 }
@@ -294,8 +295,6 @@ t_ast_node	*production_to_child(t_production prodcution)
 	t_ast_node	*child;
 
 	child = ft_malloc(sizeof(*child));
-	if (sizeof(*child) != sizeof(t_production))
-		internal_error("production_to_child: different sizes", __LINE__);
 	ft_memcpy(child, &prodcution, sizeof(prodcution));
 	if (prodcution.type == TOKEN)
 		child->data.token = new_token(child->data.token->str, child->data.token->type);
@@ -363,9 +362,11 @@ t_ast_node	*build_ast(t_ddeque *tokens)
 				ddeque_rotate(tokens, 1);
 			}
 			else if (get_token_type(tokens) == TOK_EOL)
-				internal_error("build_ast: Stack not empty", __LINE__);
+				minishell_error(2, "syntax error near unexpected token `%s'",
+					get_token_str_nl(tokens));
 			else
-				internal_error("build_ast: Stacks don't match", __LINE__);
+				minishell_error(2, "syntax error near unexpected token `%s'",
+					get_token_str_nl(tokens));
 		}
 	}
 	/* ast_node = return_example_ast(); */

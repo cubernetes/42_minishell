@@ -6,16 +6,29 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 07:38:36 by tosuman           #+#    #+#             */
-/*   Updated: 2024/02/02 03:53:02 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/02 05:26:17 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 #include "../../include/memory.h"
+#include <stdarg.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 char	*get_token_str(t_ddeque *tokens)
 {
 	return (((t_token *)tokens->head->data)->str);
+}
+
+char	*get_token_str_nl(t_ddeque *tokens)
+{
+	char	*str;
+
+	str = ((t_token *)tokens->head->data)->str;
+	if (!*str)
+		str = "newline";
+	return (str);
 }
 
 t_token_type	get_token_type(t_ddeque *tokens)
@@ -96,8 +109,6 @@ t_bool	push_token(const char **line, t_ddeque *tokens, size_t token_len,
 	char	*str;
 
 	str = ft_strndup(*line, token_len);
-	if (!str)
-		internal_error("push_token: ft_strndup", __LINE__);
 	ddeque_push_value_bottom(tokens, new_token(str, type));
 	*line += token_len;
 	return (TRUE);
@@ -230,7 +241,10 @@ void	tokenize_variable_len_tokens(const char **line, t_ddeque *tokens)
 	pushed += tokenize_double_quoted_string(line, tokens);
 	pushed += tokenize_word(line, tokens);
 	if (!pushed)
-		internal_error("tokenize_variable_len_tokens: lexing", __LINE__);
+	{
+		minishell_error(EXIT_FAILURE, "could not tokenize `%s'",
+			get_token_str(tokens));
+	}
 }
 
 /* environment variable expansion is NOT happening in the tokenization phase*/
