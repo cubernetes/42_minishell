@@ -1,0 +1,1 @@
+<infile echo hello | grep ^h && (hostname | grep bla ) ||printf buh > /dev/null
