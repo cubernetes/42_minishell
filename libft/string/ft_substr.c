@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 15:07:24 by tischmid          #+#    #+#             */
-/*   Updated: 2024/01/25 22:17:49 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/01 11:21:15 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 	real_len = 0;
 	while (++real_len <= len && s[idx + real_len - 1])
 		;
-	substr = malloc(sizeof(*substr) * real_len);
+	substr = ft_malloc(sizeof(*substr) * real_len);
 	if (!substr)
 		return (NULL);
 	ft_strlcpy(substr, s + idx, real_len);

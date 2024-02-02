@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 17:34:44 by tosuman           #+#    #+#             */
-/*   Updated: 2024/02/01 09:46:15 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/02 02:41:07 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include <readline/history.h> /* ... */
 #include <readline/readline.h> /* readline() */
 #include <unistd.h> /* STDERR_FILENO */
+#include <stdlib.h> /* exit() */
 
 /* TODO: should not be used anywhere for submission!!! */
 void	internal_error(const char *err, int line_no)
@@ -43,21 +44,7 @@ void	execute(t_ast_node *ast_node)
 	(void)ast_node;
 }
 
-t_bool	free_datastructures(char **line, t_ddeque **tokens,
-	t_ast_node **ast_node)
-{
-	((void)ddeque_free(*tokens, free_token), *tokens = NULL);
-	((void)ast_free(*ast_node), *ast_node = NULL);
-	return (TRUE);
-}
-
-t_bool	free_state(t_state *state, char **line, t_ddeque **tokens,
-	t_ast_node **ast_node)
-{
-	(void)free_datastructures(line, tokens, ast_node);
-	return (TRUE);
-}
-
+/* TODO: free what is returned from readline (line) */
 /* TODO: what if readline returns NULL? */
 /* TODO: use/think about rl_end (and other rl vars) */
 /* TODO: remove DEBUG macros */
@@ -72,7 +59,7 @@ t_bool	free_state(t_state *state, char **line, t_ddeque **tokens,
 int	main(void)
 {
 	static t_state	state;
-	static int		i = 10;
+	static int		i = 3;
 	char			*line;
 	t_ddeque		*tokens;
 	t_ast_node		*ast_root_node;
@@ -84,16 +71,13 @@ int	main(void)
 	{
 		update_state(&state);
 		line = readline(state.ps1);
-		if (!line && free_state(&state, &line, &tokens, &ast_root_node))
+		if (!line && free_all_ptrs())
 			break ;
 		tokens = tokenize(line);
-		ddeque_print(tokens, print_token);
-		ft_printf("\n");
 		ast_root_node = build_ast(tokens);
 		ast_print(ast_root_node);
 		execute(ast_root_node);
-		(void)free_state(&state, &line, &tokens, &ast_root_node);
 	}
-	free_all_ptrs();
+	(void)free_all_ptrs();
 	return (0);
 }

@@ -6,7 +6,7 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:02:16 by tischmid          #+#    #+#              #
-#    Updated: 2024/01/30 18:23:27 by tosuman          ###   ########.fr        #
+#    Updated: 2024/02/01 12:13:34 by tosuman          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,11 +19,15 @@ LIBFT_          := $(patsubst lib%,%,$(patsubst %.a,%,$(LIBFT)))
 
 unexport _SRC
 _SRC           += minishell.c
+_SRC           += signal_handling.c
+_SRC           += parsing.c
+_SRC           += tokenize.c
+
+vpath %.c src/ src/parsing/ src/signal_handling/ src/tokenization/
 
 _OBJ           := $(_SRC:.c=.o)
 _HEADERS       := minishell.h
 
-SRCDIR         := src
 OBJDIR         := obj
 INCLUDEDIR     := include
 LIBFT_DIR      := ./libft
@@ -33,15 +37,17 @@ INCLUDE        := $(addprefix $(INCLUDEDIR)/,$(_HEADERS))
 
 CC             := cc
 RM             := /bin/rm -f
+MKDIR          := /bin/mkdir -p
 # TODO: change -O0 to -O3 and remove -g3
 # TODO: change -std=c99 to -std=c89 (used for variadic macro)
 # TOOD: add back -Werror
 # TODO: add back -pedantic flag
 CFLAGS         := -O0 -g3 -Wall -Wextra \
                   -std=c99 -Wconversion \
-                  -Wunused -Wunreachable-code -Wshadow
+                  -Wunused -Wunreachable-code -Wshadow \
+                 -fdiagnostics-color=always
 CPPFLAGS       := -I$(LIBFT_DIR) -I$(INCLUDEDIR)
-LDFLAGS        := -L$(LIBFT_DIR)
+LDFLAGS        := -L$(LIBFT_DIR) -rdynamic
 LDLIBS         := -l$(LIBFT_) -lreadline
 
 all: $(NAME)
@@ -53,11 +59,11 @@ $(NAME): $(LIBFT_DIR)/$(LIBFT) $(OBJ)
 $(LIBFT_DIR)/$(LIBFT):
 	$(MAKE) -C $(LIBFT_DIR)
 
-$(OBJDIR)/%.o: $(SRCDIR)/%.c $(INCLUDE) | $(OBJDIR)
-	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
+$(OBJDIR)/%.o: %.c $(INCLUDE) | $(OBJDIR)
+	$(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@ -I$(INCLUDEDIR) $< 
 
 $(OBJDIR):
-	mkdir -p $@
+	$(MKDIR) $@
 
 bonus: $(BONUS)
 

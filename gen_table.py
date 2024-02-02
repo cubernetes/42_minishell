@@ -4,6 +4,7 @@ import re
 
 # https://www.cs.princeton.edu/courses/archive/spring20/cos320/LL1/
 # Literally copy from the website and paste inside of the triple single quote
+# Note, table is still without the rule complete_command ::= ''
 table = 'Nonterminal	' + '''
 
 	$	&&	||	|	(	)	TOK_WORD	>>	<<	>	<
@@ -25,6 +26,8 @@ table = table.splitlines()
 table = '\n'.join([table[0]] + table[2:]) + '\n'
 
 # Same here
+# Note for future, below grammar should add the following rule
+# complete_command ::= ''
 productions = '''
 complete_command ::= pipe_sequence complete_command_tail
 complete_command_tail ::= ''

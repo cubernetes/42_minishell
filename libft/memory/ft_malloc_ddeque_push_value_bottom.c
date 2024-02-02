@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ddeque_push_value_top.c                            :+:      :+:    :+:   */
+/*   ft_malloc_ddeque_push_value_bottom.c               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/19 09:34:41 by tischmid          #+#    #+#             */
-/*   Updated: 2024/02/01 12:40:50 by tosuman          ###   ########.fr       */
+/*   Created: 2023/11/22 14:42:21 by tischmid          #+#    #+#             */
+/*   Updated: 2024/02/02 02:20:56 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,15 @@
 #include <stdlib.h>
 
 /* not using perror and exit for compliance */
-void	ddeque_push_value_top(t_ddeque *ddeque, void *data)
+/* this function must not use ft_malloc */
+/* it shall only be used by ft_malloc from memory management */
+void	ft_malloc_ddeque_push_value_bottom(t_ddeque *ddeque, void *data)
 {
 	t_ddeque_node	*new;
 
 	if (ddeque->head)
 	{
-		new = ft_malloc(sizeof(*new));
+		new = malloc(sizeof(*new));
 		if (!new)
 			return ;
 		new->data = data;
@@ -28,11 +30,10 @@ void	ddeque_push_value_top(t_ddeque *ddeque, void *data)
 		new->prev = ddeque->head->prev;
 		ddeque->head->prev->next = new;
 		ddeque->head->prev = new;
-		ddeque->head = new;
 	}
 	else
 	{
-		ddeque->head = ft_malloc(sizeof(*ddeque->head));
+		ddeque->head = malloc(sizeof(*ddeque->head));
 		if (!ddeque->head)
 			return ;
 		ddeque->head->data = data;

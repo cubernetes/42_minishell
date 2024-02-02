@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 15:05:07 by tischmid          #+#    #+#             */
-/*   Updated: 2024/01/25 22:16:56 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/01 11:23:39 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,6 @@ t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *))
 			{
 				new_elem = new_lst->next;
 				del(new_lst->content);
-				free(new_lst);
 				new_lst = new_elem;
 			}
 			return (NULL);

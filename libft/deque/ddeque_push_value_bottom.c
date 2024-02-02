@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 14:42:21 by tischmid          #+#    #+#             */
-/*   Updated: 2024/01/26 01:39:09 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/01 11:19:53 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void	ddeque_push_value_bottom(t_ddeque *ddeque, void *data)
 
 	if (ddeque->head)
 	{
-		new = malloc(sizeof(*new));
+		new = ft_malloc(sizeof(*new));
 		if (!new)
 			return ;
 		new->data = data;
@@ -31,7 +31,7 @@ void	ddeque_push_value_bottom(t_ddeque *ddeque, void *data)
 	}
 	else
 	{
-		ddeque->head = malloc(sizeof(*ddeque->head));
+		ddeque->head = ft_malloc(sizeof(*ddeque->head));
 		if (!ddeque->head)
 			return ;
 		ddeque->head->data = data;

@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 15:07:43 by tischmid          #+#    #+#             */
-/*   Updated: 2024/01/25 22:16:42 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/01 11:18:25 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ t_list	*ft_lstnew(void *content)
 {
 	t_list	*new;
 
-	new = malloc(sizeof(*new));
+	new = ft_malloc(sizeof(*new));
 	if (!new)
 		return (NULL);
 	new->content = content;

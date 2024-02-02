@@ -6,25 +6,13 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 07:38:36 by tosuman           #+#    #+#             */
-/*   Updated: 2024/02/01 09:48:53 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/01 11:26:03 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 #include "../../include/memory.h"
 #include <stdlib.h>
-
-t_bool	free_token(void *data)
-{
-	t_token	*token;
-
-	if (!data)
-		return (TRUE);
-	token = (t_token *)data;
-	(free(token->str), token->str = NULL);
-	(free(token), token = NULL);
-	return (TRUE);
-}
 
 char	*get_token_str(t_ddeque *tokens)
 {

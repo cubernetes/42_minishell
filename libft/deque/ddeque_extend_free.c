@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 14:40:27 by tischmid          #+#    #+#             */
-/*   Updated: 2024/01/29 03:42:38 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/01 11:38:30 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,10 @@
 void	ddeque_extend_free(t_ddeque *ddeque_a, t_ddeque *ddeque_b,
 		t_bool (free_data)(void *))
 {
+	(void)free_data;
 	while (ddeque_b->head)
 	{
 		ddeque_push_node_bottom(ddeque_a, ddeque_pop_top(ddeque_b));
 		ddeque_a->size += 1;
 	}
-	(void)ddeque_free(ddeque_b, free_data);
 }

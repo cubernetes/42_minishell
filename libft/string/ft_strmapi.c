@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 15:06:35 by tischmid          #+#    #+#             */
-/*   Updated: 2024/01/25 22:20:17 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/01 11:21:31 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ char	*ft_strmapi(char const *s, char (f)(unsigned int, char))
 	char				*str;
 	unsigned int		idx;
 
-	str = malloc(sizeof(*str) * (ft_strlen(s) + 1));
+	str = ft_malloc(sizeof(*str) * (ft_strlen(s) + 1));
 	if (!str)
 		return (NULL);
 	idx = (unsigned int)-1;

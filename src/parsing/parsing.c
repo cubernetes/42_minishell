@@ -6,12 +6,11 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 07:40:13 by tosuman           #+#    #+#             */
-/*   Updated: 2024/02/01 09:49:46 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/02 03:38:09 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
-#include "../../include/tokenization.h"
 #include <stdlib.h>
 
 const char	*ast_node_type_to_string(t_ast_node_type type)
@@ -42,26 +41,6 @@ const char	*ast_node_type_to_string(t_ast_node_type type)
 		return (STR_AST_NODE_TYPE_UNKNOWN);
 }
 
-t_bool	ast_free(t_ast_node *ast_node)
-{
-	t_ast_node	**orig_children;
-
-	if (!ast_node)
-		return (TRUE);
-	if (ast_node->type == TOKEN)
-	{
-		((void)free_token(ast_node->data.token), ast_node->data.token = NULL);
-		(free(ast_node), ast_node = NULL);
-		return (TRUE);
-	}
-	orig_children = ast_node->data.children;
-	while (*ast_node->data.children)
-		(void)ast_free(*ast_node->data.children++);
-	(free(orig_children), ast_node->data.children = NULL);
-	(free(ast_node), ast_node = NULL);
-	return (TRUE);
-}
-
 void	print_production(void *data, t_bool first)
 {
 	t_production	*production;
@@ -82,6 +61,16 @@ void	print_production(void *data, t_bool first)
 			production->data.token->str);
 	else
 		ft_printf("%s\033[32m%s\033[m", second, ast_node_type_to_string(production->type));
+}
+
+t_bool	ast_node_is_null(t_ast_node *ast_node)
+{
+	if (!ast_node)
+		return (TRUE);
+	if (ast_node->type == 0)
+		if (ast_node->data.token == NULL && ast_node->data.children == NULL)
+			return (TRUE);
+	return (FALSE);
 }
 
 void	print_children(t_ast_node **children)
@@ -142,16 +131,6 @@ t_ast_node	*new_ast_nonterm(t_ast_node_type type, t_ast_node **children)
 	ast_node->type = type;
 	ast_node->data.children = children;
 	return (ast_node);
-}
-
-t_bool	ast_node_is_null(t_ast_node *ast_node)
-{
-	if (!ast_node)
-		return (TRUE);
-	if (ast_node->type == 0)
-		if (ast_node->data.token == NULL && ast_node->data.children == NULL)
-			return (TRUE);
-	return (FALSE);
 }
 
 void	ast_print_with_depth(t_ast_node *ast_node, size_t n)
@@ -245,7 +224,7 @@ t_ast_node	*return_example_ast(void)
 int	get_production_idx(t_ast_node_type nonterm, t_token *token)
 {
 	static int	transition_table[NUM_NONTERMS][NUM_TOKENS] = {
-	{-1, -1, -1, -1, 0, -1, 0, 0, 0, 0, 0},
+	{19, -1, -1, -1, 0, -1, 0, 0, 0, 0, 0},
 	{1, 2, 2, -1, -1, 1, -1, -1, -1, -1, -1},
 	{-1, 3, 4, -1, -1, -1, -1, -1, -1, -1, -1},
 	{-1, -1, -1, -1, 5, -1, 5, 5, 5, 5, 5},
@@ -271,29 +250,29 @@ int	get_production_idx(t_ast_node_type nonterm, t_token *token)
 /* TODO: Don't use 0 as NULL */
 t_production	*get_production(t_ast_node_type nonterm, t_token *token)
 {
-	static t_token		tokens[] = {{0}, {TOK_EOL, 0}, {TOK_AND, 0}, \
+	static t_token		tks[] = {{0}, {TOK_EOL, 0}, {TOK_AND, 0}, \
 		{TOK_OR, 0}, {TOK_PIPE, 0}, {TOK_L_PAREN, 0}, {TOK_R_PAREN, 0}, \
 		{TOK_WORD, 0}, {TOK_OVERRIDE, 0}, {TOK_APPEND, 0}, {TOK_INPUT, 0}, \
 		{TOK_HEREDOC, 0}, {TOK_EPSILON, 0}, {TOK_SQUOTE_STR, 0}, \
 		{TOK_DQUOTE_STR, 0}, {TOK_ERROR, 0}};
 	static t_production	productions[][4] = {\
 		{{PIPE_SEQUENCE, {0}}, {COMPLETE_COMMAND_TAIL, {0}}, {0}}, \
-		{{TOKEN, {&tokens[TOK_EPSILON]}}, {0}}, \
+		{{TOKEN, {&tks[TOK_EPSILON]}}, {0}}, \
 		{{AND_OR, {0}}, {PIPE_SEQUENCE, {0}}, {COMPLETE_COMMAND_TAIL, {0}}, {0}}, \
-		{{TOKEN, {&tokens[TOK_AND]}}, {0}}, {{TOKEN, {&tokens[TOK_OR]}}, {0}}, \
+		{{TOKEN, {&tks[TOK_AND]}}, {0}}, {{TOKEN, {&tks[TOK_OR]}}, {0}}, \
 		{{COMMAND, {0}}, {PIPE_SEQUENCE_TAIL, {0}}, {0}}, \
-		{{TOKEN, {&tokens[TOK_EPSILON]}}, {0}}, \
-		{{TOKEN, {&tokens[TOK_PIPE]}}, {COMMAND, {0}}, {PIPE_SEQUENCE_TAIL, {0}}, {0}}, \
+		{{TOKEN, {&tks[TOK_EPSILON]}}, {0}}, \
+		{{TOKEN, {&tks[TOK_PIPE]}}, {COMMAND, {0}}, {PIPE_SEQUENCE_TAIL, {0}}, {0}}, \
 		{{SIMPLE_COMMAND, {0}}, {0}}, {{COMPOUND_COMMAND, {0}}, {0}}, \
-		{{TOKEN, {&tokens[TOK_L_PAREN]}}, {COMPLETE_COMMAND, {0}}, {TOKEN, {&tokens[TOK_R_PAREN]}}, {0}}, \
-		{{IO_REDIRECT, {0}}, {TOKEN, {&tokens[TOK_WORD]}}, {SIMPLE_COMMAND_TAIL, {0}}, {0}}, \
-		{{TOKEN, {&tokens[TOK_EPSILON]}}, {0}}, \
-		{{IO_REDIRECT, {0}}, {TOKEN, {&tokens[TOK_WORD]}}, {SIMPLE_COMMAND_TAIL, {0}}, {0}}, \
-		{{TOKEN, {&tokens[TOK_EPSILON]}}, {0}}, \
-		{{TOKEN, {&tokens[TOK_APPEND]}}, {0}}, \
-		{{TOKEN, {&tokens[TOK_HEREDOC]}}, {0}}, \
-		{{TOKEN, {&tokens[TOK_OVERRIDE]}}, {0}}, \
-		{{TOKEN, {&tokens[TOK_INPUT]}}, {0}}};
+		{{TOKEN, {&tks[TOK_L_PAREN]}}, {COMPLETE_COMMAND, {0}}, {TOKEN, {&tks[TOK_R_PAREN]}}, {0}}, \
+		{{IO_REDIRECT, {0}}, {TOKEN, {&tks[TOK_WORD]}}, {SIMPLE_COMMAND_TAIL, {0}}, {0}}, \
+		{{TOKEN, {&tks[TOK_EPSILON]}}, {0}}, \
+		{{IO_REDIRECT, {0}}, {TOKEN, {&tks[TOK_WORD]}}, {SIMPLE_COMMAND_TAIL, {0}}, {0}}, \
+		{{TOKEN, {&tks[TOK_EPSILON]}}, {0}}, \
+		{{TOKEN, {&tks[TOK_APPEND]}}, {0}}, \
+		{{TOKEN, {&tks[TOK_HEREDOC]}}, {0}}, \
+		{{TOKEN, {&tks[TOK_OVERRIDE]}}, {0}}, \
+		{{TOKEN, {&tks[TOK_INPUT]}}, {0}}, {{TOKEN, {&tks[TOK_EPSILON]}}, {0}}};
 
 	return (productions[get_production_idx(nonterm, token)]);
 }
@@ -348,11 +327,10 @@ t_ast_node	*build_ast(t_ddeque *tokens)
 	while (1)
 	{
 		top = stack->head->data;
-		free(ddeque_pop_top(stack));
+		ddeque_pop_top(stack);
 		if (top->type != TOKEN)
 		{
 			children = productions_to_children(get_production(top->type, tokens->head->data));
-			print_children(children);
 			push_productions(ast_root_node, stack, children);
 			ast_node->data.children = children;
 			ast_node = ast_node->data.children[0];
@@ -378,8 +356,6 @@ t_ast_node	*build_ast(t_ddeque *tokens)
 				internal_error("build_ast: Stacks don't match", __LINE__);
 		}
 	}
-	ddeque_free(stack, ft_free);
 	/* ast_node = return_example_ast(); */
 	return (ast_root_node);
 }
-

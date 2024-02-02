@@ -1,19 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ddeque_free.c                                      :+:      :+:    :+:   */
+/*   ft_malloc_ddeque_free.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 14:37:19 by tischmid          #+#    #+#             */
-/*   Updated: 2024/01/29 03:41:35 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/01 11:52:47 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../libft.h"
 #include <stdlib.h>
 
-t_bool	ddeque_free(t_ddeque *ddeque, t_bool (free_data)(void *))
+/* only function allowd to use free */
+/* must only be used by ft_malloc from memory management */
+t_bool	ft_malloc_ddeque_free(t_ddeque *ddeque, t_bool (free_data)(void *))
 {
 	t_ddeque_node	*head;
 	t_ddeque_node	*tail;

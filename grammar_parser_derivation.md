@@ -15,6 +15,7 @@
 %token TOK_OVERRIDE TOK_APPEND TOK_INPUT TOK_HEREDOC
 /*     '>'          '>>'       '<'       '<<'     */
 
+// Note, complete_command can be empty, this is missing here but added later down
 complete_command : list
                  ;
 list             : and_or
@@ -79,6 +80,7 @@ here_end         : WORD
 ```
 
 # Same grammar as but this time in EBNF
+# Note, complete_command can be empty, this is missing here but added later down
 ```c
 complete_command = list ;
 list = and_or ;
@@ -102,6 +104,7 @@ here_end = TOK_WORD ;
 ```
 
 # Compressed form
+# Note, complete_command can be empty, this is missing here but added later down
 ```c
 complete_command = pipe_sequence { ( TOK_AND | TOK_OR ) pipe_sequence } ;
 pipe_sequence = command { TOK_PIPE command } ;
@@ -112,6 +115,7 @@ io_redirect = ( TOK_APPEND | TOK_OVERRIDE | TOK_INPUT | TOK_HEREDOC ) TOK_WORD ;
 ```
 
 # Improved form. (shockingly similar to lmiehler's EBNF)
+# Note, complete_command can be empty, this is missing here but added later down
 ```c
 complete_command = pipe_sequence { ( '&&' | '||' ) pipe_sequence } ;
 pipe_sequence = command { '|' command } ;
@@ -135,7 +139,9 @@ io_redirect = '>' | '>>' | '<' | '<<' ;
 # '' represents empty string (epsilon)
 # whitespace delimited tokens found on the right, which are not found on the left
 # are terminal symbols. Every other symbol, except '', is a non-terminal.
+# Update, complete_command can be empty
 ```c
+complete_command ::= ''
 complete_command ::= pipe_sequence complete_command_tail
 complete_command_tail ::= ''
 complete_command_tail ::= and_or pipe_sequence complete_command_tail
@@ -158,10 +164,11 @@ io_redirect ::= <
 ```
 
 # This yields the following first & follow sets:
+# Update, make complete_command nullable
 ```c
 Nonterminal           | Nullable? | First set                 | Follow set
 ----------------------|-----------|---------------------------|-----------
-complete_command      | no        | TOK_WORD, (, >, >>, <, << | ), $
+complete_command      | yes       | TOK_WORD, (, >, >>, <, << | ), $
 complete_command_tail | yes       | &&, ||                    | ), $
 and_or                | no        | &&, ||                    | TOK_WORD, (, >, >>, <, <<
 pipe_sequence         | no        | TOK_WORD, (, >, >>, <, << | &&, ||, ), $
@@ -174,10 +181,11 @@ io_redirect           | yes       | >, >>, <, <<              | TOK_WORD
 ```
 
 # And it yields the following transition table (generated from the link above)
+# Update, add rule 19 (complete_command ::= '')
 ```c
 Nonterminal           | $                            | &&                                                                   | ||                                                                   | |                                                   | (                                                        | )                            | TOK_WORD                                                         | >                                                                | >>                                                               | <                                                                | <<
 ----------------------|------------------------------|----------------------------------------------------------------------|----------------------------------------------------------------------|-----------------------------------------------------|----------------------------------------------------------|------------------------------|------------------------------------------------------------------|------------------------------------------------------------------|------------------------------------------------------------------|------------------------------------------------------------------|-----------------------------------------------------------------
-complete_command      |                              |                                                                      |                                                                      |                                                     | complete_command ::= pipe_sequence complete_command_tail |                              | complete_command ::= pipe_sequence complete_command_tail         | complete_command ::= pipe_sequence complete_command_tail         | complete_command ::= pipe_sequence complete_command_tail         | complete_command ::= pipe_sequence complete_command_tail         | complete_command ::= pipe_sequence complete_command_tail
+complete_command      | complete_command ::= ''      |                                                                      |                                                                      |                                                     | complete_command ::= pipe_sequence complete_command_tail |                              | complete_command ::= pipe_sequence complete_command_tail         | complete_command ::= pipe_sequence complete_command_tail         | complete_command ::= pipe_sequence complete_command_tail         | complete_command ::= pipe_sequence complete_command_tail         | complete_command ::= pipe_sequence complete_command_tail
 complete_command_tail | complete_command_tail ::= '' | complete_command_tail ::= and_or pipe_sequence complete_command_tail | complete_command_tail ::= and_or pipe_sequence complete_command_tail |                                                     |                                                          | complete_command_tail ::= '' |                                                                  |                                                                  |                                                                  |                                                                  |
 and_or                |                              | and_or ::= &&                                                        | and_or ::= ||                                                        |                                                     |                                                          |                              |                                                                  |                                                                  |                                                                  |                                                                  |
 pipe_sequence         |                              |                                                                      |                                                                      |                                                     | pipe_sequence ::= command pipe_sequence_tail             |                              | pipe_sequence ::= command pipe_sequence_tail                     | pipe_sequence ::= command pipe_sequence_tail                     | pipe_sequence ::= command pipe_sequence_tail                     | pipe_sequence ::= command pipe_sequence_tail                     | pipe_sequence ::= command pipe_sequence_tail
@@ -212,12 +220,19 @@ io_redirect           |                              |                          
 18. io_redirect ::= <
 ```
 
+# Addendum, rule 19, complete_command may be empty
+```c
+ 19. complete_command ::= ''
+```
+
+
 # This yields the same transition table, this time with the rule index instead
 # of the production itself
+# Update, add rule 19
 ```c
 Nonterminal           | $  | && | || | |  | (  | )  | TOK_WORD | >> | << | >  | <
 ----------------------|----|----|----|----|----|----|----------|----|----|----|--
-complete_command      |    |    |    |    | 0  |    | 0        | 0  | 0  | 0  | 0
+complete_command      | 19 |    |    |    | 0  |    | 0        | 0  | 0  | 0  | 0
 complete_command_tail | 1  | 2  | 2  |    |    | 1  |          |    |    |    |
 and_or                |    | 3  | 4  |    |    |    |          |    |    |    |
 pipe_sequence         |    |    |    |    | 5  |    | 5        | 5  | 5  | 5  | 5
@@ -230,10 +245,11 @@ io_redirect           |    |    |    |    |    |    | 14       | 15 | 16 | 17 | 
 ```
 
 # Let's place in the original enum identifiers
+# Update, add rule 19
 ```c
 Nonterminal           | TOK_EOL | TOK_AND | TOK_OR | TOK_PIPE | TOK_L_PAREN | TOK_R_PAREN | TOK_WORD | TOK_APPEND | TOK_HEREDOC | TOK_OVERRIDE | TOK_INPUT
 ----------------------|---------|---------|--------|----------|-------------|-------------|----------|------------|-------------|--------------|----------
-COMPLETE_COMMAND      |         |         |        |          | 0           |             | 0        | 0          | 0           | 0            | 0
+COMPLETE_COMMAND      | 19      |         |        |          | 0           |             | 0        | 0          | 0           | 0            | 0
 COMPLETE_COMMAND_TAIL | 1       | 2       | 2      |          |             | 1           |          |            |             |              |
 AND_OR                |         | 3       | 4      |          |             |             |          |            |             |              |
 PIPE_SEQUENCE         |         |         |        |          | 5           |             | 5        | 5          | 5           | 5            | 5

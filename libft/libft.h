@@ -6,12 +6,12 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 15:09:08 by tischmid          #+#    #+#             */
-/*   Updated: 2024/02/01 10:18:06 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/01 12:08:14 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef LIBFT_H
-# define LIBFT_H
+# define LIBFT_H 1
 
 /* TODO: remove debug include */
 # include "../include/minishell_debug.h"
@@ -99,7 +99,10 @@ struct							s_ddeque
 	size_t						size;
 };
 
-/* memmory */
+/* misc */
+void							print_callstack(void);
+
+/* memory */
 void							*ft_memmove(void *dest, void const *src,
 									size_t n);
 void							*ft_calloc(size_t nmemb, size_t size);
@@ -110,6 +113,14 @@ int								ft_memcmp(void const *s1, void const *s2,
 									size_t n);
 void							*ft_memcpy(void *dest, void const *src,
 									size_t n);
+void							*ft_malloc(size_t size);
+t_ddeque						*manage_ptrs(void *ptr);
+t_bool							free_all_ptrs(void);
+t_bool							ft_malloc_ddeque_free(t_ddeque *ddeque,
+									t_bool (free_data)(void *));
+t_ddeque						*ft_malloc_ddeque_init(void);
+void							ft_malloc_ddeque_push_value_bottom(
+									t_ddeque *ddeque, void *data);
 
 /* strings */
 int								ft_isalnum(int c);
@@ -211,7 +222,6 @@ void							deque_sort(t_deque *deque,
 t_deque							*array_list_to_deque(char **array_list,
 									int *status);
 void							deque_print(t_deque *deque);
-t_bool							deque_free(t_deque *deque);
 t_deque							*deque_init(void);
 t_deque							*deque_slice(t_deque *deque, int start, int end,
 									int step);
@@ -240,8 +250,6 @@ void							ddeque_sort(t_ddeque *ddeque, int (cmp)(void *,
 										void *));
 void							ddeque_print(t_ddeque *ddeque,
 									void (print)(void *data, t_bool first));
-t_bool							ddeque_free(t_ddeque *ddeque,
-									t_bool (free_data)(void *));
 t_ddeque						*ddeque_init(void);
 t_ddeque						*ddeque_shallow_slice(t_ddeque *ddeque,
 									int start, int end, int step);
@@ -259,4 +267,4 @@ t_bool							cmp_int_asc(int a, int b);
 t_bool							cmp_int_desc(int a, int b);
 char							*get_next_line(int fd);
 
-#endif
+#endif /* libft.h. */

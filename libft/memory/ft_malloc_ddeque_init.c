@@ -1,38 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   deque_free.c                                       :+:      :+:    :+:   */
+/*   ft_malloc_ddeque_init.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/22 14:37:19 by tischmid          #+#    #+#             */
-/*   Updated: 2024/01/29 03:40:38 by tosuman          ###   ########.fr       */
+/*   Created: 2023/11/22 14:36:56 by tischmid          #+#    #+#             */
+/*   Updated: 2024/02/01 11:50:59 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../libft.h"
 #include <stdlib.h>
 
-t_bool	deque_free(t_deque *deque)
+/* this function must not use ft_malloc */
+/* it shall only be used by ft_malloc from memory management */
+t_ddeque	*ft_malloc_ddeque_init(void)
 {
-	t_deque_node	*head;
-	t_deque_node	*tail;
+	t_ddeque	*deque;
 
+	deque = malloc(sizeof(*deque));
 	if (!deque)
-		return (TRUE);
-	head = deque->head;
-	if (!head)
-	{
-		(free(deque), deque = NULL);
-		return (TRUE);
-	}
-	tail = head->prev;
-	while (head != tail)
-	{
-		head = head->next;
-		(free(head->prev), head->prev = NULL);
-	}
-	(free(head), head = NULL);
-	(free(deque), deque = NULL);
-	return (TRUE);
+		return (NULL);
+	deque->head = NULL;
+	deque->size = 0;
+	return (deque);
 }

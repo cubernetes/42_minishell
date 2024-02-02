@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 09:35:19 by tosuman           #+#    #+#             */
-/*   Updated: 2024/02/01 09:37:21 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/01 11:32:50 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,6 @@ void	print_callstack(void)
 	void	*callstack[MAX_CALLSTACK_SIZE];
 	int		frames;
 	char	**symbols;
-	char	*frame;
 
 	frames = backtrace(callstack, MAX_CALLSTACK_SIZE);
 	symbols = backtrace_symbols(callstack, frames);
