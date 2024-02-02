@@ -6,18 +6,17 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 17:34:44 by tosuman           #+#    #+#             */
-/*   Updated: 2024/02/02 05:27:52 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/02 06:13:34 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 #include "../libft/libft.h"
-#include "../include/memory.h"
 #include <stdio.h> /* needed for FILE typedef needed by readline */
 #include <readline/history.h> /* ... */
 #include <readline/readline.h> /* readline() */
-#include <unistd.h> /* STDERR_FILENO */
 #include <stdlib.h> /* exit(), DONT USE free or malloc! */
+#include <unistd.h> /* STDERR_FILENO */
 
 /* TODO: use argv[0] instead of hardcoded minishell */
 void	minishell_error(int exit_code, const char *fmt, ...)

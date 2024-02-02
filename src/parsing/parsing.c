@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 07:40:13 by tosuman           #+#    #+#             */
-/*   Updated: 2024/02/02 05:49:09 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/02 06:12:11 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -321,7 +321,6 @@ t_ast_node	**productions_to_children(t_production *productions)
 }
 
 /* LL(1) parser */
-/* TODO: improve error handling */
 t_ast_node	*build_ast(t_ddeque *tokens)
 {
 	t_ast_node		*ast_node;
@@ -369,6 +368,5 @@ t_ast_node	*build_ast(t_ddeque *tokens)
 					get_token_str_nl(tokens));
 		}
 	}
-	/* ast_node = return_example_ast(); */
 	return (ast_root_node);
 }
