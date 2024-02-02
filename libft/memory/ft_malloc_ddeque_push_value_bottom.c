@@ -6,12 +6,20 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 14:42:21 by tischmid          #+#    #+#             */
-/*   Updated: 2024/02/02 02:20:56 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/02 04:59:31 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../libft.h"
 #include <stdlib.h>
+
+void	print_ptr(void *data, t_bool first)
+{
+	if (first)
+		ft_printf("%p", data);
+	else
+		ft_printf(" -> %p", data);
+}
 
 /* not using perror and exit for compliance */
 /* this function must not use ft_malloc */

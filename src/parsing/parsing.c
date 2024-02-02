@@ -6,12 +6,11 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 07:40:13 by tosuman           #+#    #+#             */
-/*   Updated: 2024/02/02 03:38:09 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/02 03:57:42 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
-#include <stdlib.h>
 
 const char	*ast_node_type_to_string(t_ast_node_type type)
 {
@@ -91,10 +90,23 @@ void	push_productions(t_ast_node *ast_node, t_ddeque *stack, t_production **prod
 	ddeque_push_value_top(stack, *productions);
 }
 
-void	repeat_string(const char *str, size_t n)
+void	repeat_string(const char *str, int n, t_bool color)
 {
-	while (n--)
+	int	i;
+
+	i = -1;
+	while (++i < n)
+	{
+		if (color)
+		{
+			ft_putstr("\033[");
+			ft_putnbr((i % 7) + 31);
+			ft_putstr("m");
+		}
 		ft_printf("%s", str);
+		if (color)
+			ft_putstr("\033[m");
+	}
 }
 
 t_ast_node	*new_ast_node(t_ast_node_type type, t_ast_node_data data)
@@ -133,13 +145,13 @@ t_ast_node	*new_ast_nonterm(t_ast_node_type type, t_ast_node **children)
 	return (ast_node);
 }
 
-void	ast_print_with_depth(t_ast_node *ast_node, size_t n)
+void	ast_print_with_depth(t_ast_node *ast_node, int n)
 {
 	t_ast_node	**tmp_children;
 
 	if (!ast_node)
 		internal_error("ast_print_with_depth: ast_node is NULL", __LINE__);
-	repeat_string("    ", n);
+	repeat_string("|   ", n, TRUE);
 	if (ast_node->type != TOKEN)
 	{
 		ft_printf("- <%s>\n", ast_node_type_to_string(ast_node->type));

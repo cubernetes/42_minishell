@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 17:34:44 by tosuman           #+#    #+#             */
-/*   Updated: 2024/02/02 02:41:07 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/02 04:59:01 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 #include <readline/history.h> /* ... */
 #include <readline/readline.h> /* readline() */
 #include <unistd.h> /* STDERR_FILENO */
-#include <stdlib.h> /* exit() */
+#include <stdlib.h> /* exit(), DONT USE free or malloc! */
 
 /* TODO: should not be used anywhere for submission!!! */
 void	internal_error(const char *err, int line_no)
@@ -44,7 +44,6 @@ void	execute(t_ast_node *ast_node)
 	(void)ast_node;
 }
 
-/* TODO: free what is returned from readline (line) */
 /* TODO: what if readline returns NULL? */
 /* TODO: use/think about rl_end (and other rl vars) */
 /* TODO: remove DEBUG macros */
@@ -70,8 +69,8 @@ int	main(void)
 	while (i--)
 	{
 		update_state(&state);
-		line = readline(state.ps1);
-		if (!line && free_all_ptrs())
+		line = manage_ptrs(readline(state.ps1))->head->prev->data;
+		if (!line)
 			break ;
 		tokens = tokenize(line);
 		ast_root_node = build_ast(tokens);

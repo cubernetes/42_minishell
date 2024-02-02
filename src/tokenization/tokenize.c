@@ -6,13 +6,12 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 07:38:36 by tosuman           #+#    #+#             */
-/*   Updated: 2024/02/01 11:26:03 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/02 03:53:02 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 #include "../../include/memory.h"
-#include <stdlib.h>
 
 char	*get_token_str(t_ddeque *tokens)
 {
