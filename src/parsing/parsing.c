@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 07:40:13 by tosuman           #+#    #+#             */
-/*   Updated: 2024/02/02 05:31:18 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/02 05:49:09 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -263,11 +263,11 @@ int	get_production_idx(t_ast_node_type nonterm, t_token *token)
 /* TODO: Don't use 0 as NULL */
 t_production	*get_production(t_ast_node_type nonterm, t_token *token)
 {
-	static t_token		tks[] = {{0}, {TOK_EOL, 0}, {TOK_AND, 0}, \
-		{TOK_OR, 0}, {TOK_PIPE, 0}, {TOK_L_PAREN, 0}, {TOK_R_PAREN, 0}, \
-		{TOK_WORD, 0}, {TOK_OVERRIDE, 0}, {TOK_APPEND, 0}, {TOK_INPUT, 0}, \
-		{TOK_HEREDOC, 0}, {TOK_EPSILON, 0}, {TOK_SQUOTE_STR, 0}, \
-		{TOK_DQUOTE_STR, 0}, {TOK_ERROR, 0}};
+	static t_token		tks[] = {{0}, {TOK_EOL, ""}, {TOK_AND, ""}, \
+		{TOK_OR, ""}, {TOK_PIPE, ""}, {TOK_L_PAREN, ""}, {TOK_R_PAREN, ""}, \
+		{TOK_WORD, ""}, {TOK_OVERRIDE, ""}, {TOK_APPEND, ""}, {TOK_INPUT, ""}, \
+		{TOK_HEREDOC, ""}, {TOK_EPSILON, ""}, {TOK_SQUOTE_STR, ""}, \
+		{TOK_DQUOTE_STR, ""}, {TOK_ERROR, ""}};
 	static t_production	productions[][4] = {\
 		{{PIPE_SEQUENCE, {0}}, {COMPLETE_COMMAND_TAIL, {0}}, {0}}, \
 		{{TOKEN, {&tks[TOK_EPSILON]}}, {0}}, \
