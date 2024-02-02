@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 17:34:44 by tosuman           #+#    #+#             */
-/*   Updated: 2024/02/02 06:13:34 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/02 06:20:30 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,7 @@ int	main(void)
 		if (!line)
 			break ;
 		tokens = tokenize(line);
+		ddeque_print(tokens, print_token);
 		ast_root_node = build_ast(tokens);
 		ast_print(ast_root_node);
 		execute(ast_root_node);

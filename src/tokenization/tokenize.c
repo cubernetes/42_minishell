@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 07:38:36 by tosuman           #+#    #+#             */
-/*   Updated: 2024/02/02 05:26:17 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/02 06:25:02 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -249,6 +249,7 @@ void	tokenize_variable_len_tokens(const char **line, t_ddeque *tokens)
 
 /* environment variable expansion is NOT happening in the tokenization phase*/
 /* wildcard expansion (globbing) is also not happening here*/
+/* TODO: well, I think you kinda have to do env expansion and globbing here.. */
 /* those are responsibilities while or after building the AST */
 t_ddeque	*tokenize(const char *line)
 {
