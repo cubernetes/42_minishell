@@ -6,12 +6,12 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 17:35:26 by tosuman           #+#    #+#             */
-/*   Updated: 2024/02/07 08:31:54 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/07 12:59:53 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
-# define MINISHELL_H 1
+# define MINISHELL_H	1
 
 /* TODO: remove debug include */
 # include "../libft/libft.h"

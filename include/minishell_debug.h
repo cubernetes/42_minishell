@@ -6,12 +6,12 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 23:34:44 by tosuman           #+#    #+#             */
-/*   Updated: 2024/01/26 01:03:40 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/07 13:00:13 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_DEBUG_H
-# define MINISHELL_DEBUG_H 1
+# define MINISHELL_DEBUG_H	1
 
 # define REP0(X)
 # define REP1(X) X

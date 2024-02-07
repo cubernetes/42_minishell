@@ -6,12 +6,12 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 15:09:08 by tischmid          #+#    #+#             */
-/*   Updated: 2024/02/07 08:25:36 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/07 12:59:42 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef LIBFT_H
-# define LIBFT_H 1
+# define LIBFT_H	1
 
 /* TODO: remove debug include */
 # include "../include/minishell_debug.h"
