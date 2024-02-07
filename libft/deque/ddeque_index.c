@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 14:38:41 by tischmid          #+#    #+#             */
-/*   Updated: 2024/01/29 03:42:19 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/07 06:29:38 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,14 +25,13 @@ int	ddeque_index(t_ddeque *ddeque, void *data, t_bool (cmp)(void *, void *))
 		return (-1);
 	if (cmp(head->data, data))
 		return (0);
-	head = head->next;
 	idx = 1;
-	while (head != orig_head)
+	while (head->next != orig_head)
 	{
+		head = head->next;
 		if (cmp(head->data, data))
 			return (idx);
 		++idx;
-		head = head->next;
 	}
 	return (-1);
 }

@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 14:37:38 by tischmid          #+#    #+#             */
-/*   Updated: 2024/02/02 21:51:07 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/07 06:28:41 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void	ddeque_iter(t_ddeque *ddeque, void (*f)(void *data))
 	f(head->data);
 	while (head->next != orig_head)
 	{
-		f(head->next->data);
 		head = head->next;
+		f(head->data);
 	}
 }

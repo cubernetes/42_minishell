@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 14:37:38 by tischmid          #+#    #+#             */
-/*   Updated: 2023/11/22 14:37:53 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/02/07 06:28:04 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,17 +19,13 @@ void	deque_print(t_deque *deque)
 
 	head = deque->head;
 	orig_head = head;
-	if (head)
-		ft_printf("%d", head->data);
-	else
-	{
-		ft_printf("Empty deque.\n");
+	if (!head && ft_printf("Empty deque.\n"))
 		return ;
-	}
+	ft_printf("%d", head->data);
 	while (head->next != orig_head)
 	{
-		ft_printf(" -> %d", head->next->data);
 		head = head->next;
+		ft_printf(" -> %d", head->data);
 	}
 	ft_printf("\n");
 }

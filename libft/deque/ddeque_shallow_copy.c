@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ddeque_copy.c                                      :+:      :+:    :+:   */
+/*   ddeque_shallow_copy.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 14:39:52 by tischmid          #+#    #+#             */
-/*   Updated: 2024/01/15 15:32:46 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/07 06:31:43 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,11 +25,10 @@ t_ddeque	*ddeque_shallow_copy(t_ddeque *ddeque)
 	orig_head = ddeque->head;
 	head = orig_head;
 	ddeque_push_value_bottom(new_ddeque, head->data);
-	head = head->next;
-	while (head != orig_head)
+	while (head->next != orig_head)
 	{
-		ddeque_push_value_bottom(new_ddeque, head->data);
 		head = head->next;
+		ddeque_push_value_bottom(new_ddeque, head->data);
 	}
 	return (new_ddeque);
 }

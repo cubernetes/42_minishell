@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/19 14:25:38 by tischmid          #+#    #+#             */
-/*   Updated: 2024/01/15 15:41:44 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/07 06:30:22 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,8 @@ size_t	ddeque_size(t_ddeque *ddeque)
 	head = orig_head;
 	if (!head)
 		return (0);
-	head = head->next;
 	size = 1;
-	while (head != orig_head)
+	while (head->next != orig_head)
 	{
 		head = head->next;
 		++size;
