@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 07:51:00 by tosuman           #+#    #+#             */
-/*   Updated: 2024/02/02 05:01:12 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/03 17:48:34 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ t_ddeque	*manage_ptrs(void *ptr)
 	return (ptrs);
 }
 
+/* TODO: fix this: calling free_all_ptrs more than once causes SIGSEGV */
 /* malloc wrapper that fails gracefully and frees memory when it can */
 void	*ft_malloc(size_t size)
 {

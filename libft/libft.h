@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 15:09:08 by tischmid          #+#    #+#             */
-/*   Updated: 2024/02/02 05:01:23 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/03 17:52:32 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -250,6 +250,7 @@ void							ddeque_sort(t_ddeque *ddeque, int (cmp)(void *,
 										void *));
 void							ddeque_print(t_ddeque *ddeque,
 									void (print)(void *data, t_bool first));
+void							ddeque_print_debug(t_ddeque *ddeque);
 t_ddeque						*ddeque_init(void);
 t_ddeque						*ddeque_shallow_slice(t_ddeque *ddeque,
 									int start, int end, int step);

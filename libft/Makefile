@@ -6,16 +6,16 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:09:11 by tischmid          #+#    #+#              #
-#    Updated: 2024/02/02 04:34:02 by tosuman          ###   ########.fr        #
+#    Updated: 2024/02/07 05:41:23 by tosuman          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-# CC = cc
+CC = gcc
 unexport CFLAGS
 # TODO: change -O0 to -03 and remove -g3
 # TODO: change -std=c99 to -std=c89 (used for variadic macro)
 # TODO: add back -pedantic flag
-CFLAGS += -O0 -g3 -Wall -Wextra -Werror \
+CFLAGS += -O0 -g3 -fPIE -Wall -Wextra -Werror \
           -std=c99 -Wconversion \
           -Wunused -Wunreachable-code -Wshadow
 unexport LDFLAGS
@@ -150,6 +150,7 @@ SRC += deque_argmax.c
 
 SRC += ddeque_init.c
 SRC += ddeque_print.c
+SRC += ddeque_print_debug.c
 SRC += ddeque_index.c
 SRC += ddeque_slice.c
 SRC += ddeque_sort.c

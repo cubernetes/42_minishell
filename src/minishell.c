@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 17:34:44 by tosuman           #+#    #+#             */
-/*   Updated: 2024/02/02 06:20:30 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/02 18:06:38 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,11 +62,11 @@ void	execute(t_ast_node *ast_node)
 /* TODO: make functions static where needed */
 int	main(void)
 {
-	static t_state	state;
-	static int		i = 3;
-	char			*line;
-	t_ddeque		*tokens;
-	t_ast_node		*ast_root_node;
+	static t_state		state;
+	static int			i = 3;
+	char				*line;
+	t_ddeque			*tokens;
+	t_ast_node			*ast_root_node;
 
 	tokens = NULL;
 	ast_root_node = NULL;

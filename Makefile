@@ -6,7 +6,7 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:02:16 by tischmid          #+#    #+#              #
-#    Updated: 2024/02/01 12:13:34 by tosuman          ###   ########.fr        #
+#    Updated: 2024/02/07 05:40:51 by tosuman          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,17 +35,17 @@ SRC            := $(addprefix $(SRCDIR)/,$(_SRC))
 OBJ            := $(addprefix $(OBJDIR)/,$(_OBJ))
 INCLUDE        := $(addprefix $(INCLUDEDIR)/,$(_HEADERS))
 
-CC             := cc
+CC             := gcc
 RM             := /bin/rm -f
 MKDIR          := /bin/mkdir -p
 # TODO: change -O0 to -O3 and remove -g3
 # TODO: change -std=c99 to -std=c89 (used for variadic macro)
 # TOOD: add back -Werror
 # TODO: add back -pedantic flag
-CFLAGS         := -O0 -g3 -Wall -Wextra \
-                  -std=c99 -Wconversion \
+CFLAGS         := -O0 -g3 -fPIE -Wall -Wextra \
+                  -std=c17 -Wconversion \
                   -Wunused -Wunreachable-code -Wshadow \
-                 -fdiagnostics-color=always
+                  -fdiagnostics-color=always
 CPPFLAGS       := -I$(LIBFT_DIR) -I$(INCLUDEDIR)
 LDFLAGS        := -L$(LIBFT_DIR) -rdynamic
 LDLIBS         := -l$(LIBFT_) -lreadline
@@ -60,7 +60,7 @@ $(LIBFT_DIR)/$(LIBFT):
 	$(MAKE) -C $(LIBFT_DIR)
 
 $(OBJDIR)/%.o: %.c $(INCLUDE) | $(OBJDIR)
-	$(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@ -I$(INCLUDEDIR) $< 
+	$(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@ -I$(INCLUDEDIR) $<
 
 $(OBJDIR):
 	$(MKDIR) $@
