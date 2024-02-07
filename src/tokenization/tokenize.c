@@ -6,12 +6,12 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 07:38:36 by tosuman           #+#    #+#             */
-/*   Updated: 2024/02/07 05:44:58 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/07 06:17:53 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
-#include "../../include/memory.h"
+#include "../../libft/libft.h"
 #include <stdarg.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -251,6 +251,7 @@ void	tokenize_variable_len_tokens(const char **line, t_ddeque *tokens)
 /* wildcard expansion (globbing) is also not happening here*/
 /* those are responsibilities while or after building the AST */
 /* TODO: well, I think you kinda have to do env expansion and globbing here.. */
+/* TODO: set is_last_subtoken member for each token */
 t_ddeque	*tokenize(const char *line)
 {
 	t_ddeque		*tokens;
@@ -264,5 +265,8 @@ t_ddeque	*tokenize(const char *line)
 		if (((t_token *)tokens->head->prev->data)->type == TOK_EOL)
 			break ;
 	}
+	expand_env_vars(tokens);
+	/* glob_tokens(tokens); */
+	/* join_tokens(tokens); */
 	return (tokens);
 }

@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 17:35:26 by tosuman           #+#    #+#             */
-/*   Updated: 2024/02/02 05:31:41 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/07 08:31:54 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 /* TODO: use advanced prompt */
 /* # define PS1 "\\u@\\h:\\w\\$ " */
 # define PS1 "$ "
+# define IFS ' '
 
 # define STR_TOK_OVERRIDE   "TOK_OVERRIDE"
 # define STR_TOK_INPUT      "TOK_INPUT"
@@ -83,6 +84,7 @@ typedef struct s_token
 {
 	t_token_type	type;
 	char			*str;
+	t_bool			is_last_subtoken;
 }	t_token;
 
 typedef struct s_tokens
@@ -140,5 +142,9 @@ char			*get_token_str(t_ddeque *tokens);
 char			*get_token_str_nl(t_ddeque *tokens);
 t_token_type	get_token_type(t_ddeque *tokens);
 void			minishell_error(int exit_code, const char *fmt, ...);
+void			expand_env_vars(t_ddeque *tokens);
+char			**set_environ(char **envp);
+char			**get_environ(void);
+char			*env_lookup(char *var);
 
 #endif /* minishell.h. */

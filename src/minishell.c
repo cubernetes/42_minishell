@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 17:34:44 by tosuman           #+#    #+#             */
-/*   Updated: 2024/02/02 18:06:38 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/07 08:32:21 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ void	execute(t_ast_node *ast_node)
 /* TODO: protect all mallocs (e.g. xmalloc(size_t n, int lineno), etc.) */
 /* TODO: check for NULL when using any function that returns a malloced ptr */
 /* TODO: make functions static where needed */
-int	main(void)
+int	main(int argc, char **argv, char **envp)
 {
 	static t_state		state;
 	static int			i = 3;
@@ -68,6 +68,9 @@ int	main(void)
 	t_ddeque			*tokens;
 	t_ast_node			*ast_root_node;
 
+	(void)argc;
+	(void)argv;
+	set_environ(envp);
 	tokens = NULL;
 	ast_root_node = NULL;
 	setup_signals();

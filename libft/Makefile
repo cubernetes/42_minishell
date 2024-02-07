@@ -6,7 +6,7 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:09:11 by tischmid          #+#    #+#              #
-#    Updated: 2024/02/07 05:41:23 by tosuman          ###   ########.fr        #
+#    Updated: 2024/02/07 08:24:19 by tosuman          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -136,7 +136,7 @@ SRC += deque_slice.c
 SRC += deque_sort.c
 SRC += deque_copy.c
 SRC += deque_size.c
-SRC += deque_extend_free.c
+SRC += deque_extend.c
 SRC += deque_swap.c
 SRC += deque_rotate.c
 SRC += deque_pop_top.c
@@ -151,12 +151,13 @@ SRC += deque_argmax.c
 SRC += ddeque_init.c
 SRC += ddeque_print.c
 SRC += ddeque_print_debug.c
+SRC += array_list_to_ddeque.c
 SRC += ddeque_index.c
 SRC += ddeque_slice.c
 SRC += ddeque_sort.c
 SRC += ddeque_shallow_copy.c
 SRC += ddeque_size.c
-SRC += ddeque_extend_free.c
+SRC += ddeque_extend.c
 SRC += ddeque_swap.c
 SRC += ddeque_rotate.c
 SRC += ddeque_pop_top.c
@@ -166,6 +167,8 @@ SRC += ddeque_push_value_bottom.c
 SRC += ddeque_push_node_top.c
 SRC += ddeque_push_value_top.c
 SRC += ddeque_equal.c
+SRC += ddeque_iter.c
+SRC += ddeque_sum.c
 
 _OBJ = $(SRC:.c=.o)
 OBJ = $(addprefix $(OBJDIR)/,$(_OBJ))

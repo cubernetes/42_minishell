@@ -6,11 +6,12 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 07:40:13 by tosuman           #+#    #+#             */
-/*   Updated: 2024/02/02 06:12:11 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/07 07:10:49 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
+#include "../../libft/libft.h"
 #include <stdlib.h>
 
 const char	*ast_node_type_to_string(t_ast_node_type type)
@@ -263,11 +264,11 @@ int	get_production_idx(t_ast_node_type nonterm, t_token *token)
 /* TODO: Don't use 0 as NULL */
 t_production	*get_production(t_ast_node_type nonterm, t_token *token)
 {
-	static t_token		tks[] = {{0}, {TOK_EOL, ""}, {TOK_AND, ""}, \
-		{TOK_OR, ""}, {TOK_PIPE, ""}, {TOK_L_PAREN, ""}, {TOK_R_PAREN, ""}, \
-		{TOK_WORD, ""}, {TOK_OVERRIDE, ""}, {TOK_APPEND, ""}, {TOK_INPUT, ""}, \
-		{TOK_HEREDOC, ""}, {TOK_EPSILON, ""}, {TOK_SQUOTE_STR, ""}, \
-		{TOK_DQUOTE_STR, ""}, {TOK_ERROR, ""}};
+	static t_token		tks[] = {{0}, {TOK_EOL, "", TRUE}, {TOK_AND, "", TRUE}, \
+		{TOK_OR, "", TRUE}, {TOK_PIPE, "", TRUE}, {TOK_L_PAREN, "", TRUE}, {TOK_R_PAREN, "", TRUE}, \
+		{TOK_WORD, "", TRUE}, {TOK_OVERRIDE, "", TRUE}, {TOK_APPEND, "", TRUE}, {TOK_INPUT, "", TRUE}, \
+		{TOK_HEREDOC, "", TRUE}, {TOK_EPSILON, "", TRUE}, {TOK_SQUOTE_STR, "", TRUE}, \
+		{TOK_DQUOTE_STR, "", TRUE}, {TOK_ERROR, "", TRUE}};
 	static t_production	productions[][4] = {\
 		{{PIPE_SEQUENCE, {0}}, {COMPLETE_COMMAND_TAIL, {0}}, {0}}, \
 		{{TOKEN, {&tks[TOK_EPSILON]}}, {0}}, \
@@ -330,7 +331,7 @@ t_ast_node	*build_ast(t_ddeque *tokens)
 	t_ast_node		**children;
 
 	stack = ddeque_init();
-	ddeque_push_value_top(stack, production_to_child((t_production){TOKEN, {&(t_token){TOK_EOL, NULL}}}));
+	ddeque_push_value_top(stack, production_to_child((t_production){TOKEN, {&(t_token){TOK_EOL, "", TRUE}}}));
 	ddeque_push_value_top(stack, production_to_child((t_production){COMPLETE_COMMAND, {0}}));
 	ast_node = new_ast_nonterm(COMPLETE_COMMAND, NULL);
 	ast_root_node = ast_node;

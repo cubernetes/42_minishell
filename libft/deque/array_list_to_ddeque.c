@@ -1,22 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   deque_extend_free.c                                :+:      :+:    :+:   */
+/*   array_list_to_ddeque.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/22 14:40:27 by tischmid          #+#    #+#             */
-/*   Updated: 2024/02/01 11:34:13 by tosuman          ###   ########.fr       */
+/*   Created: 2023/10/19 14:25:38 by tischmid          #+#    #+#             */
+/*   Updated: 2024/02/07 07:53:36 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../libft.h"
 
-void	deque_extend_free(t_deque *deque_a, t_deque *deque_b)
+t_ddeque	*array_list_to_ddeque(char **array_list, void *(*new_node)(void *))
 {
-	while (deque_b->head)
+	t_ddeque	*ddeque;
+
+	ddeque = ddeque_init();
+	while (*array_list)
 	{
-		deque_push_node_bottom(deque_a, deque_pop_top(deque_b));
-		deque_a->size += 1;
+		ddeque_push_value_bottom(ddeque, new_node(*array_list));
+		++array_list;
 	}
+	return (ddeque);
 }

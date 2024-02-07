@@ -6,7 +6,7 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:02:16 by tischmid          #+#    #+#              #
-#    Updated: 2024/02/07 05:40:51 by tosuman          ###   ########.fr        #
+#    Updated: 2024/02/07 08:26:50 by tosuman          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,8 +22,10 @@ _SRC           += minishell.c
 _SRC           += signal_handling.c
 _SRC           += parsing.c
 _SRC           += tokenize.c
+_SRC           += expansion.c
 
-vpath %.c src/ src/parsing/ src/signal_handling/ src/tokenization/
+vpath %.c src src/parsing src/signal_handling src/tokenization \
+          src/expansion
 
 _OBJ           := $(_SRC:.c=.o)
 _HEADERS       := minishell.h
@@ -50,13 +52,13 @@ CPPFLAGS       := -I$(LIBFT_DIR) -I$(INCLUDEDIR)
 LDFLAGS        := -L$(LIBFT_DIR) -rdynamic
 LDLIBS         := -l$(LIBFT_) -lreadline
 
-all: $(NAME)
+all: libft $(NAME)
 
 $(NAME): $(LIBFT_DIR)/$(LIBFT) $(OBJ)
 	$(CC) -o $@ $(LDFLAGS) $(OBJ) $(LDLIBS)
 	$(MAKE)
 
-$(LIBFT_DIR)/$(LIBFT):
+libft:
 	$(MAKE) -C $(LIBFT_DIR)
 
 $(OBJDIR)/%.o: %.c $(INCLUDE) | $(OBJDIR)
@@ -79,4 +81,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: re fclean clean all bonus
+.PHONY: re fclean clean all bonus libft
