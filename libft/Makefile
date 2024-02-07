@@ -6,18 +6,18 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:09:11 by tischmid          #+#    #+#              #
-#    Updated: 2024/02/07 08:24:19 by tosuman          ###   ########.fr        #
+#    Updated: 2024/02/07 16:11:25 by tosuman          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 CC = gcc
 unexport CFLAGS
 # TODO: change -O0 to -03 and remove -g3
-# TODO: change -std=c99 to -std=c89 (used for variadic macro)
-# TODO: add back -pedantic flag
-CFLAGS += -O0 -g3 -fPIE -Wall -Wextra -Werror \
-          -std=c99 -Wconversion \
-          -Wunused -Wunreachable-code -Wshadow
+# TODO: add back -Werror
+CFLAGS += -O0 -g3 -fPIE -Wall -Wextra \
+          -std=c99 -pedantic -Wconversion \
+          -Wunused -Wunreachable-code -Wshadow \
+          -fdiagnostics-color=always
 unexport LDFLAGS
 LDFLAGS = -rdynamic
 AR = ar rcs

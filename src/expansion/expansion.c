@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/07 06:13:50 by tosuman           #+#    #+#             */
-/*   Updated: 2024/02/07 08:32:48 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/07 13:34:36 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,6 +110,8 @@ static void	expand(t_ddeque *new_tokens, t_ddeque_node *head)
 		expand_word(new_tokens, head);
 	else if (((t_token *)head->data)->type == TOK_DQUOTE_STR)
 		expand_dquote_str(new_tokens, head);
+	else
+		ddeque_push_value_bottom(new_tokens, head->data);
 }
 
 void	expand_env_vars(t_ddeque *tokens)
@@ -129,6 +131,5 @@ void	expand_env_vars(t_ddeque *tokens)
 		head = head->next;
 		expand(new_tokens, head);
 	}
-	ddeque_push_value_bottom(new_tokens, tokens->head->prev->data);
 	tokens->head = new_tokens->head;
 }
