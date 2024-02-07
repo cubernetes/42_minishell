@@ -42,8 +42,9 @@ RM             := /bin/rm -f
 MKDIR          := /bin/mkdir -p
 # TODO: change -O0 to -O3 and remove -g3
 # TOOD: add back -Werror
+# TODO: add back std=c99 if possible
 CFLAGS         := -O0 -g3 -fPIE -Wall -Wextra \
-                  -std=c99 -pedantic -Wconversion \
+                  -pedantic -Wconversion \
                   -Wunused -Wunreachable-code -Wshadow \
                   -fdiagnostics-color=always
 CPPFLAGS       := -I$(LIBFT_DIR) -I$(INCLUDEDIR)
