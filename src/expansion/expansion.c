@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/07 06:13:50 by tosuman           #+#    #+#             */
-/*   Updated: 2024/02/07 13:34:36 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/11 10:45:40 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ static size_t	expand_vars(t_token *token, char *var)
 
 static void	*new_word_token(void *data)
 {
-	return (new_token((char *)data, TOK_WORD));
+	return (new_token((char *)data, TOK_WORD, TRUE));
 }
 
 static void	expand_word(t_ddeque *new_tokens, t_ddeque_node *head)
@@ -56,6 +56,8 @@ static void	expand_word(t_ddeque *new_tokens, t_ddeque_node *head)
 		token_str += expand_vars(token, token_str);
 	new_toks = array_list_to_ddeque(ft_split(token->str, IFS), new_word_token);
 	ddeque_extend(new_tokens, new_toks);
+	if (!token->is_last_subtoken)
+		((t_token *)new_tokens->head->prev->data)->is_last_subtoken = FALSE;
 }
 
 char	**set_environ(char **envp)

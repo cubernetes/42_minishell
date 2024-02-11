@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 07:40:13 by tosuman           #+#    #+#             */
-/*   Updated: 2024/02/07 07:10:49 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/11 10:46:55 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,7 +127,7 @@ t_ast_node	*new_ast_token(t_token_type type, char *str)
 
 	ast_node = ft_malloc(sizeof(*ast_node));
 	ast_node->type = TOKEN;
-	ast_node->data.token = new_token(str, type);
+	ast_node->data.token = new_token(str, type, TRUE);
 	return (ast_node);
 }
 
@@ -298,7 +298,8 @@ t_ast_node	*production_to_child(t_production prodcution)
 	child = ft_malloc(sizeof(*child));
 	ft_memcpy(child, &prodcution, sizeof(prodcution));
 	if (prodcution.type == TOKEN)
-		child->data.token = new_token(child->data.token->str, child->data.token->type);
+		child->data.token = new_token(child->data.token->str,
+			child->data.token->type, TRUE);
 	return (child);
 }
 

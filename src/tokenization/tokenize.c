@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 07:38:36 by tosuman           #+#    #+#             */
-/*   Updated: 2024/02/07 16:25:09 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/11 10:42:56 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,24 +82,30 @@ void	skip_whitespace(const char **line)
 void	print_token(void *data, t_bool first)
 {
 	t_token	*token;
+	char	*clr;
 
 	token = (t_token *)data;
+	if (token->is_last_subtoken)
+		clr = "";
+	else
+		clr = "\033[33m";
 	if (first)
-		ft_printf("<\033[31m%s\033[m> (%s)", token->str,
+		ft_printf("<\033[31m%s\033[m> (%s%s\033[m)", token->str, clr,
 			token_type_to_string(token->type));
 	else
-		ft_printf(" -> <\033[31m%s\033[m> (%s)", token->str,
+		ft_printf(" -> <\033[31m%s\033[m> (%s%s\033[m)", token->str, clr,
 			token_type_to_string(token->type));
 }
 
 /* TODO: change return type to t_token later */
-void	*new_token(char *str, t_token_type type)
+void	*new_token(char *str, t_token_type type, t_bool is_last_subtoken)
 {
 	t_token	*token;
 
 	token = ft_malloc(sizeof(*token));
 	token->str = str;
 	token->type = type;
+	token->is_last_subtoken = is_last_subtoken;
 	return (token);
 }
 
@@ -107,9 +113,14 @@ t_bool	push_token(const char **line, t_ddeque *tokens, size_t token_len,
 	t_token_type type)
 {
 	char	*str;
+	t_bool	is_last_subtoken;
 
 	str = ft_strndup(*line, token_len);
-	ddeque_push_value_bottom(tokens, new_token(str, type));
+	if (ft_isspace((*line)[token_len]))
+		is_last_subtoken = TRUE;
+	else
+		is_last_subtoken = FALSE;
+	ddeque_push_value_bottom(tokens, new_token(str, type, is_last_subtoken));
 	*line += token_len;
 	return (TRUE);
 }
@@ -254,12 +265,12 @@ void	tokenize_variable_len_tokens(const char **line, t_ddeque *tokens)
 /* TODO: set is_last_subtoken member for each token */
 t_ddeque	*tokenize(const char *line)
 {
-	t_ddeque		*tokens;
+	t_ddeque	*tokens;
 
 	tokens = ddeque_init();
+	skip_whitespace(&line);
 	while (TRUE)
 	{
-		skip_whitespace(&line);
 		if (!tokenize_fixed_len_tokens(&line, tokens))
 			tokenize_variable_len_tokens(&line, tokens);
 		if (((t_token *)tokens->head->prev->data)->type == TOK_EOL)

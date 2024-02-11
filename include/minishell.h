@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 17:35:26 by tosuman           #+#    #+#             */
-/*   Updated: 2024/02/07 12:59:53 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/11 10:43:21 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,7 +137,8 @@ t_ast_node		*build_ast(t_ddeque *tokens);
 void			ast_print(t_ast_node *ast_node);
 void			print_token(void *data, t_bool first);
 const char		*token_type_to_string(t_token_type type);
-void			*new_token(char *str, t_token_type type);
+void			*new_token(char *str, t_token_type type,
+					t_bool is_last_subtoken);
 char			*get_token_str(t_ddeque *tokens);
 char			*get_token_str_nl(t_ddeque *tokens);
 t_token_type	get_token_type(t_ddeque *tokens);
