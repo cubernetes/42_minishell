@@ -6,20 +6,11 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:09:11 by tischmid          #+#    #+#              #
-#    Updated: 2024/02/07 16:11:25 by tosuman          ###   ########.fr        #
+#    Updated: 2024/02/11 11:02:53 by tosuman          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-CC = gcc
-unexport CFLAGS
-# TODO: change -O0 to -03 and remove -g3
-# TODO: add back -Werror
-CFLAGS += -O0 -g3 -fPIE -Wall -Wextra \
-          -std=c99 -pedantic -Wconversion \
-          -Wunused -Wunreachable-code -Wshadow \
-          -fdiagnostics-color=always
-unexport LDFLAGS
-LDFLAGS = -rdynamic
+CC = clang
 AR = ar rcs
 RM = /bin/rm -f
 MKDIR = /bin/mkdir -p
@@ -28,6 +19,14 @@ LN = /bin/ln -f
 NAME = libft.a
 OBJDIR = ./obj
 INCDIR = .
+
+# TODO: change -O0 to -03 and remove -g3
+# TODO: add back -Werror
+CFLAGS = -O0 -g3 -fPIE -Wall -Wextra \
+          -std=c99 -pedantic -Wconversion \
+          -Wunreachable-code -Wshadow \
+          -fdiagnostics-color=always
+CPPFLAGS = -I$(INCDIR)
 
 unexport SUBDIRS
 SUBDIRS += string
@@ -183,7 +182,7 @@ $(NAME): $(OBJ)
 	$(AR) $@ $(OBJ)
 
 $(OBJDIR)/%.o: %.c $(INCLUDE) | $(OBJDIR)
-	$(CC) $(CFLAGS) -c -o $@ -I$(INCDIR) $< $(LDFLAGS)
+	$(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
 
 $(OBJDIR):
 	$(MKDIR) $@

@@ -6,11 +6,15 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:02:16 by tischmid          #+#    #+#              #
-#    Updated: 2024/02/07 16:08:58 by tosuman          ###   ########.fr        #
+#    Updated: 2024/02/11 11:03:01 by tosuman          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 # Makefile for [ "$(uname -s)" = "Linux" ]
+
+CC             := clang
+RM             := /bin/rm -f
+MKDIR          := /bin/mkdir -p
 
 NAME            := minishell
 BONUS           := $(NAME)
@@ -37,15 +41,12 @@ SRC            := $(addprefix $(SRCDIR)/,$(_SRC))
 OBJ            := $(addprefix $(OBJDIR)/,$(_OBJ))
 INCLUDE        := $(addprefix $(INCLUDEDIR)/,$(_HEADERS))
 
-CC             := gcc
-RM             := /bin/rm -f
-MKDIR          := /bin/mkdir -p
 # TODO: change -O0 to -O3 and remove -g3
 # TOOD: add back -Werror
 # TODO: add back std=c99 if possible
 CFLAGS         := -O0 -g3 -fPIE -Wall -Wextra \
                   -pedantic -Wconversion \
-                  -Wunused -Wunreachable-code -Wshadow \
+                  -Wunreachable-code -Wshadow \
                   -fdiagnostics-color=always
 CPPFLAGS       := -I$(LIBFT_DIR) -I$(INCLUDEDIR)
 LDFLAGS        := -L$(LIBFT_DIR) -rdynamic
