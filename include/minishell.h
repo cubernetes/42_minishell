@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 17:35:26 by tosuman           #+#    #+#             */
-/*   Updated: 2024/02/11 10:43:21 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/11 11:22:42 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,6 +144,7 @@ char			*get_token_str_nl(t_ddeque *tokens);
 t_token_type	get_token_type(t_ddeque *tokens);
 void			minishell_error(int exit_code, const char *fmt, ...);
 void			expand_env_vars(t_ddeque *tokens);
+void			join_tokens(t_ddeque *tokens);
 char			**set_environ(char **envp);
 char			**get_environ(void);
 char			*env_lookup(char *var);

@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/07 06:13:50 by tosuman           #+#    #+#             */
-/*   Updated: 2024/02/11 10:45:40 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/11 12:01:46 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,6 +132,57 @@ void	expand_env_vars(t_ddeque *tokens)
 	{
 		head = head->next;
 		expand(new_tokens, head);
+	}
+	tokens->head = new_tokens->head;
+}
+
+void	join_tokens(t_ddeque *tokens)
+{
+	t_ddeque_node	*orig_head;
+	t_ddeque_node	*head;
+	t_ddeque		*new_tokens;
+	t_token			*token;
+	t_token			*word_token;
+
+	new_tokens = ddeque_init();
+	head = tokens->head;
+	orig_head = head;
+	if (!head)
+		return ;
+	token = (t_token *)head->data;
+	word_token = NULL;
+	if (token->is_last_subtoken)
+		ddeque_push_value_bottom(new_tokens, token);
+	else
+		word_token = new_token(token->str, TOK_WORD, TRUE);
+	while (head->next != orig_head)
+	{
+		head = head->next;
+		token = (t_token *)head->data;
+		if (!token->is_last_subtoken)
+		{
+			if (!word_token)
+				word_token = new_token("", TOK_WORD, TRUE);
+			word_token->str = ft_strjoin(word_token->str, token->str);
+		}
+		else if (token->type == TOK_WORD || token->type == TOK_SQUOTE_STR
+			|| token->type == TOK_DQUOTE_STR)
+		{
+			if (!word_token)
+				word_token = new_token("", TOK_WORD, TRUE);
+			word_token->str = ft_strjoin(word_token->str, token->str);
+			ddeque_push_value_bottom(new_tokens, word_token);
+			word_token = NULL;
+		}
+		else
+		{
+			if (word_token)
+			{
+				ddeque_push_value_bottom(new_tokens, word_token);
+				word_token = NULL;
+			}
+			ddeque_push_value_bottom(new_tokens, token);
+		}
 	}
 	tokens->head = new_tokens->head;
 }

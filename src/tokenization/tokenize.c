@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 07:38:36 by tosuman           #+#    #+#             */
-/*   Updated: 2024/02/11 10:42:56 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/11 12:07:53 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,9 +114,18 @@ t_bool	push_token(const char **line, t_ddeque *tokens, size_t token_len,
 {
 	char	*str;
 	t_bool	is_last_subtoken;
+	t_bool	is_str_tok;
+	t_bool	is_last;
+	t_bool	is_last_quote;
 
 	str = ft_strndup(*line, token_len);
-	if (ft_isspace((*line)[token_len]))
+	is_str_tok = type == TOK_SQUOTE_STR || type == TOK_DQUOTE_STR
+		|| type == TOK_WORD;
+	is_last = ft_isspace((*line)[token_len]) || type == TOK_EOL
+		|| (*line)[token_len] == '\0';
+	is_last_quote = ((*line)[token_len] == '\'' || (*line)[token_len] == '"')
+		&& (*line)[token_len + 1] == '\0';
+	if (is_last || is_last_quote || !is_str_tok)
 		is_last_subtoken = TRUE;
 	else
 		is_last_subtoken = FALSE;
@@ -275,9 +284,10 @@ t_ddeque	*tokenize(const char *line)
 			tokenize_variable_len_tokens(&line, tokens);
 		if (((t_token *)tokens->head->prev->data)->type == TOK_EOL)
 			break ;
+		skip_whitespace(&line);
 	}
 	expand_env_vars(tokens);
 	/* glob_tokens(tokens); */
-	/* join_tokens(tokens); */
+	join_tokens(tokens);
 	return (tokens);
 }
