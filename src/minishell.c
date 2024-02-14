@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 17:34:44 by tosuman           #+#    #+#             */
-/*   Updated: 2024/02/14 18:59:32 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/14 22:16:48 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ void	update_state(t_state *state)
 /* TODO: check for NULL when using any function that returns a malloced ptr */
 /* TODO: make functions static where needed */
 /* TODO: check for forbidden functions (backtrace): nm minishell */
+/* TODO: check all free_all_ptrs() calls */
 int	main(int argc, char **argv, char **envp)
 {
 	static t_state		state;

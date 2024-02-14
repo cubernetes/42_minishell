@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 07:38:36 by tosuman           #+#    #+#             */
-/*   Updated: 2024/02/14 18:54:52 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/14 22:30:43 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,7 +140,7 @@ t_bool	tokenize_fixed_len_tokens(const char **line, t_ddeque *tokens)
 
 	pushed = FALSE;
 	if (**line == '\0')
-		pushed = push_token(line, tokens, 1, TOK_EOL);
+		pushed = push_token(line, tokens, 0, TOK_EOL);
 	else if (**line == '>' && *(*line + 1) == '>')
 		pushed = push_token(line, tokens, 2, TOK_APPEND);
 	else if (**line == '<' && *(*line + 1) == '<')
@@ -287,7 +287,7 @@ t_ddeque	*tokenize(const char *line)
 		skip_whitespace(&line);
 	}
 	expand_env_vars(tokens);
-	/* glob_tokens(tokens); */
+	glob_tokens(tokens);
 	join_tokens(tokens);
 	return (tokens);
 }
