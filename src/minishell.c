@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 17:34:44 by tosuman           #+#    #+#             */
-/*   Updated: 2024/02/11 12:13:09 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/14 18:59:32 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,12 +41,6 @@ void	update_state(t_state *state)
 {
 	state->ps0 = expand_prompt(PS0);
 	state->ps1 = expand_prompt(PS1);
-}
-
-/* ast_node should be the root of the ast */
-void	execute(t_ast_node *ast_node)
-{
-	(void)ast_node;
 }
 
 /* TODO: what if readline returns NULL? */

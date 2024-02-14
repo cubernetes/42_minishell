@@ -6,7 +6,7 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:02:16 by tischmid          #+#    #+#              #
-#    Updated: 2024/02/11 11:03:01 by tosuman          ###   ########.fr        #
+#    Updated: 2024/02/14 19:00:07 by tosuman          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,9 +27,10 @@ _SRC           += signal_handling.c
 _SRC           += parsing.c
 _SRC           += tokenize.c
 _SRC           += expansion.c
+_SRC           += executor.c
 
 vpath %.c src src/parsing src/signal_handling src/tokenization \
-          src/expansion
+          src/expansion src/execution/
 
 _OBJ           := $(_SRC:.c=.o)
 _HEADERS       := minishell.h

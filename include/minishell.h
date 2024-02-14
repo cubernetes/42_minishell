@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 17:35:26 by tosuman           #+#    #+#             */
-/*   Updated: 2024/02/11 11:22:42 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/14 18:59:16 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,5 +148,6 @@ void			join_tokens(t_ddeque *tokens);
 char			**set_environ(char **envp);
 char			**get_environ(void);
 char			*env_lookup(char *var);
+void			execute(t_ast_node *ast_node);
 
 #endif /* minishell.h. */
