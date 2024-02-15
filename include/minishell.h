@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 17:35:26 by tosuman           #+#    #+#             */
-/*   Updated: 2024/02/14 19:36:08 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/15 13:34:52 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,11 +97,24 @@ typedef struct s_tokens
 typedef struct s_ast_node	t_ast_node;
 typedef t_ast_node			*t_children[];
 
+/* TODO: NOT REQUIRED: int err; */
+typedef struct s_fds
+{
+	int	in;
+	int	out;
+}	t_fds;
+
+typedef union u_ast_meta_data
+{
+	t_fds	fds;
+}	t_ast_meta_data;
+
 /* children is a NULL terminated array of t_ast_node ptrs */
 typedef union u_ast_node_data
 {
-	t_token		*token;
-	t_ast_node	**children;
+	t_token			*token;
+	t_ast_meta_data	meta_data;
+	t_ast_node		**children;
 }	t_ast_node_data;
 
 /* TOKEN is a TERMINAL, every other member is a NONTERMINAL */
