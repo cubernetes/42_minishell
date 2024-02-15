@@ -101,7 +101,6 @@ typedef union u_ast_meta_data
 typedef union u_ast_node_data
 {
 	t_token			*token;
-	t_ast_meta_data	meta_data;
 	t_ast_node		**children;
 }	t_ast_node_data;
 
@@ -128,6 +127,7 @@ struct s_ast_node
 {
 	t_ast_node_type	type;
 	t_ast_node_data	data;
+	t_ast_meta_data	meta_data;
 };
 
 typedef t_ast_node			t_production;
