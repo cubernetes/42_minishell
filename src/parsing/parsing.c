@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 07:40:13 by tosuman           #+#    #+#             */
-/*   Updated: 2024/02/11 10:46:55 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/15 13:22:34 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -192,7 +192,7 @@ t_ast_node	**new_children(t_ast_node **children)
 	return (new_children);
 }
 
-t_ast_node	*return_example_ast(void)
+t_ast_node	*return_example_parse_tree(void)
 {
 	return (\
 	new_ast_nonterm(COMPLETE_COMMAND, new_children((t_children){\
@@ -227,6 +227,89 @@ t_ast_node	*return_example_ast(void)
 				NULL})),
 			NULL})),
 		NULL})),
+	NULL}))
+	);
+}
+
+t_ast_node	*return_example_ast(void)
+{
+	return (\
+	new_ast_nonterm(COMPLETE_COMMAND, new_children((t_children){\
+		new_ast_nonterm(PIPE_SEQUENCE, new_children((t_children){\
+			new_ast_nonterm(COMMAND, new_children((t_children){\
+				new_ast_nonterm(SIMPLE_COMMAND, new_children((t_children){\
+					new_ast_nonterm(IO_REDIRECT, new_children((t_children){\
+						new_ast_m_token(TOK_HEREDOC, "<<"), \
+						new_ast_m_token(TOK_WORD, "heredoc"), \
+					NULL})), \
+					new_ast_m_token(TOK_WORD, "echo"), \
+					new_ast_m_token(TOK_WORD, "hi"), \
+				NULL})), \
+			NULL})), \
+			new_ast_nonterm(COMMAND, new_children((t_children){\
+				new_ast_nonterm(SIMPLE_COMMAND, new_children((t_children){\
+					new_ast_nonterm(IO_REDIRECT, new_children((t_children){\
+						new_ast_m_token(TOK_INPUT, "<"), \
+						new_ast_m_token(TOK_WORD, "infile"), \
+					NULL})), \
+					new_ast_m_token(TOK_WORD, "grep"), \
+					new_ast_m_token(TOK_WORD, "^h"), \
+					new_ast_nonterm(IO_REDIRECT, new_children((t_children){\
+						new_ast_m_token(TOK_OVERRIDE, ">"), \
+						new_ast_m_token(TOK_WORD, "somefile"), \
+					NULL})), \
+					new_ast_nonterm(IO_REDIRECT, new_children((t_children){\
+						new_ast_m_token(TOK_OVERRIDE, ">"), \
+						new_ast_m_token(TOK_WORD, "anotherfile"), \
+					NULL})), \
+				NULL})), \
+			NULL})), \
+			new_ast_nonterm(COMMAND, new_children((t_children){\
+				new_ast_nonterm(SIMPLE_COMMAND, new_children((t_children){\
+					new_ast_m_token(TOK_WORD, "nl"), \
+				NULL})), \
+			NULL})), \
+		NULL})), \
+		new_ast_m_token(TOK_AND, "&&"), \
+		new_ast_nonterm(PIPE_SEQUENCE, new_children((t_children){\
+			new_ast_nonterm(COMMAND, new_children((t_children){\
+				new_ast_nonterm(SIMPLE_COMMAND, new_children((t_children){\
+					new_ast_m_token(TOK_WORD, "hostname"), \
+				NULL})), \
+			NULL})), \
+			new_ast_nonterm(COMMAND, new_children((t_children){\
+				new_ast_nonterm(SIMPLE_COMMAND, new_children((t_children){\
+					new_ast_m_token(TOK_WORD, "grep"), \
+					new_ast_m_token(TOK_WORD, "h"), \
+					new_ast_nonterm(IO_REDIRECT, new_children((t_children){\
+						new_ast_m_token(TOK_APPEND, ">>"), \
+						new_ast_m_token(TOK_WORD, "appendfile.txt"), \
+					NULL})), \
+				NULL})), \
+			NULL})), \
+		NULL})), \
+		new_ast_m_token(TOK_AND, "||"), \
+		new_ast_nonterm(PIPE_SEQUENCE, new_children((t_children){\
+			new_ast_nonterm(COMMAND, new_children((t_children){\
+				new_ast_nonterm(SIMPLE_COMMAND, new_children((t_children){\
+					new_ast_nonterm(IO_REDIRECT, new_children((t_children){\
+						new_ast_m_token(TOK_INPUT, "<"), \
+						new_ast_m_token(TOK_WORD, "infile"), \
+					NULL})), \
+					new_ast_m_token(TOK_WORD, "hello world"), \
+					new_ast_nonterm(IO_REDIRECT, new_children((t_children){\
+						new_ast_m_token(TOK_OVERRIDE, ">"), \
+						new_ast_m_token(TOK_WORD, "/dev/null"), \
+					NULL})), \
+				NULL})), \
+			NULL})), \
+			new_ast_nonterm(COMMAND, new_children((t_children){\
+				new_ast_nonterm(SIMPLE_COMMAND, new_children((t_children){\
+					new_ast_m_token(TOK_WORD, "grep"), \
+					new_ast_m_token(TOK_DQUOTE_STR, "^hello world"), \
+				NULL})), \
+			NULL})), \
+		NULL})), \
 	NULL}))
 	);
 }
@@ -323,7 +406,7 @@ t_ast_node	**productions_to_children(t_production *productions)
 }
 
 /* LL(1) parser */
-t_ast_node	*build_ast(t_ddeque *tokens)
+t_ast_node	*build_parse_tree(t_ddeque *tokens)
 {
 	t_ast_node		*ast_node;
 	t_ast_node		*ast_root_node;
@@ -371,4 +454,14 @@ t_ast_node	*build_ast(t_ddeque *tokens)
 		}
 	}
 	return (ast_root_node);
+}
+
+t_ast_node	*build_ast(t_ddeque *tokens)
+{
+	t_ast_node	*parse_tree;
+	t_ast_node	*ast;
+
+	parse_tree = build_parse_tree(tokens);
+	ast = return_example_ast();
+	return (ast);
 }
