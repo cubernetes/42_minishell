@@ -355,23 +355,23 @@ t_production	*get_production(t_ast_node_type nonterm, t_token *token)
 		{TOK_HEREDOC, "", TRUE}, {TOK_EPSILON, "", TRUE}, {TOK_SQUOTE_STR, "", TRUE}, \
 		{TOK_DQUOTE_STR, "", TRUE}, {TOK_ERROR, "", TRUE}};
 	static t_production	productions[][4] = {\
-		{{PIPE_SEQUENCE, {0}}, {COMPLETE_COMMAND_TAIL, {0}}, {0}}, \
-		{{TOKEN, {&tks[TOK_EPSILON]}}, {0}}, \
-		{{AND_OR, {0}}, {PIPE_SEQUENCE, {0}}, {COMPLETE_COMMAND_TAIL, {0}}, {0}}, \
-		{{TOKEN, {&tks[TOK_AND]}}, {0}}, {{TOKEN, {&tks[TOK_OR]}}, {0}}, \
-		{{COMMAND, {0}}, {PIPE_SEQUENCE_TAIL, {0}}, {0}}, \
-		{{TOKEN, {&tks[TOK_EPSILON]}}, {0}}, \
-		{{TOKEN, {&tks[TOK_PIPE]}}, {COMMAND, {0}}, {PIPE_SEQUENCE_TAIL, {0}}, {0}}, \
-		{{SIMPLE_COMMAND, {0}}, {0}}, {{COMPOUND_COMMAND, {0}}, {0}}, \
-		{{TOKEN, {&tks[TOK_L_PAREN]}}, {COMPLETE_COMMAND, {0}}, {TOKEN, {&tks[TOK_R_PAREN]}}, {0}}, \
-		{{IO_REDIRECT, {0}}, {TOKEN, {&tks[TOK_WORD]}}, {SIMPLE_COMMAND_TAIL, {0}}, {0}}, \
-		{{TOKEN, {&tks[TOK_EPSILON]}}, {0}}, \
-		{{IO_REDIRECT, {0}}, {TOKEN, {&tks[TOK_WORD]}}, {SIMPLE_COMMAND_TAIL, {0}}, {0}}, \
-		{{TOKEN, {&tks[TOK_EPSILON]}}, {0}}, \
-		{{TOKEN, {&tks[TOK_APPEND]}}, {0}}, \
-		{{TOKEN, {&tks[TOK_HEREDOC]}}, {0}}, \
-		{{TOKEN, {&tks[TOK_OVERRIDE]}}, {0}}, \
-		{{TOKEN, {&tks[TOK_INPUT]}}, {0}}, {{TOKEN, {&tks[TOK_EPSILON]}}, {0}}};
+		{{PIPE_SEQUENCE, {0}, {0}}, {COMPLETE_COMMAND_TAIL, {0}, {0}}, {0}}, \
+		{{TOKEN, {&tks[TOK_EPSILON]}, {0}}, {0}}, \
+		{{AND_OR, {0}, {0}}, {PIPE_SEQUENCE, {0}, {0}}, {COMPLETE_COMMAND_TAIL, {0}, {0}}, {0}}, \
+		{{TOKEN, {&tks[TOK_AND]}, {0}}, {0}}, {{TOKEN, {&tks[TOK_OR]}, {0}}, {0}}, \
+		{{COMMAND, {0}, {0}}, {PIPE_SEQUENCE_TAIL, {0}, {0}}, {0}}, \
+		{{TOKEN, {&tks[TOK_EPSILON]}, {0}}, {0}}, \
+		{{TOKEN, {&tks[TOK_PIPE]}, {0}}, {COMMAND, {0}, {0}}, {PIPE_SEQUENCE_TAIL, {0}, {0}}, {0}}, \
+		{{SIMPLE_COMMAND, {0}, {0}}, {0}}, {{COMPOUND_COMMAND, {0}, {0}}, {0}}, \
+		{{TOKEN, {&tks[TOK_L_PAREN]}, {0}}, {COMPLETE_COMMAND, {0}, {0}}, {TOKEN, {&tks[TOK_R_PAREN]}, {0}}, {0}}, \
+		{{IO_REDIRECT, {0}, {0}}, {TOKEN, {&tks[TOK_WORD]}, {0}}, {SIMPLE_COMMAND_TAIL, {0}, {0}}, {0}}, \
+		{{TOKEN, {&tks[TOK_EPSILON]}, {0}}, {0}}, \
+		{{IO_REDIRECT, {0}, {0}}, {TOKEN, {&tks[TOK_WORD]}, {0}}, {SIMPLE_COMMAND_TAIL, {0}, {0}}, {0}}, \
+		{{TOKEN, {&tks[TOK_EPSILON]}, {0}}, {0}}, \
+		{{TOKEN, {&tks[TOK_APPEND]}, {0}}, {0}}, \
+		{{TOKEN, {&tks[TOK_HEREDOC]}, {0}}, {0}}, \
+		{{TOKEN, {&tks[TOK_OVERRIDE]}, {0}}, {0}}, \
+		{{TOKEN, {&tks[TOK_INPUT]}, {0}}, {0}, {0}}, {{TOKEN, {&tks[TOK_EPSILON]}, {0}}, {0}}};
 
 	return (productions[get_production_idx(nonterm, token)]);
 }
@@ -417,8 +417,8 @@ t_ast_node	*build_parse_tree(t_ddeque *tokens)
 	t_ast_node		**children;
 
 	stack = ddeque_init();
-	ddeque_push_value_top(stack, production_to_child((t_production){TOKEN, {&(t_token){TOK_EOL, "", TRUE}}}));
-	ddeque_push_value_top(stack, production_to_child((t_production){COMPLETE_COMMAND, {0}}));
+	ddeque_push_value_top(stack, production_to_child((t_production){TOKEN, {&(t_token){TOK_EOL, "", TRUE}}, {0}}));
+	ddeque_push_value_top(stack, production_to_child((t_production){COMPLETE_COMMAND, {0}, {0}}));
 	ast_node = new_ast_nonterm(COMPLETE_COMMAND, NULL);
 	ast_root_node = ast_node;
 	while (1)
