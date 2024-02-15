@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 17:35:26 by tosuman           #+#    #+#             */
-/*   Updated: 2024/02/15 13:34:52 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/02/15 13:40:07 by pgrussin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 /* TODO: use advanced prompt */
 /* # define PS1 "\\u@\\h:\\w\\$ " */
 # define PS1 "$ "
-# define IFS ' '
+# define IFS 32
 
 # define STR_TOK_OVERRIDE   "TOK_OVERRIDE"
 # define STR_TOK_INPUT      "TOK_INPUT"
