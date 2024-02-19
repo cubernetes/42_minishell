@@ -120,6 +120,18 @@ typedef enum e_ast_node_type
 	TOKEN
 }	t_ast_node_type;
 
+
+typedef	struct s_fdrd
+{
+	int	tmp_fdin;
+	int	tmp_fdout;
+	int	fd_stdin;
+	int	fd_stdout;
+	int	fdin;
+	int	fdout;
+}	t_fdrd;
+
+
 /* if t_ast_node.type == TOKEN, then t_ast_node.data.token shall be used */
 /* if t_ast_node.type != TOKEN, then t_ast_node.data.children
  * shall be used */
