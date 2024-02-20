@@ -61,9 +61,7 @@ int	main(int argc, char **argv, char **envp)
 	while (i--)
 	{
 		update_state(&state);
-		/* TODO: uncomment line and delete line below*/
-		/*line = manage_ptrs(readline(state.ps1))->head->prev->data;*/
-		line = ft_strdup("echo hi");
+		line = manage_ptrs(readline(state.ps1))->head->prev->data;
 		if (!line)
 			break ;
 		tokens = tokenize(line);

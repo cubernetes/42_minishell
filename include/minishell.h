@@ -123,12 +123,13 @@ typedef enum e_ast_node_type
 
 typedef	struct s_fdrd
 {
-	int	tmp_fdin;
-	int	tmp_fdout;
 	int	fd_stdin;
 	int	fd_stdout;
 	int	fdin;
 	int	fdout;
+	char	*infile;
+	char	*outfile;
+	char	*herdoc_delimiter;
 }	t_fdrd;
 
 
