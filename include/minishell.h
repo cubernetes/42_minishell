@@ -94,7 +94,8 @@ typedef struct s_fds
 
 typedef union u_ast_meta_data
 {
-	t_fds	fds;
+	t_fds			fds;
+	t_token_type	conditional;
 }	t_ast_meta_data;
 
 /* children is a NULL terminated array of t_ast_node ptrs */
