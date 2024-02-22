@@ -164,5 +164,4 @@ char			**get_environ(void);
 char			*env_lookup(char *var);
 void			execute(t_ast_node *ast_node);
 void			glob_tokens(t_ddeque *tokens);
-
 #endif /* minishell.h. */
