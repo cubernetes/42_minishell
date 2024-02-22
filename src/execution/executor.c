@@ -6,7 +6,7 @@
 /*   By: pgrussin <pgrussin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/15 14:01:02 by pgrussin          #+#    #+#             */
-/*   Updated: 2024/02/22 18:24:50 by pgrussin         ###   ########.fr       */
+/*   Updated: 2024/02/22 21:28:04 by pgrussin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,10 +105,39 @@ int	execute_token(t_ast_node **token)
 	{
 		if (give_ast_node_type == TOK_AND)
 			return (1);
-		printf("TOK AND: \n");
+
 	}
 }
 
+t_bool	execute_tok_and(t_ast_node **tok_and)
+{
+	t_ast_node	**parent;
+
+	parent = *(tok_and - 1);
+	if (!parent)
+		return (FALSE);
+	if (execute_complete_command(*parent))
+	{
+		execute_complete_command((*tok_and)->data.children);
+		return (TRUE);
+	}
+	return (FALSE);
+}
+
+t_bool	execute_tok_or(t_ast_node **tok_or)
+{
+	t_ast_node	**parent;
+	/* TODO: protect the -1*/
+	parent = *(tok_or - 1);
+	if (!parent)
+		return (FALSE);
+	if (!execute_complete_command(*parent))
+	{
+		execute_complete_command((*tok_or)->data.children);
+		return (TRUE);
+	}
+	return (FALSE);
+}
 /*return value for TOK_AND & TOK_OR to see if command was succesful executet*/
 int	execute_complete_command(t_ast_node *ast_node)
 {
@@ -120,17 +149,18 @@ int	execute_complete_command(t_ast_node *ast_node)
 	children = ast_node->data.children;
 	while (*children != NULL)
 	{
-		if ((*children)->type == PIPE_SEQUENCE)
+		if (((*children)->type == PIPE_SEQUENCE) && 
+		((*(children + 1))->data.token->type != TOK_AND && 
+		(*(children + 1))->data.token->type != TOK_OR))
 			rtn = execute_pipe_sequence((*children)->data.children);
-		/*if (ast_node->data.children[i]->type == SIMPLE_COMMAND)
-			rtn = execute_simple_command(*child);*/
-		//should be TOK_AND, but somehow is only token
-		/*if ((*children)->type == TOKEN)
-		  if {
-		  }
-			rtn = execute_token(*children);
-		if (ast_node->data.children[i]->type == TOK_OR)
-			rtn = execute_tok_or(*child);*/
+		else if ((*children)->type == TOKEN)
+		{
+			if ((*children)->data.token->type == TOK_AND)
+			       execute_tok_and(*children);
+			else if ((*children)->data.token->type == TOK_OR)
+				execute_tok_or(*children);
+			children++;	
+		}
 		children++;
 	}
 	return (rtn);
