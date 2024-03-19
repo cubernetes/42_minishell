@@ -6,7 +6,7 @@
 /*   By: pgrussin <pgrussin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/15 14:01:02 by pgrussin          #+#    #+#             */
-/*   Updated: 2024/02/22 21:28:04 by pgrussin         ###   ########.fr       */
+/*   Updated: 2024/03/19 17:11:34 by pgrussin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,11 +47,16 @@ int	execute_io_redirect(t_ast_node **io_redirect)
 
 int	execute_simple_commands(t_ast_node **simple_command)
 {
-	while (*simple_command != NULL)
+	t_ast_node	**children;
+
+	children = (*simple_command)->data.children;
+	while (*children != NULL)
 	{
-		if ((*simple_command)->type == IO_REDIRECT)
+		if ((*children)->type == IO_REDIRECT)
 				execute_io_redirect((*simple_command)->data.token);
-		simple_command++;
+		else if ((*children)->type == TOKEN)
+			return (1);
+		children++;
 	}
 	return (0);
 }
@@ -59,13 +64,17 @@ int	execute_simple_commands(t_ast_node **simple_command)
 int	iterate_pipe_sequence(t_ast_node **commands)
 {
 	int	rtn;
-	while (*commands != NULL)
+	t_ast_node	**children;
+
+	children = (*commands)->data.children;
+	while (*children != NULL)
 	{
-		if ((*commands)->type == COMPLETE_COMMAND)
+		/* TODO: implement complete Command */
+		if ((*children)->type == COMPLETE_COMMAND)
 			rtn = 1;
-		else if ((*commands)->type == SIMPLE_COMMAND)
+		else if ((*children)->type == SIMPLE_COMMAND)
 			execute_simple_commands((*commands)->data.children);
-		commands++;
+		children++;
 	}
 	return (0);
 }
@@ -113,12 +122,11 @@ t_bool	execute_tok_and(t_ast_node **tok_and)
 {
 	t_ast_node	**parent;
 
-	parent = *(tok_and - 1);
-	if (!parent)
+	if (*(tok_and - 1) == NULL)
 		return (FALSE);
-	if (execute_complete_command(*parent))
+	parent = tok_and - 1;
+	if (execute_pipe_sequence(parent))
 	{
-		execute_complete_command((*tok_and)->data.children);
 		return (TRUE);
 	}
 	return (FALSE);
@@ -128,12 +136,11 @@ t_bool	execute_tok_or(t_ast_node **tok_or)
 {
 	t_ast_node	**parent;
 	/* TODO: protect the -1*/
-	parent = *(tok_or - 1);
-	if (!parent)
+	if (*(tok_or - 1) == NULL)
 		return (FALSE);
-	if (!execute_complete_command(*parent))
+	parent = tok_or - 1;
+	if (!execute_pipe_sequence(parent))
 	{
-		execute_complete_command((*tok_or)->data.children);
 		return (TRUE);
 	}
 	return (FALSE);
@@ -149,17 +156,16 @@ int	execute_complete_command(t_ast_node *ast_node)
 	children = ast_node->data.children;
 	while (*children != NULL)
 	{
-		if (((*children)->type == PIPE_SEQUENCE) && 
+		if (((*children)->type == PIPE_SEQUENCE) && (*(children + 1)) != NULL && 
 		((*(children + 1))->data.token->type != TOK_AND && 
 		(*(children + 1))->data.token->type != TOK_OR))
 			rtn = execute_pipe_sequence((*children)->data.children);
 		else if ((*children)->type == TOKEN)
 		{
 			if ((*children)->data.token->type == TOK_AND)
-			       execute_tok_and(*children);
+			       execute_tok_and(children);
 			else if ((*children)->data.token->type == TOK_OR)
-				execute_tok_or(*children);
-			children++;	
+				execute_tok_or(children);
 		}
 		children++;
 	}
