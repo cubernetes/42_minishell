@@ -526,7 +526,8 @@ t_ast_node	*build_ast(t_ddeque *tokens)
 	t_ast_node	*ast;
 
 	parse_tree = build_parse_tree(tokens);
+	return (parse_tree);
 	/* ast = build_ast_recursively(parse_tree); */
-	ast = return_example_ast();
-	return (ast);
+	/* ast = return_example_ast(); */
+	/* return (ast); */
 }

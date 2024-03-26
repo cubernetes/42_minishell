@@ -62,7 +62,8 @@ int	main(int argc, char **argv, char **envp)
 	while (i--)
 	{
 		update_state(&state);
-		line = manage_ptrs(readline(state.ps1))->head->prev->data;
+		/* line = manage_ptrs(readline(state.ps1))->head->prev->data; */
+		line = "echo hi";
 		if (!line)
 			break ;
 		tokens = tokenize(line);
