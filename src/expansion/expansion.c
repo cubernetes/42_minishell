@@ -122,6 +122,7 @@ void	expand_env_vars(t_ddeque *tokens)
 		expand(new_tokens, head);
 	}
 	tokens->head = new_tokens->head;
+	tokens->size = new_tokens->size;
 }
 
 void	join_tokens(t_ddeque *tokens)
@@ -173,4 +174,5 @@ void	join_tokens(t_ddeque *tokens)
 		}
 	}
 	tokens->head = new_tokens->head;
+	tokens->size = new_tokens->size;
 }

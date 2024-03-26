@@ -68,4 +68,5 @@ void	glob_tokens(t_ddeque *tokens)
 		}
 	}
 	tokens->head = new_tokens->head;
+	tokens->size = new_tokens->size;
 }

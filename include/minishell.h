@@ -101,8 +101,8 @@ typedef union u_ast_meta_data
 /* children is a NULL terminated array of t_ast_node ptrs */
 typedef union u_ast_node_data
 {
-	t_token			*token;
-	t_ast_node		**children;
+	t_token		*token;
+	t_ddeque	*children;
 }	t_ast_node_data;
 
 /* TOKEN is a TERMINAL, every other member is a NONTERMINAL */
