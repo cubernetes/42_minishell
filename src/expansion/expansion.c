@@ -106,17 +106,15 @@ static void	expand(t_ddeque *new_tokens, t_ddeque_node *head)
 
 void	expand_env_vars(t_ddeque *tokens)
 {
-	t_ddeque_node	*orig_head;
 	t_ddeque_node	*head;
 	t_ddeque		*new_tokens;
 
 	new_tokens = ddeque_init();
 	head = tokens->head;
-	orig_head = head;
 	if (!head)
 		return ;
 	expand(new_tokens, head);
-	while (head->next != orig_head)
+	while (head->next != tokens->head)
 	{
 		head = head->next;
 		expand(new_tokens, head);
@@ -127,7 +125,6 @@ void	expand_env_vars(t_ddeque *tokens)
 
 void	join_tokens(t_ddeque *tokens)
 {
-	t_ddeque_node	*orig_head;
 	t_ddeque_node	*head;
 	t_ddeque		*new_tokens;
 	t_token			*token;
@@ -135,7 +132,6 @@ void	join_tokens(t_ddeque *tokens)
 
 	new_tokens = ddeque_init();
 	head = tokens->head;
-	orig_head = head;
 	if (!head)
 		return ;
 	token = (t_token *)head->data;
@@ -144,7 +140,7 @@ void	join_tokens(t_ddeque *tokens)
 		ddeque_push_value_right(new_tokens, token);
 	else
 		word_token = new_token(token->str, TOK_WORD, TRUE);
-	while (head->next != orig_head)
+	while (head->next != tokens->head)
 	{
 		head = head->next;
 		token = (t_token *)head->data;

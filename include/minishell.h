@@ -75,13 +75,6 @@ typedef struct s_token
 	t_bool			is_last_subtoken;
 }	t_token;
 
-typedef struct s_tokens
-{
-	t_ddeque		*tokens;
-	t_ddeque_node	*orig_head;
-	t_token			*err_token;
-}	t_tokens;
-
 typedef struct s_ast_node	t_ast_node;
 typedef t_ast_node			*t_children[];
 
