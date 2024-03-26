@@ -43,7 +43,7 @@ static void	expand_word(t_ddeque *new_tokens, t_ddeque_node *head)
 	while (*token_str)
 		token_str += expand_vars(token, token_str);
 	new_toks = array_list_to_ddeque(ft_split(token->str, IFS), new_word_token);
-	ddeque_extend(new_tokens, new_toks);
+	ddeque_extend_bottom(new_tokens, new_toks);
 	if (!token->is_last_subtoken)
 		((t_token *)new_tokens->head->prev->data)->is_last_subtoken = FALSE;
 }

@@ -55,14 +55,14 @@ void	glob_tokens(t_ddeque *tokens)
 	if (head)
 	{
 		if (((t_token *)head->data)->type == TOK_WORD)
-			ddeque_extend(new_tokens, glob_token(head->data));
+			ddeque_extend_bottom(new_tokens, glob_token(head->data));
 		else
 			ddeque_push_value_bottom(new_tokens, head->data);
 		while (head->next != tokens->head)
 		{
 			head = head->next;
 			if (((t_token *)head->data)->type == TOK_WORD)
-				ddeque_extend(new_tokens, glob_token(head->data));
+				ddeque_extend_bottom(new_tokens, glob_token(head->data));
 			else
 				ddeque_push_value_bottom(new_tokens, head->data);
 		}

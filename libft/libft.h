@@ -226,7 +226,9 @@ t_deque							*deque_init(void);
 t_deque							*deque_slice(t_deque *deque, int start, int end,
 									int step);
 int								deque_index(t_deque *deque, t_deque_type data);
-void							deque_extend(t_deque *deque_a,
+void							deque_extend_bottom(t_deque *deque_a,
+									t_deque *deque_b);
+void							deque_extend_top(t_deque *deque_a,
 									t_deque *deque_b);
 int								deque_equal(t_deque *deque_a, t_deque *deque_b);
 int								deque_argmax(t_deque *deque, int *max_idx);
@@ -256,7 +258,9 @@ t_ddeque						*ddeque_shallow_slice(t_ddeque *ddeque,
 									int start, int end, int step);
 int								ddeque_index(t_ddeque *ddeque, void *data,
 									t_bool (cmp)(void *, void *));
-void							ddeque_extend(t_ddeque *ddeque_a,
+void							ddeque_extend_bottom(t_ddeque *ddeque_a,
+									t_ddeque *ddeque_b);
+void							ddeque_extend_top(t_ddeque *ddeque_a,
 									t_ddeque *ddeque_b);
 t_bool							ddeque_equal(t_ddeque *ddeque_a,
 									t_ddeque *ddeque_b,

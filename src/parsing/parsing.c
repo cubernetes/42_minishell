@@ -417,8 +417,8 @@ t_ast_node	*build_parse_tree(t_ddeque *tokens)
 	t_ast_node		**children;
 
 	stack = ddeque_init();
-	ddeque_push_value_top(stack, production_to_child((t_production){TOKEN, {&(t_token){TOK_EOL, "", TRUE}}, {0}}));
-	ddeque_push_value_top(stack, production_to_child((t_production){COMPLETE_COMMAND, {0}, {0}}));
+	ddeque_push_value_right(stack, production_to_child((t_production){COMPLETE_COMMAND, {0}, {0}}));
+	ddeque_push_value_right(stack, production_to_child((t_production){TOKEN, {&(t_token){TOK_EOL, "", TRUE}}, {0}}));
 	ast_node = new_ast_nonterm(COMPLETE_COMMAND, NULL);
 	ast_root_node = ast_node;
 	while (1)
