@@ -1,6 +1,7 @@
 #include "../../include/minishell.h"
 #include "../../libft/libft.h"
 #include <stdlib.h>
+#include <assert.h>
 
 const char	*ast_node_type_to_string(t_ast_node_type type)
 {
@@ -489,19 +490,89 @@ t_ast_node	*build_parse_tree(t_ddeque *tokens)
 	/* } */
 /* } */
 
-/* t_ast_node	**build_ast_recursively(t_ast_node *node) */
-/* { */
-/*  */
-/* } */
+t_ddeque	*build_ast_recursively(t_ast_node *node)
+{
+	t_ddeque	*children;
+	t_ast_node	*head;
+	t_ddeque	*flat;
+
+	flat = ddeque_init();
+	if (node->type == TOKEN)
+	{
+		if (node->data.token->type != TOK_EPSILON
+			&& node->data.token->type != TOK_PIPE
+			&& node->data.token->type != TOK_L_PAREN
+			&& node->data.token->type != TOK_R_PAREN)
+			ddeque_push_value_right(flat, node);
+	}
+	else if (node->type == IO_REDIRECT)
+		assert(FALSE);
+	else if (node->type == COMPLETE_COMMAND
+		|| node->type == PIPE_SEQUENCE
+		|| node->type == SIMPLE_COMMAND)
+	{
+		ddeque_push_value_right(flat, node);
+		children = node->data.children;
+		node->data.children = ddeque_init();
+		while (children->size > 0)
+		{
+			head = ddeque_pop_left(children)->data;
+			if (head->type == IO_REDIRECT)
+			{
+				if (((t_ast_node *)head->data.children->head->data)->data.token->type != TOK_EPSILON)
+				{
+					ddeque_push_value_right(node->data.children, head);
+					head = ddeque_pop_left(children)->data;
+					if (head->type != TOKEN)
+						assert(FALSE);
+					ddeque_push_value_right(((t_ast_node *)node->data.children->head->prev->data)->data.children, head);
+				}
+			}
+			else
+				ddeque_extend_right(node->data.children, build_ast_recursively(head));
+		}
+	}
+	else if (node->type == COMPLETE_COMMAND_TAIL
+		|| node->type == PIPE_SEQUENCE_TAIL
+		|| node->type == SIMPLE_COMMAND_TAIL
+		|| node->type == COMMAND
+		|| node->type == COMPOUND_COMMAND
+		|| node->type == AND_OR)
+	{
+		children = node->data.children;
+		while (children->size > 0)
+		{
+			head = ddeque_pop_left(children)->data;
+			if (head->type == IO_REDIRECT)
+			{
+				if (((t_ast_node *)head->data.children->head->data)->data.token->type != TOK_EPSILON)
+				{
+					ddeque_push_value_right(flat, head);
+					head = ddeque_pop_left(children)->data;
+					if (head->type != TOKEN)
+						assert(FALSE);
+					ddeque_push_value_right(((t_ast_node *)flat->head->prev->data)->data.children, head);
+				}
+			}
+			else
+				ddeque_extend_right(flat, build_ast_recursively(head));
+		}
+	}
+	else
+	{
+		ft_printf("node->type: \033[34m%s\033[m\n", ast_node_type_to_string(node->type));
+		assert(FALSE);
+	}
+	return (flat);
+}
 
 t_ast_node	*build_ast(t_ddeque *tokens)
 {
 	t_ast_node	*parse_tree;
+	t_ast_node	*ast;
 
-	/* t_ast_node	*ast; */
 	parse_tree = build_parse_tree(tokens);
-	return (parse_tree);
-	/* ast = build_ast_recursively(parse_tree); */
+	ast = ddeque_pop_left(build_ast_recursively(parse_tree))->data;
 	/* ast = return_example_ast(); */
-	/* return (ast); */
+	return (ast);
 }

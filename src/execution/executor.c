@@ -6,7 +6,7 @@
 /*   By: pgrussin <pgrussin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/15 14:01:02 by pgrussin          #+#    #+#             */
-/*   Updated: 2024/03/26 08:35:37 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/03/26 10:07:46 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,6 @@
 #include <fcntl.h>
 /*malloc lib*/
 #include <stdlib.h>
-/* TODO: delete, used for printf*/
-#include <stdio.h>
 
 t_bool	redirect_override(t_ddeque *override)
 {
@@ -227,6 +225,6 @@ void	execute(t_ast_node *ast_node)
 	if (ast_node == NULL)
 		return ;
 	rtn = execute_complete_command(ast_node);
-	printf("return: %d\n", rtn);
+	ft_printf("return: %d\n", rtn);
 }
 
