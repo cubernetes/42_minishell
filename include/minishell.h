@@ -121,18 +121,6 @@ typedef enum e_ast_node_type
 	AST_NODE_TYPE_UNKNOWN
 }	t_ast_node_type;
 
-typedef	struct s_fdrd
-{
-	int	fd_stdin;
-	int	fd_stdout;
-	int	fdin;
-	int	fdout;
-	char	*infile;
-	char	*outfile;
-	char	*herdoc_delimiter;
-}	t_fdrd;
-
-
 /* if t_ast_node.type == TOKEN, then t_ast_node.data.token shall be used */
 /* if t_ast_node.type != TOKEN, then t_ast_node.data.children
  * shall be used */

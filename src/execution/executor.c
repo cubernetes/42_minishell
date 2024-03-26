@@ -1,12 +1,9 @@
 #include "../../include/minishell.h"
-/*dup lib*/
-#include <unistd.h>
-/*open lib*/
-#include <sys/types.h>
+#include <unistd.h> /* dup() */
+#include <sys/types.h> /* open() */
 #include <sys/stat.h>
 #include <fcntl.h>
-/*malloc lib*/
-#include <stdlib.h>
+#include <stdlib.h> /* malloc() */
 
 t_bool	redirect_override(t_ddeque *override, t_ast_node *simple_command)
 {
@@ -35,14 +32,12 @@ t_bool	redirect_override(t_ddeque *override, t_ast_node *simple_command)
 
 t_bool	execute_io_redirect(t_ast_node *io_redirect, t_ast_node *simple_command)
 {
-	t_fdrd			*redir_fd;
 	t_bool			rtn;
 	t_ddeque		*children;
 	t_ddeque_node	*head;
 
 	children = io_redirect->data.children;
 	rtn = FALSE;
-	redir_fd = ft_malloc(sizeof(*redir_fd));
 	head = children->head;
 	if (!head)
 		return (TRUE);
