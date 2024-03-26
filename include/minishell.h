@@ -85,10 +85,16 @@ typedef struct s_fds
 	int	out;
 }	t_fds;
 
-typedef union u_ast_meta_data
+typedef struct s_simple_command
 {
 	t_fds			fds;
-	t_token_type	conditional;
+	unsigned char	exit_status;
+}	t_simple_command;
+
+typedef union u_ast_meta_data
+{
+	t_simple_command	simple_command;
+	t_token_type		conditional;
 }	t_ast_meta_data;
 
 /* children is a NULL terminated array of t_ast_node ptrs */
@@ -114,7 +120,6 @@ typedef enum e_ast_node_type
 	TOKEN,
 	AST_NODE_TYPE_UNKNOWN
 }	t_ast_node_type;
-
 
 typedef	struct s_fdrd
 {

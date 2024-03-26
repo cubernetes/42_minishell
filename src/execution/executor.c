@@ -8,19 +8,32 @@
 /*malloc lib*/
 #include <stdlib.h>
 
-t_bool	redirect_override(t_ddeque *override)
+t_bool	redirect_override(t_ddeque *override, t_ast_node *simple_command)
 {
 	t_bool	rtn;
+	int		fd;
+	int		sc_fd_out;
+	char	*file_path;
 
-	/* int	fd; */
-	/* char	*str; */
-	//fd = open()
-	(void)override;
-	rtn = TRUE;
+	file_path = ((t_ast_node *)override->head->next->data)->data.token->str;
+	fd = open(file_path, O_WRONLY | O_TRUNC | O_CREAT, 0644);
+	if (fd == -1)
+	{
+		simple_command->meta_data.simple_command.exit_status = 1;
+		rtn = FALSE;
+	}
+	else
+	{
+		sc_fd_out = simple_command->meta_data.simple_command.fds.out;
+		if (sc_fd_out != -2)
+			close(sc_fd_out);
+		simple_command->meta_data.simple_command.fds.out = fd;
+		rtn = TRUE;
+	}
 	return (rtn);
 }
 
-t_bool	execute_io_redirect(t_ast_node *io_redirect)
+t_bool	execute_io_redirect(t_ast_node *io_redirect, t_ast_node *simple_command)
 {
 	t_fdrd			*redir_fd;
 	t_bool			rtn;
@@ -34,12 +47,12 @@ t_bool	execute_io_redirect(t_ast_node *io_redirect)
 	if (!head)
 		return (TRUE);
 	if (((t_ast_node *)head->data)->data.token->type == TOK_OVERRIDE)
-		rtn = redirect_override(children);
+		rtn = redirect_override(children, simple_command);
 	while (head->next != children->head)
 	{
 		head = head->next;
 		if (((t_ast_node *)head->data)->data.token->type == TOK_OVERRIDE)
-			rtn = redirect_override(children);
+			rtn = redirect_override(children, simple_command);
 	}
 	return (rtn);
 }
@@ -56,12 +69,12 @@ t_bool	execute_simple_command(t_ast_node *simple_command)
 	if (!head)
 		return (TRUE);
 	if (((t_ast_node *)head->data)->type == IO_REDIRECT)
-		rtn = execute_io_redirect(head->data);
+		rtn = execute_io_redirect(head->data, simple_command);
 	while (head->next != children->head)
 	{
 		head = head->next;
 		if (((t_ast_node *)head->data)->type == IO_REDIRECT)
-			rtn = execute_io_redirect(head->data);
+			rtn = execute_io_redirect(head->data, simple_command);
 	}
 	return (rtn);
 }
