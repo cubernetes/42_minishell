@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_malloc_ddeque_push_value_bottom.c               :+:      :+:    :+:   */
+/*   ft_malloc_ddeque_push_value_right.c               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -24,7 +24,7 @@ void	print_ptr(void *data, t_bool first)
 /* not using perror and exit for compliance */
 /* this function must not use ft_malloc */
 /* it shall only be used by ft_malloc from memory management */
-void	ft_malloc_ddeque_push_value_bottom(t_ddeque *ddeque, void *data)
+void	ft_malloc_ddeque_push_value_right(t_ddeque *ddeque, void *data)
 {
 	t_ddeque_node	*new;
 

@@ -39,7 +39,7 @@ t_ddeque	*manage_ptrs(void *ptr)
 
 	if (!ptrs)
 		ptrs = ft_malloc_ddeque_init();
-	ft_malloc_ddeque_push_value_bottom(ptrs, ptr);
+	ft_malloc_ddeque_push_value_right(ptrs, ptr);
 	return (ptrs);
 }
 

@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ddeque_pop_bottom.c                                :+:      :+:    :+:   */
+/*   ddeque_pop_right.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,7 +12,7 @@
 
 #include "../libft.h"
 
-t_ddeque_node	*ddeque_pop_bottom(t_ddeque *ddeque)
+t_ddeque_node	*ddeque_pop_right(t_ddeque *ddeque)
 {
 	t_ddeque_node	*head;
 	t_ddeque_node	*prev;

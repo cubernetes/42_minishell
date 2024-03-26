@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   deque_push_value_top.c                             :+:      :+:    :+:   */
+/*   deque_push_value_left.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -14,7 +14,7 @@
 #include <stdlib.h>
 
 /* not using perror and exit for compliance */
-void	deque_push_value_top(t_deque *deque, t_deque_type data)
+void	deque_push_value_left(t_deque *deque, t_deque_type data)
 {
 	t_deque_node	*new;
 

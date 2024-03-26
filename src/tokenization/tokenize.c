@@ -117,7 +117,7 @@ t_bool	push_token(const char **line, t_ddeque *tokens, size_t token_len,
 		is_last_subtoken = TRUE;
 	else
 		is_last_subtoken = FALSE;
-	ddeque_push_value_bottom(tokens, new_token(str, type, is_last_subtoken));
+	ddeque_push_value_right(tokens, new_token(str, type, is_last_subtoken));
 	*line += token_len;
 	return (TRUE);
 }

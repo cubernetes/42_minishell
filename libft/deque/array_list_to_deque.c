@@ -19,7 +19,7 @@ t_deque	*array_list_to_deque(char **array_list, int *status)
 	deque = deque_init();
 	while (*array_list)
 	{
-		deque_push_value_bottom(deque,
+		deque_push_value_right(deque,
 			(t_deque_type)ft_atoi_status(*array_list, status));
 		++array_list;
 	}

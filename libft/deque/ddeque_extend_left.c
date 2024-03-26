@@ -1,19 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   deque_extend_bottom.c                              :+:      :+:    :+:   */
+/*   ddeque_extend_left.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 14:40:27 by tischmid          #+#    #+#             */
-/*   Updated: 2024/03/26 05:09:37 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/03/26 05:09:09 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../libft.h"
 
-void	deque_extend_bottom(t_deque *deque_a, t_deque *deque_b)
+void	ddeque_extend_left(t_ddeque *ddeque_a, t_ddeque *ddeque_b)
 {
-	while (deque_b->head)
-		deque_push_node_bottom(deque_a, deque_pop_top(deque_b));
+	while (ddeque_b->head)
+		ddeque_push_node_left(ddeque_a, ddeque_pop_right(ddeque_b));
 }

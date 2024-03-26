@@ -6,7 +6,7 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:09:11 by tischmid          #+#    #+#              #
-#    Updated: 2024/03/26 05:10:10 by tosuman          ###   ########.fr        #
+#    Updated: 2024/03/26 07:14:10 by tosuman          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -87,7 +87,7 @@ SRC += error_handling.c
 SRC += ft_malloc.c
 SRC += ft_malloc_ddeque_free.c
 SRC += ft_malloc_ddeque_init.c
-SRC += ft_malloc_ddeque_push_value_bottom.c
+SRC += ft_malloc_ddeque_push_value_right.c
 
 # io
 SRC += get_next_line.c
@@ -135,16 +135,16 @@ SRC += deque_slice.c
 SRC += deque_sort.c
 SRC += deque_copy.c
 SRC += deque_size.c
-SRC += deque_extend_bottom.c
-SRC += deque_extend_top.c
+SRC += deque_extend_right.c
+SRC += deque_extend_left.c
 SRC += deque_swap.c
 SRC += deque_rotate.c
-SRC += deque_pop_top.c
-SRC += deque_pop_bottom.c
-SRC += deque_push_node_bottom.c
-SRC += deque_push_value_bottom.c
-SRC += deque_push_node_top.c
-SRC += deque_push_value_top.c
+SRC += deque_pop_left.c
+SRC += deque_pop_right.c
+SRC += deque_push_node_right.c
+SRC += deque_push_value_right.c
+SRC += deque_push_node_left.c
+SRC += deque_push_value_left.c
 SRC += deque_equal.c
 SRC += deque_argmax.c
 
@@ -157,16 +157,16 @@ SRC += ddeque_slice.c
 SRC += ddeque_sort.c
 SRC += ddeque_shallow_copy.c
 SRC += ddeque_size.c
-SRC += ddeque_extend_bottom.c
-SRC += ddeque_extend_top.c
+SRC += ddeque_extend_right.c
+SRC += ddeque_extend_left.c
 SRC += ddeque_swap.c
 SRC += ddeque_rotate.c
-SRC += ddeque_pop_top.c
-SRC += ddeque_pop_bottom.c
-SRC += ddeque_push_node_bottom.c
-SRC += ddeque_push_value_bottom.c
-SRC += ddeque_push_node_top.c
-SRC += ddeque_push_value_top.c
+SRC += ddeque_pop_left.c
+SRC += ddeque_pop_right.c
+SRC += ddeque_push_node_right.c
+SRC += ddeque_push_value_right.c
+SRC += ddeque_push_node_left.c
+SRC += ddeque_push_value_left.c
 SRC += ddeque_equal.c
 SRC += ddeque_iter.c
 SRC += ddeque_sum.c

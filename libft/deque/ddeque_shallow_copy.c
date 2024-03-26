@@ -24,11 +24,11 @@ t_ddeque	*ddeque_shallow_copy(t_ddeque *ddeque)
 		return (new_ddeque);
 	orig_head = ddeque->head;
 	head = orig_head;
-	ddeque_push_value_bottom(new_ddeque, head->data);
+	ddeque_push_value_right(new_ddeque, head->data);
 	while (head->next != orig_head)
 	{
 		head = head->next;
-		ddeque_push_value_bottom(new_ddeque, head->data);
+		ddeque_push_value_right(new_ddeque, head->data);
 	}
 	return (new_ddeque);
 }

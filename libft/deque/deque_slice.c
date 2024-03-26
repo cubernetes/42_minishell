@@ -46,7 +46,7 @@ t_deque	*deque_slice(t_deque *deque, int start, int end, int step)
 		head = head->next;
 	while ((step > 0 && start < end) || (step < 0 && start > end))
 	{
-		deque_push_value_bottom(slice, head->data);
+		deque_push_value_right(slice, head->data);
 		size = (int)ft_abs(step);
 		while (size--)
 		{

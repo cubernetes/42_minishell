@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ddeque_push_node_top.c                             :+:      :+:    :+:   */
+/*   ddeque_push_node_left.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,7 +12,7 @@
 
 #include "../libft.h"
 
-void	ddeque_push_node_top(t_ddeque *ddeque, t_ddeque_node *node)
+void	ddeque_push_node_left(t_ddeque *ddeque, t_ddeque_node *node)
 {
 	if (!node)
 		return ;

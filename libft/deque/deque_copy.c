@@ -23,11 +23,11 @@ t_deque	*deque_copy(t_deque *deque)
 		return (new_deque);
 	orig_head = deque->head;
 	head = orig_head;
-	deque_push_value_bottom(new_deque, (t_deque_type)head->data);
+	deque_push_value_right(new_deque, (t_deque_type)head->data);
 	while (head->next != orig_head)
 	{
 		head = head->next;
-		deque_push_value_bottom(new_deque, (t_deque_type)head->data);
+		deque_push_value_right(new_deque, (t_deque_type)head->data);
 	}
 	return (new_deque);
 }

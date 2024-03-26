@@ -119,7 +119,7 @@ t_bool							free_all_ptrs(void);
 t_bool							ft_malloc_ddeque_free(t_ddeque *ddeque,
 									t_bool (free_data)(void *));
 t_ddeque						*ft_malloc_ddeque_init(void);
-void							ft_malloc_ddeque_push_value_bottom(
+void							ft_malloc_ddeque_push_value_right(
 									t_ddeque *ddeque, void *data);
 
 /* strings */
@@ -203,15 +203,15 @@ int								ft_vdprintf(int fd, const char *fmt,
 int								ft_dprintf(int fd, const char *fmt, ...);
 
 /* regular deque (type must be define above) */
-t_deque_node					*deque_pop_bottom(t_deque *deque);
-t_deque_node					*deque_pop_top(t_deque *deque);
-void							deque_push_value_top(t_deque *deque,
+t_deque_node					*deque_pop_right(t_deque *deque);
+t_deque_node					*deque_pop_left(t_deque *deque);
+void							deque_push_value_left(t_deque *deque,
 									t_deque_type data);
-void							deque_push_node_top(t_deque *deque,
+void							deque_push_node_left(t_deque *deque,
 									t_deque_node *node);
-void							deque_push_value_bottom(t_deque *deque,
+void							deque_push_value_right(t_deque *deque,
 									t_deque_type data);
-void							deque_push_node_bottom(t_deque *deque,
+void							deque_push_node_right(t_deque *deque,
 									t_deque_node *node);
 void							deque_swap(t_deque *deque);
 void							deque_rotate(t_deque *deque, int n);
@@ -226,23 +226,23 @@ t_deque							*deque_init(void);
 t_deque							*deque_slice(t_deque *deque, int start, int end,
 									int step);
 int								deque_index(t_deque *deque, t_deque_type data);
-void							deque_extend_bottom(t_deque *deque_a,
+void							deque_extend_right(t_deque *deque_a,
 									t_deque *deque_b);
-void							deque_extend_top(t_deque *deque_a,
+void							deque_extend_left(t_deque *deque_a,
 									t_deque *deque_b);
 int								deque_equal(t_deque *deque_a, t_deque *deque_b);
 int								deque_argmax(t_deque *deque, int *max_idx);
 
 /* data deque */
-t_ddeque_node					*ddeque_pop_bottom(t_ddeque *ddeque);
-t_ddeque_node					*ddeque_pop_top(t_ddeque *ddeque);
-void							ddeque_push_value_top(t_ddeque *ddeque,
+t_ddeque_node					*ddeque_pop_right(t_ddeque *ddeque);
+t_ddeque_node					*ddeque_pop_left(t_ddeque *ddeque);
+void							ddeque_push_value_left(t_ddeque *ddeque,
 									void *data);
-void							ddeque_push_node_top(t_ddeque *ddeque,
+void							ddeque_push_node_left(t_ddeque *ddeque,
 									t_ddeque_node *node);
-void							ddeque_push_value_bottom(t_ddeque *ddeque,
+void							ddeque_push_value_right(t_ddeque *ddeque,
 									void *data);
-void							ddeque_push_node_bottom(t_ddeque *ddeque,
+void							ddeque_push_node_right(t_ddeque *ddeque,
 									t_ddeque_node *node);
 void							ddeque_swap(t_ddeque *ddeque);
 void							ddeque_rotate(t_ddeque *ddeque, int n);
@@ -258,9 +258,9 @@ t_ddeque						*ddeque_shallow_slice(t_ddeque *ddeque,
 									int start, int end, int step);
 int								ddeque_index(t_ddeque *ddeque, void *data,
 									t_bool (cmp)(void *, void *));
-void							ddeque_extend_bottom(t_ddeque *ddeque_a,
+void							ddeque_extend_right(t_ddeque *ddeque_a,
 									t_ddeque *ddeque_b);
-void							ddeque_extend_top(t_ddeque *ddeque_a,
+void							ddeque_extend_left(t_ddeque *ddeque_a,
 									t_ddeque *ddeque_b);
 t_bool							ddeque_equal(t_ddeque *ddeque_a,
 									t_ddeque *ddeque_b,

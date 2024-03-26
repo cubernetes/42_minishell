@@ -43,7 +43,7 @@ static void	expand_word(t_ddeque *new_tokens, t_ddeque_node *head)
 	while (*token_str)
 		token_str += expand_vars(token, token_str);
 	new_toks = array_list_to_ddeque(ft_split(token->str, IFS), new_word_token);
-	ddeque_extend_bottom(new_tokens, new_toks);
+	ddeque_extend_right(new_tokens, new_toks);
 	if (!token->is_last_subtoken)
 		((t_token *)new_tokens->head->prev->data)->is_last_subtoken = FALSE;
 }
@@ -91,7 +91,7 @@ static void	expand_dquote_str(t_ddeque *new_tokens, t_ddeque_node *head)
 	token->str = "";
 	while (*token_str)
 		token_str += expand_vars(token, token_str);
-	ddeque_push_value_bottom(new_tokens, token);
+	ddeque_push_value_right(new_tokens, token);
 }
 
 static void	expand(t_ddeque *new_tokens, t_ddeque_node *head)
@@ -101,7 +101,7 @@ static void	expand(t_ddeque *new_tokens, t_ddeque_node *head)
 	else if (((t_token *)head->data)->type == TOK_DQUOTE_STR)
 		expand_dquote_str(new_tokens, head);
 	else
-		ddeque_push_value_bottom(new_tokens, head->data);
+		ddeque_push_value_right(new_tokens, head->data);
 }
 
 void	expand_env_vars(t_ddeque *tokens)
@@ -141,7 +141,7 @@ void	join_tokens(t_ddeque *tokens)
 	token = (t_token *)head->data;
 	word_token = NULL;
 	if (token->is_last_subtoken)
-		ddeque_push_value_bottom(new_tokens, token);
+		ddeque_push_value_right(new_tokens, token);
 	else
 		word_token = new_token(token->str, TOK_WORD, TRUE);
 	while (head->next != orig_head)
@@ -160,17 +160,17 @@ void	join_tokens(t_ddeque *tokens)
 			if (!word_token)
 				word_token = new_token("", TOK_WORD, TRUE);
 			word_token->str = ft_strjoin(word_token->str, token->str);
-			ddeque_push_value_bottom(new_tokens, word_token);
+			ddeque_push_value_right(new_tokens, word_token);
 			word_token = NULL;
 		}
 		else
 		{
 			if (word_token)
 			{
-				ddeque_push_value_bottom(new_tokens, word_token);
+				ddeque_push_value_right(new_tokens, word_token);
 				word_token = NULL;
 			}
-			ddeque_push_value_bottom(new_tokens, token);
+			ddeque_push_value_right(new_tokens, token);
 		}
 	}
 	tokens->head = new_tokens->head;

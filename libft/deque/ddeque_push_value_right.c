@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ddeque_push_value_top.c                            :+:      :+:    :+:   */
+/*   ddeque_push_value_right.c                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/19 09:34:41 by tischmid          #+#    #+#             */
-/*   Updated: 2024/02/01 12:40:50 by tosuman          ###   ########.fr       */
+/*   Created: 2023/11/22 14:42:21 by tischmid          #+#    #+#             */
+/*   Updated: 2024/02/01 11:19:53 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include <stdlib.h>
 
 /* not using perror and exit for compliance */
-void	ddeque_push_value_top(t_ddeque *ddeque, void *data)
+void	ddeque_push_value_right(t_ddeque *ddeque, void *data)
 {
 	t_ddeque_node	*new;
 
@@ -28,7 +28,6 @@ void	ddeque_push_value_top(t_ddeque *ddeque, void *data)
 		new->prev = ddeque->head->prev;
 		ddeque->head->prev->next = new;
 		ddeque->head->prev = new;
-		ddeque->head = new;
 	}
 	else
 	{

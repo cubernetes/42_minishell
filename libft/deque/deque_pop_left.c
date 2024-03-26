@@ -1,19 +1,38 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ddeque_extend_top.c                                :+:      :+:    :+:   */
+/*   deque_pop_left.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/22 14:40:27 by tischmid          #+#    #+#             */
-/*   Updated: 2024/03/26 05:09:09 by tosuman          ###   ########.fr       */
+/*   Created: 2023/11/22 14:41:09 by tischmid          #+#    #+#             */
+/*   Updated: 2024/01/15 17:51:44 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../libft.h"
 
-void	ddeque_extend_top(t_ddeque *ddeque_a, t_ddeque *ddeque_b)
+t_deque_node	*deque_pop_left(t_deque *deque)
 {
-	while (ddeque_b->head)
-		ddeque_push_node_top(ddeque_a, ddeque_pop_bottom(ddeque_b));
+	t_deque_node	*prev;
+	t_deque_node	*head;
+	t_deque_node	*next;
+
+	head = deque->head;
+	if (!head)
+		return (NULL);
+	prev = head->prev;
+	next = head->next;
+	if (head == head->next)
+		deque->head = NULL;
+	else
+	{
+		deque->head = next;
+		next->prev = prev;
+		prev->next = next;
+	}
+	head->next = NULL;
+	head->prev = NULL;
+	deque->size -= 1;
+	return (head);
 }

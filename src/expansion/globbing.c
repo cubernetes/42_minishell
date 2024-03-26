@@ -26,19 +26,19 @@ static t_ddeque	*glob_token(t_token *token)
 	tokens = ddeque_init();
 	dirp = opendir(".");
 	if (!dirp)
-		return (ddeque_push_value_bottom(tokens, token), tokens);
+		return (ddeque_push_value_right(tokens, token), tokens);
 	dp = readdir(dirp);
 	while (dp != NULL)
 	{
 		if (ft_strncmp(dp->d_name, ".", 1)
 			&& glob_match(token->str, dp->d_name))
-			ddeque_push_value_bottom(tokens,
+			ddeque_push_value_right(tokens,
 				new_token(ft_strdup(dp->d_name), TOK_WORD, TRUE));
 		dp = readdir(dirp);
 	}
 	closedir(dirp);
 	if (tokens->size == 0)
-		ddeque_push_value_bottom(tokens, token);
+		ddeque_push_value_right(tokens, token);
 	return (tokens);
 }
 
@@ -55,16 +55,16 @@ void	glob_tokens(t_ddeque *tokens)
 	if (head)
 	{
 		if (((t_token *)head->data)->type == TOK_WORD)
-			ddeque_extend_bottom(new_tokens, glob_token(head->data));
+			ddeque_extend_right(new_tokens, glob_token(head->data));
 		else
-			ddeque_push_value_bottom(new_tokens, head->data);
+			ddeque_push_value_right(new_tokens, head->data);
 		while (head->next != tokens->head)
 		{
 			head = head->next;
 			if (((t_token *)head->data)->type == TOK_WORD)
-				ddeque_extend_bottom(new_tokens, glob_token(head->data));
+				ddeque_extend_right(new_tokens, glob_token(head->data));
 			else
-				ddeque_push_value_bottom(new_tokens, head->data);
+				ddeque_push_value_right(new_tokens, head->data);
 		}
 	}
 	tokens->head = new_tokens->head;

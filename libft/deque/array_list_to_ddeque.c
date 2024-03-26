@@ -19,7 +19,7 @@ t_ddeque	*array_list_to_ddeque(char **array_list, void *(*new_node)(void *))
 	ddeque = ddeque_init();
 	while (*array_list)
 	{
-		ddeque_push_value_bottom(ddeque, new_node(*array_list));
+		ddeque_push_value_right(ddeque, new_node(*array_list));
 		++array_list;
 	}
 	return (ddeque);

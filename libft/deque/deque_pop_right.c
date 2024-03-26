@@ -1,33 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   deque_push_node_bottom.c                           :+:      :+:    :+:   */
+/*   deque_pop_right.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/22 14:42:03 by tischmid          #+#    #+#             */
-/*   Updated: 2024/01/15 21:41:31 by tosuman          ###   ########.fr       */
+/*   Created: 2023/11/05 01:44:47 by tischmid          #+#    #+#             */
+/*   Updated: 2024/01/15 17:52:02 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../libft.h"
 
-void	deque_push_node_bottom(t_deque *deque, t_deque_node *node)
+t_deque_node	*deque_pop_right(t_deque *deque)
 {
-	if (!node)
-		return ;
-	if (deque->head)
-	{
-		node->next = deque->head;
-		node->prev = deque->head->prev;
-		deque->head->prev->next = node;
-		deque->head->prev = node;
-	}
+	t_deque_node	*head;
+	t_deque_node	*prev;
+	t_deque_node	*prev_prev;
+
+	head = deque->head;
+	if (!head)
+		return (NULL);
+	prev = deque->head->prev;
+	prev_prev = prev->prev;
+	if (head == head->next)
+		deque->head = NULL;
 	else
 	{
-		deque->head = node;
-		deque->head->next = deque->head;
-		deque->head->prev = deque->head;
+		deque->head->prev = prev_prev;
+		prev_prev->next = deque->head;
 	}
-	deque->size += 1;
+	prev->next = NULL;
+	prev->prev = NULL;
+	deque->size -= 1;
+	return (prev);
 }
