@@ -358,13 +358,13 @@ t_production	*get_production(t_ast_node_type nonterm, t_token *token)
 	return (productions[get_production_idx(nonterm, token)]);
 }
 
-t_ast_node	*production_to_child(t_production prodcution)
+t_ast_node	*production_to_child(t_production production)
 {
 	t_ast_node	*child;
 
 	child = ft_malloc(sizeof(*child));
-	ft_memcpy(child, &prodcution, sizeof(prodcution));
-	if (prodcution.type == TOKEN)
+	ft_memcpy(child, &production, sizeof(production));
+	if (production.type == TOKEN)
 		child->data.token = new_token(child->data.token->str,
 			child->data.token->type, TRUE);
 	return (child);
