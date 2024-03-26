@@ -118,7 +118,8 @@ typedef enum e_ast_node_type
 	SIMPLE_COMMAND,
 	SIMPLE_COMMAND_TAIL,
 	IO_REDIRECT,
-	TOKEN
+	TOKEN,
+	AST_NODE_TYPE_UNKNOWN
 }	t_ast_node_type;
 
 

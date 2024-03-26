@@ -497,8 +497,8 @@ t_ast_node	*build_parse_tree(t_ddeque *tokens)
 t_ast_node	*build_ast(t_ddeque *tokens)
 {
 	t_ast_node	*parse_tree;
-	t_ast_node	*ast;
 
+	/* t_ast_node	*ast; */
 	parse_tree = build_parse_tree(tokens);
 	return (parse_tree);
 	/* ast = build_ast_recursively(parse_tree); */

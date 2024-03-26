@@ -62,15 +62,14 @@ int	main(int argc, char **argv, char **envp)
 	while (i--)
 	{
 		update_state(&state);
-		/* line = manage_ptrs(readline(state.ps1))->head->prev->data; */
-		line = "echo hi";
+		line = manage_ptrs(readline(state.ps1))->head->prev->data;
 		if (!line)
 			break ;
 		tokens = tokenize(line);
 		ddeque_print(tokens, print_token);
 		ast_root_node = build_ast(tokens);
 		ast_print(ast_root_node);
-		execute(ast_root_node);
+		/* execute(ast_root_node); */
 	}
 	(void)free_all_ptrs();
 	return (0);

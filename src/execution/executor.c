@@ -6,7 +6,7 @@
 /*   By: pgrussin <pgrussin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/15 14:01:02 by pgrussin          #+#    #+#             */
-/*   Updated: 2024/03/25 12:42:58 by pgrussin         ###   ########.fr       */
+/*   Updated: 2024/03/26 08:35:37 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,75 +22,90 @@
 /* TODO: delete, used for printf*/
 #include <stdio.h>
 
-t_bool	redirect_override(t_ast_node **override)
+t_bool	redirect_override(t_ddeque *override)
 {
-	int	fd;
-	char	*str;
 	t_bool	rtn;
 
-	rtn = TRUE;
+	/* int	fd; */
+	/* char	*str; */
 	//fd = open()
+	(void)override;
+	rtn = TRUE;
 	return (rtn);
 }
 
-t_bool	execute_io_redirect(t_ast_node **io_redirect)
+t_bool	execute_io_redirect(t_ast_node *io_redirect)
 {
-	t_fdrd *redir_fd;
-	t_bool	rtn;
-	t_ast_node	**children;
+	t_fdrd			*redir_fd;
+	t_bool			rtn;
+	t_ddeque		*children;
+	t_ddeque_node	*head;
 
-	children = (*io_redirect)->data.children;
-	rtn = 0;
-	redir_fd = (struct t_fdrd *)ft_malloc(sizeof(t_fdrd));
-	if (!redir_fd)
-		return (1);
-	while (*children != NULL)
+	children = io_redirect->data.children;
+	rtn = FALSE;
+	redir_fd = ft_malloc(sizeof(*redir_fd));
+	head = children->head;
+	if (!head)
+		return (TRUE);
+	if (((t_ast_node *)head->data)->data.token->type == TOK_OVERRIDE)
+		rtn = redirect_override(children);
+	while (head->next != children->head)
 	{
-		if ((*children)->data.token->type == TOK_OVERRIDE)
+		head = head->next;
+		if (((t_ast_node *)head->data)->data.token->type == TOK_OVERRIDE)
 			rtn = redirect_override(children);
-		children++;
 	}
 	return (rtn);
 }
 
-t_bool	execute_simple_command(t_ast_node **simple_command)
+t_bool	execute_simple_command(t_ast_node *simple_command)
 {
-	t_ast_node	**children;
-	t_bool		rtn;
+	t_ddeque		*children;
+	t_ddeque_node	*head;
+	t_bool			rtn;
 
-	children = (*simple_command)->data.children;
-	rtn = 0;
-	while (*children != NULL)
+	children = simple_command->data.children;
+	rtn = FALSE;
+	head = children->head;
+	if (!head)
+		return (TRUE);
+	if (((t_ast_node *)head->data)->type == IO_REDIRECT)
+		rtn = execute_io_redirect(head->data);
+	while (head->next != children->head)
 	{
-		if ((*children)->type == IO_REDIRECT)
-				rtn = execute_io_redirect((*simple_command)->data.token);
-		/*else if ((*children)->type == TOKEN)
-			return (1);*/
-		children++;
+		head = head->next;
+		if (((t_ast_node *)head->data)->type == IO_REDIRECT)
+			rtn = execute_io_redirect(head->data);
 	}
 	return (rtn);
 }
 
-t_bool	iterate_pipe_sequence(t_ast_node **commands)
+t_bool	iterate_pipe_sequence(t_ddeque *commands)
 {
-	t_bool	rtn;
-	t_ast_node	**children;
+	t_bool			rtn;
+	t_ddeque_node	*head;
 
-	rtn = 0;
-	children = (*commands)->data.children;
-	while (*children != NULL)
+	rtn = FALSE;
+	head = commands->head;
+	if (!head)
+		return (TRUE);
+	if (((t_ast_node *)head->data)->type == COMPLETE_COMMAND)
+		rtn = TRUE;
+	else if (((t_ast_node *)head->data)->type == SIMPLE_COMMAND)
+		rtn = execute_simple_command(head->data);
+	while (head->next != commands->head)
 	{
-		/* TODO: implement complete Command */
-		if ((*children)->type == COMPLETE_COMMAND)
-			rtn = 1;
-		else if ((*children)->type == SIMPLE_COMMAND)
-			rtn = execute_simple_command((*commands)->data.children);
-		children++;
+		head = head->next;
+		/* TODO: implement COMPLETE_COMMAND */
+		if (((t_ast_node *)head->data)->type == COMPLETE_COMMAND)
+			rtn = TRUE;
+		else if (((t_ast_node *)head->data)->type == SIMPLE_COMMAND)
+			rtn = execute_simple_command(head->data);
 	}
 	return (rtn);
 }
 
-t_bool	execute_pipe_sequence(t_ast_node **pipe_sequence)
+t_bool	execute_pipe_sequence(t_ddeque *pipe_sequence)
 {
 	t_bool	rtn;
 	/* TODO: set only onetime for unset PATH*/
@@ -98,105 +113,120 @@ t_bool	execute_pipe_sequence(t_ast_node **pipe_sequence)
 	return (rtn);
 }
 
-t_ast_node_type	give_ast_node_type(t_ast_node **ast_node)
+t_ast_node_type	give_ast_node_type(t_ast_node *ast_node)
 {
-	t_ast_node	**children;
-	children = (*ast_node)->data.children;
-	if (*children != NULL)
+	t_ddeque		*children;
+	t_ddeque_node	*head;
+
+	children = ast_node->data.children;
+	head = children->head;
+	if (!head)
+		return (AST_NODE_TYPE_UNKNOWN);
+	if (((t_ast_node *)head->data)->type == COMPLETE_COMMAND)
+		return (COMPLETE_COMMAND);
+	else if (((t_ast_node *)head->data)->type == TOKEN)
+		return (TOKEN);
+	else if (((t_ast_node *)head->data)->type == PIPE_SEQUENCE)
+		return (PIPE_SEQUENCE);
+	while (head->next != children->head)
 	{
-		if ((*children)->type == COMPLETE_COMMAND)
+		head = head->next;
+		if (((t_ast_node *)head->data)->type == COMPLETE_COMMAND)
 			return (COMPLETE_COMMAND);
-		if ((*children)->type == TOKEN)
+		else if (((t_ast_node *)head->data)->type == TOKEN)
 			return (TOKEN);
-		else if ((*children)->type == PIPE_SEQUENCE)
+		else if (((t_ast_node *)head->data)->type == PIPE_SEQUENCE)
 			return (PIPE_SEQUENCE);
-		children++;
 	}
-	return (NULL);
+	return (AST_NODE_TYPE_UNKNOWN);
 }
 
-t_bool	execute_token(t_ast_node **token)
+t_bool	execute_token(t_ast_node *token)
 {
-	t_ast_node	**child;
+	t_ast_node	*child;
 
-	child = (*token)->data.children;
-	if (give_ast_node_type(child) != NULL)
+	child = token->data.children->head->data;
+	if (give_ast_node_type(child) != AST_NODE_TYPE_UNKNOWN)
 	{
-		if (give_ast_node_type == TOK_AND)
-			return (1);
-
-	}
-}
-
-t_bool	execute_tok_and(t_ast_node **tok_and)
-{
-	t_ast_node	**parent;
-
-	if (*(tok_and - 1) == NULL)
-		return (FALSE);
-	parent = tok_and - 1;
-	if (execute_pipe_sequence(parent))
-	{
-		return (TRUE);
+		if (give_ast_node_type(child) == TOK_AND)
+			return (TRUE);
 	}
 	return (FALSE);
 }
 
-t_bool	execute_tok_or(t_ast_node **tok_or)
+t_bool	execute_tok_and(t_ddeque_node *tok_and)
 {
-	t_ast_node	**parent;
-	/* TODO: protect the -1*/
-	if (*(tok_or - 1) == NULL)
+	t_ast_node	*left;
+
+	if (((t_ast_node *)tok_and->prev->data)->type != PIPE_SEQUENCE)
 		return (FALSE);
-	parent = tok_or - 1;
-	if (!execute_pipe_sequence(parent))
-	{
+	left = ((t_ast_node *)tok_and->prev->data);
+	if (execute_pipe_sequence(left->data.children))
 		return (TRUE);
-	}
 	return (FALSE);
 }
-/*return value for TOK_AND & TOK_OR to see if command was succesful executet*/
+
+t_bool	execute_tok_or(t_ddeque_node *tok_or)
+{
+	t_ast_node	*left;
+
+	/* TODO: protect the -1 (update from timo, this todo might be out-of-date */
+	if (((t_ast_node *)tok_or->prev->data)->type != PIPE_SEQUENCE)
+		return (FALSE);
+	left = ((t_ast_node *)tok_or->prev->data);
+	if (!execute_pipe_sequence(left->data.children))
+		return (TRUE);
+	return (FALSE);
+}
+
+/* return value for TOK_AND & TOK_OR to see if command was succesfully executed */
 t_bool	execute_complete_command(t_ast_node *ast_node)
 {
-	int	i;
-	t_ast_node	**children;
-	t_bool		b;
-	
+	t_bool			rtn;
+	t_ddeque		*children;
+	t_ddeque_node	*head;
+
 	children = ast_node->data.children;
-	while (*children != NULL)
+	head = children->head;
+	if (!head)
+		return (TRUE);
+	while (head->next != children->head)
 	{
-		if (((*children)->type == PIPE_SEQUENCE) && (*(children + 1)) != NULL && 
-		((*(children + 1))->data.token->type != TOK_AND && 
-		(*(children + 1))->data.token->type != TOK_OR))
-			b = execute_pipe_sequence((*children)->data.children);
-		else if ((*children)->type == TOKEN)
+		head = head->next;
+		if (((t_ast_node *)head->data)->type == PIPE_SEQUENCE
+			&& ((t_ast_node *)head->next->data)->type != TOKEN)
+			rtn = execute_pipe_sequence(((t_ast_node *)head->data)->data.children);
+		else if (((t_ast_node *)head->data)->type == TOKEN)
 		{
-			if ((*children)->data.token->type == TOK_AND)
+			if (((t_ast_node *)head->data)->data.token->type == TOK_AND)
 			{
-				b = execute_tok_and(children);
-			 	if (b == TRUE)
-			       		b = execute_pipe_sequence((*children)->data.children);
+				rtn = execute_tok_and(head);
+				if (rtn == TRUE)
+					rtn = execute_pipe_sequence(((t_ast_node *)head->prev->data)->data.children);
 			}
-			else if ((*children)->data.token->type == TOK_OR)
+			else if (((t_ast_node *)head->data)->data.token->type == TOK_OR)
 			{
-				b = execute_tok_or(children);
-				if (b == FALSE)
-			       		b = execute_pipe_sequence((*children)->data.children);
+				rtn = execute_tok_or(head);
+				if (rtn == FALSE)
+					rtn = execute_pipe_sequence(((t_ast_node *)head->prev->data)->data.children);
+			}
+			else
+			{
+				/* syntax error */
 			}
 		}
-		children++;
 	}
-	return (b);
+	return (rtn);
 }
 
 /* ast_node should be the root of the ast */
 void	execute(t_ast_node *ast_node)
 {
-	int rtn;
+	t_bool	rtn;
+
 	if (ast_node == NULL)
 		return ;
 	rtn = execute_complete_command(ast_node);
 	printf("return: %d\n", rtn);
-
 }
 
