@@ -444,32 +444,6 @@ t_ast_node	*build_parse_tree(t_ddeque *tokens)
 	return (ast_root_node);
 }
 
-/* static void	add_child(t_ast_node ***children, t_ast_node *node) */
-/* { */
-	/* int			idx; */
-	/* t_ast_node	**new_children; */
-/*  */
-	/* if (!*children) */
-	/* { */
-		/* *children = ft_malloc(sizeof(**children) * 2); */
-		/* (*children)[1] = NULL; */
-		/* idx = 0; */
-		/* (*children)[idx] = node; */
-	/* } */
-	/* else */
-	/* { */
-		/* idx = 0; */
-		/* while ((*children)[idx]) */
-			/* ++idx; */
-		/* new_children = ft_malloc(sizeof(*new_children) * (idx + 2)); */
-		/* idx = -1; */
-		/* while ((*children)[++idx]) */
-			/* new_children[idx] = (*children)[idx]; */
-		/* new_children[idx++] = node; */
-		/* new_children[idx] = NULL; */
-	/* } */
-/* } */
-
 /* t_ast_node	**build_ast_recursively(t_ast_node *parse_tree_node) */
 /* { */
 	/* t_ast_node	*ast; */
