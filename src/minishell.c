@@ -69,7 +69,7 @@ int	main(int argc, char **argv, char **envp)
 		ddeque_print(tokens, print_token);
 		ast_root_node = build_ast(tokens);
 		ast_print(ast_root_node);
-		/* execute(ast_root_node); */
+		execute(ast_root_node);
 	}
 	(void)free_all_ptrs();
 	return (0);

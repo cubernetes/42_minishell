@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   executor.c                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: pgrussin <pgrussin@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/15 14:01:02 by pgrussin          #+#    #+#             */
-/*   Updated: 2024/03/26 10:07:46 by tosuman          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../../include/minishell.h"
 /*dup lib*/
 #include <unistd.h>
@@ -183,11 +171,14 @@ t_bool	execute_complete_command(t_ast_node *ast_node)
 	t_bool			rtn;
 	t_ddeque		*children;
 	t_ddeque_node	*head;
+	t_bool			first;
 
 	children = ast_node->data.children;
 	head = children->head;
 	if (!head)
 		return (TRUE);
+	rtn = TRUE;
+	first = TRUE;
 	while (head->next != children->head)
 	{
 		head = head->next;
@@ -198,19 +189,21 @@ t_bool	execute_complete_command(t_ast_node *ast_node)
 		{
 			if (((t_ast_node *)head->data)->data.token->type == TOK_AND)
 			{
-				rtn = execute_tok_and(head);
+				if (first)
+					rtn = execute_tok_and(head);
+				first = FALSE;
 				if (rtn == TRUE)
-					rtn = execute_pipe_sequence(((t_ast_node *)head->prev->data)->data.children);
+					rtn = execute_pipe_sequence(((t_ast_node *)head->next->data)->data.children);
+				head = head->next;
 			}
 			else if (((t_ast_node *)head->data)->data.token->type == TOK_OR)
 			{
-				rtn = execute_tok_or(head);
+				if (first)
+					rtn = execute_tok_or(head);
+				first = FALSE;
 				if (rtn == FALSE)
-					rtn = execute_pipe_sequence(((t_ast_node *)head->prev->data)->data.children);
-			}
-			else
-			{
-				/* syntax error */
+					rtn = execute_pipe_sequence(((t_ast_node *)head->next->data)->data.children);
+				head = head->next;
 			}
 		}
 	}
@@ -227,4 +220,3 @@ void	execute(t_ast_node *ast_node)
 	rtn = execute_complete_command(ast_node);
 	ft_printf("return: %d\n", rtn);
 }
-

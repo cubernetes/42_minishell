@@ -277,7 +277,7 @@ t_ast_node	*return_example_ast(void)
 				NULL})), \
 			NULL})), \
 		NULL})), \
-		new_ast_m_token(TOK_AND, "||"), \
+		new_ast_m_token(TOK_AND, "&&"), \
 		new_ast_nonterm(PIPE_SEQUENCE, new_children((t_children){\
 			new_ast_nonterm(SIMPLE_COMMAND, new_children((t_children){\
 				new_ast_nonterm(IO_REDIRECT, new_children((t_children){\
