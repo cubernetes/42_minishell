@@ -62,24 +62,6 @@ t_bool	ast_node_is_null(t_ast_node *ast_node)
 	return (FALSE);
 }
 
-void	print_children(t_ast_node **children)
-{
-	while (!ast_node_is_null(*children))
-	{
-		ft_printf("[[%s]], ", ast_node_type_to_string((*children)->type));
-		++children;
-	}
-	ft_printf("\n");
-}
-
-void	push_productions(t_ast_node *ast_node, t_ddeque *stack, t_production **productions)
-{
-	if (ast_node_is_null(*productions))
-		return ;
-	push_productions(ast_node, stack, productions + 1);
-	ddeque_push_value_top(stack, *productions);
-}
-
 void	repeat_string(const char *str, int n, t_bool color)
 {
 	int	i;
@@ -125,7 +107,7 @@ t_ast_node	*new_ast_m_token(t_token_type type, const char *str)
 }
 
 /* children must be allocated on heap */
-t_ast_node	*new_ast_nonterm(t_ast_node_type type, t_ast_node **children)
+t_ast_node	*new_ast_nonterm(t_ast_node_type type, t_ddeque *children)
 {
 	t_ast_node	*ast_node;
 
@@ -137,20 +119,22 @@ t_ast_node	*new_ast_nonterm(t_ast_node_type type, t_ast_node **children)
 
 void	ast_print_with_depth(t_ast_node *ast_node, int n)
 {
-	t_ast_node	**tmp_children;
+	t_ddeque_node	*head;
 
 	repeat_string("|   ", n, TRUE);
 	if (ast_node->type != TOKEN)
 	{
-		ft_printf("- <%s>\n", ast_node_type_to_string(ast_node->type));
-		if (ast_node->data.children)
+		ft_printf("- <%s> (%d children)\n",
+			ast_node_type_to_string(ast_node->type),
+			ast_node->data.children->size);
+		head = ast_node->data.children->head;
+		if (!head)
+			return ;
+		ast_print_with_depth(head->data, n + 1);
+		while (head->next != ast_node->data.children->head)
 		{
-		}
-		tmp_children = ast_node->data.children;
-		while (tmp_children && *tmp_children && !ast_node_is_null(*tmp_children))
-		{
-			ast_print_with_depth(*tmp_children, n + 1);
-			++tmp_children;
+			head = head->next;
+			ast_print_with_depth(head->data, n + 1);
 		}
 	}
 	else
@@ -166,17 +150,15 @@ void	ast_print(t_ast_node *ast_node)
 	ast_print_with_depth(ast_node, 0);
 }
 
-t_ast_node	**new_children(t_ast_node **children)
+t_ddeque	*new_children(t_ast_node **children)
 {
-	t_ast_node	**new_children;
+	t_ddeque	*new_children;
 	size_t		i;
 
 	i = 0;
+	new_children = ddeque_init();
 	while (children[i])
-		++i;
-	new_children = ft_malloc(sizeof(*new_children) * (++i));
-	while (i--)
-		new_children[i] = children[i];
+		ddeque_push_value_right(new_children, children[i++]);
 	return (new_children);
 }
 
@@ -388,23 +370,28 @@ t_ast_node	*production_to_child(t_production prodcution)
 	return (child);
 }
 
-t_ast_node	**productions_to_children(t_production *productions)
+t_ddeque	*productions_to_children(t_production *productions)
 {
 	int			size;
-	t_ast_node	**children;
+	t_ddeque	*children;
 
+	children = ddeque_init();
 	size = 0;
 	while (!ast_node_is_null(productions + size))
-		++size;
-	children = ft_malloc(sizeof(*children) * (size_t)(size + 1));
-	size = 0;
-	while (!ast_node_is_null(productions + size))
-	{
-		children[size] = production_to_child(productions[size]);
-		++size;
-	}
-	children[size] = NULL;
+		ddeque_push_value_right(children,
+			production_to_child(productions[size++]));
 	return (children);
+}
+
+void	print_ast_node(void *data, t_bool first)
+{
+	t_ast_node	*node;
+
+	node = (t_ast_node *)data;
+	if (first)
+		ft_printf("AST_NODES: %s", ast_node_type_to_string(node->type));
+	else
+		ft_printf(" -> %s", ast_node_type_to_string(node->type));
 }
 
 /* LL(1) parser */
@@ -414,7 +401,7 @@ t_ast_node	*build_parse_tree(t_ddeque *tokens)
 	t_ast_node		*ast_root_node;
 	t_ddeque		*stack;
 	t_ast_node		*top;
-	t_ast_node		**children;
+	t_ddeque		*children;
 
 	stack = ddeque_init();
 	ddeque_push_value_right(stack, production_to_child((t_production){COMPLETE_COMMAND, {0}, {0}}));
@@ -423,14 +410,13 @@ t_ast_node	*build_parse_tree(t_ddeque *tokens)
 	ast_root_node = ast_node;
 	while (1)
 	{
-		top = stack->head->data;
-		ddeque_pop_top(stack);
+		top = ddeque_pop_left(stack)->data;
 		if (top->type != TOKEN)
 		{
 			children = productions_to_children(get_production(top->type, tokens->head->data));
-			push_productions(ast_root_node, stack, children);
+			ddeque_extend_left(stack, ddeque_shallow_copy(children));
 			ast_node->data.children = children;
-			ast_node = ast_node->data.children[0];
+			ast_node = ast_node->data.children->head->data;
 		}
 		else
 		{
