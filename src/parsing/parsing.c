@@ -444,76 +444,81 @@ t_ast_node	*build_parse_tree(t_ddeque *tokens)
 	return (ast_root_node);
 }
 
-static void	add_child(t_ast_node ***children, t_ast_node *node)
-{
-	int			idx;
-	t_ast_node	**new_children;
+/* static void	add_child(t_ast_node ***children, t_ast_node *node) */
+/* { */
+	/* int			idx; */
+	/* t_ast_node	**new_children; */
+/*  */
+	/* if (!*children) */
+	/* { */
+		/* *children = ft_malloc(sizeof(**children) * 2); */
+		/* (*children)[1] = NULL; */
+		/* idx = 0; */
+		/* (*children)[idx] = node; */
+	/* } */
+	/* else */
+	/* { */
+		/* idx = 0; */
+		/* while ((*children)[idx]) */
+			/* ++idx; */
+		/* new_children = ft_malloc(sizeof(*new_children) * (idx + 2)); */
+		/* idx = -1; */
+		/* while ((*children)[++idx]) */
+			/* new_children[idx] = (*children)[idx]; */
+		/* new_children[idx++] = node; */
+		/* new_children[idx] = NULL; */
+	/* } */
+/* } */
 
-	if (!*children)
-	{
-		*children = ft_malloc(sizeof(**children) * 2);
-		(*children)[1] = NULL;
-		idx = 0;
-		(*children)[idx] = node;
-	}
-	else
-	{
-		idx = 0;
-		while ((*children)[idx])
-			++idx;
-		new_children = ft_malloc(sizeof(*new_children) * (idx + 2));
-		idx = -1;
-		while ((*children)[++idx])
-			new_children[idx] = (*children)[idx];
-		new_children[idx++] = node;
-		new_children[idx] = NULL;
-	}
-}
+/* t_ast_node	**build_ast_recursively(t_ast_node *parse_tree_node) */
+/* { */
+	/* t_ast_node	*ast; */
+	/* t_ast_node	**children; */
+	/* int			idx; */
+/*  */
+	/* if (parse_tree_node->type == TOKEN) */
+		/* return (parse_tree_node); */
+	/* else if (parse_tree_node->type == COMPLETE_COMMAND */
+			/* || parse_tree_node->type == PIPE_SEQUENCE) */
+	/* { */
+		/* ast = parse_tree_node; */
+		/* children = ast->data.children; */
+		/* ast->data.children = NULL; */
+		/* idx = -1; */
+		/* while (children && children[++idx]) */
+			/* add_child(&ast->data.children, build_ast_recursively(children[idx])); */
+		/* return (ast); */
+	/* } */
+	/* else if (parse_tree_node->type == COMPLETE_COMMAND_TAIL) */
+	/* { */
+		/* ast = parse_tree_node; */
+		/* ast->type = PIPE_SEQUENCE; */
+		/* ast->meta_data.conditional = ast->data.children[0]->type; */
+		/* children = ast->data.children[1]->data.children; */
+		/* ast->data.children = NULL; */
+		/* idx = -1; */
+		/* while (children && children[++idx]) */
+			/* add_child(&ast->data.children, build_ast_recursively(children[idx])); */
+		/* return (ast); */
+	/* } */
+	/* else if (parse_tree_node->type == PIPE_SEQUENCE_TAIL) */
+	/* { */
+		/* return (build_ast_recursively(parse_tree_node->data.children[1])); */
+		/* ast = parse_tree_node; */
+		/* ast->type = COMMAND; */
+		/* children = ast->data.children[1]->data.children; */
+		/* ast->data.children = NULL; */
+		/* idx = -1; */
+		/* while (children && children[++idx]) */
+			/* add_child(&ast->data.children, build_ast_recursively(children[idx])); */
+		/* return (ast); */
+	/* } */
+/* } */
 
-t_ast_node	**build_ast_recursively(t_ast_node *parse_tree_node)
-{
-	t_ast_node	*ast;
-	t_ast_node	**children;
-	int			idx;
-
-	if (parse_tree_node->type == TOKEN)
-		return (parse_tree_node);
-	else if (parse_tree_node->type == COMPLETE_COMMAND
-			|| parse_tree_node->type == PIPE_SEQUENCE)
-	{
-		ast = parse_tree_node;
-		children = ast->data.children;
-		ast->data.children = NULL;
-		idx = -1;
-		while (children && children[++idx])
-			add_child(&ast->data.children, build_ast_recursively(children[idx]));
-		return (ast);
-	}
-	else if (parse_tree_node->type == COMPLETE_COMMAND_TAIL)
-	{
-		ast = parse_tree_node;
-		ast->type = PIPE_SEQUENCE;
-		ast->meta_data.conditional = ast->data.children[0]->type;
-		children = ast->data.children[1]->data.children;
-		ast->data.children = NULL;
-		idx = -1;
-		while (children && children[++idx])
-			add_child(&ast->data.children, build_ast_recursively(children[idx]));
-		return (ast);
-	}
-	else if (parse_tree_node->type == PIPE_SEQUENCE_TAIL)
-	{
-		return (build_ast_recursively(parse_tree_node->data.children[1]));
-		ast = parse_tree_node;
-		ast->type = COMMAND;
-		children = ast->data.children[1]->data.children;
-		ast->data.children = NULL;
-		idx = -1;
-		while (children && children[++idx])
-			add_child(&ast->data.children, build_ast_recursively(children[idx]));
-		return (ast);
-	}
-}
+/* t_ast_node	**build_ast_recursively(t_ast_node *node) */
+/* { */
+/*  */
+/* } */
 
 t_ast_node	*build_ast(t_ddeque *tokens)
 {
