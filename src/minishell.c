@@ -44,6 +44,7 @@ void	update_state(t_state *state)
 /* TODO: make functions static where needed */
 /* TODO: check for forbidden functions (backtrace): nm minishell */
 /* TODO: check all free_all_ptrs() calls */
+/* TODO: make free_all_ptrs() callable multiple times */
 int	main(int argc, char **argv, char **envp)
 {
 	static t_state		state;
