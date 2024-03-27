@@ -1,6 +1,9 @@
 #include "../../include/minishell.h"
-#include <unistd.h> /* close() */
-#include <fcntl.h> /* open() */
+#include <unistd.h> /* dup() */
+#include <sys/types.h> /* open() */
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <stdlib.h> /* malloc() */
 
 t_bool	redirect_override(t_ddeque *override, t_ast_node *simple_command)
 {

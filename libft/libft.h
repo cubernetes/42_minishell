@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 15:09:08 by tischmid          #+#    #+#             */
-/*   Updated: 2024/03/26 17:19:03 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/03/26 05:10:37 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,6 @@ struct							s_deque
 {
 	t_deque_node				*head;
 	size_t						size;
-	t_bool						iter_flag;
 };
 
 /* Quote Norm:
