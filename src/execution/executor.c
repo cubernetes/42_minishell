@@ -2,6 +2,9 @@
 #include <unistd.h> /* close() */
 #include <fcntl.h> /* open() */
 
+/* TODO: delete prototype */
+void	ms_execve(t_ast_node *command);
+
 /* TODO: implement heredoc redirection*/
 /*t_bool redirect_heredoc(t_ddeque *heredoc, t_ast_node *simple_command)
 {
@@ -131,6 +134,7 @@ t_bool	execute_simple_command(t_ast_node *simple_command)
 		head = head->next;
 		if (((t_ast_node *)head->data)->type == IO_REDIRECT)
 			rtn = execute_io_redirect(head->data, simple_command);
+		ms_execve(simple_command);
 	}
 	return (rtn);
 }

@@ -62,6 +62,20 @@ char	**get_environ(void)
 	return (set_environ(NULL));
 }
 
+char	**set_argv(char **argv)
+{
+	static char	**_argv = NULL;
+
+	if (argv)
+		_argv = argv;
+	return (_argv);
+}
+
+char	**get_argv(void)
+{
+	return (set_argv(NULL));
+}
+
 char	*env_lookup(char *var)
 {
 	char	**envp;

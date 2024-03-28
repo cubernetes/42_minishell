@@ -56,6 +56,7 @@ int	main(int argc, char **argv, char **envp)
 	(void)argc;
 	(void)argv;
 	set_environ(envp);
+	set_argv(argv);
 	tokens = NULL;
 	ast_root_node = NULL;
 	setup_signals();
