@@ -2,7 +2,40 @@
 #include <unistd.h> /* close() */
 #include <fcntl.h> /* open() */
 
-t_bool	redirect_override(t_ddeque *override, t_ast_node *simple_command)
+/* TODO: implement heredoc redirection*/
+/*t_bool redirect_heredoc(t_ddeque *heredoc, t_ast_node *simple_command)
+{
+	t_bool		rtn;
+	int		fd;
+
+
+}*/
+t_bool redirect_input(t_ddeque *override, t_ast_node *simple_command)
+{
+	t_bool		rtn;
+	int		fd;
+	int		sc_fd_in;
+	char		*file_path;
+
+	file_path = ((t_ast_node *)override->head->next->data)->data.token->str;
+	fd = open(file_path, O_RDONLY);
+	if (fd == -1)
+	{
+		simple_command->meta_data.simple_command.exit_status = 1;
+		rtn  = FALSE;
+	}
+	else
+	{
+		sc_fd_in = simple_command->meta_data.simple_command.fds.in;
+		if (sc_fd_in != -2)
+			close(sc_fd_in);
+		simple_command->meta_data.simple_command.fds.out = fd;
+		rtn = TRUE;
+	}
+	return (rtn);
+}
+
+t_bool	redirect_append(t_ddeque *override, t_ast_node *simple_command)
 {
 	t_bool	rtn;
 	int		fd;
@@ -11,6 +44,31 @@ t_bool	redirect_override(t_ddeque *override, t_ast_node *simple_command)
 
 	file_path = ((t_ast_node *)override->head->next->data)->data.token->str;
 	fd = open(file_path, O_WRONLY | O_TRUNC | O_CREAT, 0644);
+	if (fd == -1)
+	{
+		simple_command->meta_data.simple_command.exit_status = 1;
+		rtn = FALSE;
+	}
+	else
+	{
+		sc_fd_out = simple_command->meta_data.simple_command.fds.out;
+		if (sc_fd_out != -2)
+			close(sc_fd_out);
+		simple_command->meta_data.simple_command.fds.out = fd;
+		rtn = TRUE;
+	}
+	return (rtn);
+}
+
+t_bool	redirect_override(t_ddeque *override, t_ast_node *simple_command)
+{
+	t_bool	rtn;
+	int		fd;
+	int		sc_fd_out;
+	char	*file_path;
+
+	file_path = ((t_ast_node *)override->head->next->data)->data.token->str;
+	fd = open(file_path, O_WRONLY | O_APPEND | O_CREAT, 0644);
 	if (fd == -1)
 	{
 		simple_command->meta_data.simple_command.exit_status = 1;
@@ -45,6 +103,12 @@ t_bool	execute_io_redirect(t_ast_node *io_redirect, t_ast_node *simple_command)
 		head = head->next;
 		if (((t_ast_node *)head->data)->data.token->type == TOK_OVERRIDE)
 			rtn = redirect_override(children, simple_command);
+		else if (((t_ast_node *)head->data)->data.token->type == TOK_INPUT)
+			rtn = redirect_input(children, simple_command);
+		if (((t_ast_node *)head->data)->data.token->type == TOK_APPEND)
+			rtn = redirect_append(children, simple_command);
+		/*if (((t_ast_node *)head->data)->data.token->type == TOK_HEREDOC)
+			rtn = redirect_heredoc(children, simple_command);*/
 	}
 	return (rtn);
 }
