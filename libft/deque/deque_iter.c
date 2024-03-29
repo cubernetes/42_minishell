@@ -1,31 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ddeque_sum.c                                       :+:      :+:    :+:   */
+/*   deque_iter.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 14:37:38 by tischmid          #+#    #+#             */
-/*   Updated: 2024/03/26 08:48:02 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/03/27 17:46:22 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../libft.h"
 
-int	ddeque_sum(t_ddeque *ddeque, int (*f)(void *data))
+void	deque_iter(t_deque *deque, void (*f)(void *ptr))
 {
-	t_ddeque_node	*head;
-	int				sum;
+	t_deque_node	*head;
 
-	sum = 0;
-	head = ddeque->head;
+	head = deque->head;
 	if (!head)
-		return (0);
-	sum += f(head->data);
-	while (head->next != ddeque->head)
+		return ;
+	f(head);
+	while (head->next != deque->head)
 	{
 		head = head->next;
-		sum += f(head->data);
+		f(head);
 	}
-	return (sum);
 }

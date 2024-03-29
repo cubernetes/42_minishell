@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ddeque_push_value_left.c                            :+:      :+:    :+:   */
+/*   deque_push_ptr_left.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/19 09:34:41 by tischmid          #+#    #+#             */
-/*   Updated: 2024/02/01 12:40:50 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/03/27 17:59:11 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,30 +14,30 @@
 #include <stdlib.h>
 
 /* not using perror and exit for compliance */
-void	ddeque_push_value_left(t_ddeque *ddeque, void *data)
+void	deque_push_ptr_left(t_deque *deque, void *ptr)
 {
-	t_ddeque_node	*new;
+	t_deque_node	*new;
 
-	if (ddeque->head)
+	if (deque->head)
 	{
 		new = ft_malloc(sizeof(*new));
 		if (!new)
 			return ;
-		new->data = data;
-		new->next = ddeque->head;
-		new->prev = ddeque->head->prev;
-		ddeque->head->prev->next = new;
-		ddeque->head->prev = new;
-		ddeque->head = new;
+		new->as_ptr = ptr;
+		new->next = deque->head;
+		new->prev = deque->head->prev;
+		deque->head->prev->next = new;
+		deque->head->prev = new;
+		deque->head = new;
 	}
 	else
 	{
-		ddeque->head = ft_malloc(sizeof(*ddeque->head));
-		if (!ddeque->head)
+		deque->head = ft_malloc(sizeof(*deque->head));
+		if (!deque->head)
 			return ;
-		ddeque->head->data = data;
-		ddeque->head->next = ddeque->head;
-		ddeque->head->prev = ddeque->head;
+		deque->head->as_ptr = ptr;
+		deque->head->next = deque->head;
+		deque->head->prev = deque->head;
 	}
-	ddeque->size += 1;
+	deque->size += 1;
 }

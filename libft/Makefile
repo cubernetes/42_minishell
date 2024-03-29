@@ -6,7 +6,7 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:09:11 by tischmid          #+#    #+#              #
-#    Updated: 2024/03/26 08:58:17 by tosuman          ###   ########.fr        #
+#    Updated: 2024/03/29 19:22:40 by tosuman          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,7 +23,7 @@ INCDIR = .
 # TODO: change -O0 to -03 and remove -g3
 # TODO: add back -Werror
 CFLAGS = -O0 -g3 -fPIE -Wall -Wextra \
-          -std=c99 -pedantic -Wconversion \
+          -pedantic -Wconversion \
           -Wunreachable-code -Wshadow \
           -fdiagnostics-color=always
 CPPFLAGS = -I$(INCDIR)
@@ -81,13 +81,14 @@ SRC += ft_calloc.c
 SRC += ft_memchr.c
 SRC += ft_memcmp.c
 SRC += ft_memcpy.c
+SRC += ft_memdup.c
 SRC += ft_memmove.c
 SRC += ft_memset.c
 SRC += error_handling.c
 SRC += ft_malloc.c
-SRC += ft_malloc_ddeque_free.c
-SRC += ft_malloc_ddeque_init.c
-SRC += ft_malloc_ddeque_push_value_right.c
+SRC += ft_malloc_deque_free.c
+SRC += ft_malloc_deque_init.c
+SRC += ft_malloc_deque_push_ptr_right.c
 
 # io
 SRC += get_next_line.c
@@ -129,11 +130,12 @@ SRC += cmp_int_asc.c
 # deque
 SRC += deque_init.c
 SRC += deque_print.c
-SRC += array_list_to_deque.c
+SRC += deque_print_debug.c
+SRC += string_list_to_deque.c
 SRC += deque_index.c
 SRC += deque_slice.c
 SRC += deque_sort.c
-SRC += deque_copy.c
+SRC += deque_shallow_copy.c
 SRC += deque_size.c
 SRC += deque_extend_right.c
 SRC += deque_extend_left.c
@@ -142,34 +144,14 @@ SRC += deque_rotate.c
 SRC += deque_pop_left.c
 SRC += deque_pop_right.c
 SRC += deque_push_node_right.c
-SRC += deque_push_value_right.c
+SRC += deque_push_ptr_right.c
 SRC += deque_push_node_left.c
-SRC += deque_push_value_left.c
+SRC += deque_push_ptr_left.c
 SRC += deque_equal.c
-SRC += deque_argmax.c
-
-SRC += ddeque_init.c
-SRC += ddeque_print.c
-SRC += ddeque_print_debug.c
-SRC += array_list_to_ddeque.c
-SRC += ddeque_index.c
-SRC += ddeque_slice.c
-SRC += ddeque_sort.c
-SRC += ddeque_shallow_copy.c
-SRC += ddeque_size.c
-SRC += ddeque_extend_right.c
-SRC += ddeque_extend_left.c
-SRC += ddeque_swap.c
-SRC += ddeque_rotate.c
-SRC += ddeque_pop_left.c
-SRC += ddeque_pop_right.c
-SRC += ddeque_push_node_right.c
-SRC += ddeque_push_value_right.c
-SRC += ddeque_push_node_left.c
-SRC += ddeque_push_value_left.c
-SRC += ddeque_equal.c
-SRC += ddeque_iter.c
-SRC += ddeque_sum.c
+SRC += deque_iter.c
+SRC += deque_sum.c
+SRC += deque_begin.c
+SRC += deque_next.c
 
 _OBJ = $(SRC:.c=.o)
 OBJ = $(addprefix $(OBJDIR)/,$(_OBJ))

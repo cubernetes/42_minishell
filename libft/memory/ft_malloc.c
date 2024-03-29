@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 07:51:00 by tosuman           #+#    #+#             */
-/*   Updated: 2024/02/03 17:48:34 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/03/27 17:57:38 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,21 +25,21 @@ t_bool	ft_free(void *ptr)
 
 t_bool	free_all_ptrs(void)
 {
-	t_ddeque	*ptrs;
+	t_deque	*ptrs;
 
 	ptrs = manage_ptrs(NULL);
-	ft_malloc_ddeque_free(ptrs, ft_free);
+	ft_malloc_deque_free(ptrs, ft_free);
 	return (TRUE);
 }
 
 /* globals are not allowed? Well, oopsie */
-t_ddeque	*manage_ptrs(void *ptr)
+t_deque	*manage_ptrs(void *ptr)
 {
-	static t_ddeque	*ptrs = NULL;
+	static t_deque	*ptrs = NULL;
 
 	if (!ptrs)
-		ptrs = ft_malloc_ddeque_init();
-	ft_malloc_ddeque_push_value_right(ptrs, ptr);
+		ptrs = ft_malloc_deque_init();
+	ft_malloc_deque_push_ptr_right(ptrs, ptr);
 	return (ptrs);
 }
 

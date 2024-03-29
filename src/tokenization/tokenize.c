@@ -4,26 +4,27 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-char	*get_token_str(t_ddeque *tokens)
+char	*get_token_str(t_deque *tokens)
 {
-	return (((t_token *)tokens->head->data)->str);
+	return (tokens->head->as_token->str);
 }
 
-char	*get_token_str_nl(t_ddeque *tokens)
+char	*get_token_str_nl(t_deque *tokens)
 {
 	char	*str;
 
-	str = ((t_token *)tokens->head->data)->str;
+	str = get_token_str(tokens);
 	if (!*str)
 		str = "newline";
 	return (str);
 }
 
-t_token_type	get_token_type(t_ddeque *tokens)
+t_token_type	get_token_type(t_deque *tokens)
 {
-	return (((t_token *)tokens->head->data)->type);
+	return (tokens->head->as_token->type);
 }
 
+/* TODO: Turn into hashmap */
 const char	*token_type_to_string(t_token_type type)
 {
 	if (type == TOK_OR)
@@ -67,12 +68,12 @@ void	skip_whitespace(const char **line)
 		++(*line);
 }
 
-void	print_token(void *data, t_bool first)
+void	print_token(void *ptr, t_bool first)
 {
 	t_token	*token;
 	char	*clr;
 
-	token = (t_token *)data;
+	token = (t_token *)ptr;
 	if (token->is_last_subtoken)
 		clr = "";
 	else
@@ -97,7 +98,7 @@ void	*new_token(char *str, t_token_type type, t_bool is_last_subtoken)
 	return (token);
 }
 
-t_bool	push_token(const char **line, t_ddeque *tokens, size_t token_len,
+t_bool	push_token(const char **line, t_deque *tokens, size_t token_len,
 	t_token_type type)
 {
 	char	*str;
@@ -117,12 +118,12 @@ t_bool	push_token(const char **line, t_ddeque *tokens, size_t token_len,
 		is_last_subtoken = TRUE;
 	else
 		is_last_subtoken = FALSE;
-	ddeque_push_value_right(tokens, new_token(str, type, is_last_subtoken));
+	deque_push_ptr_right(tokens, new_token(str, type, is_last_subtoken));
 	*line += token_len;
 	return (TRUE);
 }
 
-t_bool	tokenize_fixed_len_tokens(const char **line, t_ddeque *tokens)
+t_bool	tokenize_fixed_len_tokens(const char **line, t_deque *tokens)
 {
 	t_bool	pushed;
 
@@ -150,7 +151,7 @@ t_bool	tokenize_fixed_len_tokens(const char **line, t_ddeque *tokens)
 	return (pushed);
 }
 
-t_bool	tokenize_single_quoted_string(const char **line, t_ddeque *tokens)
+t_bool	tokenize_single_quoted_string(const char **line, t_deque *tokens)
 {
 	size_t		len;
 	const char	*tmp;
@@ -177,7 +178,7 @@ t_bool	tokenize_single_quoted_string(const char **line, t_ddeque *tokens)
 	return (FALSE);
 }
 
-t_bool	tokenize_double_quoted_string(const char **line, t_ddeque *tokens)
+t_bool	tokenize_double_quoted_string(const char **line, t_deque *tokens)
 {
 	size_t		len;
 	const char	*tmp;
@@ -220,7 +221,7 @@ t_bool	is_not_and_and(const char *line)
 	return (TRUE);
 }
 
-t_bool	tokenize_word(const char **line, t_ddeque *tokens)
+t_bool	tokenize_word(const char **line, t_deque *tokens)
 {
 	size_t		len;
 	const char	*tmp;
@@ -240,7 +241,7 @@ t_bool	tokenize_word(const char **line, t_ddeque *tokens)
 	return (FALSE);
 }
 
-void	tokenize_variable_len_tokens(const char **line, t_ddeque *tokens)
+void	tokenize_variable_len_tokens(const char **line, t_deque *tokens)
 {
 	t_bool	pushed;
 
@@ -260,17 +261,17 @@ void	tokenize_variable_len_tokens(const char **line, t_ddeque *tokens)
 /* those are responsibilities while or after building the AST */
 /* TODO: well, I think you kinda have to do env expansion and globbing here.. */
 /* TODO: set is_last_subtoken member for each token */
-t_ddeque	*tokenize(const char *line)
+t_deque	*tokenize(const char *line)
 {
-	t_ddeque	*tokens;
+	t_deque	*tokens;
 
-	tokens = ddeque_init();
+	tokens = deque_init();
 	skip_whitespace(&line);
 	while (TRUE)
 	{
 		if (!tokenize_fixed_len_tokens(&line, tokens))
 			tokenize_variable_len_tokens(&line, tokens);
-		if (((t_token *)tokens->head->prev->data)->type == TOK_EOL)
+		if (tokens->head->prev->as_token->type == TOK_EOL)
 			break ;
 		skip_whitespace(&line);
 	}

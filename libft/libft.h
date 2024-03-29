@@ -6,12 +6,12 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 15:09:08 by tischmid          #+#    #+#             */
-/*   Updated: 2024/03/26 05:10:37 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/03/29 19:22:27 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef LIBFT_H
-# define LIBFT_H	1
+# define LIBFT_H 1
 
 /* TODO: remove debug include */
 # include "../include/minishell_debug.h"
@@ -24,6 +24,7 @@
 # define NULL_PTR_STR "(null)"
 # define NIL_PTR_STR "(nil)"
 
+/* get_next_line */
 # ifndef OPEN_MAX
 #  define OPEN_MAX 4096
 # endif
@@ -31,12 +32,6 @@
 # ifndef BUFFER_SIZE
 #  define BUFFER_SIZE 1
 # endif
-
-typedef enum e_bool
-{
-	FALSE = 0,
-	TRUE
-}	t_bool;
 
 typedef struct s_gnl_vars
 {
@@ -48,23 +43,39 @@ typedef struct s_gnl_vars
 	int							len;
 }								t_gnl_vars;
 
+typedef enum e_bool
+{
+	FALSE = 0,
+	TRUE
+}								t_bool;
+
 typedef struct s_list
 {
 	void						*content;
 	struct s_list				*next;
 }								t_list;
 
+
+/* forward declarations */
 typedef struct s_deque			t_deque;
 typedef struct s_deque_node		t_deque_node;
-
-/* default */
-typedef int						t_deque_type;
+typedef struct s_ast_node		t_ast_node;
+typedef struct s_token			t_token;
 
 struct							s_deque_node
 {
 	t_deque_node				*prev;
 	t_deque_node				*next;
-	t_deque_type				data;
+	union
+	{
+		void					*as_ptr;
+		char					*as_str;
+		t_token					*as_token;
+		t_ast_node				*as_ast_node;
+		long					as_long;
+		int						as_int;
+		char					as_char;
+	};
 };
 
 struct							s_deque
@@ -73,34 +84,12 @@ struct							s_deque
 	size_t						size;
 };
 
-/* Quote Norm:
- * 
- * Preprocessor constants (or #define) you create must
- * be used only for literal and constant values.
- * 
- * But you don't want to allocate on the heap everytime if you know your data
- * is an int or the like. That's why we create another deque type, the
- * data deque (ddeque), where you always need to allocate on the heap
- * for the data.
- */
-typedef struct s_ddeque			t_ddeque;
-typedef struct s_ddeque_node	t_ddeque_node;
-
-struct							s_ddeque_node
+typedef struct s_deque_iter
 {
-	t_ddeque_node				*prev;
-	t_ddeque_node				*next;
-	void						*data;
-};
-
-struct							s_ddeque
-{
-	t_ddeque_node				*head;
-	size_t						size;
-};
-
-/* misc */
-void							print_callstack(void);
+	t_deque						*deque;
+	t_deque_node				*head;
+	t_bool						first_iter;
+}								t_deque_iter;
 
 /* memory */
 void							*ft_memmove(void *dest, void const *src,
@@ -113,14 +102,15 @@ int								ft_memcmp(void const *s1, void const *s2,
 									size_t n);
 void							*ft_memcpy(void *dest, void const *src,
 									size_t n);
+void							*ft_memdup(const void *src, size_t size);
 void							*ft_malloc(size_t size);
-t_ddeque						*manage_ptrs(void *ptr);
+t_deque							*manage_ptrs(void *ptr);
 t_bool							free_all_ptrs(void);
-t_bool							ft_malloc_ddeque_free(t_ddeque *ddeque,
-									t_bool (free_data)(void *));
-t_ddeque						*ft_malloc_ddeque_init(void);
-void							ft_malloc_ddeque_push_value_right(
-									t_ddeque *ddeque, void *data);
+t_bool							ft_malloc_deque_free(t_deque *deque,
+									t_bool(free_data)(void *));
+t_deque							*ft_malloc_deque_init(void);
+void							ft_malloc_deque_push_ptr_right(
+									t_deque *deque, void *data);
 
 /* strings */
 int								ft_isalnum(int c);
@@ -153,9 +143,9 @@ size_t							ft_strlcat(char *dst, char const *src,
 									size_t size);
 size_t							ft_strlcpy(char *dst, char const *src,
 									size_t size);
-char							*ft_strmapi(char const *s,
-									char (f)(unsigned int, char));
-void							ft_striteri(char *s, void (*f)(unsigned int,
+char							*ft_strmapi(char const *s, char (f)(
+										unsigned int, char));
+void							ft_striteri(char *s, void (f)(unsigned int,
 										char *));
 int								ft_char_in_charset(char c, char const *charset);
 
@@ -174,11 +164,11 @@ void							ft_lstadd_front(t_list **lst, t_list *new_head);
 int								ft_lstsize(t_list *lst);
 t_list							*ft_lstlast(t_list *lst);
 void							ft_lstadd_back(t_list **lst, t_list *new_tail);
-void							ft_lstdelone(t_list *lst, void (*del)(void *));
-void							ft_lstclear(t_list **lst, void (*del)(void *));
-void							ft_lstiter(t_list *lst, void (*f)(void *));
-t_list							*ft_lstmap(t_list *lst, void *(*f)(void *),
-									void (*del)(void *));
+void							ft_lstdelone(t_list *lst, void (del)(void *));
+void							ft_lstclear(t_list **lst, void (del)(void *));
+void							ft_lstiter(t_list *lst, void (f)(void *));
+t_list							*ft_lstmap(t_list *lst, void *(f)(void *),
+									void (del)(void *));
 
 /* printing */
 int								ft_putendl_fd(char *s, int fd);
@@ -202,79 +192,51 @@ int								ft_vdprintf(int fd, const char *fmt,
 									va_list ap);
 int								ft_dprintf(int fd, const char *fmt, ...);
 
-/* regular deque (type must be define above) */
+/* deque */
 t_deque_node					*deque_pop_right(t_deque *deque);
 t_deque_node					*deque_pop_left(t_deque *deque);
-void							deque_push_value_left(t_deque *deque,
-									t_deque_type data);
+void							deque_push_ptr_left(t_deque *deque,
+									void *data);
 void							deque_push_node_left(t_deque *deque,
 									t_deque_node *node);
-void							deque_push_value_right(t_deque *deque,
-									t_deque_type data);
+void							deque_push_ptr_right(t_deque *deque,
+									void *data);
 void							deque_push_node_right(t_deque *deque,
 									t_deque_node *node);
 void							deque_swap(t_deque *deque);
 void							deque_rotate(t_deque *deque, int n);
-t_deque							*deque_copy(t_deque *deque);
+t_deque							*deque_shallow_copy(t_deque *deque);
 size_t							deque_size(t_deque *deque);
-void							deque_sort(t_deque *deque,
-									t_bool (cmp)(t_deque_type, t_deque_type));
-t_deque							*array_list_to_deque(char **array_list,
-									int *status);
-void							deque_print(t_deque *deque);
+void							deque_sort(t_deque *deque, int (cmp)(void *,
+										void *));
+void							deque_print(t_deque *deque,
+									void (print)(void *data, t_bool first));
+void							deque_print_debug(t_deque *deque);
 t_deque							*deque_init(void);
-t_deque							*deque_slice(t_deque *deque, int start, int end,
-									int step);
-int								deque_index(t_deque *deque, t_deque_type data);
+t_deque							*deque_shallow_slice(t_deque *deque, int start,
+									int end, int step);
+int								deque_index(t_deque *deque, void *data,
+									t_bool(cmp)(void *, void *));
 void							deque_extend_right(t_deque *deque_a,
 									t_deque *deque_b);
 void							deque_extend_left(t_deque *deque_a,
 									t_deque *deque_b);
-int								deque_equal(t_deque *deque_a, t_deque *deque_b);
-int								deque_argmax(t_deque *deque, int *max_idx);
-
-/* data deque */
-t_ddeque_node					*ddeque_pop_right(t_ddeque *ddeque);
-t_ddeque_node					*ddeque_pop_left(t_ddeque *ddeque);
-void							ddeque_push_value_left(t_ddeque *ddeque,
-									void *data);
-void							ddeque_push_node_left(t_ddeque *ddeque,
-									t_ddeque_node *node);
-void							ddeque_push_value_right(t_ddeque *ddeque,
-									void *data);
-void							ddeque_push_node_right(t_ddeque *ddeque,
-									t_ddeque_node *node);
-void							ddeque_swap(t_ddeque *ddeque);
-void							ddeque_rotate(t_ddeque *ddeque, int n);
-t_ddeque						*ddeque_shallow_copy(t_ddeque *ddeque);
-size_t							ddeque_size(t_ddeque *ddeque);
-void							ddeque_sort(t_ddeque *ddeque, int (cmp)(void *,
-										void *));
-void							ddeque_print(t_ddeque *ddeque,
-									void (print)(void *data, t_bool first));
-void							ddeque_print_debug(t_ddeque *ddeque);
-t_ddeque						*ddeque_init(void);
-t_ddeque						*ddeque_shallow_slice(t_ddeque *ddeque,
-									int start, int end, int step);
-int								ddeque_index(t_ddeque *ddeque, void *data,
-									t_bool (cmp)(void *, void *));
-void							ddeque_extend_right(t_ddeque *ddeque_a,
-									t_ddeque *ddeque_b);
-void							ddeque_extend_left(t_ddeque *ddeque_a,
-									t_ddeque *ddeque_b);
-t_bool							ddeque_equal(t_ddeque *ddeque_a,
-									t_ddeque *ddeque_b,
-									t_bool (cmp)(void *, void *));
-void							ddeque_iter(t_ddeque *ddeque,
-									void (*f)(void *data));
-int								ddeque_sum(t_ddeque *ddeque,
-									int (*f)(void *data));
-t_ddeque						*array_list_to_ddeque(char **array_list,
-									void *(*new_node)(void *));
+t_bool							deque_equal(t_deque *deque_a, t_deque *deque_b,
+									t_bool(cmp)(void *, void *));
+void							deque_iter(t_deque *deque,
+									void (f)(void *data));
+int								deque_sum(t_deque *deque, int (f)(void *data));
+t_deque							*string_list_to_deque(char **array_list,
+									void *(new_node)(char *str));
+t_deque_node					*deque_next(t_deque_iter *deque_iter);
+t_deque_iter					*deque_begin(t_deque *deque);
+/* int							deque_argmax(t_deque *deque, int *max_idx); */
 
 /* misc */
 t_bool							cmp_int_asc(int a, int b);
 t_bool							cmp_int_desc(int a, int b);
 char							*get_next_line(int fd);
+/* TODO: this function contains forbidden functions (backtrace) */
+void							print_callstack(void);
 
 #endif /* libft.h. */

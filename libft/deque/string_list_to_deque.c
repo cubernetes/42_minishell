@@ -1,26 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   array_list_to_deque.c                              :+:      :+:    :+:   */
+/*   string_list_to_deque.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/19 14:25:38 by tischmid          #+#    #+#             */
-/*   Updated: 2024/01/15 23:24:21 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/03/27 17:58:26 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../libft.h"
 
-t_deque	*array_list_to_deque(char **array_list, int *status)
+t_deque	*string_list_to_deque(char **array_list, void *(new_node_ptr)(char *str))
 {
 	t_deque	*deque;
 
 	deque = deque_init();
 	while (*array_list)
 	{
-		deque_push_value_right(deque,
-			(t_deque_type)ft_atoi_status(*array_list, status));
+		deque_push_ptr_right(deque, new_node_ptr(*array_list));
 		++array_list;
 	}
 	return (deque);

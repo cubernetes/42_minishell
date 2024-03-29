@@ -6,13 +6,13 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 14:39:32 by tischmid          #+#    #+#             */
-/*   Updated: 2024/01/29 03:41:19 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/03/27 17:52:41 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../libft.h"
 
-void	deque_sort(t_deque *deque, t_bool (cmp)(t_deque_type, t_deque_type))
+void	deque_sort(t_deque *deque, int (cmp)(void *ptr1, void *ptr2))
 {
 	size_t	n;
 	size_t	orig_n;
@@ -27,7 +27,7 @@ void	deque_sort(t_deque *deque, t_bool (cmp)(t_deque_type, t_deque_type))
 		i = orig_n;
 		while (--i)
 		{
-			if (cmp(deque->head->data, deque->head->next->data))
+			if (cmp(deque->head->as_ptr, deque->head->next->as_ptr))
 				deque_swap(deque);
 			deque->head = deque->head->next;
 		}

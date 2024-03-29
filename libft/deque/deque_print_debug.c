@@ -1,40 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   deque_argmax.c                                     :+:      :+:    :+:   */
+/*   deque_print_debug.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/01/16 13:06:31 by tosuman           #+#    #+#             */
-/*   Updated: 2024/03/26 08:47:42 by tosuman          ###   ########.fr       */
+/*   Created: 2024/02/03 17:50:23 by tosuman           #+#    #+#             */
+/*   Updated: 2024/03/26 08:48:22 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../libft.h"
-#include <limits.h>
 
-int	deque_argmax(t_deque *deque, int *max_idx)
+void	deque_print_debug(t_deque *deque)
 {
 	t_deque_node	*head;
-	t_deque_type	max_value;
-	int				idx;
 
 	head = deque->head;
-	if (!head)
-		return (*max_idx = -1, INT_MIN);
-	idx = 0;
-	if (max_idx)
-		*max_idx = idx;
-	max_value = head->data;
-	while (++idx && head->next != deque->head)
+	if (!head && ft_printf("Empty deque.\n"))
+		return ;
+	ft_printf("<\033[31m%p\033[m:\033[32m%p\033[m:\033[33m%p\033[m>",
+		head->prev, head, head->next);
+	while (head->next != deque->head)
 	{
 		head = head->next;
-		if (head->data > max_value)
-		{
-			max_value = head->data;
-			if (max_idx)
-				*max_idx = idx;
-		}
+		ft_printf("\n<\033[31m%p\033[m:\033[32m%p\033[m:\033[33m%p\033[m>",
+			head->prev, head, head->next);
 	}
-	return (max_value);
+	ft_printf("\n");
 }

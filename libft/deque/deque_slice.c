@@ -6,13 +6,14 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 14:39:06 by tischmid          #+#    #+#             */
-/*   Updated: 2024/01/16 10:31:07 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/03/27 17:58:15 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../libft.h"
 #include <stdlib.h>
 
+/* also determines whether to return early */
 static int	calculate_bounds(int *start, int *end, int *step, int *size)
 {
 	int	orig_start;
@@ -46,7 +47,7 @@ t_deque	*deque_slice(t_deque *deque, int start, int end, int step)
 		head = head->next;
 	while ((step > 0 && start < end) || (step < 0 && start > end))
 	{
-		deque_push_value_right(slice, head->data);
+		deque_push_ptr_right(slice, head->as_ptr);
 		size = (int)ft_abs(step);
 		while (size--)
 		{

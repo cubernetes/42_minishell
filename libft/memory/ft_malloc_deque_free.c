@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_malloc_ddeque_free.c                            :+:      :+:    :+:   */
+/*   ft_malloc_deque_free.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 14:37:19 by tischmid          #+#    #+#             */
-/*   Updated: 2024/02/02 04:59:47 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/03/27 17:55:25 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,28 +15,28 @@
 
 /* only function allowd to use free */
 /* must only be used by ft_malloc from memory management */
-t_bool	ft_malloc_ddeque_free(t_ddeque *ddeque, t_bool (free_data)(void *))
+t_bool	ft_malloc_deque_free(t_deque *deque, t_bool (free_data)(void *ptr))
 {
-	t_ddeque_node	*head;
-	t_ddeque_node	*tail;
+	t_deque_node	*head;
+	t_deque_node	*tail;
 
-	if (!ddeque)
+	if (!deque)
 		return (TRUE);
-	head = ddeque->head;
+	head = deque->head;
 	if (!head)
 	{
-		(free(ddeque), ddeque = NULL);
+		(free(deque), deque = NULL);
 		return (TRUE);
 	}
 	tail = head->prev;
 	while (head != tail)
 	{
 		head = head->next;
-		(void)free_data(head->prev->data);
+		(void)free_data(head->prev->as_ptr);
 		(free(head->prev), head->prev = NULL);
 	}
-	free_data(head->data);
+	free_data(head->as_ptr);
 	(free(head), head = NULL);
-	(free(ddeque), ddeque = NULL);
+	(free(deque), deque = NULL);
 	return (TRUE);
 }

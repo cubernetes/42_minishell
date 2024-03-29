@@ -17,54 +17,54 @@ static t_bool	glob_match(const char *pattern, const char *str)
 	return (FALSE);
 }
 
-static t_ddeque	*glob_token(t_token *token)
+static t_deque	*glob_token(t_token *token)
 {
 	DIR				*dirp;
 	struct dirent	*dp;
-	t_ddeque		*tokens;
+	t_deque			*tokens;
 
-	tokens = ddeque_init();
+	tokens = deque_init();
 	dirp = opendir(".");
 	if (!dirp)
-		return (ddeque_push_value_right(tokens, token), tokens);
+		return (deque_push_ptr_right(tokens, token), tokens);
 	dp = readdir(dirp);
 	while (dp != NULL)
 	{
 		if (ft_strncmp(dp->d_name, ".", 1)
 			&& glob_match(token->str, dp->d_name))
-			ddeque_push_value_right(tokens,
+			deque_push_ptr_right(tokens,
 				new_token(ft_strdup(dp->d_name), TOK_WORD, TRUE));
 		dp = readdir(dirp);
 	}
 	closedir(dirp);
 	if (tokens->size == 0)
-		ddeque_push_value_right(tokens, token);
+		deque_push_ptr_right(tokens, token);
 	return (tokens);
 }
 
 /* mirroring bash's behaviour of NOT globbing when it fails to open a dir */
 /* TODO: apply DRY */
-/* TODO: apply DRY in the deque/ddeque functions */
-void	glob_tokens(t_ddeque *tokens)
+/* TODO: apply DRY in the deque/deque functions */
+void	glob_tokens(t_deque *tokens)
 {
-	t_ddeque		*new_tokens;
-	t_ddeque_node	*head;
+	t_deque			*new_tokens;
+	t_deque_node	*head;
 
-	new_tokens = ddeque_init();
+	new_tokens = deque_init();
 	head = tokens->head;
 	if (head)
 	{
-		if (((t_token *)head->data)->type == TOK_WORD)
-			ddeque_extend_right(new_tokens, glob_token(head->data));
+		if (head->as_token->type == TOK_WORD)
+			deque_extend_right(new_tokens, glob_token(head->as_token));
 		else
-			ddeque_push_value_right(new_tokens, head->data);
+			deque_push_ptr_right(new_tokens, head->as_ptr);
 		while (head->next != tokens->head)
 		{
 			head = head->next;
-			if (((t_token *)head->data)->type == TOK_WORD)
-				ddeque_extend_right(new_tokens, glob_token(head->data));
+			if (head->as_token->type == TOK_WORD)
+				deque_extend_right(new_tokens, glob_token(head->as_token));
 			else
-				ddeque_push_value_right(new_tokens, head->data);
+				deque_push_ptr_right(new_tokens, head->as_ptr);
 		}
 	}
 	tokens->head = new_tokens->head;

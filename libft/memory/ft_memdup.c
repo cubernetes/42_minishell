@@ -1,28 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ddeque_iter.c                                      :+:      :+:    :+:   */
+/*   ft_memdup.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/22 14:37:38 by tischmid          #+#    #+#             */
-/*   Updated: 2024/03/26 08:45:25 by tosuman          ###   ########.fr       */
+/*   Created: 2024/03/29 19:20:25 by tosuman           #+#    #+#             */
+/*   Updated: 2024/03/29 19:22:31 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../libft.h"
+#include <stddef.h>
 
-void	ddeque_iter(t_ddeque *ddeque, void (*f)(void *data))
+void	*ft_memdup(const void *src, size_t size)
 {
-	t_ddeque_node	*head;
+	void	*dest;
 
-	head = ddeque->head;
-	if (!head)
-		return ;
-	f(head->data);
-	while (head->next != ddeque->head)
-	{
-		head = head->next;
-		f(head->data);
-	}
+	dest = ft_malloc(size);
+	ft_memcpy(dest, src, size);
+	return (dest);
 }

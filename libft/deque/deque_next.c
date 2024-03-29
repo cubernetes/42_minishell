@@ -1,31 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ddeque_print_debug.c                               :+:      :+:    :+:   */
+/*   deque_next.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/03 17:50:23 by tosuman           #+#    #+#             */
-/*   Updated: 2024/03/26 08:48:22 by tosuman          ###   ########.fr       */
+/*   Created: 2024/03/28 13:39:54 by tosuman           #+#    #+#             */
+/*   Updated: 2024/03/28 13:42:43 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../libft.h"
 
-void	ddeque_print_debug(t_ddeque *ddeque)
+t_deque_node	*deque_next(t_deque_iter	*deque_iter)
 {
-	t_ddeque_node	*head;
-
-	head = ddeque->head;
-	if (!head && ft_printf("Empty ddeque.\n"))
-		return ;
-	ft_printf("<\033[31m%p\033[m:\033[32m%p\033[m:\033[33m%p\033[m>",
-		head->prev, head, head->next);
-	while (head->next != ddeque->head)
+	if (deque_iter->head == NULL)
+		return (NULL);
+	else if (deque_iter->first_iter)
 	{
-		head = head->next;
-		ft_printf("\n<\033[31m%p\033[m:\033[32m%p\033[m:\033[33m%p\033[m>",
-			head->prev, head, head->next);
+		deque_iter->first_iter = FALSE;
+		return (deque_iter->deque->head);
 	}
-	ft_printf("\n");
+	else
+	{
+		deque_iter->head = deque_iter->head->next;
+		if (deque_iter->head == deque_iter->deque->head)
+			return (NULL);
+		else
+			return (deque_iter->head);
+	}
 }

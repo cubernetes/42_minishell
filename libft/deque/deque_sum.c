@@ -1,36 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ddeque_sort.c                                      :+:      :+:    :+:   */
+/*   deque_sum.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/22 14:39:32 by tischmid          #+#    #+#             */
-/*   Updated: 2024/01/15 15:42:09 by tosuman          ###   ########.fr       */
+/*   Created: 2023/11/22 14:37:38 by tischmid          #+#    #+#             */
+/*   Updated: 2024/03/27 17:52:56 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../libft.h"
 
-void	ddeque_sort(t_ddeque *ddeque, int (cmp)(void *, void *))
+int	deque_sum(t_deque *deque, int (*f)(void *ptr))
 {
-	size_t	n;
-	size_t	orig_n;
-	size_t	i;
+	t_deque_node	*head;
+	int				sum;
 
-	orig_n = ddeque_size(ddeque);
-	n = orig_n;
-	if (!n)
-		return ;
-	while (--n)
+	sum = 0;
+	head = deque->head;
+	if (!head)
+		return (0);
+	sum += f(head->as_ptr);
+	while (head->next != deque->head)
 	{
-		i = orig_n;
-		while (--i)
-		{
-			if (cmp(ddeque->head->data, ddeque->head->next->data))
-				ddeque_swap(ddeque);
-			ddeque->head = ddeque->head->next;
-		}
-		ddeque_rotate(ddeque, 1);
+		head = head->next;
+		sum += f(head->as_ptr);
 	}
+	return (sum);
 }
