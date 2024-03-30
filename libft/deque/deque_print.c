@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 14:37:38 by tischmid          #+#    #+#             */
-/*   Updated: 2024/03/27 17:48:49 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/03/30 23:09:25 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,16 +14,14 @@
 
 void	deque_print(t_deque *deque, void (print)(void *ptr, t_bool first))
 {
-	t_deque_node	*head;
+	t_di	*di;
 
-	head = deque->head;
-	if (!head && ft_printf("Empty deque.\n"))
+	di = di_begin(deque);
+	(void)di_next(di);
+	if (di_get(di) == NULL && ft_printf(EMPTY_DEQUE))
 		return ;
-	print(head->as_ptr, TRUE);
-	while (head->next != deque->head)
-	{
-		head = head->next;
-		print(head->as_ptr, FALSE);
-	}
+	print(di_get(di)->as_ptr, TRUE);
+	while (di_next(di))
+		print(di_get(di)->as_ptr, FALSE);
 	ft_printf("\n");
 }

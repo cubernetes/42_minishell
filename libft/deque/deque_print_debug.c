@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/03 17:50:23 by tosuman           #+#    #+#             */
-/*   Updated: 2024/03/26 08:48:22 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/03/30 23:09:08 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,18 +14,16 @@
 
 void	deque_print_debug(t_deque *deque)
 {
-	t_deque_node	*head;
+	t_di	*di;
 
-	head = deque->head;
-	if (!head && ft_printf("Empty deque.\n"))
+	di = di_begin(deque);
+	(void)di_next(di);
+	if (di_get(di) == NULL && ft_printf(EMPTY_DEQUE))
 		return ;
 	ft_printf("<\033[31m%p\033[m:\033[32m%p\033[m:\033[33m%p\033[m>",
-		head->prev, head, head->next);
-	while (head->next != deque->head)
-	{
-		head = head->next;
+		di_get(di)->prev, di_get(di), di_get(di)->next);
+	while (di_next(di))
 		ft_printf("\n<\033[31m%p\033[m:\033[32m%p\033[m:\033[33m%p\033[m>",
-			head->prev, head, head->next);
-	}
+			di_get(di)->prev, di_get(di), di_get(di)->next);
 	ft_printf("\n");
 }

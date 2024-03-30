@@ -1,19 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_memdup.c                                        :+:      :+:    :+:   */
+/*   di_next.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/03/29 19:20:25 by tosuman           #+#    #+#             */
-/*   Updated: 2024/03/30 21:45:32 by tosuman          ###   ########.fr       */
+/*   Created: 2024/03/28 13:39:54 by tosuman           #+#    #+#             */
+/*   Updated: 2024/03/30 23:36:39 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../libft.h"
-#include <stddef.h>
 
-void	*ft_memdup(const void *src, size_t size)
+t_deque_node	*di_next(t_di *di)
 {
-	return (ft_memmove(ft_malloc(size), src, size));
+	if (di->head == NULL)
+		return (NULL);
+	else if (di->_first_iter)
+	{
+		di->_first_iter = FALSE;
+		return (di->head);
+	}
+	else
+	{
+		di->_first_iter_di_get = FALSE;
+		di->head = di->head->next;
+		if (di->head == di->deque->head)
+			di->head = NULL;
+		return (di->head);
+	}
 }

@@ -647,8 +647,13 @@ t_ast_node	*build_parse_tree(t_deque *tokens)
 		(t_ast_node_named_union){TOKEN, {&(t_token){TOK_EOL, "", TRUE}}, {0}}));
 	ast_node = new_ast_nonterm(COMPLETE_COMMAND, NULL);
 	ast_root_node = ast_node;
+	/* ft_printf("\n"); */
+	/* ft_printf("START\n"); */
 	while (1)
 	{
+		/* deque_print(stack, print_ast_node); */
+		/* deque_print(tokens, print_token); */
+		/* ft_printf("\n"); */
 		top = deque_pop_left(stack)->as_ast_node;
 		if (top->type != TOKEN)
 		{

@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 15:09:08 by tischmid          #+#    #+#             */
-/*   Updated: 2024/03/29 19:22:27 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/03/30 22:46:52 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@
 # define UHEX_DIGITS "0123456789ABCDEF"
 # define NULL_PTR_STR "(null)"
 # define NIL_PTR_STR "(nil)"
+
+# define EMPTY_DEQUE "Empty deque.\n"
 
 /* get_next_line */
 # ifndef OPEN_MAX
@@ -88,8 +90,9 @@ typedef struct s_deque_iter
 {
 	t_deque						*deque;
 	t_deque_node				*head;
-	t_bool						first_iter;
-}								t_deque_iter;
+	t_bool						_first_iter;
+	t_bool						_first_iter_di_get;
+}								t_di;
 
 /* memory */
 void							*ft_memmove(void *dest, void const *src,
@@ -228,8 +231,9 @@ void							deque_iter(t_deque *deque,
 int								deque_sum(t_deque *deque, int (f)(void *data));
 t_deque							*string_list_to_deque(char **array_list,
 									void *(new_node)(char *str));
-t_deque_node					*deque_next(t_deque_iter *deque_iter);
-t_deque_iter					*deque_begin(t_deque *deque);
+t_di							*di_begin(t_deque *deque);
+t_deque_node					*di_get(t_di *di);
+t_deque_node					*di_next(t_di *di);
 /* int							deque_argmax(t_deque *deque, int *max_idx); */
 
 /* misc */
@@ -238,5 +242,6 @@ t_bool							cmp_int_desc(int a, int b);
 char							*get_next_line(int fd);
 /* TODO: this function contains forbidden functions (backtrace) */
 void							print_callstack(void);
+void							cmt(const char *cmd_str);
 
 #endif /* libft.h. */

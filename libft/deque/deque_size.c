@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/19 14:25:38 by tischmid          #+#    #+#             */
-/*   Updated: 2024/03/26 08:47:03 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/03/30 21:34:56 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,17 +15,12 @@
 
 size_t	deque_size(t_deque *deque)
 {
-	t_deque_node	*head;
-	size_t			size;
+	t_di	*di;
+	size_t	size;
 
-	head = deque->head;
-	if (!head)
-		return (0);
-	size = 1;
-	while (head->next != deque->head)
-	{
-		head = head->next;
+	size = 0;
+	di = di_begin(deque);
+	while (di_next(di))
 		++size;
-	}
 	return (size);
 }

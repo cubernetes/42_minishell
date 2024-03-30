@@ -6,7 +6,7 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:09:11 by tischmid          #+#    #+#              #
-#    Updated: 2024/03/29 19:22:40 by tosuman          ###   ########.fr        #
+#    Updated: 2024/03/30 21:58:19 by tosuman          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -38,12 +38,13 @@ SUBDIRS += io
 SUBDIRS += misc
 
 vpath %.c $(SUBDIRS)
+unexport SRC
 
 # misc
 SRC += error_handling.c
+SRC += cmt.c
 
 # string
-unexport SRC
 SRC += ft_atoi.c
 SRC += ft_atoi_status.c
 SRC += ft_atof.c
@@ -150,8 +151,9 @@ SRC += deque_push_ptr_left.c
 SRC += deque_equal.c
 SRC += deque_iter.c
 SRC += deque_sum.c
-SRC += deque_begin.c
-SRC += deque_next.c
+SRC += di_begin.c
+SRC += di_get.c
+SRC += di_next.c
 
 _OBJ = $(SRC:.c=.o)
 OBJ = $(addprefix $(OBJDIR)/,$(_OBJ))

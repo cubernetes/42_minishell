@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 14:37:19 by tischmid          #+#    #+#             */
-/*   Updated: 2024/03/27 17:55:25 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/03/30 21:56:05 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 /* only function allowd to use free */
 /* must only be used by ft_malloc from memory management */
+/* cannot use iterators (t_di) here */
 t_bool	ft_malloc_deque_free(t_deque *deque, t_bool (free_data)(void *ptr))
 {
 	t_deque_node	*head;
