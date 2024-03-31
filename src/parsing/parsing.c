@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <assert.h>
 
+/* TODO: Not required: hashtable */
 const char	*ast_node_type_to_string(t_ast_node_type type)
 {
 	if (type == COMPLETE_COMMAND)
@@ -35,9 +36,8 @@ t_bool	ast_node_is_null(t_ast_node *ast_node)
 {
 	if (!ast_node)
 		return (TRUE);
-	if (ast_node->type == 0)
-		if (ast_node->token == NULL && ast_node->children == NULL)
-			return (TRUE);
+	if (!ft_memcmp(ast_node, &(t_ast_node){0}, sizeof(t_ast_node)))
+		return (TRUE);
 	return (FALSE);
 }
 
@@ -62,12 +62,14 @@ void	repeat_string(const char *str, int n, t_bool color)
 
 t_ast_node	*new_ast_token(t_token_type type, char *str)
 {
-	t_ast_node	*ast_node;
-
-	ast_node = ft_malloc(sizeof(*ast_node));
-	ast_node->type = TOKEN;
-	ast_node->token = new_token(str, type, TRUE);
-	return (ast_node);
+	return (ft_memdup(\
+		&(t_ast_node){
+			.type = TOKEN,
+			{.token = new_token(str, type, TRUE)},
+			{{{0}, 0}}
+		},
+		sizeof(t_ast_node)
+	));
 }
 
 t_ast_node	*new_ast_m_token(t_token_type type, const char *str)
@@ -75,20 +77,21 @@ t_ast_node	*new_ast_m_token(t_token_type type, const char *str)
 	return (new_ast_token(type, ft_strdup(str)));
 }
 
-/* children must be allocated on heap */
+/* children must be allocated on heap: Update, maybe outdated */
 t_ast_node	*new_ast_nonterm(t_ast_node_type type, t_deque *children)
 {
-	t_ast_node	*ast_node;
-
-	ast_node = ft_malloc(sizeof(*ast_node));
-	ast_node->type = type;
-	ast_node->children = children;
-	return (ast_node);
+	return (ft_memdup(\
+		&(t_ast_node){
+			.type = type,
+			.children = children
+		},
+		sizeof(t_ast_node)
+	));
 }
 
 void	ast_print_with_depth(t_ast_node *ast_node, int n)
 {
-	t_deque_node	*head;
+	t_di			*di;
 
 	repeat_string("|   ", n, TRUE);
 	if (ast_node->type != TOKEN)
@@ -96,22 +99,14 @@ void	ast_print_with_depth(t_ast_node *ast_node, int n)
 		ft_printf("- <%s> (%d children)\n",
 			ast_node_type_to_string(ast_node->type),
 			ast_node->children->size);
-		head = ast_node->children->head;
-		if (!head)
-			return ;
-		ast_print_with_depth(head->as_ast_node, n + 1);
-		while (head->next != ast_node->children->head)
-		{
-			head = head->next;
-			ast_print_with_depth(head->as_ast_node, n + 1);
-		}
+		di = di_begin(ast_node->children);
+		while (di_next(di))
+			ast_print_with_depth(di_get(di)->as_ast_node, n + 1);
 	}
 	else
-	{
 		ft_printf("- %s (\033[31m%s\033[m)\n",
 			token_type_to_string(ast_node->token->type),
 			ast_node->token->str);
-	}
 }
 
 void	ast_print(t_ast_node *ast_node)
@@ -269,6 +264,7 @@ t_ast_node	*return_example_ast(void)
 
 /* return the index of the production to use */
 /* TODO: fix error handling */
+/* TODO: Not required: Make transition table adaptive (quite a lot of work) */
 int	get_production_idx(t_ast_node_type nonterm, t_token *token)
 {
 	static int	transition_table[NUM_NONTERMS][NUM_TOKENS] = {
@@ -296,173 +292,46 @@ int	get_production_idx(t_ast_node_type nonterm, t_token *token)
 	return (production_idx);
 }
 
-#include <stdint.h>
-#define OFFSET_BASIS_64  14695981039346656037UL
-#define FNV_PRIME_64  1099511628211UL
-#define TABLE_SIZE 100
-
-typedef union u_types
+t_type	ht_tok(t_token_type token_type)
 {
-	t_ast_node_type	t1;
-	t_token_type	t2;
-	void			*as_ptr;
-	char			*as_str;
-	int				as_int;
-}					t_t;
-
-typedef struct s_kv
-{
-	char		*k;
-	t_t		v;
-	struct s_kv	*n;
-}				t_kv;
-
-/**
- * @brief Calculates a 64-bit FNV-1a hash from a given input string.
- *
- * @param  *input_str: A pointer to a null-terminated string
- *                     that is to be hashed.
- *
- * @retval The 64-bit hash value as an unsigned long integer.
- */
-uint64_t	fnv_1a_64(char *input_str)
-{
-	unsigned char	*str;
-	uint64_t		hash;
-
-	str = (unsigned char *)input_str;
-	hash = OFFSET_BASIS_64;
-	while (*str)
-	{
-		hash ^= (unsigned long)*str;
-		hash *= FNV_PRIME_64;
-		str++;
-	}
-	return (hash);
+	return ((t_type){
+		.t2 = token_type
+	});
 }
 
-uint64_t	hash(char *key)
+t_type	ht_ast(t_ast_node_type ast_node_type)
 {
-	return (fnv_1a_64(key));
+	return ((t_type){
+		.t1 = ast_node_type
+	});
 }
-
-void	ht_set(t_kv ht[TABLE_SIZE], char *key, t_t value)
-{
-	int		idx;
-	t_kv	*new_kv;
-
-	idx = hash(key) % TABLE_SIZE;
-	if (!ht[idx].k)
-	{
-		ht[idx].k = key;
-		ht[idx].v = value;
-		ht[idx].n = NULL;
-	}
-	else
-	{
-		new_kv = ft_malloc(sizeof(*new_kv));
-		new_kv->k = key;
-		new_kv->v = value;
-		new_kv->n = ht[idx].n;
-		ht[idx].n = new_kv;
-	}
-}
-
-t_t	ht_get(t_kv ht[TABLE_SIZE], char *key)
-{
-	t_kv	*kv;
-
-	kv = &ht[hash(key) % TABLE_SIZE];
-	while (kv && kv->k && ft_strcmp(kv->k, key))
-		kv = kv->n;
-	if (kv && kv->k)
-		return (kv->v);
-	return ((t_t){0});
-}
-
-/*
-void	ht_print(t_kv ht[TABLE_SIZE])
-{
-	int		i;
-	t_kv	*kv;
-	int		j;
-
-	i = -1;
-	while (++i < TABLE_SIZE)
-	{
-		ft_printf("%d: ", i);
-		kv = &ht[i];
-		j = 0;
-		while (1)
-		{
-			if (!kv || !kv->k)
-				break ;
-			if (j++ > 0)
-				printf(" -> ");
-			printf("\033[31m%s\033[m:\033[32m%s\033[m", ft_strtrim(kv->k, "\n"),
-				ft_strtrim(kv->v, "\n"));
-			kv = kv->n;
-		}
-		printf("\n");
-	}
-}
-*/
-
-/*
-void	ht_destroy(t_kv ht[TABLE_SIZE])
-{
-	int		i;
-	t_kv	*prev;
-	t_kv	*kv;
-	int		j;
-
-	i = -1;
-	while (++i < TABLE_SIZE)
-	{
-		kv = &ht[i];
-		if (kv->k == NULL)
-			continue ;
-		j = 0;
-		while (kv)
-		{
-			free(kv->k);
-			free(kv->v);
-			prev = kv;
-			kv = kv->n;
-			if (j > 0)
-				free(prev);
-			++j;
-		}
-	}
-}
-*/
 
 t_ast_node_type	ast_ht_get(char *key)
 {
 	static t_kv	ht[TABLE_SIZE + 1];
 
-	if (ht[TABLE_SIZE].v.as_int != 0)
+	manage_static_ptr(&ht[TABLE_SIZE].v.as_ptr);
+	if (ht[TABLE_SIZE].v.as_ptr != NULL)
 		return (ht_get(ht, key).t1);
-	ht_set(ht, "<pipe_sequence>", (t_t){.t1 = PIPE_SEQUENCE});
-	ht_set(ht, "<complete_command_tail>", (t_t){.t1 = COMPLETE_COMMAND_TAIL});
-	ht_set(ht, "<and_or>", (t_t){.t1 = AND_OR});
-	ht_set(ht, "<command>", (t_t){.t1 = COMMAND});
-	ht_set(ht, "<pipe_sequence_tail>", (t_t){.t1 = PIPE_SEQUENCE_TAIL});
-	ht_set(ht, "<simple_command>", (t_t){.t1 = SIMPLE_COMMAND});
-	ht_set(ht, "<compound_command>", (t_t){.t1 = COMPOUND_COMMAND});
-	ht_set(ht, "<complete_command>", (t_t){.t1 = COMPLETE_COMMAND});
-	ht_set(ht, "<io_redirect>", (t_t){.t1 = IO_REDIRECT});
-	ht_set(ht, "<simple_command_tail>", (t_t){.t1 = SIMPLE_COMMAND_TAIL});
-	(ht_set(ht, "(", (t_t){.t1 = TOKEN}), ht_set(ht, ")", (t_t){.t1 = TOKEN}));
-	(ht_set(ht, ">", (t_t){.t1 = TOKEN}), ht_set(ht, "<", (t_t){.t1 = TOKEN}));
-	ht_set(ht, "||", (t_t){.t1 = TOKEN});
-	ht_set(ht, "&&", (t_t){.t1 = TOKEN});
-	ht_set(ht, ">>", (t_t){.t1 = TOKEN});
-	ht_set(ht, "<<", (t_t){.t1 = TOKEN});
-	ht_set(ht, "TOK_WORD", (t_t){.t1 = TOKEN});
-	ht_set(ht, "TOK_EPSILON", (t_t){.t1 = TOKEN});
-	ht_set(ht, "|", (t_t){.t1 = TOKEN});
-	ht[TABLE_SIZE].v = (t_t){.as_int = 1};
+	ht_set(ht, "<pipe_sequence>", ht_ast(PIPE_SEQUENCE));
+	ht_set(ht, "<complete_command_tail>", ht_ast(COMPLETE_COMMAND_TAIL));
+	ht_set(ht, "<and_or>", ht_ast(AND_OR));
+	ht_set(ht, "<command>", ht_ast(COMMAND));
+	ht_set(ht, "<pipe_sequence_tail>", ht_ast(PIPE_SEQUENCE_TAIL));
+	ht_set(ht, "<simple_command>", ht_ast(SIMPLE_COMMAND));
+	ht_set(ht, "<compound_command>", ht_ast(COMPOUND_COMMAND));
+	ht_set(ht, "<complete_command>", ht_ast(COMPLETE_COMMAND));
+	ht_set(ht, "<io_redirect>", ht_ast(IO_REDIRECT));
+	ht_set(ht, "<simple_command_tail>", ht_ast(SIMPLE_COMMAND_TAIL));
+	(ht_set(ht, "(", ht_ast(TOKEN)), ht_set(ht, ")", ht_ast(TOKEN)));
+	(ht_set(ht, ">", ht_ast(TOKEN)), ht_set(ht, "<", ht_ast(TOKEN)));
+	(ht_set(ht, "||", ht_ast(TOKEN)), ht_set(ht, "&&", ht_ast(TOKEN)));
+	ht_set(ht, ">>", ht_ast(TOKEN));
+	ht_set(ht, "<<", ht_ast(TOKEN));
+	ht_set(ht, "TOK_WORD", ht_ast(TOKEN));
+	ht_set(ht, "TOK_EPSILON", ht_ast(TOKEN));
+	ht_set(ht, "|", ht_ast(TOKEN));
+	ht[TABLE_SIZE].v.as_ptr = (void *)1;
 	return (ht_get(ht, key).t1);
 }
 
@@ -470,71 +339,73 @@ t_token_type	tokens_ht_get(char *key)
 {
 	static t_kv	ht[TABLE_SIZE + 1];
 
-	if (ht[TABLE_SIZE].v.as_int == 0)
+	manage_static_ptr(&ht[TABLE_SIZE].v.as_ptr);
+	if (ht[TABLE_SIZE].v.as_ptr == NULL)
 	{
-		ht_set(ht, "TOK_EPSILON", (t_t){.t2 = TOK_EPSILON});
-		ht_set(ht, "TOK_WORD", (t_t){.t2 = TOK_WORD});
-		ht_set(ht, "<<", (t_t){.t2 = TOK_HEREDOC});
-		ht_set(ht, ">>", (t_t){.t2 = TOK_APPEND});
-		ht_set(ht, "<", (t_t){.t2 = TOK_INPUT});
-		ht_set(ht, ">", (t_t){.t2 = TOK_OVERRIDE});
-		ht_set(ht, "(", (t_t){.t2 = TOK_L_PAREN});
-		ht_set(ht, ")", (t_t){.t2 = TOK_R_PAREN});
-		ht_set(ht, "&&", (t_t){.t2 = TOK_AND});
-		ht_set(ht, "||", (t_t){.t2 = TOK_OR});
-		ht_set(ht, "|", (t_t){.t2 = TOK_PIPE});
-		ht[TABLE_SIZE].v = (t_t){.as_int = 1};
+		ht_set(ht, "TOK_EPSILON", ht_tok(TOK_EPSILON));
+		ht_set(ht, "TOK_WORD", ht_tok(TOK_WORD));
+		ht_set(ht, "<<", ht_tok(TOK_HEREDOC));
+		ht_set(ht, ">>", ht_tok(TOK_APPEND));
+		ht_set(ht, "<", ht_tok(TOK_INPUT));
+		ht_set(ht, ">", ht_tok(TOK_OVERRIDE));
+		ht_set(ht, "(", ht_tok(TOK_L_PAREN));
+		ht_set(ht, ")", ht_tok(TOK_R_PAREN));
+		ht_set(ht, "&&", ht_tok(TOK_AND));
+		ht_set(ht, "||", ht_tok(TOK_OR));
+		ht_set(ht, "|", ht_tok(TOK_PIPE));
+		ht[TABLE_SIZE].v.as_ptr = (void *)1;
 	}
 	return (ht_get(ht, key).t2);
 }
 
-void	print_productions(t_ast_node_named_union **prods, int max_i)
+void	print_productions(t_ast_node **prods, int max_i)
 {
-	int						i;
-	int						j;
-	t_ast_node_named_union	prod;
+	int			i;
+	int			j;
+	t_ast_node	prod;
 
 	i = -1;
 	while (++i <= max_i)
 	{
 		j = -1;
-		while (prods[i][++j].u_d.token)
+		while (prods[i][++j].token)
 		{
 			prod = prods[i][j];
 			ft_printf("i:%d, j:%d\n", i, j);
 			ft_printf("ast_node_type: %s\n", ast_node_type_to_string(prod.type));
-			ft_printf("token_ptr: %p\n", prod.u_d.token);
-			ft_printf("token_type: %s\n", token_type_to_string(prod.u_d.token->type));
-			ft_printf("token_str: %s\n", prod.u_d.token->str);
+			ft_printf("token_ptr: %p\n", prod.token);
+			ft_printf("token_type: %s\n", token_type_to_string(prod.token->type));
+			ft_printf("token_str: %s\n", prod.token->str);
 		}
 	}
 }
 
-t_ast_node_named_union	gen_production(char *token_str)
+t_ast_node	gen_production(char *token_str)
 {
-	t_token					token;
-	t_ast_node_named_union	node;
-
-	token = (t_token){\
-		.type = tokens_ht_get(token_str), \
-		.str = "", \
-		.is_last_subtoken = TRUE \
-	};
-	node = (t_ast_node_named_union){
-		ast_ht_get(token_str), \
-		{.token = ft_memdup(&token, sizeof(token))}, \
-		{0}
-	};
-	return (*(t_ast_node_named_union *)ft_memdup(&node, sizeof(node)));
+	return (*(t_ast_node *)ft_memdup(\
+		&(t_ast_node){
+			.type = ast_ht_get(token_str),
+			.token = ft_memdup(
+				&(t_token){\
+					.type = tokens_ht_get(token_str), \
+					.str = "", \
+					.is_last_subtoken = TRUE \
+				}, \
+				sizeof(t_token) \
+			), \
+			{{{0}, 0}} \
+		},
+		sizeof(t_ast_node)
+	));
 }
 
-t_ast_node_named_union	**initialize_productions(const char *grammar)
+t_ast_node	**initialize_productions(const char *grammar)
 {
-	static t_ast_node_named_union	**productions = NULL;
-	char							**lines;
-	char							**tokens;
-	int								i;
-	int								j;
+	t_ast_node	**productions;
+	char		**lines;
+	char		**tokens;
+	int			i;
+	int			j;
 
 	productions = ft_malloc(sizeof(*productions) * 20);
 	lines = ft_split(grammar, '\n');
@@ -549,17 +420,17 @@ t_ast_node_named_union	**initialize_productions(const char *grammar)
 		j = -1;
 		while (tokens[++j])
 			productions[i][j] = gen_production(tokens[j]);
-		productions[i][j] = (t_ast_node_named_union){0};
+		productions[i][j] = (t_ast_node){0};
 	}
 	return (productions);
 }
 
 /* TODO: Don't use 0 as NULL */
 /* tabsize: 4 */
-t_ast_node_named_union	*get_production(t_ast_node_type nonterm, t_token *token)
+t_ast_node	*get_production(t_ast_node_type nonterm, t_token *token)
 {
-	static t_ast_node_named_union	**productions = NULL;
-	static const char				*grammar = \
+	static t_ast_node	**productions = NULL;
+	static const char	*grammar = \
 		"<pipe_sequence> <complete_command_tail>"			"\n"	\
 		"TOK_EPSILON"										"\n"	\
 		"<and_or> <pipe_sequence> <complete_command_tail>"	"\n"	\
@@ -578,12 +449,12 @@ t_ast_node_named_union	*get_production(t_ast_node_type nonterm, t_token *token)
 		">>" "\n"	"<<" "\n"	">" "\n"	"<" "\n"				\
 		"TOK_EPSILON";
 
-	if (productions == NULL)
+	if (productions == NULL && (manage_static_ptr((void **)&productions), 1))
 		productions = initialize_productions(grammar);
 	return (productions[get_production_idx(nonterm, token)]);
 }
 
-t_ast_node	*production_to_child(t_ast_node_named_union production)
+t_ast_node	*production_to_child(t_ast_node production)
 {
 	t_ast_node	*child;
 
@@ -595,7 +466,7 @@ t_ast_node	*production_to_child(t_ast_node_named_union production)
 	return (child);
 }
 
-t_deque	*productions_to_children(t_ast_node_named_union *productions)
+t_deque	*productions_to_children(t_ast_node *productions)
 {
 	int		size;
 	t_deque	*children;
@@ -642,9 +513,9 @@ t_ast_node	*build_parse_tree(t_deque *tokens)
 
 	stack = deque_init();
 	deque_push_ptr_right(stack, production_to_child(\
-		(t_ast_node_named_union){COMPLETE_COMMAND, {0}, {0}}));
+		(t_ast_node){COMPLETE_COMMAND, {0}, {{{0}, 0}}}));
 	deque_push_ptr_right(stack, production_to_child(\
-		(t_ast_node_named_union){TOKEN, {&(t_token){TOK_EOL, "", TRUE}}, {0}}));
+		(t_ast_node){TOKEN, {.token = &(t_token){TOK_EOL, "", TRUE}}, {{{0}, 0}}}));
 	ast_node = new_ast_nonterm(COMPLETE_COMMAND, NULL);
 	ast_root_node = ast_node;
 	/* ft_printf("\n"); */

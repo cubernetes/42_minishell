@@ -134,19 +134,6 @@ t_ast_node_type	give_ast_node_type(t_ast_node *ast_node)
 	return (AST_NODE_TYPE_UNKNOWN);
 }
 
-t_bool	execute_token(t_ast_node *token)
-{
-	t_ast_node	*child;
-
-	child = token->children->head->as_ast_node;
-	if (give_ast_node_type(child) != AST_NODE_TYPE_UNKNOWN)
-	{
-		if (give_ast_node_type(child) == TOK_AND)
-			return (TRUE);
-	}
-	return (FALSE);
-}
-
 t_bool	execute_tok_and(t_deque_node *tok_and)
 {
 	t_ast_node	*left;

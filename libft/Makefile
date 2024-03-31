@@ -6,11 +6,12 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:09:11 by tischmid          #+#    #+#              #
-#    Updated: 2024/03/30 21:58:19 by tosuman          ###   ########.fr        #
+#    Updated: 2024/04/01 01:36:32 by tosuman          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-CC = clang
+# TODO: Check gcc and clang
+CC = cc
 AR = ar rcs
 RM = /bin/rm -f
 MKDIR = /bin/mkdir -p
@@ -109,6 +110,7 @@ SRC += ft_puthex.c
 SRC += ft_putptr.c
 SRC += ft_printf.c
 SRC += ft_dprintf.c
+SRC += ft_print_memory.c
 
 # list
 SRC += ft_lstnew.c

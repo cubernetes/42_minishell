@@ -7,7 +7,7 @@
 static void	handle_sigint(int sig)
 {
 	(void)sig;
-	write(1, "\n", 1);
+	ft_putchar('\n');
 	rl_replace_line("", 0);
 	rl_on_new_line();
 	rl_redisplay();

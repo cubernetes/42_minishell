@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 14:36:56 by tischmid          #+#    #+#             */
-/*   Updated: 2024/03/30 22:10:05 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/04/01 01:04:39 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@ t_deque	*ft_malloc_deque_init(void)
 {
 	t_deque	*deque;
 
+	/* ft_printf("\033[31mMALLOC\033[m\n"); */
+	/* print_callstack(); */
 	deque = malloc(sizeof(*deque));
 	if (!deque)
 		return (NULL);

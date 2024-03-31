@@ -24,7 +24,7 @@ t_token_type	get_token_type(t_deque *tokens)
 	return (tokens->head->as_token->type);
 }
 
-/* TODO: Turn into hashmap */
+/* TODO: Not required: hashtable */
 const char	*token_type_to_string(t_token_type type)
 {
 	if (type == TOK_OR)
@@ -89,13 +89,14 @@ void	print_token(void *ptr, t_bool first)
 /* TODO: change return type to t_token later */
 void	*new_token(char *str, t_token_type type, t_bool is_last_subtoken)
 {
-	t_token	*token;
-
-	token = ft_malloc(sizeof(*token));
-	token->str = str;
-	token->type = type;
-	token->is_last_subtoken = is_last_subtoken;
-	return (token);
+	return (ft_memdup(\
+		&(t_token){
+			.str = str,
+			.type = type,
+			.is_last_subtoken = is_last_subtoken
+		},
+		sizeof(t_token)
+	));
 }
 
 t_bool	push_token(const char **line, t_deque *tokens, size_t token_len,
@@ -123,6 +124,7 @@ t_bool	push_token(const char **line, t_deque *tokens, size_t token_len,
 	return (TRUE);
 }
 
+/* TODO: Not required: hashtable */
 t_bool	tokenize_fixed_len_tokens(const char **line, t_deque *tokens)
 {
 	t_bool	pushed;

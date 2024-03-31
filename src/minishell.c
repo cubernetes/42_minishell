@@ -47,6 +47,7 @@ void	update_state(t_state *state)
 /* TODO: make free_all_ptrs() callable multiple times */
 /* TODO: find unused functions (like printing functions) */
 /* TODO: write test functions for deque */
+/* TODO: use -MMD and stuff */
 int	main(int argc, char **argv, char **envp)
 {
 	static t_state	state;
@@ -55,18 +56,17 @@ int	main(int argc, char **argv, char **envp)
 	t_deque			*tokens;
 	t_ast_node		*ast_root_node;
 
-	i = 1;
+	i = 5;
 	(void)argc;
 	(void)argv;
 	set_environ(envp);
 	tokens = NULL;
 	ast_root_node = NULL;
 	setup_signals();
-
 	while (i--)
 	{
 		update_state(&state);
-		line = manage_ptrs(readline(state.ps1))->head->prev->as_str;
+		line = manage_ptr(readline(state.ps1))->head->prev->as_str;
 		/* line = "echo hi"; */
 		if (!line)
 			break ;
@@ -75,6 +75,7 @@ int	main(int argc, char **argv, char **envp)
 		ast_root_node = build_ast(tokens);
 		ast_print(ast_root_node);
 		execute(ast_root_node);
+		(void)free_all_ptrs();
 	}
 	(void)free_all_ptrs();
 	return (0);

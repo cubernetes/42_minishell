@@ -6,13 +6,14 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:02:16 by tischmid          #+#    #+#              #
-#    Updated: 2024/03/26 08:58:39 by tosuman          ###   ########.fr        #
+#    Updated: 2024/04/01 01:36:08 by tosuman          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 # Makefile for [ "$(uname -s)" = "Linux" ]
 
-CC             := clang
+# TODO: Check gcc and clang
+CC             := cc
 RM             := /bin/rm -f
 MKDIR          := /bin/mkdir -p
 
@@ -29,9 +30,10 @@ _SRC           += tokenize.c
 _SRC           += expansion.c
 _SRC           += globbing.c
 _SRC           += executor.c
+_SRC           += ht.c
 
 vpath %.c src src/parsing src/signal_handling src/tokenization \
-          src/expansion src/execution/
+          src/expansion src/execution/ src/utils/
 
 _OBJ           := $(_SRC:.c=.o)
 _HEADERS       := minishell.h

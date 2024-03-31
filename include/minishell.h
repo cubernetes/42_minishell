@@ -43,6 +43,11 @@
 # define NUM_NONTERMS 10
 # define NUM_TOKENS 11
 
+/* hashtable */
+# define OFFSET_BASIS_64  14695981039346656037UL
+# define FNV_PRIME_64  1099511628211UL
+# define TABLE_SIZE 100
+
 typedef struct s_state
 {
 	char								*ps0;
@@ -126,21 +131,22 @@ struct									s_ast_node
 	};
 };
 
-typedef struct s_ast_node_named_union	t_ast_node_named_union;
-
-struct									s_ast_node_named_union
+/* hashtable */
+typedef union u_types
 {
-	t_ast_node_type						type;
-	union
-	{
-		t_token							*token;
-		t_deque							*children;
-	} u_d;
-	union
-	{
-		t_simple_cmd_meta				simple_cmd_meta;
-	} u_md;
-};
+	t_ast_node_type	t1;
+	t_token_type	t2;
+	void			*as_ptr;
+	char			*as_str;
+	int				as_int;
+}					t_type;
+
+typedef struct s_kv
+{
+	char		*k;
+	t_type		v;
+	struct s_kv	*n;
+}				t_kv;
 
 void									setup_signals(void);
 t_deque									*tokenize(const char *line);
@@ -163,4 +169,9 @@ char									**get_environ(void);
 char									*env_lookup(char *var);
 void									execute(t_ast_node *ast_node);
 void									glob_tokens(t_deque *tokens);
+t_type									ht_get(t_kv ht[TABLE_SIZE], char *key);
+void									ht_set(t_kv ht[TABLE_SIZE], char *key,
+											t_type value);
+void									ht_print(t_kv ht[TABLE_SIZE],
+											void (print)(char *k, void *v));
 #endif /* minishell.h. */

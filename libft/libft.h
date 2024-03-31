@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 15:09:08 by tischmid          #+#    #+#             */
-/*   Updated: 2024/03/30 22:46:52 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/04/01 00:05:11 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include <stdarg.h>
 # include <stddef.h>
 # include <sys/types.h>
+# include <stdint.h>
 
 # define HEX_DIGITS "0123456789abcdef"
 # define UHEX_DIGITS "0123456789ABCDEF"
@@ -31,8 +32,8 @@
 #  define OPEN_MAX 4096
 # endif
 
-# ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 1
+# ifndef GNL_BUFFER_SIZE
+#  define GNL_BUFFER_SIZE 1
 # endif
 
 typedef struct s_gnl_vars
@@ -56,7 +57,6 @@ typedef struct s_list
 	void						*content;
 	struct s_list				*next;
 }								t_list;
-
 
 /* forward declarations */
 typedef struct s_deque			t_deque;
@@ -86,6 +86,7 @@ struct							s_deque
 	size_t						size;
 };
 
+/* hashtable */
 typedef struct s_deque_iter
 {
 	t_deque						*deque;
@@ -107,7 +108,8 @@ void							*ft_memcpy(void *dest, void const *src,
 									size_t n);
 void							*ft_memdup(const void *src, size_t size);
 void							*ft_malloc(size_t size);
-t_deque							*manage_ptrs(void *ptr);
+t_deque							*manage_ptr(void *ptr);
+t_deque							*manage_static_ptr(void **ptr);
 t_bool							free_all_ptrs(void);
 t_bool							ft_malloc_deque_free(t_deque *deque,
 									t_bool(free_data)(void *));
@@ -153,6 +155,8 @@ void							ft_striteri(char *s, void (f)(unsigned int,
 int								ft_char_in_charset(char c, char const *charset);
 
 /* math */
+t_bool							cmp_int_asc(int a, int b);
+t_bool							cmp_int_desc(int a, int b);
 char							*ft_itoa(int n);
 int								ft_atoi(char const *nptr);
 int								ft_atoi_status(char const *nptr, int *status);
@@ -173,7 +177,7 @@ void							ft_lstiter(t_list *lst, void (f)(void *));
 t_list							*ft_lstmap(t_list *lst, void *(f)(void *),
 									void (del)(void *));
 
-/* printing */
+/* io */
 int								ft_putendl_fd(char *s, int fd);
 int								ft_putnbr_fd(int nb, int fd);
 int								ft_putchar_fd(char c, int fd);
@@ -194,6 +198,8 @@ int								ft_printf(const char *fmt, ...);
 int								ft_vdprintf(int fd, const char *fmt,
 									va_list ap);
 int								ft_dprintf(int fd, const char *fmt, ...);
+char							*get_next_line(int fd);
+void							*ft_print_memory(void *addr, size_t size);
 
 /* deque */
 t_deque_node					*deque_pop_right(t_deque *deque);
@@ -237,9 +243,6 @@ t_deque_node					*di_next(t_di *di);
 /* int							deque_argmax(t_deque *deque, int *max_idx); */
 
 /* misc */
-t_bool							cmp_int_asc(int a, int b);
-t_bool							cmp_int_desc(int a, int b);
-char							*get_next_line(int fd);
 /* TODO: this function contains forbidden functions (backtrace) */
 void							print_callstack(void);
 void							cmt(const char *cmd_str);
