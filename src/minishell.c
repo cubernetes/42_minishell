@@ -48,6 +48,7 @@ void	update_state(t_state *state)
 /* TODO: find unused functions (like printing functions) */
 /* TODO: write test functions for deque */
 /* TODO: use -MMD and stuff */
+/* remove all minishell_error() calls */
 int	main(int argc, char **argv, char **envp)
 {
 	static t_state	state;
@@ -56,7 +57,7 @@ int	main(int argc, char **argv, char **envp)
 	t_deque			*tokens;
 	t_ast_node		*ast_root_node;
 
-	i = 5;
+	i = 1;
 	(void)argc;
 	(void)argv;
 	set_environ(envp);
@@ -66,8 +67,8 @@ int	main(int argc, char **argv, char **envp)
 	while (i--)
 	{
 		update_state(&state);
-		line = manage_ptr(readline(state.ps1))->head->prev->as_str;
-		/* line = "echo hi"; */
+		/* line = manage_ptr(readline(state.ps1))->head->prev->as_str; */
+		line = "echo hi <input | <<HEREDOC grep h && ( echo hi >>append.txt ) | megapipe >/dev/null || echo error";
 		if (!line)
 			break ;
 		tokens = tokenize(line);

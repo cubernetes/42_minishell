@@ -1,22 +1,22 @@
 #include "../../include/minishell.h"
+#include <errno.h>
+#include <stdlib.h>
+#include <string.h>
 #include <unistd.h> /* dup() */
-#include <sys/types.h> /* open() */
-#include <sys/stat.h>
 #include <fcntl.h>
 
-t_bool	redirect_override(t_deque *io_redirect_node, t_ast_node *simple_command)
+t_bool	redirect_override(char *file_path, t_ast_node *simple_command)
 {
 	t_bool	rtn;
 	int		fd;
 	int		sc_fd_out;
-	char	*file_path;
 
-	file_path = io_redirect_node->head->next->as_ast_node->token->str;
 	fd = open(file_path, O_WRONLY | O_TRUNC | O_CREAT, 0644);
 	if (fd == -1)
 	{
 		simple_command->simple_cmd_meta.exit_status = 1;
 		rtn = FALSE;
+		minishell_error(EXIT_FAILURE, "redirect error: %s", strerror(errno));
 	}
 	else
 	{
@@ -32,68 +32,51 @@ t_bool	redirect_override(t_deque *io_redirect_node, t_ast_node *simple_command)
 t_bool	execute_io_redirect(t_ast_node *io_redirect, t_ast_node *simple_command)
 {
 	t_bool			rtn;
-	t_deque			*children;
-	t_deque_node	*head;
+	char			*file_path;
+	t_token_type	type;
 
-	children = io_redirect->children;
 	rtn = FALSE;
-	head = children->head;
-	if (!head)
-		return (TRUE);
-	if (head->as_ast_node->token->type == TOK_OVERRIDE)
-		rtn = redirect_override(children, simple_command);
-	while (head->next != children->head)
-	{
-		head = head->next;
-		if (head->as_ast_node->token->type == TOK_OVERRIDE)
-			rtn = redirect_override(children, simple_command);
-	}
+	type = io_redirect->children->head->as_ast_node->token->type;
+	file_path = io_redirect->children->head->next->as_ast_node->token->str;
+	if (type == TOK_OVERRIDE)
+		rtn = redirect_override(file_path, simple_command);
+	else if (type == TOK_OVERRIDE)
+		rtn = redirect_override(file_path, simple_command);
+	else if (type == TOK_OVERRIDE)
+		rtn = redirect_override(file_path, simple_command);
+	else if (type == TOK_OVERRIDE)
+		rtn = redirect_override(file_path, simple_command);
 	return (rtn);
 }
 
 t_bool	execute_simple_command(t_ast_node *simple_command)
 {
-	t_deque			*children;
-	t_deque_node	*head;
 	t_bool			rtn;
+	t_di			*di;
 
-	children = simple_command->children;
-	rtn = FALSE;
-	head = children->head;
-	if (!head)
-		return (TRUE);
-	if (head->as_ast_node->type == IO_REDIRECT)
-		rtn = execute_io_redirect(head->as_ast_node, simple_command);
-	while (head->next != children->head)
-	{
-		head = head->next;
-		if (head->as_ast_node->type == IO_REDIRECT)
-			rtn = execute_io_redirect(head->as_ast_node, simple_command);
-	}
+	rtn = TRUE;
+	di = di_begin(simple_command->children);
+	while (di_next(di))
+		if (di_get(di)->as_ast_node->type == IO_REDIRECT)
+			rtn = execute_io_redirect(di_get(di)->as_ast_node, simple_command);
 	return (rtn);
 }
 
+/* TODO: Not required: think about set -o pipefail */
 t_bool	iterate_pipe_sequence(t_deque *commands)
 {
 	t_bool			rtn;
-	t_deque_node	*head;
+	t_di			*di;
 
-	rtn = FALSE;
-	head = commands->head;
-	if (!head)
-		return (TRUE);
-	if (head->as_ast_node->type == COMPLETE_COMMAND)
-		rtn = TRUE;
-	else if (head->as_ast_node->type == SIMPLE_COMMAND)
-		rtn = execute_simple_command(head->as_ast_node);
-	while (head->next != commands->head)
+	rtn = TRUE;
+	di = di_begin(commands);
+	while (di_next(di))
 	{
-		head = head->next;
 		/* TODO: implement COMPLETE_COMMAND */
-		if (head->as_ast_node->type == COMPLETE_COMMAND)
+		if (di_get(di)->as_ast_node->type == COMPLETE_COMMAND)
 			rtn = TRUE;
-		else if (head->as_ast_node->type == SIMPLE_COMMAND)
-			rtn = execute_simple_command(head->as_ast_node);
+		else if (di_get(di)->as_ast_node->type == SIMPLE_COMMAND)
+			rtn = execute_simple_command(di_get(di)->as_ast_node);
 	}
 	return (rtn);
 }
@@ -106,38 +89,11 @@ t_bool	execute_pipe_sequence(t_deque *pipe_sequence)
 	return (rtn);
 }
 
-t_ast_node_type	give_ast_node_type(t_ast_node *ast_node)
-{
-	t_deque			*children;
-	t_deque_node	*head;
-
-	children = ast_node->children;
-	head = children->head;
-	if (!head)
-		return (AST_NODE_TYPE_UNKNOWN);
-	if (head->as_ast_node->type == COMPLETE_COMMAND)
-		return (COMPLETE_COMMAND);
-	else if (head->as_ast_node->type == TOKEN)
-		return (TOKEN);
-	else if (head->as_ast_node->type == PIPE_SEQUENCE)
-		return (PIPE_SEQUENCE);
-	while (head->next != children->head)
-	{
-		head = head->next;
-		if (head->as_ast_node->type == COMPLETE_COMMAND)
-			return (COMPLETE_COMMAND);
-		else if (head->as_ast_node->type == TOKEN)
-			return (TOKEN);
-		else if (head->as_ast_node->type == PIPE_SEQUENCE)
-			return (PIPE_SEQUENCE);
-	}
-	return (AST_NODE_TYPE_UNKNOWN);
-}
-
 t_bool	execute_tok_and(t_deque_node *tok_and)
 {
 	t_ast_node	*left;
 
+	/* next 2 lines can be removed */
 	if (tok_and->prev->as_ast_node->type != PIPE_SEQUENCE)
 		return (FALSE);
 	left = tok_and->prev->as_ast_node;
@@ -150,7 +106,7 @@ t_bool	execute_tok_or(t_deque_node *tok_or)
 {
 	t_ast_node	*left;
 
-	/* TODO: protect the -1 (update from timo, this todo might be out-of-date */
+	/* next 2 lines can be removed */
 	if (tok_or->prev->as_ast_node->type != PIPE_SEQUENCE)
 		return (FALSE);
 	left = tok_or->prev->as_ast_node;
@@ -163,41 +119,36 @@ t_bool	execute_tok_or(t_deque_node *tok_or)
 t_bool	execute_complete_command(t_ast_node *ast_node)
 {
 	t_bool			rtn;
-	t_deque			*children;
-	t_deque_node	*head;
 	t_bool			first;
+	t_di			*di;
 
-	children = ast_node->children;
-	head = children->head;
-	if (!head)
-		return (TRUE);
-	rtn = TRUE;
 	first = TRUE;
-	while (head->next != children->head)
+	rtn = TRUE;
+	di = di_begin(ast_node->children);
+	while (di_next(di))
 	{
-		head = head->next;
-		if (head->as_ast_node->type == PIPE_SEQUENCE
-			&& head->next->as_ast_node->type != TOKEN)
-			rtn = execute_pipe_sequence(head->as_ast_node->children);
-		else if (head->as_ast_node->type == TOKEN)
+		if (di_get(di)->as_ast_node->type == PIPE_SEQUENCE
+			&& di_get(di)->next->as_ast_node->type != TOKEN)
+			rtn = execute_pipe_sequence(di_get(di)->as_ast_node->children);
+		else if (di_get(di)->as_ast_node->type == TOKEN)
 		{
-			if (head->as_ast_node->token->type == TOK_AND)
+			if (di_get(di)->as_ast_node->token->type == TOK_AND)
 			{
 				if (first)
-					rtn = execute_tok_and(head);
+					rtn = execute_tok_and(di_get(di));
 				first = FALSE;
 				if (rtn == TRUE)
-					rtn = execute_pipe_sequence(head->next->as_ast_node->children);
-				head = head->next;
+					rtn = execute_pipe_sequence(di_get(di)->next->as_ast_node->children);
+				di_next(di);
 			}
-			else if (head->as_ast_node->token->type == TOK_OR)
+			else if (di_get(di)->as_ast_node->token->type == TOK_OR)
 			{
 				if (first)
-					rtn = execute_tok_or(head);
+					rtn = execute_tok_or(di_get(di));
 				first = FALSE;
 				if (rtn == FALSE)
-					rtn = execute_pipe_sequence(head->next->as_ast_node->children);
-				head = head->next;
+					rtn = execute_pipe_sequence(di_get(di)->next->as_ast_node->children);
+				di_next(di);
 			}
 		}
 	}
