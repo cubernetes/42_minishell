@@ -48,37 +48,6 @@ static void	expand_word(t_deque *new_tokens, t_deque_node *head)
 		new_tokens->head->prev->as_token->is_last_subtoken = FALSE;
 }
 
-char	**set_environ(char **envp)
-{
-	static char	**_envp = NULL;
-
-	if (envp)
-		_envp = envp;
-	return (_envp);
-}
-
-char	**get_environ(void)
-{
-	return (set_environ(NULL));
-}
-
-char	*env_lookup(char *var)
-{
-	char	**envp;
-	size_t	len;
-
-	envp = get_environ();
-	while (envp && envp[0])
-	{
-		len = ft_strlen(var);
-		if (!ft_strncmp(envp[0], var, len)
-			&& envp[0][len] == '=')
-			return (envp[0] + len + 1);
-		++envp;
-	}
-	return ("");
-}
-
 static void	expand_dquote_str(t_deque *new_tokens, t_deque_node *head)
 {
 	t_token	*token;

@@ -58,9 +58,7 @@ int	main(int argc, char **argv, char **envp)
 	t_ast_node		*ast_root_node;
 
 	i = 1;
-	(void)argc;
-	(void)argv;
-	set_environ(envp);
+	((void)argc, set_argv(argv), set_env(envp));
 	tokens = NULL;
 	ast_root_node = NULL;
 	setup_signals();

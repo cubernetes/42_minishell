@@ -5,6 +5,59 @@
 #include <unistd.h> /* dup() */
 #include <fcntl.h>
 
+/* TODO: implement heredoc redirection*/
+/*t_bool redirect_heredoc(t_ddeque *heredoc, t_ast_node *simple_command)
+{
+	t_bool		rtn;
+	int		fd;
+}*/
+
+t_bool	redirect_input(char *file_path, t_ast_node *simple_command)
+{
+	t_bool	rtn;
+	int		fd;
+	int		sc_fd_in;
+
+	fd = open(file_path, O_RDONLY);
+	if (fd == -1)
+	{
+		simple_command->simple_cmd_meta.exit_status = 1;
+		rtn = FALSE;
+	}
+	else
+	{
+		sc_fd_in = simple_command->simple_cmd_meta.fds.in;
+		if (sc_fd_in != -2)
+			close(sc_fd_in);
+		simple_command->simple_cmd_meta.fds.out = fd;
+		rtn = TRUE;
+	}
+	return (rtn);
+}
+
+t_bool	redirect_append(char *file_path, t_ast_node *simple_command)
+{
+	t_bool	rtn;
+	int		fd;
+	int		sc_fd_out;
+
+	fd = open(file_path, O_WRONLY | O_APPEND | O_CREAT, 0644);
+	if (fd == -1)
+	{
+		simple_command->simple_cmd_meta.exit_status = 1;
+		rtn = FALSE;
+	}
+	else
+	{
+		sc_fd_out = simple_command->simple_cmd_meta.fds.out;
+		if (sc_fd_out != -2)
+			close(sc_fd_out);
+		simple_command->simple_cmd_meta.fds.out = fd;
+		rtn = TRUE;
+	}
+	return (rtn);
+}
+
 t_bool	redirect_override(char *file_path, t_ast_node *simple_command)
 {
 	t_bool	rtn;
@@ -16,7 +69,6 @@ t_bool	redirect_override(char *file_path, t_ast_node *simple_command)
 	{
 		simple_command->simple_cmd_meta.exit_status = 1;
 		rtn = FALSE;
-		minishell_error(EXIT_FAILURE, "redirect error: %s", strerror(errno));
 	}
 	else
 	{
@@ -40,12 +92,14 @@ t_bool	execute_io_redirect(t_ast_node *io_redirect, t_ast_node *simple_command)
 	file_path = io_redirect->children->head->next->as_ast_node->token->str;
 	if (type == TOK_OVERRIDE)
 		rtn = redirect_override(file_path, simple_command);
-	else if (type == TOK_OVERRIDE)
-		rtn = redirect_override(file_path, simple_command);
-	else if (type == TOK_OVERRIDE)
-		rtn = redirect_override(file_path, simple_command);
-	else if (type == TOK_OVERRIDE)
-		rtn = redirect_override(file_path, simple_command);
+	else if (type == TOK_INPUT)
+		rtn = redirect_input(file_path, simple_command);
+	else if (type == TOK_APPEND)
+		rtn = redirect_append(file_path, simple_command);
+	/* else if (type == TOK_HEREDOC) */
+		/* rtn = redirect_heredoc(file_path, simple_command); */
+	if (rtn == FALSE)
+		minishell_error(EXIT_FAILURE, "redirect error: %s", strerror(errno));
 	return (rtn);
 }
 
@@ -59,6 +113,7 @@ t_bool	execute_simple_command(t_ast_node *simple_command)
 	while (di_next(di))
 		if (di_get(di)->as_ast_node->type == IO_REDIRECT)
 			rtn = execute_io_redirect(di_get(di)->as_ast_node, simple_command);
+	ms_execve(simple_command);
 	return (rtn);
 }
 

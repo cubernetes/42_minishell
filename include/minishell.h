@@ -164,9 +164,11 @@ void									minishell_error(int exit_code,
 											const char *fmt, ...);
 void									expand_env_vars(t_deque *tokens);
 void									join_tokens(t_deque *tokens);
-char									**set_environ(char **envp);
-char									**get_environ(void);
+char									**set_env(char **envp);
+char									**get_env(void);
 char									*env_lookup(char *var);
+char									**set_argv(char **argv);
+char									**get_argv(void);
 void									execute(t_ast_node *ast_node);
 void									glob_tokens(t_deque *tokens);
 t_type									ht_get(t_kv ht[TABLE_SIZE], char *key);
@@ -174,4 +176,6 @@ void									ht_set(t_kv ht[TABLE_SIZE], char *key,
 											t_type value);
 void									ht_print(t_kv ht[TABLE_SIZE],
 											void (print)(char *k, void *v));
+void									ms_execve(t_ast_node *command);
+
 #endif /* minishell.h. */
