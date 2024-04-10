@@ -6,7 +6,7 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:02:16 by tischmid          #+#    #+#              #
-#    Updated: 2024/04/01 02:35:18 by tosuman          ###   ########.fr        #
+#    Updated: 2024/04/02 10:20:32 by tosuman          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,8 +30,9 @@ _SRC           += tokenize.c
 _SRC           += expansion.c
 _SRC           += globbing.c
 _SRC           += executor.c
-_SRC           += ht.c
 _SRC           += execve.c
+_SRC           += ht.c
+_SRC           += env.c
 
 vpath %.c src src/parsing src/signal_handling src/tokenization \
           src/expansion src/execution/ src/utils/

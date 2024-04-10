@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <readline/readline.h>
 
+typedef struct sigaction	t_sa;
+
 static void	handle_sigint(int sig)
 {
 	(void)sig;
@@ -13,25 +15,13 @@ static void	handle_sigint(int sig)
 	rl_redisplay();
 }
 
-void	sigaction_init(struct sigaction *sa)
-{
-	if (sa != NULL)
-	{
-		sa->sa_handler = NULL;
-		sa->sa_sigaction = NULL;
-		sa->sa_mask = (sigset_t){0};
-		sa->sa_flags = 0;
-		sa->sa_restorer = NULL;
-	}
-}
-
 void	setup_signals(void)
 {
-	struct sigaction	sa_int;
-	struct sigaction	sa_quit;
+	t_sa	sa_int;
+	t_sa	sa_quit;
 
-	sigaction_init(&sa_int);
-	sigaction_init(&sa_quit);
+	sa_int = (t_sa){0};
+	sa_quit = (t_sa){0};
 	sa_int.sa_handler = &handle_sigint;
 	sigaction(SIGINT, &sa_int, NULL);
 	sa_quit.sa_handler = SIG_IGN;

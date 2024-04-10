@@ -6,17 +6,17 @@
 #include <stdlib.h>            /* exit(), DONT USE free or malloc! */
 #include <unistd.h>            /* STDERR_FILENO */
 
-/* TODO: use argv[0] instead of hardcoded minishell */
-void	minishell_error(int exit_code, const char *fmt, ...)
+void	minishell_error(int exit_code, t_bool do_exit, const char *fmt, ...)
 {
 	va_list	ap;
 
 	va_start(ap, fmt);
-	ft_vdprintf(STDERR_FILENO, ft_strjoin(ft_strjoin("minishell: ", fmt), "\n"),
-		ap);
+	ft_vdprintf(STDERR_FILENO, ft_strjoin(ft_strjoin(MINISHELL_NAME ": ", fmt),
+			"\n"), ap);
 	va_end(ap);
 	free_all_ptrs();
-	exit(exit_code);
+	if (do_exit)
+		exit(exit_code);
 }
 
 /* TODO: NOT REQUIRED: add basic prompt expansion */
@@ -48,7 +48,10 @@ void	update_state(t_state *state)
 /* TODO: find unused functions (like printing functions) */
 /* TODO: write test functions for deque */
 /* TODO: use -MMD and stuff */
-/* remove all minishell_error() calls */
+/* TODO: revise all minishell_error() calls */
+/* TODO: remove unnecessary indentation in variables declarations */
+/* TODO: use ptr[static 1] where needed */
+/* TOOD: flexible array members? */
 int	main(int argc, char **argv, char **envp)
 {
 	static t_state	state;
@@ -57,7 +60,8 @@ int	main(int argc, char **argv, char **envp)
 	t_deque			*tokens;
 	t_ast_node		*ast_root_node;
 
-	i = 1;
+	ft_printf("PID:%d\n", getpid());
+	i = 10;
 	((void)argc, set_argv(argv), set_env(envp));
 	tokens = NULL;
 	ast_root_node = NULL;
@@ -65,15 +69,17 @@ int	main(int argc, char **argv, char **envp)
 	while (i--)
 	{
 		update_state(&state);
-		/* line = manage_ptr(readline(state.ps1))->head->prev->as_str; */
-		line = "echo hi <input | <<HEREDOC grep h && ( echo hi >>append.txt ) | megapipe >/dev/null || echo error";
+		line = manage_ptr(readline(state.ps1))->head->prev->as_str;
+		/* line = "echo hi <input | >output grep h && ( echo hi >>append.txt ) | megapipe >/dev/null || echo error"; */
+		/* line = "echo hi && echo ho && false || echo false"; */
+		/* line = "echo hi"; */
 		if (!line)
 			break ;
 		tokens = tokenize(line);
-		deque_print(tokens, print_token);
+		/* deque_print(tokens, print_token); */
 		ast_root_node = build_ast(tokens);
-		ast_print(ast_root_node);
-		execute(ast_root_node);
+		/* ast_print(ast_root_node); */
+		(void)execute(ast_root_node);
 		(void)free_all_ptrs();
 	}
 	(void)free_all_ptrs();

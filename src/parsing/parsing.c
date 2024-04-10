@@ -96,9 +96,17 @@ void	ast_print_with_depth(t_ast_node *ast_node, int n)
 	repeat_string("|   ", n, TRUE);
 	if (ast_node->type != TOKEN)
 	{
-		ft_printf("- <%s> (%d children)\n",
-			ast_node_type_to_string(ast_node->type),
-			ast_node->children->size);
+		if (ast_node->type == SIMPLE_COMMAND)
+			ft_printf("- <%s> (%d children, in: %d, out: %d, exitcode: %d)\n",
+				ast_node_type_to_string(ast_node->type),
+				ast_node->children->size,
+				ast_node->simple_cmd_meta.fds.in,
+				ast_node->simple_cmd_meta.fds.out,
+				ast_node->simple_cmd_meta.exit_status);
+		else
+			ft_printf("- <%s> (%d children)\n",
+				ast_node_type_to_string(ast_node->type),
+				ast_node->children->size);
 		di = di_begin(ast_node->children);
 		while (di_next(di))
 			ast_print_with_depth(di_get(di)->as_ast_node, n + 1);
@@ -285,8 +293,9 @@ int	get_production_idx(t_ast_node_type nonterm, t_token *token)
 	if (production_idx == -1)
 	{
 		if (!*token->str)
-			minishell_error(2, "syntax error near unexpected token `newline'");
-		minishell_error(2, "syntax error near unexpected token `%s'",
+			minishell_error(2, TRUE,
+				"syntax error near unexpected token `newline'");
+		minishell_error(2, TRUE, "syntax error near unexpected token `%s'",
 			token->str);
 	}
 	return (production_idx);
@@ -549,10 +558,12 @@ t_ast_node	*build_parse_tree(t_deque *tokens)
 				deque_rotate(tokens, 1);
 			}
 			else if (get_token_type(tokens) == TOK_EOL)
-				minishell_error(2, "syntax error near unexpected token `%s'",
+				minishell_error(2, TRUE,
+					"syntax error near unexpected token `%s'",
 					get_token_str_nl(tokens));
 			else
-				minishell_error(2, "syntax error near unexpected token `%s'",
+				minishell_error(2, TRUE,
+					"syntax error near unexpected token `%s'",
 					get_token_str_nl(tokens));
 		}
 	}

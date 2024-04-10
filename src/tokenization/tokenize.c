@@ -253,7 +253,7 @@ void	tokenize_variable_len_tokens(const char **line, t_deque *tokens)
 	pushed += tokenize_word(line, tokens);
 	if (!pushed)
 	{
-		minishell_error(EXIT_FAILURE, "could not tokenize `%s'",
+		minishell_error(EXIT_FAILURE, TRUE, "could not tokenize `%s'",
 			get_token_str(tokens));
 	}
 }

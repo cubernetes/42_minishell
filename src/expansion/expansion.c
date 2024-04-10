@@ -29,6 +29,7 @@ static void	*new_word_token(char *str)
 	return (new_token(str, TOK_WORD, TRUE));
 }
 
+/* TODO: Not required: use full IFS instead of just the first char */
 static void	expand_word(t_deque *new_tokens, t_deque_node *head)
 {
 	t_token	*token;
@@ -42,7 +43,7 @@ static void	expand_word(t_deque *new_tokens, t_deque_node *head)
 	token->str = "";
 	while (*token_str)
 		token_str += expand_vars(token, token_str);
-	new_toks = string_list_to_deque(ft_split(token->str, IFS), new_word_token);
+	new_toks = string_list_to_deque(ft_split(token->str, IFS[0]), new_word_token);
 	deque_extend_right(new_tokens, new_toks);
 	if (!token->is_last_subtoken)
 		new_tokens->head->prev->as_token->is_last_subtoken = FALSE;
