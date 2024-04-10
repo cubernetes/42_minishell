@@ -19,15 +19,9 @@ static void	close_fds(t_ast_node *simple_command)
 	in = simple_command->simple_cmd_meta.fds.in;
 	out = simple_command->simple_cmd_meta.fds.out;
 	if (in != -2)
-	{
-		ft_printf("PID:%d, closing in: %d\n", getpid(), in);
 		close(in);
-	}
 	if (out != -2)
-	{
-		ft_printf("PID:%d, closing out: %d\n", getpid(), out);
 		close(out);
-	}
 }
 
 /* TODO: Replace magic number -2 with something like FD_UNINITIALIZED, ...*/

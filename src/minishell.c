@@ -31,6 +31,7 @@ void	update_state(t_state *state)
 	state->ps1 = expand_prompt(PS1);
 }
 
+/* TODO: history */
 /* TODO: what if readline returns NULL? */
 /* TODO: use/think about rl_end (and other rl vars) */
 /* TODO: remove DEBUG macros */
@@ -60,7 +61,6 @@ int	main(int argc, char **argv, char **envp)
 	t_deque			*tokens;
 	t_ast_node		*ast_root_node;
 
-	ft_printf("PID:%d\n", getpid());
 	i = 10;
 	((void)argc, set_argv(argv), set_env(envp));
 	tokens = NULL;

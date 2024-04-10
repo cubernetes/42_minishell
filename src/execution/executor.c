@@ -130,7 +130,6 @@ unsigned char	wait_pipesequence(t_deque *pids)
 			status = WEXITSTATUS(status);
 		else if (WIFSIGNALED(status))
 			status = 128 + WTERMSIG(status);
-		ft_printf("EXIT STATUS: %d\n", status);
 	}
 	return ((unsigned char)status);
 }
@@ -180,20 +179,18 @@ unsigned char	iterate_pipe_sequence(t_deque *commands)
 			/*       or add new metadata for COMPLETE_COMMAND (fds) */
 		else if (di_get(di)->as_ast_node->type == SIMPLE_COMMAND)
 		{
-			ast_print(di_get(di)->as_ast_node);
 			deque_push_ptr_right(pids, ft_memdup(&(pid_t){\
 				execute_simple_command_wrapper(di_get(di)->as_ast_node, commands)},
 					sizeof(pid_t)));
 		}
 	}
 	status = wait_pipesequence(pids);
-	ft_printf("\033[31mPipe sequence exited with: %d\033[m\n", status);
 	return (status);
 }
 
 unsigned char	execute_pipe_sequence(t_deque *pipe_sequence)
 {
-	t_bool	rtn;
+	unsigned char	rtn;
 	/* TODO: set only onetime for unset PATH */
 	rtn = iterate_pipe_sequence(pipe_sequence);
 	return (rtn);
@@ -203,37 +200,27 @@ unsigned char	execute_tok_and(t_deque_node *tok_and)
 {
 	t_ast_node	*left;
 
-	/* next 2 lines can be removed */
-	if (tok_and->prev->as_ast_node->type != PIPE_SEQUENCE)
-		return (FALSE);
 	left = tok_and->prev->as_ast_node;
-	if (execute_pipe_sequence(left->children))
-		return (TRUE);
-	return (FALSE);
+	return (execute_pipe_sequence(left->children));
 }
 
 unsigned char	execute_tok_or(t_deque_node *tok_or)
 {
 	t_ast_node	*left;
 
-	/* next 2 lines can be removed */
-	if (tok_or->prev->as_ast_node->type != PIPE_SEQUENCE)
-		return (FALSE);
 	left = tok_or->prev->as_ast_node;
-	if (!execute_pipe_sequence(left->children))
-		return (TRUE);
-	return (FALSE);
+	return (execute_pipe_sequence(left->children));
 }
 
 /* return value for TOK_AND & TOK_OR to see if command was succesfully executed */
 unsigned char	execute_complete_command(t_ast_node *ast_node)
 {
-	t_bool			rtn;
+	unsigned char	rtn;
 	t_bool			first;
 	t_di			*di;
 
 	first = TRUE;
-	rtn = TRUE;
+	rtn = 0;
 	di = di_begin(ast_node->children);
 	while (di_next(di))
 	{
@@ -247,7 +234,7 @@ unsigned char	execute_complete_command(t_ast_node *ast_node)
 				if (first)
 					rtn = execute_tok_and(di_get(di));
 				first = FALSE;
-				if (rtn == TRUE)
+				if (rtn == 0)
 					rtn = execute_pipe_sequence(di_get(di)->next->as_ast_node->children);
 				di_next(di);
 			}
@@ -256,7 +243,7 @@ unsigned char	execute_complete_command(t_ast_node *ast_node)
 				if (first)
 					rtn = execute_tok_or(di_get(di));
 				first = FALSE;
-				if (rtn == FALSE)
+				if (rtn != 0)
 					rtn = execute_pipe_sequence(di_get(di)->next->as_ast_node->children);
 				di_next(di);
 			}
@@ -269,7 +256,7 @@ unsigned char	execute_complete_command(t_ast_node *ast_node)
 /* TODO: think if 0 (success) is a sensible return for ast_node == NULL */
 unsigned char	execute(t_ast_node *ast_node)
 {
-	t_bool	rtn;
+	unsigned char	rtn;
 
 	if (ast_node == NULL)
 		return (0);
