@@ -7,9 +7,8 @@
 # include "minishell_debug.h"
 
 # define PS0 "> "
-/* TODO: Not required: use advanced prompt */
-/* # define PS1 "\\u@\\h:\\w\\$ " */
-# define PS1 "$ "
+/* # define PS1 "\033[31m\\u@\\h:\\w\033[m\n❯ " */
+# define PS1 "\033[31m\\u\033[m [\033[32m\\w\033[m]\n\033[33m❯\033[m "
 
 # define MINISHELL_NAME "minishell"
 
@@ -181,8 +180,8 @@ char									**set_argv(char **argv);
 char									**get_argv(void);
 unsigned char							execute(t_ast_node *ast_node);
 void									glob_tokens(t_deque *tokens);
-t_type									ht_get(t_kv ht[TABLE_SIZE], char *key);
-void									ht_set(t_kv ht[TABLE_SIZE], char *key,
+t_type									ht_get(t_kv ht[TABLE_SIZE], char key[static 1]);
+void									ht_set(t_kv ht[TABLE_SIZE], char key[static 1],
 											t_type value);
 void									ht_print(t_kv ht[TABLE_SIZE],
 											void (print)(char *k, void *v));

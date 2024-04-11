@@ -32,12 +32,6 @@ static void	set_fds(t_ast_node *simple_command)
 
 	in = simple_command->simple_cmd_meta.fds.in;
 	out = simple_command->simple_cmd_meta.fds.out;
-	ft_dprintf(open("/dev/pts/2", O_WRONLY),
-		"executing <\033[41;30m%s\033[m>: in: %d, out: %d\n",
-		simple_command->children->head->as_ast_node->token->str,
-		in,
-		out
-		);
 	if (in != -2)
 		dup2(in, STDIN_FILENO);
 	if (out != -2)
@@ -92,13 +86,9 @@ void	close_other_command_fds(t_deque *commands)
 
 	di = di_begin(commands);
 	while (di_next(di))
-	{
-		close(di_get(di)->as_ast_node->simple_cmd_meta.fds.in);
-		close(di_get(di)->as_ast_node->simple_cmd_meta.fds.out);
-	}
+		close_fds(di_get(di)->as_ast_node);
 }
 
-#include <fcntl.h>
 /* TODO: Protect all system calls (dup2, fork, close, open, execve, ...) */
 pid_t	execute_simple_command(t_ast_node *simple_command, t_deque *commands)
 {

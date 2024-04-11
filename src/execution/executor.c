@@ -81,6 +81,8 @@ void	handle_io_redirect(t_ast_node *io_redirect, t_ast_node *simple_command)
 		err = handle_redirect_input(file_path, simple_command);
 	else if (type == TOK_APPEND)
 		err = handle_redirect_append(file_path, simple_command);
+	else
+		err = FALSE;
 	/* else if (type == TOK_HEREDOC) */
 		/* err = redirect_heredoc(file_path, simple_command); */
 	if (err == FALSE)
