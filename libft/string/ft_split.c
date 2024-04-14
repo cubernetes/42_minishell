@@ -6,7 +6,7 @@
 /*   By: tischmid <timo42@proton.me>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 20:37:07 by tischmid          #+#    #+#             */
-/*   Updated: 2024/02/01 11:25:18 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/04/14 16:16:22 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@ static size_t	split_arr_len(char const *s, char c)
 	size_t	len;
 
 	len = 0;
+	if (*s == 0)
+		return (1);
 	while (*s)
 	{
 		while (*s == c)
@@ -48,8 +50,6 @@ char	**ft_split(char const *s, char c)
 
 	arr_len = split_arr_len(s, c);
 	arr = ft_malloc(sizeof(*arr) * (arr_len + 1));
-	if (!arr)
-		return (NULL);
 	idx = 0;
 	while (*s)
 	{
@@ -64,6 +64,8 @@ char	**ft_split(char const *s, char c)
 		if (!save_strlcpy(arr, ++idx, start, (size_t)(s - start + 1)))
 			return (NULL);
 	}
+	if (idx == 0)
+		arr[idx++] = ft_strdup("");
 	arr[idx] = NULL;
 	return (arr);
 }

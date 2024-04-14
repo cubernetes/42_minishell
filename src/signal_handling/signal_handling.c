@@ -5,14 +5,15 @@
 #include <stdio.h>
 #include <readline/readline.h>
 
+static int	event(void)
+{
+	return (0);
+}
+
 static void	handle_sigint(int sig)
 {
 	(void)sig;
-	/* rl_on_new_line(); */
-	ft_putchar('\n');
-	ft_printf("%s", rl_prompt);
-	rl_replace_line("", 1);
-	rl_redisplay();
+	rl_done = 1;
 }
 
 void	setup_signals(void)
@@ -20,6 +21,7 @@ void	setup_signals(void)
 	t_sa	sa_int;
 	t_sa	sa_quit;
 
+	rl_event_hook = event;
 	sa_int = (t_sa){0};
 	sa_quit = (t_sa){0};
 	sa_int.sa_handler = &handle_sigint;

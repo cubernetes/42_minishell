@@ -8,7 +8,7 @@
 
 # define PS0 "> "
 /* # define PS1 "\033[31m\\u@\\h:\\w\033[m\n❯ " */
-# define PS1 "\033[31m\\u\033[m@\033[94m\\H\033[m@\033[92mminishell\033[m [\033[32m\\W\033[m]\n> "
+# define PS1 "\033[31m\\u\033[m@\033[94m\\h\033[m@\033[92mminishell\033[m [\033[32m\\w\033[m]\n> "
 
 # define MINISHELL_NAME "minishell"
 

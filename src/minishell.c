@@ -53,8 +53,8 @@ char	*ft_replace(
 {
 	size_t	pattern_len;
 	size_t	replacement_len;
-	int		str_idx;
-	int		new_str_idx;
+	size_t	str_idx;
+	size_t	new_str_idx;
 	t_bool	replaced;
 	char	*new_str;
 
@@ -97,8 +97,8 @@ char	*ft_replace_all(
 {
 	size_t	pattern_len;
 	size_t	replacement_len;
-	int		str_idx;
-	int		new_str_idx;
+	size_t	str_idx;
+	size_t	new_str_idx;
 	char	*new_str;
 
 	pattern_len = ft_strlen(pattern);
@@ -155,6 +155,8 @@ char	*ft_gethostname(void)
 		line[len - 1] = 0;
 	close(fd);
 	get_next_line(fd);
+	if (line == NULL)
+		return ("");
 	return (line);
 }
 
@@ -246,7 +248,7 @@ int	main(int argc, char **argv, char **envp)
 		tokens = tokenize(line);
 		/* deque_print(tokens, print_token); */
 		ast_root_node = build_ast(tokens);
-		ast_print(ast_root_node);
+		/* ast_print(ast_root_node); */
 		(void)execute(ast_root_node);
 		(void)gc_free();
 	}

@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/31 12:49:11 by tosuman           #+#    #+#             */
-/*   Updated: 2024/04/01 01:43:14 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/04/14 16:11:01 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ static uint64_t	hash(char *key)
 	return (fnv_1a_64(key));
 }
 
-void	ht_set(t_kv ht[TABLE_SIZE], char *key, t_type value)
+void	ht_set(t_kv ht[TABLE_SIZE], char key[static 1], t_type value)
 {
 	int		idx;
 	t_kv	*new_kv;
@@ -55,7 +55,7 @@ void	ht_set(t_kv ht[TABLE_SIZE], char *key, t_type value)
 	}
 }
 
-t_type	ht_get(t_kv ht[TABLE_SIZE], char *key)
+t_type	ht_get(t_kv ht[TABLE_SIZE], char key[static 1])
 {
 	t_kv	*kv;
 
