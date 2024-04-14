@@ -17,6 +17,11 @@ static t_bool	glob_match(const char *pattern, const char *str)
 	return (FALSE);
 }
 
+static int	ft_strcmp2(const char *str1, const char *str2)
+{
+	return (!ft_strcmp(str1, str2));
+}
+
 static t_deque	*glob_token(t_token *token)
 {
 	DIR				*dirp;
@@ -39,6 +44,7 @@ static t_deque	*glob_token(t_token *token)
 	closedir(dirp);
 	if (tokens->size == 0)
 		deque_push_ptr_right(tokens, token);
+	deque_sort(tokens, (int (*)(void *, void *))ft_strcmp2);
 	return (tokens);
 }
 

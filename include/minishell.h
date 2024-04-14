@@ -8,7 +8,7 @@
 
 # define PS0 "> "
 /* # define PS1 "\033[31m\\u@\\h:\\w\033[m\n❯ " */
-# define PS1 "\033[31m\\u\033[m [\033[32m\\w\033[m]\n\033[33m❯\033[m "
+# define PS1 "\033[31m\\u\033[m@\033[94m\\H\033[m@\033[92mminishell\033[m [\033[32m\\W\033[m]\n> "
 
 # define MINISHELL_NAME "minishell"
 
@@ -49,6 +49,8 @@
 
 # define NUM_NONTERMS 10
 # define NUM_TOKENS 11
+
+typedef struct sigaction	t_sa;
 
 typedef struct s_state
 {
@@ -92,11 +94,16 @@ typedef struct s_fds
 	int									out;
 }										t_fds;
 
-typedef struct s_simple_command
+typedef struct s_simple_command_meta
 {
 	t_fds								fds;
 	unsigned char						exit_status;
 }										t_simple_cmd_meta;
+
+typedef struct s_complete_cmd_meta
+{
+	t_fds								fds;
+}										t_complete_cmd_meta;
 
 /* TOKEN is a TERMINAL, every other member is a NONTERMINAL */
 typedef enum e_ast_node_type
@@ -130,6 +137,7 @@ struct									s_ast_node
 	union
 	{
 		t_simple_cmd_meta				simple_cmd_meta;
+		t_complete_cmd_meta				complete_cmd_meta;
 	};
 };
 

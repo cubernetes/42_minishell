@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 15:09:08 by tischmid          #+#    #+#             */
-/*   Updated: 2024/04/04 13:09:30 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/04/13 22:34:09 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,9 +108,9 @@ void							*ft_memcpy(void *dest, void const *src,
 									size_t n);
 void							*ft_memdup(const void *src, size_t size);
 void							*ft_malloc(size_t size);
-t_deque							*manage_ptr(void *ptr);
-t_deque							*manage_static_ptr(void **ptr);
-t_bool							free_all_ptrs(void);
+t_deque							*gc_add(void *ptr);
+t_deque							*gc_set_null(void **ptr);
+t_bool							gc_free(void);
 t_bool							ft_malloc_deque_free(t_deque *deque,
 									t_bool(free_data)(void *));
 t_deque							*ft_malloc_deque_init(void);

@@ -1,17 +1,17 @@
 #include "../../libft/libft.h"
+#include "../../include/minishell.h"
 #include <signal.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <readline/readline.h>
 
-typedef struct sigaction	t_sa;
-
 static void	handle_sigint(int sig)
 {
 	(void)sig;
+	/* rl_on_new_line(); */
 	ft_putchar('\n');
-	rl_replace_line("", 0);
-	rl_on_new_line();
+	ft_printf("%s", rl_prompt);
+	rl_replace_line("", 1);
 	rl_redisplay();
 }
 

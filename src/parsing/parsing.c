@@ -112,9 +112,11 @@ void	ast_print_with_depth(t_ast_node *ast_node, int n)
 			ast_print_with_depth(di_get(di)->as_ast_node, n + 1);
 	}
 	else
-		ft_printf("- %s (\033[31m%s\033[m)\n",
-			token_type_to_string(ast_node->token->type),
-			ast_node->token->str);
+		ft_printf("- %s\n",
+			ast_node_type_to_string(ast_node->type));
+		/* ft_printf("- %s (\033[31m%s\033[m)\n", */
+			/* token_type_to_string(ast_node->token->type), */
+			/* ast_node->token->str); */
 }
 
 void	ast_print(t_ast_node *ast_node)
@@ -319,7 +321,7 @@ t_ast_node_type	ast_ht_get(char *key)
 {
 	static t_kv	ht[TABLE_SIZE + 1];
 
-	manage_static_ptr(&ht[TABLE_SIZE].v.as_ptr);
+	gc_set_null(&ht[TABLE_SIZE].v.as_ptr);
 	if (ht[TABLE_SIZE].v.as_ptr != NULL)
 		return (ht_get(ht, key).t1);
 	ht_set(ht, "<pipe_sequence>", ht_ast(PIPE_SEQUENCE));
@@ -348,7 +350,7 @@ t_token_type	tokens_ht_get(char *key)
 {
 	static t_kv	ht[TABLE_SIZE + 1];
 
-	manage_static_ptr(&ht[TABLE_SIZE].v.as_ptr);
+	gc_set_null(&ht[TABLE_SIZE].v.as_ptr);
 	if (ht[TABLE_SIZE].v.as_ptr == NULL)
 	{
 		ht_set(ht, "TOK_EPSILON", ht_tok(TOK_EPSILON));
@@ -458,7 +460,7 @@ t_ast_node	*get_production(t_ast_node_type nonterm, t_token *token)
 		">>" "\n"	"<<" "\n"	">" "\n"	"<" "\n"				\
 		"TOK_EPSILON";
 
-	if (productions == NULL && (manage_static_ptr((void **)&productions), 1))
+	if (productions == NULL && (gc_set_null((void **)&productions), 1))
 		productions = initialize_productions(grammar);
 	return (productions[get_production_idx(nonterm, token)]);
 }
