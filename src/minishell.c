@@ -242,9 +242,9 @@ int	main(int argc, char **argv, char **envp)
 	{
 		update_state(&state);
 		line = gc_add(readline(state.ps1))->head->prev->as_str;
-		add_history(line);
 		if (!line)
 			break ;
+		add_history(line);
 		tokens = tokenize(line);
 		/* deque_print(tokens, print_token); */
 		ast_root_node = build_ast(tokens);
