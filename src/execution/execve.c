@@ -1,3 +1,5 @@
+#include "libft.h"
+#include <readline/readline.h>
 #define _POSIX_C_SOURCE 200809L
 #include "../../include/minishell.h"
 #include <errno.h>
@@ -11,31 +13,39 @@
 #define EXIT_EXEVE_ERROR 3
 #define EXIT_FORK_ERROR 4
 
-static void	close_fds(t_ast_node *simple_command)
+void	close_fds(t_ast_node *simple_command)
 {
 	int	in;
 	int	out;
+	int	err;
 
 	in = simple_command->fd_in;
 	out = simple_command->fd_out;
+	err = simple_command->fd_err;
 	if (in != -2)
 		close(in);
 	if (out != -2)
 		close(out);
+	if (err != -2)
+		close(err);
 }
 
 /* TODO: Replace magic number -2 with something like FD_UNINITIALIZED, ...*/
-static void	set_fds(t_ast_node *simple_command)
+void	set_fds(t_ast_node *simple_command)
 {
 	int	in;
 	int	out;
+	int	err;
 
 	in = simple_command->fd_in;
 	out = simple_command->fd_out;
+	err = simple_command->fd_err;
 	if (in != -2)
 		dup2(in, STDIN_FILENO);
 	if (out != -2)
 		dup2(out, STDOUT_FILENO);
+	if (err != -2)
+		dup2(err, STDERR_FILENO);
 }
 
 static char	*search_executable(char *program, char **path_parts)
@@ -93,7 +103,20 @@ void	close_other_command_fds(t_deque *commands)
 pid_t	execute_simple_command(t_ast_node *simple_command, t_deque *commands)
 {
 	pid_t	pid;
+	char	**path_parts;
+	char	**argv;
+	char	*program;
+	int		error;
 
+	path_parts = ft_split(env_lookup("PATH"), ':');
+	argv = make_argv(simple_command);
+	program = search_executable(argv[0], path_parts);
+	if (!program)
+	{
+		minishell_error(EXIT_COMMAND_NOT_FOUND, FALSE, "%s: command not found",
+			argv[0]);
+		return (-1);
+	}
 	pid = fork();
 	if (pid < 0)
 		minishell_error(EXIT_FORK_ERROR, TRUE, "%s", strerror(errno));
@@ -101,22 +124,9 @@ pid_t	execute_simple_command(t_ast_node *simple_command, t_deque *commands)
 		return (close_fds(simple_command), pid);
 	set_fds(simple_command);
 	close_other_command_fds(commands);
-	ms_execve(simple_command);
+	error = execve(program, argv, get_env());
+	gc_free();
+	rl_clear_history();
 	minishell_error(EXIT_EXEVE_ERROR, FALSE, "%s", strerror(errno));
-	return (FALSE);
-}
-
-int	ms_execve(t_ast_node *simple_command)
-{
-	char	**path_parts;
-	char	**argv;
-	char	*program;
-
-	path_parts = ft_split(env_lookup("PATH"), ':');
-	argv = make_argv(simple_command);
-	program = search_executable(argv[0], path_parts);
-	if (!program)
-		minishell_error(EXIT_COMMAND_NOT_FOUND, TRUE, "%s: command not found",
-			argv[0]);
-	return (execve(program, argv, get_env()));
+	return (-1);
 }

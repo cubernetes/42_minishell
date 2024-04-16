@@ -6,7 +6,7 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:02:16 by tischmid          #+#    #+#              #
-#    Updated: 2024/04/14 17:21:12 by tosuman          ###   ########.fr        #
+#    Updated: 2024/04/16 19:31:06 by tischmid         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -62,7 +62,6 @@ all: libft $(NAME)
 
 $(NAME): $(LIBFT_DIR)/$(LIBFT) $(OBJ)
 	$(CC) -o $@ $(LDFLAGS) $(OBJ) $(LDLIBS)
-	$(MAKE)
 
 libft:
 	$(MAKE) -C $(LIBFT_DIR)

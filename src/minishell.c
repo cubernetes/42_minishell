@@ -15,9 +15,12 @@ void	minishell_error(int exit_code, t_bool do_exit, const char *fmt, ...)
 	ft_vdprintf(STDERR_FILENO, ft_strjoin(ft_strjoin(MINISHELL_NAME ": ", fmt),
 			"\n"), ap);
 	va_end(ap);
-	gc_free();
 	if (do_exit)
+	{
+		gc_free();
+		rl_clear_history();
 		exit(exit_code);
+	}
 }
 
 size_t	ft_count_all(
@@ -227,6 +230,7 @@ void	update_state(t_state *state)
 /* TODO: use ptr[static 1] where needed */
 /* TOOD: Not required: think about flexible array members? */
 /* TODO: Not required: implement shell variables */
+/* TODO: Implement ./minishell -c '' functionality */
 int	main(int argc, char **argv, char **envp)
 {
 	static t_state	state;

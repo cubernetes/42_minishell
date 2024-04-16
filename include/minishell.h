@@ -148,7 +148,7 @@ typedef struct s_kv
 }				t_kv;
 
 void									setup_signals(void);
-t_deque									*tokenize(const char *line);
+t_deque									*tokenize(const char *line); /* static 1 ? */
 t_ast_node								*build_ast(t_deque *tokens);
 void									ast_print(t_ast_node *ast_node);
 void									print_token(void *data, t_bool first);
@@ -179,12 +179,19 @@ void									ht_set(t_kv ht[TABLE_SIZE],
 											char key[static 1],
 											t_type value);
 void									ht_print(t_kv ht[TABLE_SIZE],
-											void (print)(char *k, void *v));
+											void (print)(char k[static 1], void *v));
 int										ms_execve(t_ast_node *command);
 const char								*ast_node_type_to_string(
 											t_ast_node_type type);
 pid_t									execute_simple_command(
 											t_ast_node *simple_command,
+											t_deque *commands);
+pid_t									execute_simple_command(
+											t_ast_node *simple_command,
+											t_deque *commands);
+void									close_fds(t_ast_node *simple_command);
+void									set_fds(t_ast_node *simple_command);
+void									close_other_command_fds(
 											t_deque *commands);
 
 #endif /* minishell.h. */

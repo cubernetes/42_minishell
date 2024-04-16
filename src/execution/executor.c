@@ -1,5 +1,8 @@
 #include "../../include/minishell.h"
+#include "libft.h"
 #include <errno.h>
+#include <iso646.h>
+#include <readline/readline.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
@@ -124,6 +127,8 @@ unsigned char	wait_pipesequence(t_deque *pids)
 	di = di_begin(pids);
 	while (di_next(di))
 	{
+		if (*(pid_t *)di_get(di)->as_ptr == -1)
+			continue ;
 		ret = waitpid(*(pid_t *)di_get(di)->as_ptr, &status, 0);
 		if (ret == -1)
 			minishell_error(EXIT_WAIT_ERROR, FALSE, "wait error: %d",
@@ -165,6 +170,9 @@ void	setup_pipes(t_deque *commands)
 	}
 }
 
+pid_t	execute_complete_command_wrapper(t_ast_node *complete_command,
+	t_deque *commands);
+
 /* TODO: implement COMPLETE_COMMAND execution */
 unsigned char	iterate_pipe_sequence(t_deque *commands)
 {
@@ -178,9 +186,9 @@ unsigned char	iterate_pipe_sequence(t_deque *commands)
 	while (di_next(di))
 	{
 		if (di_get(di)->as_ast_node->type == COMPLETE_COMMAND)
-			;
-			/* TODO: Implement ./minishell -c '' functionality */
-			/*       or add new metadata for COMPLETE_COMMAND (fds) */
+			deque_push_ptr_right(pids, ft_memdup(&(pid_t){\
+					execute_complete_command_wrapper(di_get(di)->as_ast_node, commands)},
+					sizeof(pid_t)));
 		else if (di_get(di)->as_ast_node->type == SIMPLE_COMMAND)
 		{
 			deque_push_ptr_right(pids, ft_memdup(&(pid_t){\
@@ -254,6 +262,28 @@ unsigned char	execute_complete_command(t_ast_node *ast_node)
 		}
 	}
 	return (rtn);
+}
+
+#define EXIT_FORK_ERROR 4
+
+pid_t	execute_complete_command_wrapper(t_ast_node *complete_command,
+	t_deque *commands)
+{
+	pid_t	pid;
+	int		ret;
+
+	pid = fork();
+	if (pid < 0)
+		minishell_error(EXIT_FORK_ERROR, TRUE, "%s", strerror(errno));
+	else if (pid > 0)
+		return (close_fds(complete_command), pid);
+	set_fds(complete_command);
+	close_other_command_fds(commands);
+	ret = execute_complete_command(complete_command);
+	/* close_fds(complete_command); */ /* TODO: why doesn't this work? */
+	gc_free();
+	rl_clear_history();
+	exit(ret);
 }
 
 /* ast_node should be the root of the ast */
