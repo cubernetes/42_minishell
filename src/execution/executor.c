@@ -20,13 +20,13 @@ t_bool	handle_redirect_input(char *file_path, t_ast_node *simple_command)
 
 	fd = open(file_path, O_RDONLY);
 	if (fd == -1)
-		return (simple_command->simple_cmd_meta.exit_status = 1, FALSE);
+		return (FALSE);
 	else
 	{
-		sc_fd_in = simple_command->simple_cmd_meta.fds.in;
+		sc_fd_in = simple_command->fd_in;
 		if (sc_fd_in != -2)
 			close(sc_fd_in);
-		simple_command->simple_cmd_meta.fds.in = fd;
+		simple_command->fd_in = fd;
 		return (TRUE);
 	}
 }
@@ -38,13 +38,13 @@ t_bool	handle_redirect_append(char *file_path, t_ast_node *simple_command)
 
 	fd = open(file_path, O_WRONLY | O_APPEND | O_CREAT, 0644);
 	if (fd == -1)
-		return (simple_command->simple_cmd_meta.exit_status = 1, FALSE);
+		return (FALSE);
 	else
 	{
-		sc_fd_out = simple_command->simple_cmd_meta.fds.out;
+		sc_fd_out = simple_command->fd_out;
 		if (sc_fd_out != -2)
 			close(sc_fd_out);
-		simple_command->simple_cmd_meta.fds.out = fd;
+		simple_command->fd_out = fd;
 		return (TRUE);
 	}
 }
@@ -56,13 +56,13 @@ t_bool	handle_redirect_override(char *file_path, t_ast_node *simple_command)
 
 	fd = open(file_path, O_WRONLY | O_TRUNC | O_CREAT, 0644);
 	if (fd == -1)
-		return (simple_command->simple_cmd_meta.exit_status = 1, FALSE);
+		return (FALSE);
 	else
 	{
-		sc_fd_out = simple_command->simple_cmd_meta.fds.out;
+		sc_fd_out = simple_command->fd_out;
 		if (sc_fd_out != -2)
 			close(sc_fd_out);
-		simple_command->simple_cmd_meta.fds.out = fd;
+		simple_command->fd_out = fd;
 		return (TRUE);
 	}
 }
@@ -146,19 +146,21 @@ void	setup_pipes(t_deque *commands)
 	prev = NULL;
 	while (di_next(di))
 	{
-		ms_init(di_get(di)->as_ast_node);
+		di_get(di)->as_ast_node->fd_in = -2;
+		di_get(di)->as_ast_node->fd_out = -2;
+		di_get(di)->as_ast_node->fd_err = -2;
 		if (prev == NULL)
 		{
 			prev = di_get(di)->as_ast_node;
 			continue ;
 		}
 		pipe(fds);
-		if (prev->simple_cmd_meta.fds.out != -2)
-			close(prev->simple_cmd_meta.fds.out);
-		if (di_get(di)->as_ast_node->simple_cmd_meta.fds.in != -2)
-			close(di_get(di)->as_ast_node->simple_cmd_meta.fds.in);
-		prev->simple_cmd_meta.fds.out = fds[1];
-		di_get(di)->as_ast_node->simple_cmd_meta.fds.in = fds[0];
+		if (prev->fd_out != -2)
+			close(prev->fd_out);
+		if (di_get(di)->as_ast_node->fd_in != -2)
+			close(di_get(di)->as_ast_node->fd_in);
+		prev->fd_out = fds[1];
+		di_get(di)->as_ast_node->fd_in = fds[0];
 		prev = di_get(di)->as_ast_node;
 	}
 }

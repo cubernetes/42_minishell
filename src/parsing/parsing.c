@@ -66,7 +66,7 @@ t_ast_node	*new_ast_token(t_token_type type, char *str)
 		&(t_ast_node){
 			.type = TOKEN,
 			{.token = new_token(str, type, TRUE)},
-			{{{0}, 0}}
+			{{0}}
 		},
 		sizeof(t_ast_node)
 	));
@@ -97,12 +97,11 @@ void	ast_print_with_depth(t_ast_node *ast_node, int n)
 	if (ast_node->type != TOKEN)
 	{
 		if (ast_node->type == SIMPLE_COMMAND)
-			ft_printf("- <%s> (%d children, in: %d, out: %d, exitcode: %d)\n",
+			ft_printf("- <%s> (%d children, in: %d, out: %d)\n",
 				ast_node_type_to_string(ast_node->type),
 				ast_node->children->size,
-				ast_node->simple_cmd_meta.fds.in,
-				ast_node->simple_cmd_meta.fds.out,
-				ast_node->simple_cmd_meta.exit_status);
+				ast_node->fd_in,
+				ast_node->fd_out);
 		else
 			ft_printf("- <%s> (%d children)\n",
 				ast_node_type_to_string(ast_node->type),
@@ -112,11 +111,9 @@ void	ast_print_with_depth(t_ast_node *ast_node, int n)
 			ast_print_with_depth(di_get(di)->as_ast_node, n + 1);
 	}
 	else
-		ft_printf("- %s\n",
-			ast_node_type_to_string(ast_node->type));
-		/* ft_printf("- %s (\033[31m%s\033[m)\n", */
-			/* token_type_to_string(ast_node->token->type), */
-			/* ast_node->token->str); */
+		ft_printf("- %s (\033[31m%s\033[m)\n",
+			token_type_to_string(ast_node->token->type),
+			ast_node->token->str);
 }
 
 void	ast_print(t_ast_node *ast_node)
@@ -404,7 +401,7 @@ t_ast_node	gen_production(char *token_str)
 				}, \
 				sizeof(t_token) \
 			), \
-			{{{0}, 0}} \
+			{{0}} \
 		},
 		sizeof(t_ast_node)
 	));
@@ -524,9 +521,9 @@ t_ast_node	*build_parse_tree(t_deque *tokens)
 
 	stack = deque_init();
 	deque_push_ptr_right(stack, production_to_child(\
-		(t_ast_node){COMPLETE_COMMAND, {0}, {{{0}, 0}}}));
+		(t_ast_node){COMPLETE_COMMAND, {0}, {{0}}}));
 	deque_push_ptr_right(stack, production_to_child(\
-		(t_ast_node){TOKEN, {.token = &(t_token){TOK_EOL, "", TRUE}}, {{{0}, 0}}}));
+		(t_ast_node){TOKEN, {.token = &(t_token){TOK_EOL, "", TRUE}}, {{0}}}));
 	ast_node = new_ast_nonterm(COMPLETE_COMMAND, NULL);
 	ast_root_node = ast_node;
 	/* ft_printf("\n"); */
@@ -656,5 +653,8 @@ t_ast_node	*build_ast(t_deque *tokens)
 	parse_tree = build_parse_tree(tokens);
 	ast = deque_pop_left(build_ast_recursively(parse_tree))->as_ast_node;
 	/* ast = return_example_ast(); */
+	ast->fd_in = -2;
+	ast->fd_out = -2;
+	ast->fd_err = -2;
 	return (ast);
 }

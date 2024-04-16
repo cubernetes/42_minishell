@@ -1,4 +1,3 @@
-#include <sys/types.h>
 #ifndef MINISHELL_H
 # define MINISHELL_H 1
 
@@ -87,24 +86,6 @@ typedef struct s_token
 
 typedef t_ast_node						*t_children[];
 
-/* TODO: NOT REQUIRED: int err; */
-typedef struct s_fds
-{
-	int									in;
-	int									out;
-}										t_fds;
-
-typedef struct s_simple_command_meta
-{
-	t_fds								fds;
-	unsigned char						exit_status;
-}										t_simple_cmd_meta;
-
-typedef struct s_complete_cmd_meta
-{
-	t_fds								fds;
-}										t_complete_cmd_meta;
-
 /* TOKEN is a TERMINAL, every other member is a NONTERMINAL */
 typedef enum e_ast_node_type
 {
@@ -136,8 +117,12 @@ struct									s_ast_node
 	};
 	union
 	{
-		t_simple_cmd_meta				simple_cmd_meta;
-		t_complete_cmd_meta				complete_cmd_meta;
+		struct
+		{
+			int	fd_in;
+			int	fd_out;
+			int	fd_err;
+		};
 	};
 };
 
@@ -188,15 +173,16 @@ char									**set_argv(char **argv);
 char									**get_argv(void);
 unsigned char							execute(t_ast_node *ast_node);
 void									glob_tokens(t_deque *tokens);
-t_type									ht_get(t_kv ht[TABLE_SIZE], char key[static 1]);
-void									ht_set(t_kv ht[TABLE_SIZE], char key[static 1],
+t_type									ht_get(t_kv ht[TABLE_SIZE],
+											char key[static 1]);
+void									ht_set(t_kv ht[TABLE_SIZE],
+											char key[static 1],
 											t_type value);
 void									ht_print(t_kv ht[TABLE_SIZE],
 											void (print)(char *k, void *v));
 int										ms_execve(t_ast_node *command);
 const char								*ast_node_type_to_string(
 											t_ast_node_type type);
-void									ms_init(t_ast_node *simple_command);
 pid_t									execute_simple_command(
 											t_ast_node *simple_command,
 											t_deque *commands);

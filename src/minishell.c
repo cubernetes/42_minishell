@@ -160,7 +160,7 @@ char	*ft_gethostname(void)
 	return (line);
 }
 
-char	*ft_getcwd()
+char	*ft_getcwd(void)
 {
 	char	*cwd;
 	char	*home_dir;
@@ -226,23 +226,23 @@ void	update_state(t_state *state)
 /* TODO: remove unnecessary indentation in variables declarations */
 /* TODO: use ptr[static 1] where needed */
 /* TOOD: Not required: think about flexible array members? */
+/* TODO: Not required: implement shell variables */
 int	main(int argc, char **argv, char **envp)
 {
 	static t_state	state;
-	static int		i;
 	char			*line;
 	t_deque			*tokens;
 	t_ast_node		*ast_root_node;
 
-	i = 10;
 	((void)argc, set_argv(argv), set_env(envp));
 	tokens = NULL;
 	ast_root_node = NULL;
 	setup_signals();
-	while (i--)
+	while (1)
 	{
 		update_state(&state);
 		line = gc_add(readline(state.ps1))->head->prev->as_str;
+		add_history(line);
 		if (!line)
 			break ;
 		tokens = tokenize(line);
@@ -252,6 +252,7 @@ int	main(int argc, char **argv, char **envp)
 		(void)execute(ast_root_node);
 		(void)gc_free();
 	}
+	rl_clear_history();
 	(void)gc_free();
 	return (0);
 }

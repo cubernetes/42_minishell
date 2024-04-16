@@ -16,8 +16,8 @@ static void	close_fds(t_ast_node *simple_command)
 	int	in;
 	int	out;
 
-	in = simple_command->simple_cmd_meta.fds.in;
-	out = simple_command->simple_cmd_meta.fds.out;
+	in = simple_command->fd_in;
+	out = simple_command->fd_out;
 	if (in != -2)
 		close(in);
 	if (out != -2)
@@ -30,8 +30,8 @@ static void	set_fds(t_ast_node *simple_command)
 	int	in;
 	int	out;
 
-	in = simple_command->simple_cmd_meta.fds.in;
-	out = simple_command->simple_cmd_meta.fds.out;
+	in = simple_command->fd_in;
+	out = simple_command->fd_out;
 	if (in != -2)
 		dup2(in, STDIN_FILENO);
 	if (out != -2)
@@ -104,13 +104,6 @@ pid_t	execute_simple_command(t_ast_node *simple_command, t_deque *commands)
 	ms_execve(simple_command);
 	minishell_error(EXIT_EXEVE_ERROR, FALSE, "%s", strerror(errno));
 	return (FALSE);
-}
-
-void	ms_init(t_ast_node *simple_command)
-{
-	simple_command->simple_cmd_meta.exit_status = 0;
-	simple_command->simple_cmd_meta.fds.in = -2;
-	simple_command->simple_cmd_meta.fds.out = -2;
 }
 
 int	ms_execve(t_ast_node *simple_command)
