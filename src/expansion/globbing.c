@@ -51,6 +51,7 @@ static t_deque	*glob_token(t_token *token)
 /* mirroring bash's behaviour of NOT globbing when it fails to open a dir */
 /* TODO: apply DRY */
 /* TODO: apply DRY in the deque/deque functions */
+/* TODO: expand .* to hidden files */
 void	glob_tokens(t_deque *tokens)
 {
 	t_deque			*new_tokens;
