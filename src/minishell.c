@@ -207,6 +207,7 @@ void	update_state(t_state *state)
 	state->ps1 = expand_prompt(PS1);
 }
 
+# define MAX_HT_SIZE 1000
 /* TODO: history */
 /* TODO: what if readline returns NULL? */
 /* TODO: use/think about rl_end (and other rl vars) */
@@ -237,6 +238,7 @@ int	main(int argc, char **argv, char **envp)
 	char			*line;
 	t_deque			*tokens;
 	t_ast_node		*ast_root_node;
+	static t_kv		*shell_vars[MAX_HT_SIZE];
 
 	((void)argc, set_argv(argv), set_env(envp));
 	tokens = NULL;
@@ -253,9 +255,11 @@ int	main(int argc, char **argv, char **envp)
 		/* deque_print(tokens, print_token); */
 		ast_root_node = build_ast(tokens);
 		/* ast_print(ast_root_node); */
-		(void)execute(ast_root_node);
+		ht_set_malloc(shell_vars, "?", (t_type){ .as_str = ft_itoa_malloc(execute(ast_root_node))});
 		(void)gc_free();
+		ft_printf("? = %s\n", ht_get_malloc(shell_vars, "?").as_str);
 	}
+	ht_destroy(shell_vars);
 	rl_clear_history();
 	(void)gc_free();
 	return (0);

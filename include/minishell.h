@@ -175,11 +175,18 @@ unsigned char							execute(t_ast_node *ast_node);
 void									glob_tokens(t_deque *tokens);
 t_type									ht_get(t_kv ht[TABLE_SIZE],
 											char key[static 1]);
+t_type									ht_get_malloc(t_kv *ht[TABLE_SIZE],
+											char key[static 1]);
 void									ht_set(t_kv ht[TABLE_SIZE],
 											char key[static 1],
 											t_type value);
+void									ht_set_malloc(t_kv *ht[TABLE_SIZE],
+											char key[static 1],
+											t_type value);
 void									ht_print(t_kv ht[TABLE_SIZE],
-											void (print)(char k[static 1], void *v));
+											void (print)(char k[static 1],
+												void *v));
+void									ht_destroy(t_kv *ht[TABLE_SIZE]);
 int										ms_execve(t_ast_node *command);
 const char								*ast_node_type_to_string(
 											t_ast_node_type type);

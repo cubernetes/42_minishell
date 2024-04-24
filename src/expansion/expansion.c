@@ -76,19 +76,13 @@ static void	expand(t_deque *new_tokens, t_deque_node *head)
 
 void	expand_env_vars(t_deque *tokens)
 {
-	t_deque_node	*head;
 	t_deque			*new_tokens;
+	t_di			*di;
 
 	new_tokens = deque_init();
-	head = tokens->head;
-	if (!head)
-		return ;
-	expand(new_tokens, head);
-	while (head->next != tokens->head)
-	{
-		head = head->next;
-		expand(new_tokens, head);
-	}
+	di = di_begin(tokens);
+	while (di_next(di))
+		expand(new_tokens, di_get(di));
 	tokens->head = new_tokens->head;
 	tokens->size = new_tokens->size;
 }

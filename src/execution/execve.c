@@ -106,7 +106,6 @@ pid_t	execute_simple_command(t_ast_node *simple_command, t_deque *commands)
 	char	**path_parts;
 	char	**argv;
 	char	*program;
-	int		error;
 
 	path_parts = ft_split(env_lookup("PATH"), ':');
 	argv = make_argv(simple_command);
@@ -124,9 +123,8 @@ pid_t	execute_simple_command(t_ast_node *simple_command, t_deque *commands)
 		return (close_fds(simple_command), pid);
 	set_fds(simple_command);
 	close_other_command_fds(commands);
-	error = execve(program, argv, get_env());
-	gc_free();
-	rl_clear_history();
+	execve(program, argv, get_env());
+	(gc_free(), rl_clear_history());
 	minishell_error(EXIT_EXEVE_ERROR, FALSE, "%s", strerror(errno));
 	return (-1);
 }

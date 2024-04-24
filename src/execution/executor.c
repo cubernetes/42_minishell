@@ -121,7 +121,7 @@ void	print_pid(void *ptr, t_bool first)
 unsigned char	wait_pipesequence(t_deque *pids)
 {
 	t_di	*di;
-	int		ret;
+	int		rtn;
 	int		status;
 
 	di = di_begin(pids);
@@ -129,14 +129,17 @@ unsigned char	wait_pipesequence(t_deque *pids)
 	{
 		if (*(pid_t *)di_get(di)->as_ptr == -1)
 			continue ;
-		ret = waitpid(*(pid_t *)di_get(di)->as_ptr, &status, 0);
-		if (ret == -1)
+		rtn = waitpid(*(pid_t *)di_get(di)->as_ptr, &status, 0);
+		if (rtn == -1)
 			minishell_error(EXIT_WAIT_ERROR, FALSE, "wait error: %d",
 				strerror(errno));
 		if (WIFEXITED(status))
 			status = WEXITSTATUS(status);
 		else if (WIFSIGNALED(status))
 			status = 128 + WTERMSIG(status);
+		else
+			minishell_error(EXIT_WAIT_ERROR, FALSE, "process ended unexpectedly",
+				strerror(errno));
 	}
 	return ((unsigned char)status);
 }
@@ -270,7 +273,7 @@ pid_t	execute_complete_command_wrapper(t_ast_node *complete_command,
 	t_deque *commands)
 {
 	pid_t	pid;
-	int		ret;
+	int		rtn;
 
 	pid = fork();
 	if (pid < 0)
@@ -279,11 +282,12 @@ pid_t	execute_complete_command_wrapper(t_ast_node *complete_command,
 		return (close_fds(complete_command), pid);
 	set_fds(complete_command);
 	close_other_command_fds(commands);
-	ret = execute_complete_command(complete_command);
+	rtn = execute_complete_command(complete_command);
 	/* close_fds(complete_command); */ /* TODO: why doesn't this work? */
 	gc_free();
 	rl_clear_history();
-	exit(ret);
+	/* ht_destroy(get_shell_env()); */ /* TODO: implement function that returns the shell environment */
+	exit(rtn);
 }
 
 /* ast_node should be the root of the ast */

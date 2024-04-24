@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 15:09:08 by tischmid          #+#    #+#             */
-/*   Updated: 2024/04/13 22:34:09 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/04/24 22:43:35 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,6 +129,7 @@ char							*ft_strnstr(char const *big, char const *little,
 char							*ft_strchr(char const *s, int c);
 char							*ft_strrchr(char const *s, int c);
 char							*ft_strdup(char const *s);
+char							*ft_strdup_malloc(char const *s);
 char							*ft_strndup(char const *s, size_t len);
 int								ft_strncmp(char const *s1, char const *s2,
 									size_t n);
@@ -158,6 +159,7 @@ int								ft_char_in_charset(char c, char const *charset);
 t_bool							cmp_int_asc(int a, int b);
 t_bool							cmp_int_desc(int a, int b);
 char							*ft_itoa(int n);
+char							*ft_itoa_malloc(int n);
 int								ft_atoi(char const *nptr);
 int								ft_atoi_status(char const *nptr, int *status);
 double							ft_atof(const char *s);
