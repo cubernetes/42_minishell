@@ -1,4 +1,5 @@
 #include "libft.h"
+#include <stdio.h>
 #include <readline/readline.h>
 #define _POSIX_C_SOURCE 200809L
 #include "../../include/minishell.h"

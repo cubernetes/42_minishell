@@ -2,6 +2,7 @@
 #include "libft.h"
 #include <errno.h>
 #include <iso646.h>
+#include <stdio.h>
 #include <readline/readline.h>
 #include <stdlib.h>
 #include <string.h>
@@ -128,6 +129,8 @@ unsigned char	wait_pipesequence(t_deque *pids)
 	while (di_next(di))
 	{
 		if (*(pid_t *)di_get(di)->as_ptr == -1)
+		{
+			status = 127;
 			continue ;
 		rtn = waitpid(*(pid_t *)di_get(di)->as_ptr, &status, 0);
 		if (rtn == -1)
