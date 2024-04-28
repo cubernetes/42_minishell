@@ -7,6 +7,8 @@
 #include <string.h>
 #include <unistd.h>            /* STDERR_FILENO */
 
+#define MAX_HT_SIZE 1000
+
 void	minishell_error(int exit_code, t_bool do_exit, const char *fmt, ...)
 {
 	va_list	ap;
@@ -201,14 +203,39 @@ char	*expand_prompt(char *prompt_string)
 	return (prompt_string);
 }
 
-void	update_state(t_state *state)
+char	*set_shell_var(char *key, char *value)
 {
-	state->ps0 = expand_prompt(PS0);
-	state->ps1 = expand_prompt(PS1);
+	static t_kv	*shell_vars[MAX_HT_SIZE];
+	char		*ret;
+
+	if (key == NULL && value == NULL)
+	{
+		ht_destroy(shell_vars);
+		return ("");
+	}
+	if (key == NULL)
+	{
+		ret = ht_get(shell_vars, value).as_str;
+		if (ret == NULL)
+			return ("");
+		return (ret);
+	}
+	set_allocator(malloc);
+	ht_set(shell_vars, ft_strdup(key), (t_type){.as_str = ft_strdup(value)});
+	set_allocator(gc_malloc);
+	return (value);
 }
 
-# define MAX_HT_SIZE 1000
-/* TODO: history */
+char	*get_shell_var(char *key)
+{
+	return (set_shell_var(NULL, key));
+}
+
+void	clear_shell_vars(void)
+{
+	set_shell_var(NULL, NULL);
+}
+
 /* TODO: what if readline returns NULL? */
 /* TODO: use/think about rl_end (and other rl vars) */
 /* TODO: remove DEBUG macros */
@@ -234,20 +261,21 @@ void	update_state(t_state *state)
 /* TODO: Implement ./minishell -c '' functionality */
 int	main(int argc, char **argv, char **envp)
 {
-	static t_state	state;
 	char			*line;
 	t_deque			*tokens;
 	t_ast_node		*ast_root_node;
-	static t_kv		*shell_vars[MAX_HT_SIZE];
 
+	set_allocator(gc_malloc);
 	((void)argc, set_argv(argv), set_env(envp));
 	tokens = NULL;
 	ast_root_node = NULL;
 	setup_signals();
+	set_shell_var("?", "0");
 	while (1)
 	{
-		update_state(&state);
-		line = gc_add(readline(state.ps1))->head->prev->as_str;
+		set_shell_var("PS0", expand_prompt(PS0));
+		set_shell_var("PS1", expand_prompt(PS1));
+		line = gc_add(readline(get_shell_var("PS1")))->head->prev->as_str;
 		if (!line)
 			break ;
 		add_history(line);
@@ -255,11 +283,10 @@ int	main(int argc, char **argv, char **envp)
 		/* deque_print(tokens, print_token); */
 		ast_root_node = build_ast(tokens);
 		/* ast_print(ast_root_node); */
-		ht_set_malloc(shell_vars, "?", (t_type){ .as_str = ft_itoa_malloc(execute(ast_root_node))});
+		set_shell_var("?", ft_itoa(execute(ast_root_node)));
 		(void)gc_free();
-		ft_printf("? = %s\n", ht_get_malloc(shell_vars, "?").as_str);
 	}
-	ht_destroy(shell_vars);
+	clear_shell_vars();
 	rl_clear_history();
 	(void)gc_free();
 	return (0);
