@@ -9,3 +9,4 @@
 minishell
 obj
 libft/libft.a
+compile_commands.json
