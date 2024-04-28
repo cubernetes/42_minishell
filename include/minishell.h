@@ -51,12 +51,6 @@
 
 typedef struct sigaction	t_sa;
 
-typedef struct s_state
-{
-	char								*ps0;
-	char								*ps1;
-}										t_state;
-
 typedef enum e_token_type
 {
 	TOK_EOL = 1,
@@ -173,14 +167,9 @@ char									**set_argv(char **argv);
 char									**get_argv(void);
 unsigned char							execute(t_ast_node *ast_node);
 void									glob_tokens(t_deque *tokens);
-t_type									ht_get(t_kv ht[TABLE_SIZE],
+t_type									ht_get(t_kv *ht[TABLE_SIZE],
 											char key[static 1]);
-t_type									ht_get_malloc(t_kv *ht[TABLE_SIZE],
-											char key[static 1]);
-void									ht_set(t_kv ht[TABLE_SIZE],
-											char key[static 1],
-											t_type value);
-void									ht_set_malloc(t_kv *ht[TABLE_SIZE],
+void									ht_set(t_kv *ht[TABLE_SIZE],
 											char key[static 1],
 											t_type value);
 void									ht_print(t_kv ht[TABLE_SIZE],
@@ -200,5 +189,8 @@ void									close_fds(t_ast_node *simple_command);
 void									set_fds(t_ast_node *simple_command);
 void									close_other_command_fds(
 											t_deque *commands);
+char									*set_shell_var(char *key, char *value);
+char									*get_shell_var(char *key);
+void									clear_shell_vars(void);
 
 #endif /* minishell.h. */
