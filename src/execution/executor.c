@@ -132,6 +132,7 @@ unsigned char	wait_pipesequence(t_deque *pids)
 		{
 			status = 127;
 			continue ;
+		}
 		rtn = waitpid(*(pid_t *)di_get(di)->as_ptr, &status, 0);
 		if (rtn == -1)
 			minishell_error(EXIT_WAIT_ERROR, FALSE, "wait error: %d",
