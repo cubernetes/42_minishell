@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 07:51:00 by tosuman           #+#    #+#             */
-/*   Updated: 2024/04/13 21:03:06 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/04/28 22:22:38 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ t_deque	*gc_add(void *ptr)
 
 /* TODO: fix this: calling gc_free more than once causes SIGSEGV */
 /* malloc wrapper that fails gracefully and frees memory when it can */
-void	*ft_malloc(size_t size)
+void	*gc_malloc(size_t size)
 {
 	void	*ptr;
 
@@ -86,5 +86,36 @@ void	*ft_malloc(size_t size)
 		exit(EXIT_FAILURE);
 	}
 	(void)gc_add(ptr);
+	return (ptr);
+}
+
+void	*(*set_allocator(void *(*_allocator)(size_t size)))(size_t size)
+{
+	static void	*(*allocator)(size_t size);
+
+	if (_allocator != NULL)
+		allocator = _allocator;
+	if (allocator == NULL)
+		allocator = malloc;
+	return (allocator);
+}
+
+void	*(*get_allocator(void))(size_t size)
+{
+	return (set_allocator(NULL));
+}
+
+void	*ft_malloc(size_t size)
+{
+	void	*ptr;
+
+	ptr = (get_allocator())(size);
+	if (!ptr)
+	{
+		ft_printf("\033[41;30mft_malloc: %s\033[m\n\033[31mCallstack "
+			"(reverse):\033[m\n", strerror(errno));
+		/* print_callstack(); */ /* preferrably keep this, but it contains forbidden functions... */
+		exit(EXIT_FAILURE);
+	}
 	return (ptr);
 }
