@@ -316,10 +316,10 @@ t_type	ht_ast(t_ast_node_type ast_node_type)
 
 t_ast_node_type	ast_ht_get(char *key)
 {
-	static t_kv	ht[TABLE_SIZE + 1];
+	static t_kv	*ht[TABLE_SIZE + 1];
 
-	gc_set_null(&ht[TABLE_SIZE].v.as_ptr);
-	if (ht[TABLE_SIZE].v.as_ptr != NULL)
+	gc_set_null((void **)&ht[TABLE_SIZE]);
+	if (ht[TABLE_SIZE] != NULL)
 		return (ht_get(ht, key).t1);
 	ht_set(ht, "<pipe_sequence>", ht_ast(PIPE_SEQUENCE));
 	ht_set(ht, "<complete_command_tail>", ht_ast(COMPLETE_COMMAND_TAIL));
@@ -339,16 +339,16 @@ t_ast_node_type	ast_ht_get(char *key)
 	ht_set(ht, "TOK_WORD", ht_ast(TOKEN));
 	ht_set(ht, "TOK_EPSILON", ht_ast(TOKEN));
 	ht_set(ht, "|", ht_ast(TOKEN));
-	ht[TABLE_SIZE].v.as_ptr = (void *)1;
+	ht[TABLE_SIZE] = (void *)1;
 	return (ht_get(ht, key).t1);
 }
 
 t_token_type	tokens_ht_get(char *key)
 {
-	static t_kv	ht[TABLE_SIZE + 1];
+	static t_kv	*ht[TABLE_SIZE + 1];
 
-	gc_set_null(&ht[TABLE_SIZE].v.as_ptr);
-	if (ht[TABLE_SIZE].v.as_ptr == NULL)
+	gc_set_null((void **)&ht[TABLE_SIZE]);
+	if (ht[TABLE_SIZE] == NULL)
 	{
 		ht_set(ht, "TOK_EPSILON", ht_tok(TOK_EPSILON));
 		ht_set(ht, "TOK_WORD", ht_tok(TOK_WORD));
@@ -361,7 +361,7 @@ t_token_type	tokens_ht_get(char *key)
 		ht_set(ht, "&&", ht_tok(TOK_AND));
 		ht_set(ht, "||", ht_tok(TOK_OR));
 		ht_set(ht, "|", ht_tok(TOK_PIPE));
-		ht[TABLE_SIZE].v.as_ptr = (void *)1;
+		ht[TABLE_SIZE] = (void *)1;
 	}
 	return (ht_get(ht, key).t2);
 }
