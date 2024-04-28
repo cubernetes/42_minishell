@@ -1,5 +1,16 @@
 #include "../../include/minishell.h"
 #include "../../libft/libft.h"
+#include <stdlib.h>
+
+char	*var_lookup(char *key)
+{
+	char	*value;
+
+	value = getenv(key);
+	if (value != NULL)
+		return (value);
+	return (get_shell_var(key));
+}
 
 static size_t	expand_vars(t_token *token, char *var)
 {
@@ -7,7 +18,7 @@ static size_t	expand_vars(t_token *token, char *var)
 	size_t	len;
 	char	*expanded_var;
 
-	if (var[0] == '$' && ft_isalpha(var[1]))
+	if (var[0] == '$' && (ft_isalpha(var[1]) || var[1] == '_'))
 	{
 		orig_var = ++var;
 		len = 0;
@@ -16,9 +27,15 @@ static size_t	expand_vars(t_token *token, char *var)
 			++var;
 			++len;
 		}
-		expanded_var = env_lookup(ft_strndup(orig_var, len));
+		expanded_var = var_lookup(ft_strndup(orig_var, len));
 		token->str = ft_strjoin(token->str, expanded_var);
 		return (len + 1);
+	}
+	else if (var[0] == '$' && var[1] == '?')
+	{
+		expanded_var = get_shell_var("?");
+		token->str = ft_strjoin(token->str, ft_strdup(expanded_var));
+		return (2);
 	}
 	token->str = ft_strjoin(token->str, ft_strndup(var, 1));
 	return (1);
