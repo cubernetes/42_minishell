@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/31 12:49:11 by tosuman           #+#    #+#             */
-/*   Updated: 2024/04/28 22:51:01 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/04/30 21:01:23 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,8 @@ void	ht_destroy(t_kv *ht[TABLE_SIZE])
 		while (kv)
 		{
 			free(kv->k);
-			free(kv->v.as_str);
+			free(((t_var *)kv->v.as_ptr)->value);
+			free(kv->v.as_ptr);
 			prev = kv;
 			kv = kv->n;
 			free(prev);

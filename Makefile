@@ -6,7 +6,7 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:02:16 by tischmid          #+#    #+#              #
-#    Updated: 2024/04/16 19:31:06 by tischmid         ###   ########.fr        #
+#    Updated: 2024/04/30 21:03:47 by tischmid         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,10 +32,18 @@ _SRC           += globbing.c
 _SRC           += executor.c
 _SRC           += execve.c
 _SRC           += ht.c
+_SRC           += environment.c
+
+_SRC           += cd.c
+_SRC           += echo.c
 _SRC           += env.c
+_SRC           += exit.c
+_SRC           += export.c
+_SRC           += pwd.c
+_SRC           += unset.c
 
 vpath %.c src src/parsing src/signal_handling src/tokenization \
-          src/expansion src/execution/ src/utils/
+          src/expansion src/execution/ src/utils/ src/builtins/
 
 _OBJ           := $(_SRC:.c=.o)
 _HEADERS       := minishell.h

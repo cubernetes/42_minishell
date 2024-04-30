@@ -277,7 +277,6 @@ t_deque	*tokenize(const char *line)
 			break ;
 		skip_whitespace(&line);
 	}
-	deque_print(tokens, print_token);
 	expand_env_vars(tokens);
 	glob_tokens(tokens);
 	join_tokens(tokens);

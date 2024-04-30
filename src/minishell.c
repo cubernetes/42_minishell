@@ -215,13 +215,18 @@ char	*set_shell_var(char *key, char *value)
 	}
 	if (key == NULL)
 	{
-		ret = ht_get(shell_vars, value).as_str;
+		ret = ((t_var *)ht_get(shell_vars, value).as_ptr)->value;
 		if (ret == NULL)
 			return ("");
 		return (ret);
 	}
 	set_allocator(malloc);
-	ht_set(shell_vars, ft_strdup(key), (t_type){.as_str = ft_strdup(value)});
+	ht_set(shell_vars, ft_strdup(key),
+		(t_type){.as_ptr = ft_memdup(&(t_var){
+			.export = FALSE,
+			.readonly = FALSE,
+			.value = ft_strdup(value)
+		}, sizeof(t_var))});
 	set_allocator(gc_malloc);
 	return (value);
 }

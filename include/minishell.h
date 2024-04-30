@@ -49,6 +49,13 @@
 # define NUM_NONTERMS 10
 # define NUM_TOKENS 11
 
+typedef struct s_var
+{
+	t_bool	export;
+	t_bool	readonly;
+	char	*value;
+}	t_var;
+
 typedef struct sigaction	t_sa;
 
 typedef enum e_token_type
@@ -97,7 +104,15 @@ typedef enum e_ast_node_type
 	AST_NODE_TYPE_UNKNOWN
 }										t_ast_node_type;
 
+typedef struct s_fds
+{
+	int	fd_in;
+	int	fd_out;
+	int	fd_err;
+}	t_fds;
+
 typedef struct s_ast_node				t_ast_node;
+
 /* if t_ast_node.type == TOKEN, then t_ast_node.token shall be used */
 /* if t_ast_node.type != TOKEN, then t_ast_node.children
  * shall be used */
@@ -111,6 +126,7 @@ struct									s_ast_node
 	};
 	union
 	{
+		t_fds	fds;
 		struct
 		{
 			int	fd_in;
@@ -192,5 +208,12 @@ void									close_other_command_fds(
 char									*set_shell_var(char *key, char *value);
 char									*get_shell_var(char *key);
 void									clear_shell_vars(void);
+int										builtin_cd(char **argv, t_fds fds);
+int										builtin_echo(char **argv, t_fds fds);
+int										builtin_env(char **argv, t_fds fds);
+int										builtin_exit(char **argv, t_fds fds);
+int										builtin_export(char **argv, t_fds fds);
+int										builtin_pwd(char **argv, t_fds fds);
+int										builtin_unset(char **argv, t_fds fds);
 
 #endif /* minishell.h. */

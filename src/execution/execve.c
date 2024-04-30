@@ -11,8 +11,8 @@
 #include <string.h>
 
 /* TODO: What to do in case of execve error? */
-#define EXIT_EXEVE_ERROR 3
-#define EXIT_FORK_ERROR 4
+#define EXECVE_ERR 3
+#define FORK_ERROR 4
 
 void	close_fds(t_ast_node *simple_command)
 {
@@ -100,6 +100,39 @@ void	close_other_command_fds(t_deque *commands)
 		close_fds(di_get(di)->as_ast_node);
 }
 
+t_bool	is_builtin(char	*word)
+{
+	return (ft_strcmp(word, "cd") == 0
+		|| ft_strcmp(word, "echo") == 0
+		|| ft_strcmp(word, "env") == 0
+		|| ft_strcmp(word, "exit") == 0
+		|| ft_strcmp(word, "export") == 0
+		|| ft_strcmp(word, "pwd") == 0
+		|| ft_strcmp(word, "unset") == 0);
+}
+
+int	handle_builtin(char	**argv, t_fds fds)
+{
+	if (*argv == NULL)
+		return (1);
+	else if (ft_strcmp(*argv, "cd") == 0)
+		return (builtin_cd(argv + 1, fds));
+	else if (ft_strcmp(*argv, "echo") == 0)
+		return (builtin_echo(argv + 1, fds));
+	else if (ft_strcmp(*argv, "env") == 0)
+		return (builtin_env(argv + 1, fds));
+	else if (ft_strcmp(*argv, "exit") == 0)
+		return (builtin_exit(argv + 1, fds));
+	else if (ft_strcmp(*argv, "export") == 0)
+		return (builtin_export(argv + 1, fds));
+	else if (ft_strcmp(*argv, "pwd") == 0)
+		return (builtin_pwd(argv + 1, fds));
+	else if (ft_strcmp(*argv, "unset") == 0)
+		return (builtin_unset(argv + 1, fds));
+	return (1);
+}
+
+
 /* TODO: Protect all system calls (dup2, fork, close, open, execve, ...) */
 pid_t	execute_simple_command(t_ast_node *simple_command, t_deque *commands)
 {
@@ -110,22 +143,19 @@ pid_t	execute_simple_command(t_ast_node *simple_command, t_deque *commands)
 
 	path_parts = ft_split(env_lookup("PATH"), ':');
 	argv = make_argv(simple_command);
+	if (is_builtin(argv[0]))
+		return (handle_builtin(argv, simple_command->fds) - 256);
 	program = search_executable(argv[0], path_parts);
 	if (!program)
-	{
-		minishell_error(EXIT_COMMAND_NOT_FOUND, FALSE, "%s: command not found",
-			argv[0]);
-		return (-1);
-	}
+		return (minishell_error(EXIT_COMMAND_NOT_FOUND, FALSE, "%s: command not found",
+			argv[0]), -1);
 	pid = fork();
 	if (pid < 0)
-		minishell_error(EXIT_FORK_ERROR, TRUE, "%s", strerror(errno));
+		minishell_error(FORK_ERROR, TRUE, "%s", strerror(errno));
 	if (pid > 0)
 		return (close_fds(simple_command), pid);
-	set_fds(simple_command);
-	close_other_command_fds(commands);
+	(set_fds(simple_command), close_other_command_fds(commands));
 	execve(program, argv, get_env());
-	(gc_free(), rl_clear_history());
-	minishell_error(EXIT_EXEVE_ERROR, FALSE, "%s", strerror(errno));
-	return (-1);
+	(gc_free(), rl_clear_history(), clear_shell_vars());
+	return (minishell_error(EXECVE_ERR, FALSE, "%s", strerror(errno)), -1);
 }

@@ -128,9 +128,12 @@ unsigned char	wait_pipesequence(t_deque *pids)
 	di = di_begin(pids);
 	while (di_next(di))
 	{
-		if (*(pid_t *)di_get(di)->as_ptr == -1)
+		if (*(pid_t *)di_get(di)->as_ptr < 0)
 		{
-			status = 127;
+			if (*(pid_t *)di_get(di)->as_ptr == -1)
+				status = 127;
+			else if (*(int *)di_get(di)->as_ptr < -255)
+				status = *(int *)di_get(di)->as_ptr + 256;
 			continue ;
 		}
 		rtn = waitpid(*(pid_t *)di_get(di)->as_ptr, &status, 0);
@@ -290,7 +293,7 @@ pid_t	execute_complete_command_wrapper(t_ast_node *complete_command,
 	/* close_fds(complete_command); */ /* TODO: why doesn't this work? */
 	gc_free();
 	rl_clear_history();
-	/* ht_destroy(get_shell_env()); */ /* TODO: implement function that returns the shell environment */
+	clear_shell_vars();
 	exit(rtn);
 }
 
