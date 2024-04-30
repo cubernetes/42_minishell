@@ -171,7 +171,7 @@ void									*new_token(char *str, t_token_type type,
 char									*get_token_str(t_deque *tokens);
 char									*get_token_str_nl(t_deque *tokens);
 t_token_type							get_token_type(t_deque *tokens);
-void									minishell_error(int exit_code,
+int									minishell_error(int exit_code,
 											t_bool do_exit,
 											const char *fmt, ...);
 void									expand_env_vars(t_deque *tokens);

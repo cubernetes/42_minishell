@@ -9,7 +9,7 @@
 
 #define MAX_HT_SIZE 1000
 
-void	minishell_error(int exit_code, t_bool do_exit, const char *fmt, ...)
+int	minishell_error(int exit_code, t_bool do_exit, const char *fmt, ...)
 {
 	va_list	ap;
 
@@ -23,6 +23,7 @@ void	minishell_error(int exit_code, t_bool do_exit, const char *fmt, ...)
 		rl_clear_history();
 		exit(exit_code);
 	}
+	return (exit_code);
 }
 
 size_t	ft_count_all(
