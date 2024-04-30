@@ -277,8 +277,8 @@ int	main(int argc, char **argv, char **envp)
 	ast_root_node = NULL;
 	setup_signals();
 	set_var("?", ft_strdup("0"), FALSE);
-	set_var("OLDPWD", getcwd(NULL, 0), FALSE);
-	set_var("PWD", getcwd(NULL, 0), FALSE);
+	set_var("OLDPWD", gc_add(getcwd(NULL, 0))->head->prev->as_str, FALSE);
+	set_var("PWD", gc_add(getcwd(NULL, 0))->head->prev->as_str, FALSE);
 	while (1)
 	{
 		set_var("PS0", expand_prompt(PS0), FALSE);
