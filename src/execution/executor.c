@@ -293,7 +293,7 @@ pid_t	execute_complete_command_wrapper(t_ast_node *complete_command,
 	/* close_fds(complete_command); */ /* TODO: why doesn't this work? */
 	gc_free();
 	rl_clear_history();
-	clear_shell_vars();
+	clear_vars();
 	exit(rtn);
 }
 

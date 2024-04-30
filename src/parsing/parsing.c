@@ -321,6 +321,7 @@ t_ast_node_type	ast_ht_get(char *key)
 	gc_set_null((void **)&ht[TABLE_SIZE]);
 	if (ht[TABLE_SIZE] != NULL)
 		return (ht_get(ht, key).t1);
+	ft_bzero(ht, sizeof(*ht) * (TABLE_SIZE + 1));
 	ht_set(ht, "<pipe_sequence>", ht_ast(PIPE_SEQUENCE));
 	ht_set(ht, "<complete_command_tail>", ht_ast(COMPLETE_COMMAND_TAIL));
 	ht_set(ht, "<and_or>", ht_ast(AND_OR));
@@ -350,6 +351,7 @@ t_token_type	tokens_ht_get(char *key)
 	gc_set_null((void **)&ht[TABLE_SIZE]);
 	if (ht[TABLE_SIZE] == NULL)
 	{
+		ft_bzero(ht, sizeof(*ht) * (TABLE_SIZE + 1));
 		ht_set(ht, "TOK_EPSILON", ht_tok(TOK_EPSILON));
 		ht_set(ht, "TOK_WORD", ht_tok(TOK_WORD));
 		ht_set(ht, "<<", ht_tok(TOK_HEREDOC));

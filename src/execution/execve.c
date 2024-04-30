@@ -156,6 +156,6 @@ pid_t	execute_simple_command(t_ast_node *simple_command, t_deque *commands)
 		return (close_fds(simple_command), pid);
 	(set_fds(simple_command), close_other_command_fds(commands));
 	execve(program, argv, get_env());
-	(gc_free(), rl_clear_history(), clear_shell_vars());
+	(gc_free(), rl_clear_history(), clear_vars());
 	return (minishell_error(EXECVE_ERR, FALSE, "%s", strerror(errno)), -1);
 }

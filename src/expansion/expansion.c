@@ -9,7 +9,7 @@ char	*var_lookup(char *key)
 	value = getenv(key);
 	if (value != NULL)
 		return (value);
-	return (get_shell_var(key));
+	return (get_var(key));
 }
 
 static size_t	expand_vars(t_token *token, char *var)
@@ -33,7 +33,7 @@ static size_t	expand_vars(t_token *token, char *var)
 	}
 	else if (var[0] == '$' && var[1] == '?')
 	{
-		expanded_var = get_shell_var("?");
+		expanded_var = get_var("?");
 		token->str = ft_strjoin(token->str, ft_strdup(expanded_var));
 		return (2);
 	}

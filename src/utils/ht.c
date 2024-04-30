@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/31 12:49:11 by tosuman           #+#    #+#             */
-/*   Updated: 2024/04/30 21:01:23 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/04/30 23:25:02 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,21 @@ void	ht_set(t_kv *ht[TABLE_SIZE], char key[static 1], t_type value)
 {
 	int		idx;
 	t_kv	*new_kv;
+	t_kv	**kv;
 
 	idx = (int)(hash(key) % TABLE_SIZE);
+	kv = &ht[idx];
+	while (*kv && (*kv)->k && ft_strcmp((*kv)->k, key))
+		(*kv) = (*kv)->n;
+
+	if (*kv && (*kv)->k)
+	{
+		free(((t_var *)(*kv)->v.as_ptr)->value);
+		free((*kv)->v.as_ptr);
+		/* free(key); */ /* TODO: watch out! */
+		(*kv)->v = value;
+		return ;
+	}
 	new_kv = ft_malloc(sizeof(*new_kv));
 	new_kv->k = key;
 	new_kv->v = value;
@@ -99,7 +112,7 @@ void	ht_destroy(t_kv *ht[TABLE_SIZE])
 		kv = ht[i];
 		while (kv)
 		{
-			free(kv->k);
+			/* free(kv->k); */ /* TODO: watch out! */
 			free(((t_var *)kv->v.as_ptr)->value);
 			free(kv->v.as_ptr);
 			prev = kv;

@@ -9,7 +9,7 @@
 
 #define MAX_HT_SIZE 1000
 
-void	minishell_error(int exit_code, t_bool do_exit, const char *fmt, ...)
+int	minishell_error(int exit_code, t_bool do_exit, const char *fmt, ...)
 {
 	va_list	ap;
 
@@ -23,6 +23,7 @@ void	minishell_error(int exit_code, t_bool do_exit, const char *fmt, ...)
 		rl_clear_history();
 		exit(exit_code);
 	}
+	return (exit_code);
 }
 
 size_t	ft_count_all(
@@ -203,7 +204,7 @@ char	*expand_prompt(char *prompt_string)
 	return (prompt_string);
 }
 
-char	*set_shell_var(char *key, char *value)
+char	*set_var(char *key, char *value, t_bool export)
 {
 	static t_kv	*shell_vars[MAX_HT_SIZE];
 	char		*ret;
@@ -221,9 +222,9 @@ char	*set_shell_var(char *key, char *value)
 		return (ret);
 	}
 	set_allocator(malloc);
-	ht_set(shell_vars, ft_strdup(key),
+	ht_set(shell_vars, key,
 		(t_type){.as_ptr = ft_memdup(&(t_var){
-			.export = FALSE,
+			.export = export,
 			.readonly = FALSE,
 			.value = ft_strdup(value)
 		}, sizeof(t_var))});
@@ -231,14 +232,14 @@ char	*set_shell_var(char *key, char *value)
 	return (value);
 }
 
-char	*get_shell_var(char *key)
+char	*get_var(char *key)
 {
-	return (set_shell_var(NULL, key));
+	return (set_var(NULL, key, FALSE));
 }
 
-void	clear_shell_vars(void)
+void	clear_vars(void)
 {
-	set_shell_var(NULL, NULL);
+	set_var(NULL, NULL, FALSE);
 }
 
 /* TODO: what if readline returns NULL? */
@@ -275,12 +276,14 @@ int	main(int argc, char **argv, char **envp)
 	tokens = NULL;
 	ast_root_node = NULL;
 	setup_signals();
-	set_shell_var("?", "0");
+	set_var("?", ft_strdup("0"), FALSE);
+	set_var("OLDPWD", getcwd(NULL, 0), FALSE);
+	set_var("PWD", getcwd(NULL, 0), FALSE);
 	while (1)
 	{
-		set_shell_var("PS0", expand_prompt(PS0));
-		set_shell_var("PS1", expand_prompt(PS1));
-		line = gc_add(readline(get_shell_var("PS1")))->head->prev->as_str;
+		set_var("PS0", expand_prompt(PS0), FALSE);
+		set_var("PS1", expand_prompt(PS1), FALSE);
+		line = gc_add(readline(get_var("PS1")))->head->prev->as_str;
 		if (!line)
 			break ;
 		add_history(line);
@@ -288,10 +291,10 @@ int	main(int argc, char **argv, char **envp)
 		/* deque_print(tokens, print_token); */
 		ast_root_node = build_ast(tokens);
 		/* ast_print(ast_root_node); */
-		set_shell_var("?", ft_itoa(execute(ast_root_node)));
+		set_var("?", ft_itoa(execute(ast_root_node)), FALSE);
 		(void)gc_free();
 	}
-	clear_shell_vars();
+	clear_vars();
 	rl_clear_history();
 	(void)gc_free();
 	return (0);
