@@ -1,9 +1,6 @@
-#include "../../include/minishell.h"
+#include "minishell.h"
 #include <unistd.h>
 #include <stdio.h>
-
-
-
 
 int	builtin_pwd(char **argv, t_fds fds)
 {

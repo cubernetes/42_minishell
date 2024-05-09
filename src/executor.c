@@ -1,7 +1,8 @@
-#include "../../include/minishell.h"
+#include "minishell.h"
 #include "libft.h"
+
+/* TODO: Test for unused headers */
 #include <errno.h>
-#include <iso646.h>
 #include <stdio.h>
 #include <readline/readline.h>
 #include <stdlib.h>

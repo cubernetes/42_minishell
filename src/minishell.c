@@ -1,5 +1,6 @@
-#include "../include/minishell.h"
-#include "../libft/libft.h"
+#include "minishell.h"
+#include "libft.h"
+
 #include <stdio.h>             /* needed for FILE typedef needed by readline */
 #include <readline/history.h>  /* ... */
 #include <readline/readline.h> /* readline() */

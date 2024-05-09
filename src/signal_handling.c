@@ -1,5 +1,6 @@
-#include "../../libft/libft.h"
-#include "../../include/minishell.h"
+#include "minishell.h"
+#include "libft.h"
+
 #include <signal.h>
 #include <unistd.h>
 #include <stdio.h>

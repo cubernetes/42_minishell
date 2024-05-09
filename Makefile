@@ -6,10 +6,11 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:02:16 by tischmid          #+#    #+#              #
-#    Updated: 2024/04/30 21:03:47 by tischmid         ###   ########.fr        #
+#    Updated: 2024/05/09 21:21:02 by tischmid         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
+# TODO: adapt for MacOS
 # Makefile for [ "$(uname -s)" = "Linux" ]
 
 # TODO: Check gcc and clang
@@ -34,6 +35,7 @@ _SRC           += execve.c
 _SRC           += ht.c
 _SRC           += environment.c
 
+# Builtins
 _SRC           += cd.c
 _SRC           += echo.c
 _SRC           += env.c
@@ -49,7 +51,7 @@ _OBJ           := $(_SRC:.c=.o)
 _HEADERS       := minishell.h
 
 OBJDIR         := obj
-INCLUDEDIR     := include
+INCLUDEDIR     := src
 LIBFT_DIR      := ./libft
 SRC            := $(addprefix $(SRCDIR)/,$(_SRC))
 OBJ            := $(addprefix $(OBJDIR)/,$(_OBJ))

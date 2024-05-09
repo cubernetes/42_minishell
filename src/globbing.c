@@ -1,4 +1,5 @@
-#include "../../include/minishell.h"
+#include "minishell.h"
+
 #include <dirent.h>
 #include <stdio.h>
 

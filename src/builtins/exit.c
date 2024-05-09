@@ -1,4 +1,4 @@
-#include "../../include/minishell.h"
+#include "minishell.h"
 
 int	builtin_exit(char **argv, t_fds fds)
 {

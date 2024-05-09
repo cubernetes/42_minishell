@@ -1,9 +1,7 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H 1
 
-/* TODO: remove debug include */
-# include "../libft/libft.h"
-# include "minishell_debug.h"
+# include "libft.h"
 
 # define PS0 "> "
 /* # define PS1 "\033[31m\\u@\\h:\\w\033[m\n❯ " */

@@ -6,12 +6,12 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/31 12:49:11 by tosuman           #+#    #+#             */
-/*   Updated: 2024/04/30 23:25:02 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/05/09 21:26:16 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../include/minishell.h"
-#include "minishell_debug.h"
+#include "minishell.h"
+
 #include <stdlib.h>
 
 static uint64_t	fnv_1a_64(char *input_str)
