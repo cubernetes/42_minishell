@@ -22,7 +22,7 @@ jobs:
       - name: Check if it relinks (clang)
         run: CC=clang make
 
-      - name: Check for NAME (2048) rule (clang)
+      - name: Check for NAME (minishell) rule (clang)
         run: CC=clang make minishell
 
       - name: Check for clean rule (clang)
@@ -34,8 +34,8 @@ jobs:
       - name: Check for re rule (clang)
         run: CC=clang make re
 
-      - name: Check if 2048 binary exists
-        run: test -x ./2048
+      - name: Check if minishell binary exists
+        run: test -x ./minishell
 
       - name: Check if there are no TODO's
         run: test "$(./check_todo.sh | wc -l)" -lt 2
