@@ -6,7 +6,7 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:02:16 by tischmid          #+#    #+#              #
-#    Updated: 2024/05/10 04:06:47 by tischmid         ###   ########.fr        #
+#    Updated: 2024/05/10 04:18:01 by tischmid         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@
 # Makefile for [ "$(uname -s)" = "Linux" ]
 
 # TODO: Check gcc and clang
-CC             := cc
+CC             ?= cc
 RM             := /bin/rm -f
 MKDIR          := /bin/mkdir -p
 

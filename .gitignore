@@ -8,10 +8,13 @@
 # gen_table.py
 # TODO: uncomment below AND `git rm' it
 # minishell_subject.pdf
+# TODO: uncomment below AND `git rm -r' it
+# .github
+
 minishell
 obj
 libft/libft.a
-compile_commands.json
 
 # compiledb
 .cache
+compile_commands.json
