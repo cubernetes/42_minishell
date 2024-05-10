@@ -23,7 +23,7 @@ jobs:
         run: CC=clang make
 
       - name: Check for NAME (2048) rule (clang)
-        run: CC=clang make 2048
+        run: CC=clang make minishell
 
       - name: Check for clean rule (clang)
         run: CC=clang make clean
