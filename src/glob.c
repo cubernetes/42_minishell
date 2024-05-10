@@ -2,20 +2,21 @@
 
 #include <dirent.h>
 #include <stdio.h>
+#include <stdbool.h>
 
-static t_bool	glob_match(const char *pattern, const char *str)
+static bool	glob_match(const char *pattern, const char *str)
 {
 	if (*pattern == '\0')
 		return (*str == '\0');
 	else if (*pattern == '*')
 	{
 		if (*str != '\0' && glob_match(pattern, str + 1))
-			return (TRUE);
+			return (true);
 		return (glob_match(pattern + 1, str));
 	}
 	else if (*pattern == '?' || *str == *pattern)
 		return (glob_match(pattern + 1, str + 1));
-	return (FALSE);
+	return (false);
 }
 
 static int	ft_strcmp2(const char *str1, const char *str2)
@@ -39,7 +40,7 @@ static t_deque	*glob_token(t_token *token)
 		if (ft_strncmp(dp->d_name, ".", 1)
 			&& glob_match(token->str, dp->d_name))
 			deque_push_ptr_right(tokens,
-				new_token(ft_strdup(dp->d_name), TOK_WORD, TRUE));
+				new_token(ft_strdup(dp->d_name), TOK_WORD, true));
 		dp = readdir(dirp);
 	}
 	closedir(dirp);

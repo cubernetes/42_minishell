@@ -3,6 +3,8 @@
 
 # include "libft.h"
 
+# include <stdbool.h>
+
 # define PS0 "> "
 /* # define PS1 "\033[31m\\u@\\h:\\w\033[m\n❯ " */
 # define PS1 "\033[31m\\u\033[m@\033[94m\\h\033[m@\033[92mminishell\033[m [\033[32m\\w\033[m]\n> "
@@ -49,8 +51,8 @@
 
 typedef struct s_var
 {
-	t_bool	export;
-	t_bool	readonly;
+	bool	export;
+	bool	readonly;
 	char	*value;
 }	t_var;
 
@@ -80,7 +82,7 @@ typedef struct s_token
 {
 	t_token_type						type;
 	char								*str;
-	t_bool								is_last_subtoken;
+	bool								is_last_subtoken;
 }										t_token;
 
 typedef t_ast_node						*t_children[];
@@ -159,18 +161,18 @@ void									setup_signals(void);
 t_deque									*tokenize(const char *line); /* static 1 ? */
 t_ast_node								*build_ast(t_deque *tokens);
 void									ast_print(t_ast_node *ast_node);
-void									print_token(void *data, t_bool first);
+void									print_token(void *data, bool first);
 void									print_ast_node(void *data,
-											t_bool first);
+											bool first);
 const char								*token_type_to_string(
 											t_token_type type);
 void									*new_token(char *str, t_token_type type,
-											t_bool is_last_subtoken);
+											bool is_last_subtoken);
 char									*get_token_str(t_deque *tokens);
 char									*get_token_str_nl(t_deque *tokens);
 t_token_type							get_token_type(t_deque *tokens);
 int										minishell_error(int exit_code,
-											t_bool do_exit,
+											bool do_exit,
 											const char *fmt, ...);
 void									expand_env_vars(t_deque *tokens);
 void									join_tokens(t_deque *tokens);
@@ -204,7 +206,7 @@ void									set_fds(t_ast_node *simple_command);
 void									close_other_command_fds(
 											t_deque *commands);
 char									*set_var(char *key, char *value,
-											t_bool export);
+											bool export);
 char									*get_var(char *key);
 void									clear_vars(void);
 int										builtin_cd(char **argv, t_fds fds);

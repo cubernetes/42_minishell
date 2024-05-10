@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../libft.h"
+#include "libft.h"
 #include <stdlib.h>
 
 t_deque	*deque_init(void)

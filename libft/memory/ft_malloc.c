@@ -6,30 +6,31 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 07:51:00 by tosuman           #+#    #+#             */
-/*   Updated: 2024/04/28 22:22:38 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/05/10 04:12:43 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../libft.h"
+#include "libft.h"
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
-t_bool	dont_free(void *data)
+bool	dont_free(void *data)
 {
 	(void)data;
 	return (1);
 }
 
-t_bool	ft_free(void *ptr)
+bool	ft_free(void *ptr)
 {
 	/* ft_printf("\033[32mFREE\033[m\n"); */
 	/* print_callstack(); */
 	free(ptr);
-	return (TRUE);
+	return (true);
 }
 
-t_bool	gc_free(void)
+bool	gc_free(void)
 {
 	t_deque	*ptrs;
 	t_deque	*static_ptrs;
@@ -42,7 +43,7 @@ t_bool	gc_free(void)
 		*(void **)(di_get(di)->as_ptr) = NULL;
 	ft_malloc_deque_free(static_ptrs, dont_free);
 	ft_malloc_deque_free(ptrs, ft_free);
-	return (TRUE);
+	return (true);
 }
 
 t_deque	*gc_set_null(void **ptr)
@@ -67,6 +68,11 @@ t_deque	*gc_add(void *ptr)
 		ptrs = ft_malloc_deque_init();
 	ft_malloc_deque_push_ptr_right(ptrs, ptr);
 	return (ptrs);
+}
+
+char	*gc_add_str(void *ptr)
+{
+	return (gc_add(ptr)->head->prev->as_str);
 }
 
 /* TODO: fix this: calling gc_free more than once causes SIGSEGV */

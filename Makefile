@@ -6,7 +6,7 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:02:16 by tischmid          #+#    #+#              #
-#    Updated: 2024/05/09 21:21:02 by tischmid         ###   ########.fr        #
+#    Updated: 2024/05/10 04:06:47 by tischmid         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,11 +25,11 @@ LIBFT_          := $(patsubst lib%,%,$(patsubst %.a,%,$(LIBFT)))
 
 unexport _SRC
 _SRC           += minishell.c
-_SRC           += signal_handling.c
+_SRC           += signals.c
 _SRC           += parsing.c
 _SRC           += tokenize.c
 _SRC           += expansion.c
-_SRC           += globbing.c
+_SRC           += glob.c
 _SRC           += executor.c
 _SRC           += execve.c
 _SRC           += ht.c
@@ -44,8 +44,7 @@ _SRC           += export.c
 _SRC           += pwd.c
 _SRC           += unset.c
 
-vpath %.c src src/parsing src/signal_handling src/tokenization \
-          src/expansion src/execution/ src/utils/ src/builtins/
+vpath %.c src src/utils/ src/builtins/
 
 _OBJ           := $(_SRC:.c=.o)
 _HEADERS       := minishell.h

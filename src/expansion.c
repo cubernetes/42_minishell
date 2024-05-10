@@ -44,7 +44,7 @@ static size_t	expand_vars(t_token *token, char *var)
 
 static void	*new_word_token(char *str)
 {
-	return (new_token(str, TOK_WORD, TRUE));
+	return (new_token(str, TOK_WORD, true));
 }
 
 /* TODO: Not required: use full IFS instead of just the first char */
@@ -64,7 +64,7 @@ static void	expand_word(t_deque *new_tokens, t_deque_node *head)
 	new_toks = string_list_to_deque(ft_split(token->str, IFS[0]), new_word_token);
 	deque_extend_right(new_tokens, new_toks);
 	if (!token->is_last_subtoken)
-		new_tokens->head->prev->as_token->is_last_subtoken = FALSE;
+		new_tokens->head->prev->as_token->is_last_subtoken = false;
 }
 
 static void	expand_dquote_str(t_deque *new_tokens, t_deque_node *head)
@@ -121,7 +121,7 @@ void	join_tokens(t_deque *tokens)
 	if (token->is_last_subtoken)
 		deque_push_ptr_right(new_tokens, token);
 	else
-		word_token = new_token(token->str, TOK_WORD, TRUE);
+		word_token = new_token(token->str, TOK_WORD, true);
 	while (head->next != tokens->head)
 	{
 		head = head->next;
@@ -129,14 +129,14 @@ void	join_tokens(t_deque *tokens)
 		if (!token->is_last_subtoken)
 		{
 			if (!word_token)
-				word_token = new_token("", TOK_WORD, TRUE);
+				word_token = new_token("", TOK_WORD, true);
 			word_token->str = ft_strjoin(word_token->str, token->str);
 		}
 		else if (token->type == TOK_WORD || token->type == TOK_SQUOTE_STR
 			|| token->type == TOK_DQUOTE_STR)
 		{
 			if (!word_token)
-				word_token = new_token("", TOK_WORD, TRUE);
+				word_token = new_token("", TOK_WORD, true);
 			word_token->str = ft_strjoin(word_token->str, token->str);
 			deque_push_ptr_right(new_tokens, word_token);
 			word_token = NULL;

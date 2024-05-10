@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../libft.h"
+#include "libft.h"
 #include <stdlib.h>
 
 static size_t	split_arr_len(char const *s, char c)

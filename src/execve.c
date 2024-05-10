@@ -10,6 +10,7 @@
 #include <fcntl.h>
 #include <sys/wait.h>
 #include <string.h>
+#include <stdbool.h>
 
 /* TODO: What to do in case of execve error? */
 #define EXECVE_ERR 3
@@ -101,7 +102,7 @@ void	close_other_command_fds(t_deque *commands)
 		close_fds(di_get(di)->as_ast_node);
 }
 
-t_bool	is_builtin(char	*word)
+bool	is_builtin(char	*word)
 {
 	return (ft_strcmp(word, "cd") == 0
 		|| ft_strcmp(word, "echo") == 0
@@ -148,15 +149,15 @@ pid_t	execute_simple_command(t_ast_node *simple_command, t_deque *commands)
 		return (handle_builtin(argv, simple_command->fds) - 256);
 	program = search_executable(argv[0], path_parts);
 	if (!program)
-		return (minishell_error(EXIT_COMMAND_NOT_FOUND, FALSE, "%s: command not found",
+		return (minishell_error(EXIT_COMMAND_NOT_FOUND, false, "%s: command not found",
 			argv[0]), -1);
 	pid = fork();
 	if (pid < 0)
-		minishell_error(FORK_ERROR, TRUE, "%s", strerror(errno));
+		minishell_error(FORK_ERROR, true, "%s", strerror(errno));
 	if (pid > 0)
 		return (close_fds(simple_command), pid);
 	(set_fds(simple_command), close_other_command_fds(commands));
 	execve(program, argv, get_env());
 	(gc_free(), rl_clear_history(), clear_vars());
-	return (minishell_error(EXECVE_ERR, FALSE, "%s", strerror(errno)), -1);
+	return (minishell_error(EXECVE_ERR, false, "%s", strerror(errno)), -1);
 }

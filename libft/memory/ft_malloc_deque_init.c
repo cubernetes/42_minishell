@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../libft.h"
+#include "libft.h"
 #include <stdlib.h>
 
 /* this function must not use ft_malloc (or functions that call it) */

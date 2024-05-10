@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../libft.h"
+#include "libft.h"
 
 void	deque_push_node_left(t_deque *deque, t_deque_node *node)
 {

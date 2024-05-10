@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../libft.h"
+#include "libft.h"
 #include <stdarg.h>
 
 int	ft_vprintf(const char *fmt, va_list ap)

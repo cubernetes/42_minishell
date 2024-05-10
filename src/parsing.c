@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <assert.h>
+#include <stdbool.h>
 
 /* TODO: Not required: hashtable */
 const char	*ast_node_type_to_string(t_ast_node_type type)
@@ -33,16 +34,16 @@ const char	*ast_node_type_to_string(t_ast_node_type type)
 		return (STR_AST_NODE_TYPE_UNKNOWN);
 }
 
-t_bool	ast_node_is_null(t_ast_node *ast_node)
+bool	ast_node_is_null(t_ast_node *ast_node)
 {
 	if (!ast_node)
-		return (TRUE);
+		return (true);
 	if (!ft_memcmp(ast_node, &(t_ast_node){0}, sizeof(t_ast_node)))
-		return (TRUE);
-	return (FALSE);
+		return (true);
+	return (false);
 }
 
-void	repeat_string(const char *str, int n, t_bool color)
+void	repeat_string(const char *str, int n, bool color)
 {
 	int	i;
 
@@ -66,7 +67,7 @@ t_ast_node	*new_ast_token(t_token_type type, char *str)
 	return (ft_memdup(\
 		&(t_ast_node){
 			.type = TOKEN,
-			{.token = new_token(str, type, TRUE)},
+			{.token = new_token(str, type, true)},
 			{{0}}
 		},
 		sizeof(t_ast_node)
@@ -94,7 +95,7 @@ void	ast_print_with_depth(t_ast_node *ast_node, int n)
 {
 	t_di			*di;
 
-	repeat_string("|   ", n, TRUE);
+	repeat_string("|   ", n, true);
 	if (ast_node->type != TOKEN)
 	{
 		if (ast_node->type == SIMPLE_COMMAND)
@@ -293,9 +294,9 @@ int	get_production_idx(t_ast_node_type nonterm, t_token *token)
 	if (production_idx == -1)
 	{
 		if (!*token->str)
-			minishell_error(2, TRUE,
+			minishell_error(2, true,
 				"syntax error near unexpected token `newline'");
-		minishell_error(2, TRUE, "syntax error near unexpected token `%s'",
+		minishell_error(2, true, "syntax error near unexpected token `%s'",
 			token->str);
 	}
 	return (production_idx);
@@ -400,7 +401,7 @@ t_ast_node	gen_production(char *token_str)
 				&(t_token){\
 					.type = tokens_ht_get(token_str), \
 					.str = "", \
-					.is_last_subtoken = TRUE \
+					.is_last_subtoken = true \
 				}, \
 				sizeof(t_token) \
 			), \
@@ -473,7 +474,7 @@ t_ast_node	*production_to_child(t_ast_node production)
 	ft_memcpy(child, &production, sizeof(production));
 	if (production.type == TOKEN)
 		child->token = new_token(child->token->str,
-				child->token->type, TRUE);
+				child->token->type, true);
 	return (child);
 }
 
@@ -490,7 +491,7 @@ t_deque	*productions_to_children(t_ast_node *productions)
 	return (children);
 }
 
-void	print_ast_node(void *data, t_bool first)
+void	print_ast_node(void *data, bool first)
 {
 	t_ast_node	*node;
 
@@ -526,7 +527,7 @@ t_ast_node	*build_parse_tree(t_deque *tokens)
 	deque_push_ptr_right(stack, production_to_child(\
 		(t_ast_node){COMPLETE_COMMAND, {0}, {{0}}}));
 	deque_push_ptr_right(stack, production_to_child(\
-		(t_ast_node){TOKEN, {.token = &(t_token){TOK_EOL, "", TRUE}}, {{0}}}));
+		(t_ast_node){TOKEN, {.token = &(t_token){TOK_EOL, "", true}}, {{0}}}));
 	ast_node = new_ast_nonterm(COMPLETE_COMMAND, NULL);
 	ast_root_node = ast_node;
 	/* ft_printf("\n"); */
@@ -560,11 +561,11 @@ t_ast_node	*build_parse_tree(t_deque *tokens)
 				deque_rotate(tokens, 1);
 			}
 			else if (get_token_type(tokens) == TOK_EOL)
-				minishell_error(2, TRUE,
+				minishell_error(2, true,
 					"syntax error near unexpected token `%s'",
 					get_token_str_nl(tokens));
 			else
-				minishell_error(2, TRUE,
+				minishell_error(2, true,
 					"syntax error near unexpected token `%s'",
 					get_token_str_nl(tokens));
 		}
@@ -588,7 +589,7 @@ t_deque	*build_ast_recursively(t_ast_node *node)
 			deque_push_ptr_right(flat, node);
 	}
 	else if (node->type == IO_REDIRECT)
-		assert(FALSE);
+		assert(false);
 	else if (node->type == COMPLETE_COMMAND
 		|| node->type == PIPE_SEQUENCE
 		|| node->type == SIMPLE_COMMAND)
@@ -606,7 +607,7 @@ t_deque	*build_ast_recursively(t_ast_node *node)
 					deque_push_ptr_right(node->children, head);
 					head = deque_pop_left(children)->as_ast_node;
 					if (head->type != TOKEN)
-						assert(FALSE);
+						assert(false);
 					deque_push_ptr_right(((t_ast_node *)node->children->head->prev->as_ast_node)->children, head);
 				}
 			}
@@ -632,7 +633,7 @@ t_deque	*build_ast_recursively(t_ast_node *node)
 					deque_push_ptr_right(flat, head);
 					head = deque_pop_left(children)->as_ast_node;
 					if (head->type != TOKEN)
-						assert(FALSE);
+						assert(false);
 					deque_push_ptr_right(((t_ast_node *)flat->head->prev->as_ast_node)->children, head);
 				}
 			}
@@ -643,7 +644,7 @@ t_deque	*build_ast_recursively(t_ast_node *node)
 	else
 	{
 		ft_printf("node->type: \033[34m%s\033[m\n", ast_node_type_to_string(node->type));
-		assert(FALSE);
+		assert(false);
 	}
 	return (flat);
 }

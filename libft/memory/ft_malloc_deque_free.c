@@ -6,30 +6,31 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 14:37:19 by tischmid          #+#    #+#             */
-/*   Updated: 2024/04/01 01:04:59 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/05/10 04:10:19 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../libft.h"
+#include "libft.h"
 #include <stdlib.h>
+#include <stdbool.h>
 
 /* only function (along ft_tree) allowd to use free */
 /* must only be used by ft_malloc from memory management */
 /* cannot use iterators (t_di) here */
-t_bool	ft_malloc_deque_free(t_deque *deque, t_bool (free_data)(void *ptr))
+bool	ft_malloc_deque_free(t_deque *deque, bool (free_data)(void *ptr))
 {
 	t_deque_node	*head;
 	t_deque_node	*tail;
 
 	if (!deque)
-		return (TRUE);
+		return (true);
 	head = deque->head;
 	if (!head)
 	{
 		/* ft_printf("\033[32mFREE\033[m\n"); */
 		/* print_callstack(); */
 		(free(deque), deque = NULL);
-		return (TRUE);
+		return (true);
 	}
 	tail = head->prev;
 	while (head != tail)
@@ -47,5 +48,5 @@ t_bool	ft_malloc_deque_free(t_deque *deque, t_bool (free_data)(void *ptr))
 	/* ft_printf("\033[32mFREE\033[m\n"); */
 	/* print_callstack(); */
 	(free(deque), deque = NULL);
-	return (TRUE);
+	return (true);
 }

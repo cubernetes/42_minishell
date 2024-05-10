@@ -6,7 +6,7 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:09:11 by tischmid          #+#    #+#              #
-#    Updated: 2024/04/01 01:36:32 by tosuman          ###   ########.fr        #
+#    Updated: 2024/05/10 04:04:37 by tischmid         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -93,7 +93,6 @@ SRC += ft_malloc_deque_init.c
 SRC += ft_malloc_deque_push_ptr_right.c
 
 # io
-SRC += get_next_line.c
 SRC += ft_putchar_fd.c
 SRC += ft_putendl_fd.c
 SRC += ft_putnbr_fd.c
@@ -111,17 +110,6 @@ SRC += ft_putptr.c
 SRC += ft_printf.c
 SRC += ft_dprintf.c
 SRC += ft_print_memory.c
-
-# list
-SRC += ft_lstnew.c
-SRC += ft_lstadd_front.c
-SRC += ft_lstsize.c
-SRC += ft_lstlast.c
-SRC += ft_lstadd_back.c
-SRC += ft_lstclear.c
-SRC += ft_lstdelone.c
-SRC += ft_lstiter.c
-SRC += ft_lstmap.c
 
 # math
 SRC += ft_max.c

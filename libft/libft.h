@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 15:09:08 by tischmid          #+#    #+#             */
-/*   Updated: 2024/05/09 21:26:52 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/05/10 04:10:31 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include <stdarg.h>
 # include <stddef.h>
 # include <sys/types.h>
+# include <stdbool.h>
 # include <stdint.h>
 
 # define HEX_DIGITS "0123456789abcdef"
@@ -24,37 +25,6 @@
 # define NIL_PTR_STR "(nil)"
 
 # define EMPTY_DEQUE "Empty deque.\n"
-
-/* get_next_line */
-# ifndef OPEN_MAX
-#  define OPEN_MAX 4096
-# endif
-
-# ifndef GNL_BUFFER_SIZE
-#  define GNL_BUFFER_SIZE 1
-# endif
-
-typedef struct s_gnl_vars
-{
-	char						*prv[OPEN_MAX];
-	char						*buf;
-	ssize_t						b;
-	int							i;
-	int							j;
-	int							len;
-}								t_gnl_vars;
-
-typedef enum e_bool
-{
-	FALSE = 0,
-	TRUE
-}								t_bool;
-
-typedef struct s_list
-{
-	void						*content;
-	struct s_list				*next;
-}								t_list;
 
 /* forward declarations */
 typedef struct s_deque			t_deque;
@@ -89,8 +59,8 @@ typedef struct s_deque_iter
 {
 	t_deque						*deque;
 	t_deque_node				*head;
-	t_bool						_first_iter;
-	t_bool						_first_iter_di_get;
+	bool						_first_iter;
+	bool						_first_iter_di_get;
 }								t_di;
 
 /* memory */
@@ -107,10 +77,11 @@ void							*ft_memcpy(void *dest, void const *src,
 void							*ft_memdup(const void *src, size_t size);
 void							*ft_malloc(size_t size);
 t_deque							*gc_add(void *ptr);
+char							*gc_add_str(void *ptr);
 t_deque							*gc_set_null(void **ptr);
-t_bool							gc_free(void);
-t_bool							ft_malloc_deque_free(t_deque *deque,
-									t_bool(free_data)(void *));
+bool							gc_free(void);
+bool							ft_malloc_deque_free(t_deque *deque,
+									bool(free_data)(void *));
 t_deque							*ft_malloc_deque_init(void);
 void							ft_malloc_deque_push_ptr_right(
 									t_deque *deque, void *data);
@@ -157,8 +128,8 @@ void							ft_striteri(char *s, void (f)(unsigned int,
 int								ft_char_in_charset(char c, char const *charset);
 
 /* math */
-t_bool							cmp_int_asc(int a, int b);
-t_bool							cmp_int_desc(int a, int b);
+bool							cmp_int_asc(int a, int b);
+bool							cmp_int_desc(int a, int b);
 char							*ft_itoa(int n);
 int								ft_atoi(char const *nptr);
 int								ft_atoi_status(char const *nptr, int *status);
@@ -166,18 +137,6 @@ double							ft_atof(const char *s);
 unsigned int					ft_abs(int n);
 int								ft_max(int a, int b);
 int								ft_min(int a, int b);
-
-/* data list */
-t_list							*ft_lstnew(void *content);
-void							ft_lstadd_front(t_list **lst, t_list *new_head);
-int								ft_lstsize(t_list *lst);
-t_list							*ft_lstlast(t_list *lst);
-void							ft_lstadd_back(t_list **lst, t_list *new_tail);
-void							ft_lstdelone(t_list *lst, void (del)(void *));
-void							ft_lstclear(t_list **lst, void (del)(void *));
-void							ft_lstiter(t_list *lst, void (f)(void *));
-t_list							*ft_lstmap(t_list *lst, void *(f)(void *),
-									void (del)(void *));
 
 /* io */
 int								ft_putendl_fd(char *s, int fd);
@@ -200,7 +159,6 @@ int								ft_printf(const char *fmt, ...);
 int								ft_vdprintf(int fd, const char *fmt,
 									va_list ap);
 int								ft_dprintf(int fd, const char *fmt, ...);
-char							*get_next_line(int fd);
 void							*ft_print_memory(void *addr, size_t size);
 
 /* deque */
@@ -221,19 +179,19 @@ size_t							deque_size(t_deque *deque);
 void							deque_sort(t_deque *deque, int (cmp)(void *,
 										void *));
 void							deque_print(t_deque *deque,
-									void (print)(void *data, t_bool first));
+									void (print)(void *data, bool first));
 void							deque_print_debug(t_deque *deque);
 t_deque							*deque_init(void);
 t_deque							*deque_shallow_slice(t_deque *deque, int start,
 									int end, int step);
 int								deque_index(t_deque *deque, void *data,
-									t_bool(cmp)(void *, void *));
+									bool(cmp)(void *, void *));
 void							deque_extend_right(t_deque *deque_a,
 									t_deque *deque_b);
 void							deque_extend_left(t_deque *deque_a,
 									t_deque *deque_b);
-t_bool							deque_equal(t_deque *deque_a, t_deque *deque_b,
-									t_bool(cmp)(void *, void *));
+bool							deque_equal(t_deque *deque_a, t_deque *deque_b,
+									bool(cmp)(void *, void *));
 void							deque_iter(t_deque *deque,
 									void (f)(void *data));
 int								deque_sum(t_deque *deque, int (f)(void *data));

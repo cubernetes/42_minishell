@@ -6,12 +6,11 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 09:35:19 by tosuman           #+#    #+#             */
-/*   Updated: 2024/04/01 00:48:07 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/05/10 04:03:07 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../include/memory.h"
-#include "../../libft/libft.h"
+#include "libft.h"
 #include <execinfo.h>
 #include <stdlib.h>
 

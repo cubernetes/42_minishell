@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../libft.h"
+#include "libft.h"
 
 /* must not be called before the first di_next() */
 t_deque_node	*di_get(t_di *di)

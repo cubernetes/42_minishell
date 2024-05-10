@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../libft.h"
+#include "libft.h"
 
 t_deque_node	*di_next(t_di *di)
 {
@@ -18,12 +18,12 @@ t_deque_node	*di_next(t_di *di)
 		return (NULL);
 	else if (di->_first_iter)
 	{
-		di->_first_iter = FALSE;
+		di->_first_iter = false;
 		return (di->head);
 	}
 	else
 	{
-		di->_first_iter_di_get = FALSE;
+		di->_first_iter_di_get = false;
 		di->head = di->head->next;
 		if (di->head == di->deque->head)
 			di->head = NULL;

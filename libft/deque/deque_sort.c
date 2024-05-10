@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../libft.h"
+#include "libft.h"
 
 void	deque_sort(t_deque *deque, int (cmp)(void *ptr1, void *ptr2))
 {

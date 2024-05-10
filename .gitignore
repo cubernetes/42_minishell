@@ -6,6 +6,8 @@
 # minishell.bnf
 # TODO: uncomment below AND `git rm' it
 # gen_table.py
+# TODO: uncomment below AND `git rm' it
+# minishell_subject.pdf
 minishell
 obj
 libft/libft.a

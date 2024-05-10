@@ -11,70 +11,71 @@
 #include <unistd.h> /* dup() */
 #include <fcntl.h>
 #include <sys/wait.h>
+#include <stdbool.h>
 
 /* TODO: implement heredoc redirection*/
-/* t_bool redirect_heredoc(t_ddeque *heredoc, t_ast_node *simple_command)
+/* bool redirect_heredoc(t_ddeque *heredoc, t_ast_node *simple_command)
 {
-	return (TRUE);
+	return (true);
 } */
 
-t_bool	handle_redirect_input(char *file_path, t_ast_node *simple_command)
+bool	handle_redirect_input(char *file_path, t_ast_node *simple_command)
 {
 	int	fd;
 	int	sc_fd_in;
 
 	fd = open(file_path, O_RDONLY);
 	if (fd == -1)
-		return (FALSE);
+		return (false);
 	else
 	{
 		sc_fd_in = simple_command->fd_in;
 		if (sc_fd_in != -2)
 			close(sc_fd_in);
 		simple_command->fd_in = fd;
-		return (TRUE);
+		return (true);
 	}
 }
 
-t_bool	handle_redirect_append(char *file_path, t_ast_node *simple_command)
+bool	handle_redirect_append(char *file_path, t_ast_node *simple_command)
 {
 	int		fd;
 	int		sc_fd_out;
 
 	fd = open(file_path, O_WRONLY | O_APPEND | O_CREAT, 0644);
 	if (fd == -1)
-		return (FALSE);
+		return (false);
 	else
 	{
 		sc_fd_out = simple_command->fd_out;
 		if (sc_fd_out != -2)
 			close(sc_fd_out);
 		simple_command->fd_out = fd;
-		return (TRUE);
+		return (true);
 	}
 }
 
-t_bool	handle_redirect_override(char *file_path, t_ast_node *simple_command)
+bool	handle_redirect_override(char *file_path, t_ast_node *simple_command)
 {
 	int		fd;
 	int		sc_fd_out;
 
 	fd = open(file_path, O_WRONLY | O_TRUNC | O_CREAT, 0644);
 	if (fd == -1)
-		return (FALSE);
+		return (false);
 	else
 	{
 		sc_fd_out = simple_command->fd_out;
 		if (sc_fd_out != -2)
 			close(sc_fd_out);
 		simple_command->fd_out = fd;
-		return (TRUE);
+		return (true);
 	}
 }
 
 void	handle_io_redirect(t_ast_node *io_redirect, t_ast_node *simple_command)
 {
-	t_bool			err;
+	bool			err;
 	char			*file_path;
 	t_token_type	type;
 
@@ -87,11 +88,11 @@ void	handle_io_redirect(t_ast_node *io_redirect, t_ast_node *simple_command)
 	else if (type == TOK_APPEND)
 		err = handle_redirect_append(file_path, simple_command);
 	else
-		err = FALSE;
+		err = false;
 	/* else if (type == TOK_HEREDOC) */
 		/* err = redirect_heredoc(file_path, simple_command); */
-	if (err == FALSE)
-		minishell_error(EXIT_FAILURE, TRUE,
+	if (err == false)
+		minishell_error(EXIT_FAILURE, true,
 			"redirect error: %s", strerror(errno));
 }
 
@@ -107,7 +108,7 @@ pid_t	execute_simple_command_wrapper(t_ast_node *simple_command,
 	return (execute_simple_command(simple_command, commands));
 }
 
-void	print_pid(void *ptr, t_bool first)
+void	print_pid(void *ptr, bool first)
 {
 	if (first)
 		ft_printf("%d", *(pid_t *)ptr);
@@ -139,14 +140,14 @@ unsigned char	wait_pipesequence(t_deque *pids)
 		}
 		rtn = waitpid(*(pid_t *)di_get(di)->as_ptr, &status, 0);
 		if (rtn == -1)
-			minishell_error(EXIT_WAIT_ERROR, FALSE, "wait error: %d",
+			minishell_error(EXIT_WAIT_ERROR, false, "wait error: %d",
 				strerror(errno));
 		if (WIFEXITED(status))
 			status = WEXITSTATUS(status);
 		else if (WIFSIGNALED(status))
 			status = 128 + WTERMSIG(status);
 		else
-			minishell_error(EXIT_WAIT_ERROR, FALSE, "process ended unexpectedly",
+			minishell_error(EXIT_WAIT_ERROR, false, "process ended unexpectedly",
 				strerror(errno));
 	}
 	return ((unsigned char)status);
@@ -239,10 +240,10 @@ unsigned char	execute_tok_or(t_deque_node *tok_or)
 unsigned char	execute_complete_command(t_ast_node *ast_node)
 {
 	unsigned char	rtn;
-	t_bool			first;
+	bool			first;
 	t_di			*di;
 
-	first = TRUE;
+	first = true;
 	rtn = 0;
 	di = di_begin(ast_node->children);
 	while (di_next(di))
@@ -256,7 +257,7 @@ unsigned char	execute_complete_command(t_ast_node *ast_node)
 			{
 				if (first)
 					rtn = execute_tok_and(di_get(di));
-				first = FALSE;
+				first = false;
 				if (rtn == 0)
 					rtn = execute_pipe_sequence(di_get(di)->next->as_ast_node->children);
 				di_next(di);
@@ -265,7 +266,7 @@ unsigned char	execute_complete_command(t_ast_node *ast_node)
 			{
 				if (first)
 					rtn = execute_tok_or(di_get(di));
-				first = FALSE;
+				first = false;
 				if (rtn != 0)
 					rtn = execute_pipe_sequence(di_get(di)->next->as_ast_node->children);
 				di_next(di);
@@ -285,7 +286,7 @@ pid_t	execute_complete_command_wrapper(t_ast_node *complete_command,
 
 	pid = fork();
 	if (pid < 0)
-		minishell_error(EXIT_FORK_ERROR, TRUE, "%s", strerror(errno));
+		minishell_error(EXIT_FORK_ERROR, true, "%s", strerror(errno));
 	else if (pid > 0)
 		return (close_fds(complete_command), pid);
 	set_fds(complete_command);

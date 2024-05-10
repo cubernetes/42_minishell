@@ -6,7 +6,7 @@ int	builtin_pwd(char **argv, t_fds fds)
 {
 	char	*tmp;
 
-	tmp = gc_add(getcwd(NULL, 0))->head->prev->as_str;
+	tmp = gc_add_str(getcwd(NULL, 0));
 	printf("%s\n", tmp);
 	return (0);
 }
