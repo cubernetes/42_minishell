@@ -12,251 +12,6 @@
 
 #define MAX_HT_SIZE 1000
 
-enum e_type
-{
-	INT,
-	SIZE_T,
-	CHAR,
-	STR,
-	PTR,
-	LIST_NODE,
-};
-
-typedef struct s_list_node	t_list_node;
-typedef struct s_list		t_list;
-
-typedef struct s_data
-{
-	enum e_type		type;
-	union
-	{
-		int			as_int;
-		size_t		as_size_t;
-		char		as_char;
-		char		*as_str;
-		void		*as_ptr;
-		t_list_node	*as_list_node;
-	};
-}	t_data;
-
-/* anonymous struct must come first and be identical to t_data */
-struct s_list_node
-{
-	struct
-	{
-		enum e_type		type;
-		union
-		{
-			int			as_int;
-			size_t		as_size_t;
-			char		as_char;
-			char		*as_str;
-			void		*as_ptr;
-			t_list_node	*as_list_node;
-		};
-	};
-	t_list_node	*next;
-	t_list_node	*prev;
-};
-
-typedef struct s_list
-{
-	t_list_node		*first;
-	t_list_node		*last;
-	t_list_node		*current;
-	size_t			current_idx;
-	t_list			*current_stack;     /* don't iterate over this one obv. */
-	t_list			*current_idx_stack; /* don't iterate over this one obv. */
-	size_t			len;
-}	t_list;
-
-t_list	*new_list(void)
-{
-	return (ft_memdup(&(t_list){
-			.current_stack = ft_memdup(&(t_list){0}, sizeof(t_list)),
-			.current_idx_stack = ft_memdup(&(t_list){0}, sizeof(t_list))
-		}, sizeof(t_list))
-	);
-}
-
-t_data	as_str(char *as_str)
-{
-	return ((t_data){.as_str = as_str, .type = STR});
-}
-
-t_data	as_ptr(void *as_ptr)
-{
-	return ((t_data){.as_ptr = as_ptr, .type = PTR});
-}
-
-t_data	as_int(int as_int)
-{
-	return ((t_data){.as_int = as_int, .type = INT});
-}
-
-t_data	as_size_t(size_t as_size_t)
-{
-	return ((t_data){.as_size_t = as_size_t, .type = SIZE_T});
-}
-
-t_data	as_char(char as_char)
-{
-	return ((t_data){.as_char = as_char, .type = CHAR});
-}
-
-t_list	*push(t_list list[static 1], t_data data)
-{
-	struct s_list_node	*node;
-
-	node = ft_malloc(sizeof(*node));
-	ft_memmove(node, &data, sizeof(data));
-	if (list->len == 0)
-	{
-		list->first = node;
-		list->current = node;
-		list->last = node;
-	}
-	else
-	{
-		list->last->next = node;
-		list->first->prev = node;
-		if (list->first == list->current)
-			list->current->prev = node;
-	}
-	node->next = list->first;
-	node->prev = list->last;
-	list->last = node;
-	list->len++;
-	return (list);
-}
-
-/* void	destroy_simple_list(t_list list[static 1]) */
-/* { */
-	/* struct s_list_node	*head; */
-/*  */
-	/* if (list->first == NULL) */
-	/* { */
-		/* free(list); */
-		/* return ; */
-	/* } */
-	/* head = list->first->next; */
-	/* while (head != list->first) */
-	/* { */
-		/* head = head->next; */
-		/* if (head->prev->type == STR) */
-			/* free(head->prev->as_str); */
-		/* free(head->prev); */
-	/* } */
-	/* if (head->type == STR) */
-		/* free(head->as_str); */
-	/* free(head); */
-	/* free(list); */
-/* } */
-
-/* void	destroy_list(t_list list[static 1]) */
-/* { */
-	/* destroy_simple_list(list->current_stack); */
-	/* destroy_simple_list(list->current_idx_stack); */
-	/* destroy_simple_list(list); */
-/* } */
-
-t_list	*start_iterator(t_list list[static 1])
-{
-	(void)push(list->current_stack, as_ptr(list->current));
-	(void)push(list->current_idx_stack, as_size_t(list->current_idx));
-	if (list->first)
-		list->current = list->first->prev;
-	list->current_idx = (size_t)-1;
-	return (list);
-}
-
-t_list	*split(const char s[static 1], const char delim[static 2])
-{
-	t_list	*list;
-	int		token_start;
-	int		token_end;
-	size_t	delim_len;
-
-	delim_len = ft_strlen(delim);
-	list = new_list();
-	if (delim_len == 0)
-		return (list);
-	token_start = 0;
-	token_end = 0;
-	while (s[token_end])
-	{
-		if (!ft_strncmp(s + token_end, delim, delim_len))
-		{
-			(void)push(list, as_str(ft_strndup(s + token_start, (size_t)(token_end - token_start))));
-			token_end += delim_len;
-			token_start = token_end;
-			--token_end;
-		}
-		++token_end;
-	}
-	(void)push(list, as_str(ft_strndup(s + token_start, (size_t)(token_end - token_start))));
-	return (list);
-}
-
-t_list	*pop(t_list *list)
-{
-	list->last->prev->next = list->first;
-	list->first->prev = list->last->prev;
-	list->last = list->last->prev;
-	list->len--;
-	return (list);
-}
-
-t_list_node	*next(t_list list[static 1])
-{
-	if (list->current_idx == list->len - 1)
-	{
-		list->current = list->current_stack->last->as_ptr;
-		list->current_idx = list->current_idx_stack->last->as_size_t;
-		(void)pop(list->current_stack);
-		(void)pop(list->current_idx_stack);
-		return (NULL);
-	}
-	list->current = list->current->next;
-	list->current_idx++;
-	return (list->current);
-}
-
-t_list *last(t_list list[static 1])
-{
-	list->current = list->current_stack->last->as_ptr;
-	list->current_idx = list->current_idx_stack->last->as_size_t;
-	(void)pop(list->current_stack);
-	(void)pop(list->current_idx_stack);
-	return (list);
-}
-
-char	*get_next_line(int fd)
-{
-	ssize_t	bytes_read;
-	char	c;
-	t_list	*chars;
-	char	*str;
-
-	chars = new_list();
-	bytes_read = read(fd, &c, 1);
-	while (bytes_read)
-	{
-		if (c == '\n')
-			break ;
-		push(chars, as_char(c));
-		bytes_read = read(fd, &c, 1);
-	}
-	if (bytes_read == 0 && chars->len == 0)
-		return (NULL);
-	str = ft_malloc(sizeof(*str) * (chars->len + 1));
-	str[chars->len] = 0;
-	start_iterator(chars);
-	while (next(chars))
-		str[chars->current_idx] = chars->current->as_char;
-	return (str);
-}
-
 int	minishell_error(int exit_code, bool do_exit, const char *fmt, ...)
 {
 	va_list	ap;
@@ -272,158 +27,6 @@ int	minishell_error(int exit_code, bool do_exit, const char *fmt, ...)
 		exit(exit_code);
 	}
 	return (exit_code);
-}
-
-size_t	ft_count_all(
-	const char str[static 1],
-	const char pattern[static 1])
-{
-	size_t	pattern_len;
-	size_t	pattern_count;
-
-	pattern_len = ft_strlen(pattern);
-	pattern_count = 0;
-	while (*str)
-	{
-		if (!ft_strncmp(str, pattern, pattern_len))
-		{
-			pattern_count += 1;
-			str += pattern_len;
-			if (!pattern_len)
-				++str;
-		}
-		else
-			++str;
-	}
-	if (!pattern_len)
-		pattern_count += 1;
-	return (pattern_count);
-}
-
-char	*ft_replace(
-	const char str[static 1],
-	const char pattern[static 1],
-	const char replacement[static 1])
-{
-	size_t	pattern_len;
-	size_t	replacement_len;
-	size_t	str_idx;
-	size_t	new_str_idx;
-	bool	replaced;
-	char	*new_str;
-
-	pattern_len = ft_strlen(pattern);
-	replacement_len = ft_strlen(replacement);
-	if (ft_count_all(str, pattern) == 0)
-		return (ft_strdup(str));
-	new_str = ft_malloc(sizeof(*new_str) * (1 + ft_strlen(str)
-				+ (replacement_len - pattern_len)));
-	str_idx = 0;
-	new_str_idx = 0;
-	replaced = false;
-	while (str[str_idx])
-	{
-		if (!ft_strncmp(str + str_idx, pattern, pattern_len) && !replaced)
-		{
-			replaced = true;
-			ft_strlcpy(new_str + new_str_idx, replacement, replacement_len + 1);
-			str_idx += pattern_len;
-			new_str_idx += replacement_len;
-			if (!pattern_len)
-				new_str[new_str_idx++] = str[str_idx++];
-		}
-		else
-			new_str[new_str_idx++] = str[str_idx++];
-	}
-	if (!pattern_len && !replaced)
-	{
-		ft_strlcpy(new_str + new_str_idx, replacement, replacement_len + 1);
-		new_str_idx += replacement_len;
-	}
-	new_str[new_str_idx] = 0;
-	return (new_str);
-}
-
-char	*ft_replace_all(
-	const char str[static 1],
-	const char pattern[static 1],
-	const char replacement[static 1])
-{
-	size_t	pattern_len;
-	size_t	replacement_len;
-	size_t	str_idx;
-	size_t	new_str_idx;
-	char	*new_str;
-
-	pattern_len = ft_strlen(pattern);
-	replacement_len = ft_strlen(replacement);
-	new_str = ft_malloc(sizeof(*new_str) * (1 + ft_strlen(str)
-				+ (replacement_len - pattern_len) * ft_count_all(str, pattern)));
-	str_idx = 0;
-	new_str_idx = 0;
-	while (str[str_idx])
-	{
-		if (!ft_strncmp(str + str_idx, pattern, pattern_len))
-		{
-			ft_strlcpy(new_str + new_str_idx, replacement, replacement_len + 1);
-			str_idx += pattern_len;
-			new_str_idx += replacement_len;
-			if (!pattern_len)
-				new_str[new_str_idx++] = str[str_idx++];
-		}
-		else
-			new_str[new_str_idx++] = str[str_idx++];
-	}
-	if (!pattern_len)
-	{
-		ft_strlcpy(new_str + new_str_idx, replacement, replacement_len + 1);
-		new_str_idx += replacement_len;
-	}
-	new_str[new_str_idx] = 0;
-	return (new_str);
-}
-
-/* #define UNIQUE1 "\xbe \xd8 \x85 \x52 \xa3" */
-/* #define UNIQUE2 "\xa1 \x3f \x6f \x28 \x87" */
-#define UNIQUE1 "<START_UNIQUE>"
-#define UNIQUE2 "<END_UNIQUE>"
-char	*uniquize(const char *str)
-{
-	return (ft_strjoin(UNIQUE1, ft_strjoin(str, UNIQUE2)));
-}
-
-#include <fcntl.h>
-
-char	*ft_gethostname(void)
-{
-	int		fd;
-	char	*line;
-	size_t	len;
-
-	fd = open("/etc/hostname", O_RDONLY);
-	if (fd < 0)
-		return ("");
-	line = get_next_line(fd);
-	len = ft_strlen(line);
-	if (line[len - 1] == '\n')
-		line[len - 1] = 0;
-	close(fd);
-	get_next_line(fd);
-	if (line == NULL)
-		return ("");
-	return (line);
-}
-
-char	*ft_getcwd(void)
-{
-	char	*cwd;
-	char	*home_dir;
-
-	cwd = gc_add_str(getcwd(NULL, 0));
-	home_dir = env_lookup("HOME");
-	if (!ft_strncmp(home_dir, cwd, ft_strlen(home_dir)))
-		cwd = ft_replace(cwd, home_dir, "~");
-	return (cwd);
 }
 
 typedef struct s_str_pair
@@ -450,44 +53,6 @@ char	*expand_prompt(char *prompt_string)
 	while (di_next(di))
 		prompt_string = ft_replace_all(prompt_string, uniquize((*(t_str_pair *)di_get(di)->as_ptr).l), (*(t_str_pair *)di_get(di)->as_ptr).r);
 	return (prompt_string);
-}
-
-char	*set_var(char *key, char *value, bool export)
-{
-	static t_kv	*shell_vars[MAX_HT_SIZE];
-	char		*ret;
-
-	if (key == NULL && value == NULL)
-	{
-		ht_destroy(shell_vars);
-		return ("");
-	}
-	if (key == NULL)
-	{
-		ret = ((t_var *)ht_get(shell_vars, value).as_ptr)->value;
-		if (ret == NULL)
-			return ("");
-		return (ret);
-	}
-	set_allocator(malloc);
-	ht_set(shell_vars, key,
-		(t_type){.as_ptr = ft_memdup(&(t_var){
-			.export = export,
-			.readonly = false,
-			.value = ft_strdup(value)
-		}, sizeof(t_var))});
-	set_allocator(gc_malloc);
-	return (value);
-}
-
-char	*get_var(char *key)
-{
-	return (set_var(NULL, key, false));
-}
-
-void	clear_vars(void)
-{
-	set_var(NULL, NULL, false);
 }
 
 /* TODO: what if readline returns NULL? */
@@ -548,37 +113,54 @@ int	main2(int argc, char **argv, char **envp)
 	return (0);
 }
 
-char	*parse(char *line)
+
+
+t_tree	*parse(char *line)
 {
-	return (line);
+	t_list	tokens;
+	t_tree	tree;
+
+	tokens = tokenize(line);
+	tree = build_ast(tokens);
+	return (tree);
 }
 
-void	exec(char *cmd)
+void	exec(t_tree *tree)
 {
-	printf("cmd:<%s>\n", cmd);
+	print_tree_node(tree);
 }
 
 void	interpret_lines(t_list *lines)
 {
+	t_tree	*tree;
+
 	start_iterator(lines);
 	while (next(lines))
-		exec(parse(lines->current->as_str));
+	{
+		tree = parse(lines->current->as_str);
+		exec(tree);
+	}
 }
 
 /* read-eval-print-loop */
 void	repl(void)
 {
 	char	*input;
+	t_list	*lines;
 
 	while (true)
 	{
 		if (isatty(STDIN_FILENO))
-			input = gc_add_str(readline(">>> "));
+		{
+			input = readline(">>> ");
+			gc_add_str(input);
+		}
 		else
 			input = get_next_line(STDIN_FILENO);
 		if (input == NULL)
 			break ;
-		interpret_lines(split(input, "\n"));
+		lines = split(input, "\n");
+		interpret_lines(lines);
 	}
 }
 
@@ -588,8 +170,55 @@ void	finish(void)
 	gc_free();
 }
 
+/* TODO: make logic correct */
+void	set_pwd(void)
+{
+	char	*cwd;
+
+	cwd = get_var("PWD");
+	if (NULL != cwd)
+	{
+		cwd = getcwd(NULL, 0);
+		gc_add_str(cwd);
+	}
+	set_var("PWD", cwd, (t_flags){.exported = true});
+}
+/* On startup, bash sets the value of PWD to getcwd(2) when it is unset.
+ * However, when it is set already (through inheritance), then it is not
+ * updated until the next chdir(2) UNLESS the directory described by PWD
+ * does not exist, does not refer to the same inode number as the directory
+ * described by getcwd(2), in which case it is set to getcwd(2).
+ */
+
+void	set_oldpwd(void)
+{
+	char	*cwd;
+
+	cwd = get_var("PWD");
+	if (NULL != cwd)
+	{
+		set_var("OLDPWD", cwd, false);
+	}
+}
+
+void	inherit_environment(void)
+{
+}
+
+void	set_initial_shell_variables(void)
+{
+	char	*cwd;
+
+	inherit_environment();
+	set_var("?", "0", (t_flags){.exported = true, .hidden = true});
+	set_pwd();
+}
+
 void	init(void)
 {
+	set_allocator(gc_malloc);
+	gc_set_context("DEFAULT");
+	set_initial_shell_variables();
 }
 
 int	main(int argc, char *argv[], char *envp[])
@@ -597,7 +226,6 @@ int	main(int argc, char *argv[], char *envp[])
 	(void)argc;
 	(void)argv;
 	(void)envp;
-	set_allocator(gc_malloc);
 	init();
 	repl();
 	finish();

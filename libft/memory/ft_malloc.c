@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 07:51:00 by tosuman           #+#    #+#             */
-/*   Updated: 2024/05/10 04:12:43 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/05/11 17:13:22 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,11 +68,6 @@ t_deque	*gc_add(void *ptr)
 		ptrs = ft_malloc_deque_init();
 	ft_malloc_deque_push_ptr_right(ptrs, ptr);
 	return (ptrs);
-}
-
-char	*gc_add_str(void *ptr)
-{
-	return (gc_add(ptr)->head->prev->as_str);
 }
 
 /* TODO: fix this: calling gc_free more than once causes SIGSEGV */

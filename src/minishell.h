@@ -44,7 +44,7 @@
 # define STR_SIMPLE_COMMAND_TAIL   "SIMPLE_COMMAND_TAIL"
 # define STR_IO_REDIRECT           "IO_REDIRECT"
 # define STR_TOKEN                 "TOKEN"
-# define STR_AST_NODE_TYPE_UNKNOWN "AST_NODE_TYPE_UNKNOWN"
+# define STR_TREE_TYPE_UNKNOWN     "TREE_TYPE_UNKNOWN"
 
 # define NUM_NONTERMS 10
 # define NUM_TOKENS 11
@@ -53,6 +53,7 @@ typedef struct s_var
 {
 	bool	export;
 	bool	readonly;
+	bool	hidden;
 	char	*value;
 }	t_var;
 
@@ -85,10 +86,10 @@ typedef struct s_token
 	bool								is_last_subtoken;
 }										t_token;
 
-typedef t_ast_node						*t_children[];
+typedef t_tree						*t_children[];
 
 /* TOKEN is a TERMINAL, every other member is a NONTERMINAL */
-typedef enum e_ast_node_type
+typedef enum e_tree_type
 {
 	COMPLETE_COMMAND = 1,
 	COMPLETE_COMMAND_TAIL,
@@ -101,8 +102,8 @@ typedef enum e_ast_node_type
 	SIMPLE_COMMAND_TAIL,
 	IO_REDIRECT,
 	TOKEN,
-	AST_NODE_TYPE_UNKNOWN
-}										t_ast_node_type;
+	TREE_TYPE_UNKNOWN
+}										t_tree_type;
 
 typedef struct s_fds
 {
@@ -111,14 +112,14 @@ typedef struct s_fds
 	int	fd_err;
 }	t_fds;
 
-typedef struct s_ast_node				t_ast_node;
+typedef struct s_tree				t_tree;
 
-/* if t_ast_node.type == TOKEN, then t_ast_node.token shall be used */
-/* if t_ast_node.type != TOKEN, then t_ast_node.children
+/* if t_tree.type == TOKEN, then t_tree.token shall be used */
+/* if t_tree.type != TOKEN, then t_tree.children
  * shall be used */
-struct									s_ast_node
+struct									s_tree
 {
-	t_ast_node_type						type;
+	t_tree_type						type;
 	union
 	{
 		t_token							*token;
@@ -143,7 +144,7 @@ struct									s_ast_node
 
 typedef union u_types
 {
-	t_ast_node_type	t1;
+	t_tree_type	t1;
 	t_token_type	t2;
 	void			*as_ptr;
 	char			*as_str;
@@ -159,10 +160,10 @@ typedef struct s_kv
 
 void									setup_signals(void);
 t_deque									*tokenize(const char *line); /* static 1 ? */
-t_ast_node								*build_ast(t_deque *tokens);
-void									ast_print(t_ast_node *ast_node);
+t_tree								*build_ast(t_deque *tokens);
+void									tree_print(t_tree *tree);
 void									print_token(void *data, bool first);
-void									print_ast_node(void *data,
+void									print_tree(void *data,
 											bool first);
 const char								*token_type_to_string(
 											t_token_type type);
@@ -181,7 +182,7 @@ char									**get_env(void);
 char									*env_lookup(char *var);
 char									**set_argv(char **argv);
 char									**get_argv(void);
-unsigned char							execute(t_ast_node *ast_node);
+unsigned char							execute(t_tree *tree);
 void									glob_tokens(t_deque *tokens);
 t_type									ht_get(t_kv *ht[TABLE_SIZE],
 											char key[static 1]);
@@ -192,17 +193,17 @@ void									ht_print(t_kv ht[TABLE_SIZE],
 											void (print)(char k[static 1],
 												void *v));
 void									ht_destroy(t_kv *ht[TABLE_SIZE]);
-int										ms_execve(t_ast_node *command);
-const char								*ast_node_type_to_string(
-											t_ast_node_type type);
+int										ms_execve(t_tree *command);
+const char								*tree_type_to_string(
+											t_tree_type type);
 pid_t									execute_simple_command(
-											t_ast_node *simple_command,
+											t_tree *simple_command,
 											t_deque *commands);
 pid_t									execute_simple_command(
-											t_ast_node *simple_command,
+											t_tree *simple_command,
 											t_deque *commands);
-void									close_fds(t_ast_node *simple_command);
-void									set_fds(t_ast_node *simple_command);
+void									close_fds(t_tree *simple_command);
+void									set_fds(t_tree *simple_command);
 void									close_other_command_fds(
 											t_deque *commands);
 char									*set_var(char *key, char *value,

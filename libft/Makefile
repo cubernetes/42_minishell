@@ -6,7 +6,7 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:09:11 by tischmid          #+#    #+#              #
-#    Updated: 2024/05/10 04:04:37 by tischmid         ###   ########.fr        #
+#    Updated: 2024/05/11 06:55:34 by tischmid         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -99,6 +99,8 @@ SRC += ft_putnbr_fd.c
 SRC += ft_putstr_fd.c
 SRC += ft_putendl.c
 SRC += ft_putstr.c
+SRC += ft_putstr_n.c
+SRC += ft_putstr_n_clr.c
 SRC += ft_putnbr.c
 SRC += ft_putchar.c
 SRC += ft_putfmt.c

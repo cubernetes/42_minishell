@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 15:09:08 by tischmid          #+#    #+#             */
-/*   Updated: 2024/05/10 04:10:31 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/05/11 16:35:19 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,9 @@
 # define NIL_PTR_STR "(nil)"
 
 # define EMPTY_DEQUE "Empty deque.\n"
+
+#define UNIQUE1 "<START_UNIQUE>"
+#define UNIQUE2 "<END_UNIQUE>"
 
 /* forward declarations */
 typedef struct s_deque			t_deque;
@@ -149,6 +152,9 @@ int								ft_puthex(unsigned long nbr, int uppercase);
 int								ft_putnbr(int nb);
 int								ft_putchar(char c);
 int								ft_putstr(char *s);
+void							ft_putstr_n(const char *str, int n);
+void							ft_putstr_n_clr(const char *str, int n,
+									bool color);
 int								ft_putptr(void *ptr);
 int								ft_putptr_fd(void *ptr, int fd);
 int								ft_putfmt(const char **fmt, va_list ap);

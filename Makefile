@@ -6,7 +6,7 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:02:16 by tischmid          #+#    #+#              #
-#    Updated: 2024/05/10 04:18:01 by tischmid         ###   ########.fr        #
+#    Updated: 2024/05/11 07:00:12 by tischmid         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,14 +26,24 @@ LIBFT_          := $(patsubst lib%,%,$(patsubst %.a,%,$(LIBFT)))
 unexport _SRC
 _SRC           += minishell.c
 _SRC           += signals.c
-_SRC           += parsing.c
-_SRC           += tokenize.c
 _SRC           += expansion.c
 _SRC           += glob.c
 _SRC           += executor.c
 _SRC           += execve.c
 _SRC           += ht.c
 _SRC           += environment.c
+
+# Tokenization
+_SRC           += tokenize.c
+
+# Parsing
+_SRC           += productions.c
+_SRC           += printing.c
+_SRC           += new_tree_tokens.c
+_SRC           += helper.c
+_SRC           += hashtable.c
+_SRC           += example_trees.c
+_SRC           += build_ast.c
 
 # Builtins
 _SRC           += cd.c
@@ -44,7 +54,12 @@ _SRC           += export.c
 _SRC           += pwd.c
 _SRC           += unset.c
 
-vpath %.c src src/utils/ src/builtins/
+vpath %.c             \
+	src               \
+	src/parsing/      \
+	src/tokenization/ \
+	src/utils/        \
+	src/builtins/
 
 _OBJ           := $(_SRC:.c=.o)
 _HEADERS       := minishell.h
