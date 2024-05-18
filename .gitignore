@@ -18,3 +18,8 @@ libft/libft.a
 # compiledb
 .cache
 compile_commands.json
+
+
+# TODO: remove
+a.out
+test.c

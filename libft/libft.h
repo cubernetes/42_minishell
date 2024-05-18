@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 15:09:08 by tischmid          #+#    #+#             */
-/*   Updated: 2024/05/18 17:05:48 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/05/18 19:08:18 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,9 +167,6 @@ int								ft_vdprintf(int fd, const char *fmt,
 									va_list ap);
 int								ft_dprintf(int fd, const char *fmt, ...);
 void							*ft_print_memory(void *addr, size_t size);
-
-/* list */
-#include "./list/list.h"
 
 /* deque */
 t_deque_node					*deque_pop_right(t_deque *deque);

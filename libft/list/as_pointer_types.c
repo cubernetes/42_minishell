@@ -1,4 +1,4 @@
-#include "libft.h"
+#include "list.h"
 
 /** Return a data union initialized with the char* argument.
  *

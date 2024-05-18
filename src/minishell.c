@@ -78,6 +78,7 @@ char	*expand_prompt(char *prompt_string)
 /* TOOD: Not required: think about flexible array members? */
 /* TODO: Not required: implement shell variables */
 /* TODO: Implement ./minishell -c '' functionality */
+/* TODO: Use yoda conditions */
 int	main2(int argc, char **argv, char **envp)
 {
 	char			*line;

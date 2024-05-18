@@ -1,5 +1,5 @@
 #include "libft.h"
-#include "stdlib.h"
+#include "list.h"
 
 /** Free inherent resources of a simple list (allocated pointers are not freed).
  *

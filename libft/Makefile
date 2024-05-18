@@ -6,7 +6,7 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:09:11 by tischmid          #+#    #+#              #
-#    Updated: 2024/05/18 17:55:46 by tischmid         ###   ########.fr        #
+#    Updated: 2024/05/18 19:04:29 by tischmid         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,6 +20,7 @@ LN = /bin/ln -f
 NAME = libft.a
 OBJDIR = ./obj
 INCDIR = .
+LISTDIR = ./list
 
 # TODO: change -O0 to -03 and remove -g3
 # TODO: add back -Werror
@@ -27,7 +28,7 @@ CFLAGS = -O0 -g3 -fPIE -Wall -Wextra \
           -pedantic -Wconversion \
           -Wunreachable-code -Wshadow \
           -fdiagnostics-color=always
-CPPFLAGS = -I$(INCDIR)
+CPPFLAGS = -I$(INCDIR) -I$(LISTDIR)
 
 unexport SUBDIRS
 SUBDIRS += string
@@ -121,15 +122,27 @@ SRC += cmp_int_desc.c
 SRC += cmp_int_asc.c
 
 # list
+SRC += lswap.c
 SRC += lsplit.c
+SRC += lsort.c
+SRC += lrotate.c
+SRC += lpush_left.c
 SRC += lpush.c
+SRC += lprint.c
+SRC += lprint_rev.c
+SRC += lpop_left.c
 SRC += lpop.c
 SRC += lnext.c
+SRC += lprev.c
 SRC += lnew.c
 SRC += llast.c
 SRC += liter.c
+SRC += liter_rev.c
+SRC += lequal.c
 SRC += ldestroy.c
 SRC += lcopy.c
+SRC += deque_extend_right.c
+SRC += deque_extend_left.c
 SRC += as_pointer_types.c
 SRC += as_numeric_types.c
 SRC += as_data.c

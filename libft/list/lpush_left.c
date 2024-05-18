@@ -1,13 +1,13 @@
 #include "libft.h"
 #include "list.h"
 
-/** Push a data union to the end of a list.
+/** Push a data union to the beginning of a list ("prepend").
  *
- *  @param list: the list to push `data' to
- *  @param data: the data union to push to `list'
+ *  @param list: the list to prepend `data' to
+ *  @param data: the data union to prepend to `list'
  *  @returns: `list'
  */
-t_list	*lpush(t_list list[static 1], t_data data)
+t_list	*lpush_left(t_list list[static 1], t_data data)
 {
 	struct s_list_node	*node;
 
@@ -21,12 +21,13 @@ t_list	*lpush(t_list list[static 1], t_data data)
 	}
 	else
 	{
-		list->last->next = node;
 		list->first->prev = node;
+		list->last->next = node;
 	}
 	node->next = list->first;
 	node->prev = list->last;
-	list->last = node;
+	list->first = node;
 	list->len++;
 	return (list);
 }
+/* TODO: Test rigorously */

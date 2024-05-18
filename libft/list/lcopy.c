@@ -1,17 +1,10 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   lcopy.c                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/22 14:39:52 by tischmid          #+#    #+#             */
-/*   Updated: 2024/05/18 17:50:06 by tischmid         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
+#include "list.h"
 
-#include "libft.h"
-
+/** Return a shallow copy of a list
+ *
+ *  @param list: the list to create the shallow copy of
+ *  @returns: a shallow copy of `list'
+ */
 t_list	*lcopy(t_list *list)
 {
 	t_list	*new_list;

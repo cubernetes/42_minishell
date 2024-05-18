@@ -1,4 +1,5 @@
 #include "libft.h"
+#include "list.h"
 
 /** Split a string on a string delimiter and return a list.
  *

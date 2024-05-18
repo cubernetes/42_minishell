@@ -1,4 +1,4 @@
-#include "libft.h"
+#include "list.h"
 
 /** Remove the last element of a list.
  *
