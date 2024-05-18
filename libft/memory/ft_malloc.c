@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 07:51:00 by tosuman           #+#    #+#             */
-/*   Updated: 2024/05/11 17:13:22 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/05/18 17:05:06 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,18 +15,15 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-
-bool	dont_free(void *data)
-{
-	(void)data;
-	return (1);
-}
+#include <unistd.h>
 
 bool	ft_free(void *ptr)
 {
-	/* ft_printf("\033[32mFREE\033[m\n"); */
-	/* print_callstack(); */
-	free(ptr);
+	if (get_allocator() == malloc)
+		free(ptr);
+	else
+		ft_dprintf(STDERR_FILENO, "Warning, called ft_free(), but garbage "
+				"collection is active. Doing nothing.\n");
 	return (true);
 }
 
@@ -41,7 +38,7 @@ bool	gc_free(void)
 	di = di_begin(static_ptrs);
 	while (di_next(di))
 		*(void **)(di_get(di)->as_ptr) = NULL;
-	ft_malloc_deque_free(static_ptrs, dont_free);
+	ft_malloc_deque_free(static_ptrs, ft_free);
 	ft_malloc_deque_free(ptrs, ft_free);
 	return (true);
 }
@@ -76,8 +73,6 @@ void	*gc_malloc(size_t size)
 {
 	void	*ptr;
 
-	/* ft_printf("\033[31mMALLOC\033[m\n"); */
-	/* print_callstack(); */
 	ptr = malloc(size);
 	if (!ptr)
 	{

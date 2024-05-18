@@ -6,7 +6,7 @@
  *  @param delim: the string delimiter to split on (must be at least 1 char)
  *  @returns: a new list containing the elements of the split operation
  */
-t_list	*split(const char str[static 1], const char delim[static 2])
+t_list	*lsplit(const char str[static 1], const char delim[static 2])
 {
 	t_list	*list;
 	int		token_start;
@@ -14,7 +14,7 @@ t_list	*split(const char str[static 1], const char delim[static 2])
 	size_t	delim_len;
 
 	delim_len = ft_strlen(delim);
-	list = new_list();
+	list = lnew();
 	if (delim_len == 0)
 		return (list);
 	token_start = 0;
@@ -23,13 +23,13 @@ t_list	*split(const char str[static 1], const char delim[static 2])
 	{
 		if (!ft_strncmp(str + token_end, delim, delim_len))
 		{
-			(void)push(list, as_str(ft_strndup(str + token_start, (size_t)(token_end - token_start))));
+			(void)lpush(list, as_str(ft_strndup(str + token_start, (size_t)(token_end - token_start))));
 			token_end += delim_len;
 			token_start = token_end;
 			--token_end;
 		}
 		++token_end;
 	}
-	(void)push(list, as_str(ft_strndup(str + token_start, (size_t)(token_end - token_start))));
+	(void)lpush(list, as_str(ft_strndup(str + token_start, (size_t)(token_end - token_start))));
 	return (list);
 }

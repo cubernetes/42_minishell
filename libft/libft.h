@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 15:09:08 by tischmid          #+#    #+#             */
-/*   Updated: 2024/05/11 16:35:19 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/05/18 17:05:48 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,7 @@ void							*ft_memcpy(void *dest, void const *src,
 									size_t n);
 void							*ft_memdup(const void *src, size_t size);
 void							*ft_malloc(size_t size);
+bool							ft_free(void *ptr);
 t_deque							*gc_add(void *ptr);
 char							*gc_add_str(void *ptr);
 t_deque							*gc_set_null(void **ptr);
@@ -166,6 +167,9 @@ int								ft_vdprintf(int fd, const char *fmt,
 									va_list ap);
 int								ft_dprintf(int fd, const char *fmt, ...);
 void							*ft_print_memory(void *addr, size_t size);
+
+/* list */
+#include "./list/list.h"
 
 /* deque */
 t_deque_node					*deque_pop_right(t_deque *deque);

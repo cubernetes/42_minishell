@@ -70,4 +70,21 @@ typedef struct s_list
 	size_t			len;
 }	t_list;
 
+t_data		as_data(t_list_node *list_node);
+t_data		as_int(int as_int);
+t_data		as_size_t(size_t as_size_t);
+t_data		as_char(char as_char);
+t_data		as_str(char *as_str);
+t_data		as_ptr(void *as_ptr);
+t_data		as_list_node(t_list_node *as_list_node);
+t_list		*lcopy(t_list *list);
+void		ldestroy(t_list list[static 1]);
+t_list		*liter(t_list list[static 1]);
+t_list		*llast(t_list list[static 1]);
+t_list		*lnew(void);
+t_list_node	*lnext(t_list list[static 1]);
+t_list		*lpop(t_list *list);
+t_list		*lpush(t_list list[static 1], t_data data);
+t_list		*lsplit(const char str[static 1], const char delim[static 2]);
+
 #endif /* list.h */

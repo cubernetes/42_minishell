@@ -6,7 +6,7 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:09:11 by tischmid          #+#    #+#              #
-#    Updated: 2024/05/11 06:55:34 by tischmid         ###   ########.fr        #
+#    Updated: 2024/05/18 17:55:46 by tischmid         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -119,6 +119,20 @@ SRC += ft_abs.c
 SRC += ft_min.c
 SRC += cmp_int_desc.c
 SRC += cmp_int_asc.c
+
+# list
+SRC += lsplit.c
+SRC += lpush.c
+SRC += lpop.c
+SRC += lnext.c
+SRC += lnew.c
+SRC += llast.c
+SRC += liter.c
+SRC += ldestroy.c
+SRC += lcopy.c
+SRC += as_pointer_types.c
+SRC += as_numeric_types.c
+SRC += as_data.c
 
 # deque
 SRC += deque_init.c
