@@ -99,7 +99,7 @@ int	main(int argc, char **argv, char **envp)
 			break ;
 		add_history(line);
 		tokens = tokenize(line);
-		/* deque_print(tokens, print_token); */
+		lprint(tokens, print_token);
 		ast_root_node = build_ast(tokens);
 		/* ast_print(ast_root_node); */
 		set_var("?", ft_itoa(execute(ast_root_node)), (t_flags){0});

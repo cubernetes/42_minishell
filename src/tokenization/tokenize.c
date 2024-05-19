@@ -70,12 +70,12 @@ void	skip_whitespace(const char **line)
 		++(*line);
 }
 
-void	print_token(void *ptr, bool first)
+void	print_token(t_data data, bool first)
 {
 	t_token	*token;
 	char	*clr;
 
-	token = (t_token *)ptr;
+	token = data.as_token;
 	if (token->is_last_subtoken)
 		clr = "";
 	else
@@ -101,6 +101,7 @@ void	*new_token(char *str, t_token_type type, bool is_last_subtoken)
 	));
 }
 
+/* TODO: TODO: FIX PARSING BUG!!! */
 bool	push_token(const char **line, t_list *tokens, size_t token_len,
 	t_token_type type)
 {

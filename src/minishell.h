@@ -160,7 +160,7 @@ void									setup_signals(void);
 t_list									*tokenize(const char *line); /* static 1 ? */
 t_tree									*build_ast(t_list *tokens);
 void									tree_print(t_tree *tree);
-void									print_token(void *data, bool first);
+void									print_token(t_data data, bool first);
 void									print_tree_node(void *data, bool first);
 void									print_tree(void *data,
 											bool first);
