@@ -14,6 +14,7 @@ static int	event(void)
 static void	handle_sigint(int sig)
 {
 	(void)sig;
+	rl_replace_line("", 0);
 	rl_done = 1;
 }
 
