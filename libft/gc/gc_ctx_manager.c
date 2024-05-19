@@ -31,7 +31,7 @@ t_ctx_meta	gc_ctx_manager(t_method method, char *_ctx_name)
 	else if (method == DESTROY_CURRENT_CONTEXT)
 	{
 		ldestroy(ht_get(ctxs, ctx_name).as_list);
-		ht_set(ctxs, ctx_name, (t_data){0});
+		ht_unset(ctxs, ctx_name);
 	}
 	else if (method == DESTROY_ALL_CONTEXTS)
 	{

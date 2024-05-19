@@ -290,9 +290,7 @@ pid_t	execute_complete_command_wrapper(t_tree *complete_command,
 	close_other_command_fds(commands);
 	rtn = execute_complete_command(complete_command);
 	/* close_fds(complete_command); */ /* TODO: why doesn't this work? */
-	gc_free_all();
-	rl_clear_history();
-	/* clear_vars(); */
+	finish();
 	exit(rtn);
 }
 

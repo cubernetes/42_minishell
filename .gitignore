@@ -24,3 +24,6 @@ compile_commands.json
 a.out
 test.c
 test.txt
+
+# TODO: remove error cases
+# open_fds_input.txt

@@ -25,5 +25,5 @@ void	ht_unset(t_ht *ht[MAX_HT_SIZE], char key[static 1])
 		ht[idx] = kv->n;
 	else
 		prev->n = kv->n;
-	(ft_free(kv->k), kv->k = NULL, ft_free(kv), kv = NULL);
+	(ft_free(kv->k), kv->k = NULL, ft_free(kv));
 }

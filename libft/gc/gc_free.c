@@ -1,7 +1,6 @@
 #include "libft.h"
 
 #include <stdbool.h>
-#include <stdlib.h>
 
 bool	gc_free(char *ctx)
 {

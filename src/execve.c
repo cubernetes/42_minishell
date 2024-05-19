@@ -155,6 +155,6 @@ pid_t	execute_simple_command(t_tree *simple_command, t_list *commands)
 		return (close_fds(simple_command), pid);
 	(set_fds(simple_command), close_other_command_fds(commands));
 	execve(program, argv, get_env());
-	(gc_free_all(), rl_clear_history()/*, clear_vars() */);
+	finish();
 	return (minishell_error(EXECVE_ERR, false, "%s", strerror(errno)), -1);
 }

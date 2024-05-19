@@ -20,8 +20,7 @@ int	minishell_error(int exit_code, bool do_exit, const char *fmt, ...)
 	va_end(ap);
 	if (do_exit)
 	{
-		gc_free_all();
-		rl_clear_history();
+		finish();
 		exit(exit_code);
 	}
 	return (exit_code);
@@ -106,8 +105,7 @@ int	main(int argc, char **argv, char **envp)
 		set_var("?", ft_itoa(execute(ast_root_node)), (t_flags){0});
 		(void)gc_free("DEFAULT");
 	}
-	rl_clear_history();
-	(void)gc_free_all();
+	finish();
 	return (0);
 }
 /*
@@ -210,7 +208,7 @@ void	repl(void)
 void	finish(void)
 {
 	rl_clear_history();
-	gc_free_all();
+	(void)gc_free_all();
 }
 
 /* TODO: make logic correct */

@@ -14,11 +14,12 @@ void	ht_destroy(t_ht *ht[MAX_HT_SIZE], bool (*free_data)(t_data data))
 		kv = ht[i];
 		while (kv)
 		{
-			free(kv->k);
+			ft_free(kv->k);
+			kv->k = NULL;
 			free_data(kv->v);
 			prev = kv;
 			kv = kv->n;
-			free(prev);
+			ft_free(prev);
 		}
 	}
 }
