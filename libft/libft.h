@@ -26,9 +26,9 @@
 typedef struct s_list			t_list;
 typedef struct s_list_node		t_list_node;
 typedef struct s_token			t_token;
-typedef struct s_token_type		t_token_type;
+typedef int						t_token_type;
 typedef struct s_tree			t_tree;
-typedef struct s_tree_type		t_tree_type;
+typedef int						t_tree_type;
 typedef struct s_var			t_var;
 typedef struct s_literator		t_literator;
 typedef struct s_data			t_data;
@@ -45,6 +45,7 @@ enum e_type
 	TYPE_CHAR,
 	TYPE_STR,
 	TYPE_PTR,
+	TYPE_GC_PTR,
 	TYPE_LITERATOR,
 	TYPE_TOKEN,
 	TYPE_TOKEN_TYPE,
@@ -69,9 +70,9 @@ struct s_data
 		void			*as_ptr;
 		t_literator		*as_literator;
 		t_token			*as_token;
-		t_token_type	*as_token_type;
+		t_token_type	as_token_type;
 		t_tree			*as_tree;
-		t_tree_type		*as_tree_type;
+		t_tree_type		as_tree_type;
 		t_var			*as_var;
 	};
 };
@@ -95,9 +96,9 @@ struct s_list_node
 			void			*as_ptr;
 			t_literator		*as_literator;
 			t_token			*as_token;
-			t_token_type	*as_token_type;
+			t_token_type	as_token_type;
 			t_tree			*as_tree;
-			t_tree_type		*as_tree_type;
+			t_tree_type		as_tree_type;
 			t_var			*as_var;
 		};
 	};
@@ -248,21 +249,28 @@ int								ft_vdprintf(int fd, const char *fmt,
 int								ft_dprintf(int fd, const char *fmt, ...);
 void							*ft_print_memory(void *addr, size_t size);
 
-/* list */
+/* data constructors */
+t_data							as_data(t_list_node *list_node);
 t_data							as_int(int as_int);
 t_data							as_size_t(size_t as_size_t);
 t_data							as_char(char as_char);
-t_data							as_data(t_list_node *list_node);
+t_data							as_pid_t(pid_t as_pid_t);
+t_data							as_var(t_var *as_var);
+t_data							as_str(char *as_str);
+t_data							as_ptr(void *as_ptr);
+t_data							as_literator(t_literator *as_literator);
+t_data							as_token(t_token *as_token);
+t_data							as_tree(t_tree *as_tree);
+t_data							as_token_type(t_token_type as_token_type);
+t_data							as_tree_type(t_tree_type as_tree_type);
+t_data							as_gc_ptr(t_var *as_gc_ptr);
+
+/* list */
 t_list_node						*lbackward(t_list list[static 1]);
 void							lprint_rev(t_list *list,
 									void (print)(t_data data, bool first));
 void							ldestroy(t_list list[static 1]);
 void							lrotate(t_list *list, int n);
-t_data							as_str(char *as_str);
-t_data							as_ptr(void *as_ptr);
-t_data							as_literator(t_literator *as_literator);
-t_data							as_tree(t_tree *as_tree);
-t_data							as_token(t_token *as_token);
 t_list							*liter(t_list list[static 1]);
 t_list							*lcopy(t_list *list);
 t_list							*liter_rev(t_list list[static 1]);

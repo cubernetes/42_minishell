@@ -1,5 +1,5 @@
-#include "libft.h"
 #include "minishell.h"
+#include "libft.h"
 
 t_tree	gen_production(char *token_str)
 {

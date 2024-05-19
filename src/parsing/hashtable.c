@@ -1,22 +1,12 @@
-#include "libft.h"
 #include "minishell.h"
-
-t_type	as_token_type(t_token_type token_type)
-{
-	return ((t_type){.t2 = token_type});
-}
-
-t_type	as_tree_type(t_tree_type tree_type)
-{
-	return ((t_type){.t1 = tree_type});
-}
+#include "libft.h"
 
 t_tree_type	tree_ht_get(char *key)
 {
 	static t_ht	*ht[MAX_HT_SIZE + 1];
 
 	if (ht[MAX_HT_SIZE] != NULL)
-		return (ht_get(ht, key).t1);
+		return (ht_get(ht, key).as_tree_type);
 	gc_set_context("POST");
 	ft_bzero(ht, sizeof(*ht) * (MAX_HT_SIZE + 1));
 	ht_set(ht, "<pipe_sequence>", as_tree_type(PIPE_SEQUENCE));
@@ -39,7 +29,7 @@ t_tree_type	tree_ht_get(char *key)
 	ht_set(ht, "|", as_tree_type(TOKEN));
 	ht[MAX_HT_SIZE] = (void *)1;
 	gc_set_context("DEFAULT");
-	return (ht_get(ht, key).t1);
+	return (ht_get(ht, key).as_tree_type);
 }
 
 t_token_type	tokens_ht_get(char *key)
@@ -64,5 +54,5 @@ t_token_type	tokens_ht_get(char *key)
 		ht[MAX_HT_SIZE] = (void *)1;
 		gc_set_context("DEFAULT");
 	}
-	return (ht_get(ht, key).t2);
+	return (ht_get(ht, key).as_token_type);
 }

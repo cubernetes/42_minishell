@@ -9,6 +9,8 @@ bool	gc_free(const char *ctx)
 
 	(void)ctx;
 	ptrs = gc_add(NULL);
+	set_allocator(malloc);
 	ldestroy(ptrs);
+	set_allocator(gc_malloc);
 	return (true);
 }

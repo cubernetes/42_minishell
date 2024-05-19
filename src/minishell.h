@@ -1,10 +1,12 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H 1
 
+/************************** INCLUDES *************************/
 # include "libft.h"
 
 # include <stdbool.h>
 
+/************************** DEFINES *************************/
 # define PS0 "> "
 /* # define PS1 "\033[31m\\u@\\h:\\w\033[m\n❯ " */
 # define PS1 "\033[31m\\u\033[m@\033[94m\\h\033[m@\033[92mminishell\033[m [\033[32m\\w\033[m]\n> "
@@ -13,7 +15,6 @@
 
 # define IFS " \n\t"
 
-/* Exit codes */
 # define EXIT_COMMAND_NOT_FOUND 127
 
 # define STR_TOK_OVERRIDE   "TOK_OVERRIDE"
@@ -46,86 +47,89 @@
 # define STR_TOKEN                 "TOKEN"
 # define STR_TREE_TYPE_UNKNOWN     "TREE_TYPE_UNKNOWN"
 
+# define TOK_EOL        1
+# define TOK_AND        2
+# define TOK_OR         3
+# define TOK_PIPE       4
+# define TOK_L_PAREN    5
+# define TOK_R_PAREN    6
+# define TOK_WORD       7
+# define TOK_OVERRIDE   8
+# define TOK_APPEND     9
+# define TOK_INPUT      10
+# define TOK_HEREDOC    11
+# define TOK_EPSILON    12
+# define TOK_SQUOTE_STR 13
+# define TOK_DQUOTE_STR 14
+# define TOK_ERROR      15
+
+/* TOKEN is a TERMINAL, every other member is a NONTERMINAL */
+# define COMPLETE_COMMAND      1
+# define COMPLETE_COMMAND_TAIL 2
+# define AND_OR                3
+# define PIPE_SEQUENCE         4
+# define PIPE_SEQUENCE_TAIL    5
+# define COMMAND               6
+# define COMPOUND_COMMAND      7
+# define SIMPLE_COMMAND        8
+# define SIMPLE_COMMAND_TAIL   9
+# define IO_REDIRECT           10
+# define TOKEN                 11
+# define TREE_TYPE_UNKNOWN     12
+
 # define NUM_NONTERMS 10
 # define NUM_TOKENS 11
 
-typedef struct s_str_pair
+/********************* FORWARD DECLARATIONS *********************/
+typedef struct s_token		t_token;
+typedef int					t_token_type;
+typedef struct s_tree		t_tree;
+typedef int					t_tree_type;
+typedef struct s_fds		t_fds;
+typedef struct s_var		t_var;
+typedef struct s_flags		t_flags;
+typedef struct s_str_pair	t_str_pair;
+
+/*** other typedefs ***/
+typedef t_tree				*t_children[];
+typedef struct sigaction	t_sa;
+
+/************************** STRUCTURES *************************/
+
+struct s_str_pair
 {
 	char	*l;
 	char	*r;
-}			t_str_pair;
+};
 
-typedef struct s_flags
+struct s_flags
 {
 	bool	exp;
 	bool	hidden;
 	bool	readonly;
-}	t_flags;
+};
 
-typedef struct s_var
+struct s_var
 {
 	bool	exp;
 	bool	readonly;
 	bool	hidden;
 	char	*value;
-}	t_var;
+};
 
-typedef struct sigaction	t_sa;
-
-typedef enum e_token_type
-{
-	TOK_EOL = 1,
-	TOK_AND,
-	TOK_OR,
-	TOK_PIPE,
-	TOK_L_PAREN,
-	TOK_R_PAREN,
-	TOK_WORD,
-	TOK_OVERRIDE,
-	TOK_APPEND,
-	TOK_INPUT,
-	TOK_HEREDOC,
-	TOK_EPSILON,
-	TOK_SQUOTE_STR,
-	TOK_DQUOTE_STR,
-	TOK_ERROR
-}										t_token_type;
-
-typedef struct s_token					t_token;
-typedef struct s_token
+struct s_token
 {
 	t_token_type						type;
 	char								*str;
 	bool								is_last_subtoken;
-}										t_token;
+};
 
-typedef struct s_tree				t_tree;
-
-typedef t_tree						*t_children[];
-
-/* TOKEN is a TERMINAL, every other member is a NONTERMINAL */
-typedef enum e_tree_type
-{
-	COMPLETE_COMMAND = 1,
-	COMPLETE_COMMAND_TAIL,
-	AND_OR,
-	PIPE_SEQUENCE,
-	PIPE_SEQUENCE_TAIL,
-	COMMAND,
-	COMPOUND_COMMAND,
-	SIMPLE_COMMAND,
-	SIMPLE_COMMAND_TAIL,
-	IO_REDIRECT,
-	TOKEN,
-	TREE_TYPE_UNKNOWN
-}										t_tree_type;
-
-typedef struct s_fds
+struct s_fds
 {
 	int	fd_in;
 	int	fd_out;
 	int	fd_err;
-}	t_fds;
+};
 
 /* if t_tree.type == TOKEN, then t_tree.token shall be used */
 /* if t_tree.type != TOKEN, then t_tree.children
@@ -150,6 +154,8 @@ struct									s_tree
 	};
 };
 
+
+/************** PROTOTYPES ******************/
 void									setup_signals(void);
 t_list									*tokenize(const char *line); /* static 1 ? */
 t_tree									*build_ast(t_list *tokens);
@@ -177,15 +183,6 @@ char									**set_argv(char **argv);
 char									**get_argv(void);
 unsigned char							execute(t_tree *tree);
 void									glob_tokens(t_list *tokens);
-t_type									ht_get(t_ht *ht[MAX_HT_SIZE],
-											char key[static 1]);
-void									ht_set(t_ht *ht[MAX_HT_SIZE],
-											char key[static 1],
-											t_type value);
-void									ht_print(t_ht ht[MAX_HT_SIZE],
-											void (print)(char k[static 1],
-												void *v));
-void									ht_destroy(t_ht *ht[MAX_HT_SIZE]);
 int										ms_execve(t_tree *command);
 const char								*tree_type_to_string(
 											t_tree_type type);

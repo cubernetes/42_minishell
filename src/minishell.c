@@ -34,7 +34,7 @@ char	*expand_prompt(char *prompt_string)
 	replacements = lnew();
 	lpush(replacements, as_ptr(&(t_str_pair){"\\u", env_lookup("USER")}));
 	lpush(replacements, as_ptr(&(t_str_pair){"\\w", ft_getcwd()}));
-	lpush(replacements, as_ptr(&(t_str_pair){"\\W", string_list_to_deque(ft_split(ft_getcwd(), '/'), (void *(*)(char *))ft_strdup)->head->prev->as_str}));
+	lpush(replacements, as_ptr(&(t_str_pair){"\\W", lsplit(ft_getcwd(), "/")->last->as_str}));
 	lpush(replacements, as_ptr(&(t_str_pair){"\\h", ft_gethostname()}));
 	lpush(replacements, as_ptr(&(t_str_pair){"\\H", ft_split(ft_gethostname(), '.')[0]}));
 	liter(replacements);

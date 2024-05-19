@@ -6,7 +6,7 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:02:16 by tischmid          #+#    #+#              #
-#    Updated: 2024/05/19 06:50:38 by tischmid         ###   ########.fr        #
+#    Updated: 2024/05/19 11:30:21 by tischmid         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,12 +24,10 @@ LIBFT           := libft.a
 LIBFT_          := $(patsubst lib%,%,$(patsubst %.a,%,$(LIBFT)))
 
 unexport _SRC
-_SRC += ht.c
 _SRC += signals.c
-_SRC += shell_vars.c
+_SRC += ft_getcwd.c
+_SRC += ft_gethostname.c
 _SRC += expansion.c
-_SRC += glob.c
-_SRC += minishell.c
 _SRC += execve.c
 _SRC += tokenize.c
 _SRC += printing.c
@@ -40,22 +38,22 @@ _SRC += productions.c
 _SRC += example_trees.c
 _SRC += build_ast.c
 _SRC += executor.c
-_SRC += cd.c
+_SRC += shell_vars.c
+_SRC += glob.c
+_SRC += minishell.c
 _SRC += echo.c
-_SRC += env.c
-_SRC += exit.c
 _SRC += unset.c
 _SRC += export.c
 _SRC += pwd.c
+_SRC += env.c
+_SRC += exit.c
+_SRC += cd.c
 _SRC += environment.c
-_SRC += ft_gethostname.c
-_SRC += ft_getcwd.c
 
 vpath %.c             \
 	src               \
 	src/parsing/      \
 	src/tokenization/ \
-	src/utils/        \
 	src/builtins/     \
 	src/unistd/
 
@@ -69,6 +67,7 @@ SRC              := $(addprefix $(SRCDIR)/,$(_SRC))
 OBJ              := $(addprefix $(OBJDIR)/,$(_OBJ))
 MINISHELL_HEADER := $(addprefix $(SRCDIR)/,$(_HEADERS))
 
+# TODO: improve makefile
 # TODO: change -O0 to -O3 and remove -g3
 # TOOD: add back -Werror
 # TODO: add back std=c99 if possible
@@ -77,7 +76,9 @@ CFLAGS           := -O0 -g3 -fPIE -Wall -Wextra \
                     -Wunreachable-code -Wshadow \
                     -fdiagnostics-color=always
 CPPFLAGS         := -I$(LIBFT_DIR) -I$(SRCDIR)
-LDFLAGS          := -L$(LIBFT_DIR) -rdynamic
+
+# -rdynamic # for backtrace
+LDFLAGS          := -L$(LIBFT_DIR)
 LDLIBS           := -l$(LIBFT_) -lreadline
 
 all: libft $(NAME)

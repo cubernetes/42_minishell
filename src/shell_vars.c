@@ -27,7 +27,7 @@ char	*set_var(char *key, char value[static 1], t_flags flags)
 	}
 	gc_set_context("POST");
 	ht_set(shell_vars, key,
-		(t_type){.as_var = ft_memdup(&(t_var){
+		(t_data){.as_var = ft_memdup(&(t_var){
 			.exp = flags.exp,
 			.readonly = flags.readonly,
 			.hidden = flags.hidden,

@@ -18,12 +18,12 @@ static void	lsimple_destroy(t_list list[static 1])
 	while (head != list->first)
 	{
 		head = head->next;
-		if (head->prev->type == TYPE_STR)
-			ft_free(head->prev->as_str);
+		if (head->prev->type == TYPE_GC_PTR)
+			ft_free(head->prev->as_ptr);
 		ft_free(head->prev);
 	}
-	if (head->type == TYPE_STR)
-		ft_free(head->as_str);
+	if (head->type == TYPE_GC_PTR)
+		ft_free(head->as_ptr);
 	ft_free(head);
 	ft_free(list);
 }
