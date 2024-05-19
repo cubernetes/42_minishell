@@ -32,17 +32,21 @@ char	*expand_prompt(char *prompt_string)
 	t_list	*replacements;
 
 	replacements = lnew();
-	lpush(replacements, as_ptr(&(t_str_pair){"\\u", env_lookup("USER")}));
-	lpush(replacements, as_ptr(&(t_str_pair){"\\w", ft_getcwd()}));
-	lpush(replacements, as_ptr(&(t_str_pair){"\\W", lsplit(ft_getcwd(), "/")->last->as_str}));
-	lpush(replacements, as_ptr(&(t_str_pair){"\\h", ft_gethostname()}));
-	lpush(replacements, as_ptr(&(t_str_pair){"\\H", ft_split(ft_gethostname(), '.')[0]}));
+	lpush(replacements, as_str_pair(&(t_str_pair){"\\u", env_lookup("USER")}));
+	lpush(replacements, as_str_pair(&(t_str_pair){"\\w", ft_getcwd()}));
+	lpush(replacements, as_str_pair(&(t_str_pair){"\\W", lsplit(ft_getcwd(), "/")->last->as_str}));
+	lpush(replacements, as_str_pair(&(t_str_pair){"\\h", ft_gethostname()}));
+	lpush(replacements, as_str_pair(&(t_str_pair){"\\H", ft_split(ft_gethostname(), '.')[0]}));
 	liter(replacements);
 	while (lnext(replacements))
-		prompt_string = ft_replace_all(prompt_string, (*(t_str_pair *)replacements->current->as_ptr).l, uniquize((*(t_str_pair *)replacements->current->as_ptr).l));
+		prompt_string = ft_replace_all(prompt_string,
+				replacements->current->as_str_pair->l,
+				uniquize(replacements->current->as_str_pair->l));
 	liter(replacements);
 	while (lnext(replacements))
-		prompt_string = ft_replace_all(prompt_string, uniquize((*(t_str_pair *)replacements->current->as_ptr).l), (*(t_str_pair *)replacements->current->as_ptr).r);
+		prompt_string = ft_replace_all(prompt_string,
+				uniquize(replacements->current->as_str_pair->l),
+				replacements->current->as_str_pair->r);
 	return (prompt_string);
 }
 
@@ -102,12 +106,58 @@ int	main(int argc, char **argv, char **envp)
 		set_var("?", ft_itoa(execute(ast_root_node)), (t_flags){0});
 		(void)gc_free("DEFAULT");
 	}
-	/* clear_vars(); */
 	rl_clear_history();
 	(void)gc_free_all();
 	return (0);
 }
+/*
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+*/
 t_tree	*parse(char *line)
 {
 	t_list	*tokens;

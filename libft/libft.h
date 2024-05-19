@@ -33,6 +33,8 @@ typedef struct s_var			t_var;
 typedef struct s_literator		t_literator;
 typedef struct s_data			t_data;
 typedef struct s_ht				t_ht;
+typedef struct s_str_pair		t_str_pair;
+typedef struct s_ctx_meta		t_ctx_meta;
 
 /***************** ENUMS *****************/
 /** Comprehensive enumeration of data types, must match union members of t_data.
@@ -52,9 +54,28 @@ enum e_type
 	TYPE_TREE,
 	TYPE_TREE_TYPE,
 	TYPE_VAR,
+	TYPE_LIST,
+	TYPE_STR_PAIR,
 };
 
+enum						e_method
+{
+	GET_CONTEXT,
+	SET_CONTEXT,
+	DESTROY_CONTEXT,
+	DESTROY_CURRENT_CONTEXT,
+	DESTROY_ALL_CONTEXTS,
+};
+typedef enum e_method		t_method;
+
 /***************** STRUCTURES *****************/
+struct						s_ctx_meta
+{
+	t_ht					*(*ctxs)[MAX_HT_SIZE];
+	char					*ctx_name;
+	t_list					*ctx;
+};
+
 /** Data structure to be used with generic data structure implementations.
  */
 struct s_data
@@ -68,12 +89,15 @@ struct s_data
 		char			as_char;
 		char			*as_str;
 		void			*as_ptr;
+		void			*as_gc_ptr;
 		t_literator		*as_literator;
 		t_token			*as_token;
 		t_token_type	as_token_type;
 		t_tree			*as_tree;
 		t_tree_type		as_tree_type;
 		t_var			*as_var;
+		t_list			*as_list;
+		t_str_pair		*as_str_pair;
 	};
 };
 
@@ -94,12 +118,15 @@ struct s_list_node
 			char			as_char;
 			char			*as_str;
 			void			*as_ptr;
+			void			*as_gc_ptr;
 			t_literator		*as_literator;
 			t_token			*as_token;
 			t_token_type	as_token_type;
 			t_tree			*as_tree;
 			t_tree_type		as_tree_type;
 			t_var			*as_var;
+			t_list			*as_list;
+			t_str_pair		*as_str_pair;
 		};
 	};
 	t_list_node	*next;
@@ -151,17 +178,21 @@ void							*ft_memcpy(void *dest, void const *src,
 void							*ft_memdup(const void *src, size_t size);
 
 /* gc */
-void							*ft_malloc(size_t size);
+bool							dont_free(void *ptr);
 bool							ft_free(void *ptr);
-t_list							*gc_add(void *ptr);
-char							*gc_add_str(void *ptr);
-bool							gc_free(const char *ctx);
+bool							gc_free(char *ctx);
 bool							gc_free_all(void);
-void							gc_set_context(const char *ctx);
+char							*gc_add_str(void *ptr);
+t_list							*gc_add(void *ptr);
+t_list							*gc_get_context(void);
+char							*gc_get_context_name(void);
+t_list							*gc_set_context(char *new_ctx_name);
+t_ctx_meta						gc_ctx_manager(t_method method, char *_ctx_name);
+void							*ft_malloc(size_t size);
 void							*gc_malloc(size_t size);
+void							*(*get_allocator(void))(size_t size);
 void							*(*set_allocator(void *(*_allocator)
 										(size_t size)))(size_t size);
-void							*(*get_allocator(void))(size_t size);
 
 /* strings */
 int								ft_isalnum(int c);
@@ -264,12 +295,14 @@ t_data							as_tree(t_tree *as_tree);
 t_data							as_token_type(t_token_type as_token_type);
 t_data							as_tree_type(t_tree_type as_tree_type);
 t_data							as_gc_ptr(t_var *as_gc_ptr);
+t_data							as_list(t_list *as_list);
+t_data							as_str_pair(t_str_pair *as_str_pair);
 
 /* list */
 t_list_node						*lbackward(t_list list[static 1]);
 void							lprint_rev(t_list *list,
 									void (print)(t_data data, bool first));
-void							ldestroy(t_list list[static 1]);
+bool							ldestroy(t_list list[static 1]);
 void							lrotate(t_list *list, int n);
 t_list							*liter(t_list list[static 1]);
 t_list							*lcopy(t_list *list);
@@ -298,6 +331,8 @@ void							lprint(t_list *list,
 									/* int end, int step); */
 
 /* hashtable */
+void							ht_unset(t_ht *ht[MAX_HT_SIZE],
+									char key[static 1]);
 void							ht_set(t_ht *ht[MAX_HT_SIZE],
 									char key[static 1], t_data data);
 t_data							ht_get(t_ht *ht[MAX_HT_SIZE],

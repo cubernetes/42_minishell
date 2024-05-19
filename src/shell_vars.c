@@ -1,11 +1,18 @@
 #include "minishell.h"
 #include "libft.h"
 
+static char	*ft_nullable_strdup(const char *s)
+{
+	if (s == NULL)
+		return (NULL);
+	return (ft_strdup(s));
+}
+
 /** Set a shell variable or get it, depending on the parameters.
  *
  *  if `key' is not NULL:
  *   @param key: the variable name
- *   @param value: the variable value
+ *   @param value: the variable value (NULL means unset)
  *   @param exp: whether this variable should be inherited by child processes
  *   @returns: `value'
  *  if `key' is NULL:
@@ -13,10 +20,11 @@
  *   @returns: the variable value corresponding to `value';
  *             "" if the variable is unset
  */
-char	*set_var(char *key, char value[static 1], t_flags flags)
+char	*set_var(char *key, char *value, t_flags flags)
 {
 	static t_ht	*shell_vars[MAX_HT_SIZE];
 	char		*ret;
+	char		*prev_ctx;
 
 	if (key == NULL)
 	{
@@ -25,15 +33,18 @@ char	*set_var(char *key, char value[static 1], t_flags flags)
 			return ("");
 		return (ret);
 	}
+	if (value == NULL)
+		return (value);
+	prev_ctx = gc_get_context_name();
 	gc_set_context("POST");
 	ht_set(shell_vars, key,
 		(t_data){.as_var = ft_memdup(&(t_var){
 			.exp = flags.exp,
 			.readonly = flags.readonly,
 			.hidden = flags.hidden,
-			.value = ft_strdup(value)
+			.value = ft_nullable_strdup(value)
 		}, sizeof(t_var))});
-	gc_set_context("DEFAULT");
+	gc_set_context(prev_ctx);
 	return (value);
 }
 

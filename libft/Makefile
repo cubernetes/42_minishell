@@ -6,7 +6,7 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:09:11 by tischmid          #+#    #+#              #
-#    Updated: 2024/05/19 11:30:59 by tischmid         ###   ########.fr        #
+#    Updated: 2024/05/19 17:37:10 by tischmid         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -98,8 +98,11 @@ SRC += set_allocator.c
 SRC += get_allocator.c
 SRC += gc_set_context.c
 SRC += gc_malloc.c
+SRC += gc_get_context.c
+SRC += gc_get_context_name.c
 SRC += gc_free.c
 SRC += gc_free_all.c
+SRC += gc_ctx_manager.c
 SRC += gc_add_str.c
 SRC += gc_add.c
 SRC += ft_malloc.c
@@ -168,6 +171,7 @@ SRC += as_enum_types.c
 SRC += as_data.c
 
 # hashtable
+SRC += ht_unset.c
 SRC += ht_set.c
 SRC += ht_get.c
 SRC += ht_print.c

@@ -119,7 +119,7 @@ int	handle_builtin(char	**argv, t_fds fds)
 	else if (ft_strcmp(*argv, "echo") == 0)
 		return (builtin_echo(argv + 1, fds));
 	else if (ft_strcmp(*argv, "env") == 0)
-		return (builtin_env(get_env(), fds));
+		return (builtin_env(get_env(), fds, "", false));
 	else if (ft_strcmp(*argv, "exit") == 0)
 		return (builtin_exit(argv + 1, fds));
 	else if (ft_strcmp(*argv, "export") == 0)

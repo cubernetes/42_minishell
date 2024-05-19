@@ -5,14 +5,14 @@
  *
  *  @param list: the simple list to destroy
  */
-static void	lsimple_destroy(t_list list[static 1])
+static bool	lsimple_destroy(t_list list[static 1])
 {
 	struct s_list_node	*head;
 
 	if (list->first == NULL)
 	{
 		ft_free(list);
-		return ;
+		return (true);
 	}
 	head = list->first->next;
 	while (head != list->first)
@@ -26,14 +26,15 @@ static void	lsimple_destroy(t_list list[static 1])
 		ft_free(head->as_ptr);
 	ft_free(head);
 	ft_free(list);
+	return (true);
 }
 
 /** Free inherent resources of a list (allocated pointers are not freed).
  *
  *  @param list: the list to destroy
  */
-void	ldestroy(t_list list[static 1])
+bool	ldestroy(t_list list[static 1])
 {
-	lsimple_destroy(list->_iterator_stack);
-	lsimple_destroy(list);
+	return (lsimple_destroy(list->_iterator_stack)
+		&& lsimple_destroy(list));
 }

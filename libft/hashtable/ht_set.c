@@ -13,7 +13,7 @@ void	ht_set(t_ht *ht[MAX_HT_SIZE], char key[static 1], t_data value)
 		kv = kv->n;
 	if (kv != NULL)
 	{
-		if (kv->k != NULL && ft_strcmp(kv->k, key))
+		if (kv->k != NULL && !ft_strcmp(kv->k, key))
 		{
 			kv->v = value;
 			return ;
