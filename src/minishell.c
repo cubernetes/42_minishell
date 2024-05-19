@@ -94,7 +94,7 @@ int	main(int argc, char **argv, char **envp)
 		set_var("PS0", expand_prompt(PS0), (t_flags){0});
 		set_var("PS1", expand_prompt(PS1), (t_flags){0});
 		line = gc_add_str(readline(get_var("PS1")));
-		/* line = ft_strdup("echo hi"); */
+		/* line = ft_strdup("echo $WHATEVER"); */
 		if (!line)
 			break ;
 		add_history(line);

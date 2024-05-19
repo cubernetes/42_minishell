@@ -23,15 +23,15 @@ static char	*ft_nullable_strdup(const char *s)
 char	*set_var(char *key, char *value, t_flags flags)
 {
 	static t_ht	*shell_vars[MAX_HT_SIZE];
-	char		*ret;
+	t_var		*ret;
 	char		*prev_ctx;
 
 	if (key == NULL)
 	{
-		ret = ht_get(shell_vars, value).as_var->value;
+		ret = ht_get(shell_vars, value).as_var;
 		if (ret == NULL)
 			return ("");
-		return (ret);
+		return (ret->value);
 	}
 	if (value == NULL)
 		return (value);
