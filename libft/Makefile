@@ -6,7 +6,7 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:09:11 by tischmid          #+#    #+#              #
-#    Updated: 2024/05/18 19:04:29 by tischmid         ###   ########.fr        #
+#    Updated: 2024/05/19 07:01:12 by tischmid         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,7 +19,7 @@ LN = /bin/ln -f
 
 NAME = libft.a
 OBJDIR = ./obj
-INCDIR = .
+SRCDIR = .
 LISTDIR = ./list
 
 # TODO: change -O0 to -03 and remove -g3
@@ -28,7 +28,7 @@ CFLAGS = -O0 -g3 -fPIE -Wall -Wextra \
           -pedantic -Wconversion \
           -Wunreachable-code -Wshadow \
           -fdiagnostics-color=always
-CPPFLAGS = -I$(INCDIR) -I$(LISTDIR)
+CPPFLAGS = -I$(SRCDIR) -I$(LISTDIR)
 
 unexport SUBDIRS
 SUBDIRS += string
@@ -38,6 +38,7 @@ SUBDIRS += deque
 SUBDIRS += math
 SUBDIRS += io
 SUBDIRS += misc
+SUBDIRS += unistd
 
 vpath %.c $(SUBDIRS)
 unexport SRC
@@ -77,6 +78,10 @@ SRC += ft_striteri.c
 SRC += ft_strmapi.c
 SRC += ft_char_in_charset.c
 SRC += ft_isspace.c
+SRC += uniquize.c
+SRC += ft_count_all.c
+SRC += ft_replace.c
+SRC += ft_replace_all.c
 
 # memory
 SRC += ft_bzero.c
@@ -113,6 +118,7 @@ SRC += ft_putptr.c
 SRC += ft_printf.c
 SRC += ft_dprintf.c
 SRC += ft_print_memory.c
+SRC += get_next_line.c
 
 # math
 SRC += ft_max.c
@@ -128,21 +134,22 @@ SRC += lsort.c
 SRC += lrotate.c
 SRC += lpush_left.c
 SRC += lpush.c
-SRC += lprint.c
 SRC += lprint_rev.c
+SRC += lprint.c
 SRC += lpop_left.c
 SRC += lpop.c
 SRC += lnext.c
-SRC += lprev.c
 SRC += lnew.c
 SRC += llast.c
-SRC += liter.c
 SRC += liter_rev.c
+SRC += liter.c
+SRC += lforward.c
+SRC += lextend_left.c
+SRC += lextend.c
 SRC += lequal.c
 SRC += ldestroy.c
 SRC += lcopy.c
-SRC += deque_extend_right.c
-SRC += deque_extend_left.c
+SRC += lbackward.c
 SRC += as_pointer_types.c
 SRC += as_numeric_types.c
 SRC += as_data.c
@@ -179,7 +186,7 @@ OBJ = $(addprefix $(OBJDIR)/,$(_OBJ))
 
 unexport _DEPS
 _DEPS += libft.h
-INCLUDE = $(addprefix $(INCDIR)/,$(_DEPS))
+INCLUDE = $(addprefix $(SRCDIR)/,$(_DEPS))
 
 all: $(NAME)
 

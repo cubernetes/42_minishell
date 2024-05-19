@@ -1,4 +1,5 @@
 #include "minishell.h"
+#include "libft.h"
 
 #include <dirent.h>
 #include <stdio.h>
@@ -19,34 +20,34 @@ static bool	glob_match(const char *pattern, const char *str)
 	return (false);
 }
 
-static int	ft_strcmp2(const char *str1, const char *str2)
+static bool	ft_strcmp2(t_data str1, t_data str2)
 {
-	return (!ft_strcmp(str1, str2));
+	return ((bool)!ft_strcmp(str1.as_str, str2.as_str));
 }
 
-static t_deque	*glob_token(t_token *token)
+static t_list	*glob_token(t_token *token)
 {
 	DIR				*dirp;
 	struct dirent	*dp;
-	t_deque			*tokens;
+	t_list			*tokens;
 
-	tokens = deque_init();
+	tokens = lnew();
 	dirp = opendir(".");
 	if (!dirp)
-		return (deque_push_ptr_right(tokens, token), tokens);
+		return (lpush(tokens, as_token(token)), tokens);
 	dp = readdir(dirp);
 	while (dp != NULL)
 	{
 		if (ft_strncmp(dp->d_name, ".", 1)
 			&& glob_match(token->str, dp->d_name))
-			deque_push_ptr_right(tokens,
-				new_token(ft_strdup(dp->d_name), TOK_WORD, true));
+			lpush(tokens,
+				as_token(new_token(ft_strdup(dp->d_name), TOK_WORD, true)));
 		dp = readdir(dirp);
 	}
 	closedir(dirp);
-	if (tokens->size == 0)
-		deque_push_ptr_right(tokens, token);
-	deque_sort(tokens, (int (*)(void *, void *))ft_strcmp2);
+	if (tokens->len == 0)
+		lpush(tokens, as_token(token));
+	lsort(tokens, ft_strcmp2);
 	return (tokens);
 }
 
@@ -54,28 +55,28 @@ static t_deque	*glob_token(t_token *token)
 /* TODO: apply DRY */
 /* TODO: apply DRY in the deque/deque functions */
 /* TODO: expand .* to hidden files */
-void	glob_tokens(t_deque *tokens)
+void	glob_tokens(t_list *tokens)
 {
-	t_deque			*new_tokens;
-	t_deque_node	*head;
+	t_list		*new_tokens;
+	t_list_node	*first;
 
-	new_tokens = deque_init();
-	head = tokens->head;
-	if (head)
+	new_tokens = lnew();
+	first = tokens->first;
+	if (first)
 	{
-		if (head->as_token->type == TOK_WORD)
-			deque_extend_right(new_tokens, glob_token(head->as_token));
+		if (first->as_token->type == TOK_WORD)
+			lextend(new_tokens, glob_token(first->as_token));
 		else
-			deque_push_ptr_right(new_tokens, head->as_ptr);
-		while (head->next != tokens->head)
+			lpush(new_tokens, as_token(first->as_token));
+		while (first->next != tokens->first)
 		{
-			head = head->next;
-			if (head->as_token->type == TOK_WORD)
-				deque_extend_right(new_tokens, glob_token(head->as_token));
+			first = first->next;
+			if (first->as_token->type == TOK_WORD)
+				lextend(new_tokens, glob_token(first->as_token));
 			else
-				deque_push_ptr_right(new_tokens, head->as_ptr);
+				lpush(new_tokens, as_token(first->as_token));
 		}
 	}
-	tokens->head = new_tokens->head;
-	tokens->size = new_tokens->size;
+	tokens->first = new_tokens->first;
+	tokens->len = new_tokens->len;
 }

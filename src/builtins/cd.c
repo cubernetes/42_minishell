@@ -8,6 +8,8 @@ int	builtin_cd(char **argv, t_fds fds)
 {
 	char	*var;
 	int	status;
+
+	(void)fds;
 	var = getenv("HOME");
 	if (!var)
 		return (minishell_error(1, false, "cd: HOME not set"));

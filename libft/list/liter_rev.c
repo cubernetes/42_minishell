@@ -1,3 +1,4 @@
+#include "libft.h"
 #include "list.h"
 
 /** Start a new backwards-iterator on a list.
@@ -7,10 +8,18 @@
  */
 t_list	*liter_rev(t_list list[static 1])
 {
-	(void)lpush(list->current_stack, as_ptr(list->current));
-	(void)lpush(list->current_idx_stack, as_size_t(list->current_idx));
+	(void)lpush(list->_iterator_stack, as_literator(ft_memdup(&(t_literator){
+			.current = list->current,
+			.current_idx = list->_current_idx,
+			.method = list->_method
+		},
+		sizeof(t_literator)
+	)));
 	if (list->last)
 		list->current = list->last->next;
-	list->current_idx = (size_t)-1;
+	else
+		list->current = NULL;
+	list->_current_idx = (size_t)-1;
+	list->_method = lbackward;
 	return (list);
 }

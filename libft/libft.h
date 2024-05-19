@@ -6,12 +6,14 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 15:09:08 by tischmid          #+#    #+#             */
-/*   Updated: 2024/05/18 19:08:18 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/05/19 06:49:57 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef LIBFT_H
 # define LIBFT_H 1
+
+# include "list/list.h"
 
 # include <stdarg.h>
 # include <stddef.h>
@@ -26,8 +28,8 @@
 
 # define EMPTY_DEQUE "Empty deque.\n"
 
-#define UNIQUE1 "<START_UNIQUE>"
-#define UNIQUE2 "<END_UNIQUE>"
+# define UNIQUE1 "<START_UNIQUE>"
+# define UNIQUE2 "<END_UNIQUE>"
 
 /* forward declarations */
 typedef struct s_deque			t_deque;
@@ -130,6 +132,15 @@ char							*ft_strmapi(char const *s, char (f)(
 void							ft_striteri(char *s, void (f)(unsigned int,
 										char *));
 int								ft_char_in_charset(char c, char const *charset);
+char							*uniquize(const char str[static 1]);
+size_t							ft_count_all(const char str[static 1],
+									const char pattern[static 1]);
+char							*ft_replace(const char str[static 1],
+									const char pattern[static 1],
+									const char replacement[static 1]);
+char							*ft_replace_all(const char str[static 1],
+									const char pattern[static 1],
+									const char replacement[static 1]);
 
 /* math */
 bool							cmp_int_asc(int a, int b);
@@ -143,6 +154,7 @@ int								ft_max(int a, int b);
 int								ft_min(int a, int b);
 
 /* io */
+char							*get_next_line(int fd);
 int								ft_putendl_fd(char *s, int fd);
 int								ft_putnbr_fd(int nb, int fd);
 int								ft_putchar_fd(char c, int fd);

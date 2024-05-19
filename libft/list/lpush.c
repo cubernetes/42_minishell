@@ -7,7 +7,7 @@
  *  @param data: the data union to push to `list'
  *  @returns: `list'
  */
-t_list	*lpush(t_list list[static 1], t_data data)
+t_list	*lpush(t_list         list[static 1], t_data data)
 {
 	struct s_list_node	*node;
 

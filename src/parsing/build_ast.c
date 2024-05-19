@@ -6,36 +6,37 @@
 #include <stdbool.h>
 
 /* LL(1) parser */
-t_tree	*build_parse_tree(t_deque *tokens)
+t_tree	*build_parse_tree(t_list *tokens)
 {
 	t_tree	*tree;
 	t_tree	*tree_root;
-	t_deque		*stack;
+	t_list		*stack;
 	t_tree	*top;
-	t_deque		*children;
+	t_list		*children;
 
-	stack = deque_init();
-	deque_push_ptr_right(stack, production_to_child(\
-		(t_tree){COMPLETE_COMMAND, {0}, {{0}}}));
-	deque_push_ptr_right(stack, production_to_child(\
-		(t_tree){TOKEN, {.token = &(t_token){TOK_EOL, "", true}}, {{0}}}));
+	stack = lnew();
+	lpush(stack, as_tree(production_to_child(\
+		(t_tree){COMPLETE_COMMAND, {0}, {{0}}})));
+	lpush(stack, as_tree(production_to_child(\
+		(t_tree){TOKEN, {.token = &(t_token){TOK_EOL, "", true}}, {{0}}})));
 	tree = new_tree_nonterm(COMPLETE_COMMAND, NULL);
 	tree_root = tree;
 	while (1)
 	{
-		top = deque_pop_left(stack)->as_tree;
+		top = stack->first->as_tree;
+		lpop_left(stack);
 		if (top->type != TOKEN)
 		{
-			children = productions_to_children(get_production(top->type, tokens->head->as_token));
-			deque_extend_left(stack, deque_shallow_copy(children));
+			children = productions_to_children(get_production(top->type, tokens->first->as_token));
+			lextend_left(stack, lcopy(children));
 			tree->children = children;
-			tree = tree->children->head->as_tree;
+			tree = tree->children->first->as_tree;
 		}
 		else
 		{
 			if (top->token->type == TOK_EPSILON)
 			{
-				tree = stack->head->as_tree;
+				tree = stack->first->as_tree;
 				continue ;
 			}
 			else if (get_token_type(tokens) == TOK_EOL && top->token->type == TOK_EOL)
@@ -43,8 +44,8 @@ t_tree	*build_parse_tree(t_deque *tokens)
 			else if (get_token_type(tokens) == top->token->type)
 			{
 				tree->token->str = get_token_str(tokens);
-				tree = stack->head->as_tree;
-				deque_rotate(tokens, 1);
+				tree = stack->first->as_tree;
+				lrotate(tokens, 1);
 			}
 			else if (get_token_type(tokens) == TOK_EOL)
 				minishell_error(2, true,
@@ -59,20 +60,20 @@ t_tree	*build_parse_tree(t_deque *tokens)
 	return (tree_root);
 }
 
-t_deque	*build_tree_recursively(t_tree *tree)
+t_list	*build_tree_recursively(t_tree *tree)
 {
-	t_deque		*children;
-	t_tree	*head;
-	t_deque		*flat;
+	t_list	*children;
+	t_tree	*first;
+	t_list	*flat;
 
-	flat = deque_init();
+	flat = lnew();
 	if (tree->type == TOKEN)
 	{
 		if (tree->token->type != TOK_EPSILON
 			&& tree->token->type != TOK_PIPE
 			&& tree->token->type != TOK_L_PAREN
 			&& tree->token->type != TOK_R_PAREN)
-			deque_push_ptr_right(flat, tree);
+			lpush(flat, as_tree(tree));
 	}
 	else if (tree->type == IO_REDIRECT)
 		assert(false);
@@ -80,25 +81,27 @@ t_deque	*build_tree_recursively(t_tree *tree)
 		|| tree->type == PIPE_SEQUENCE
 		|| tree->type == SIMPLE_COMMAND)
 	{
-		deque_push_ptr_right(flat, tree);
+		lpush(flat, as_tree(tree));
 		children = tree->children;
-		tree->children = deque_init();
-		while (children->size > 0)
+		tree->children = lnew();
+		while (children->len > 0)
 		{
-			head = deque_pop_left(children)->as_tree;
-			if (head->type == IO_REDIRECT)
+			first = children->first->as_tree;
+			lpop_left(children);
+			if (first->type == IO_REDIRECT)
 			{
-				if (((t_tree *)head->children->head->as_tree)->token->type != TOK_EPSILON)
+				if (((t_tree *)first->children->first->as_tree)->token->type != TOK_EPSILON)
 				{
-					deque_push_ptr_right(tree->children, head);
-					head = deque_pop_left(children)->as_tree;
-					if (head->type != TOKEN)
+					lpush(tree->children, as_tree(first));
+					first = children->first->as_tree;
+					lpop_left(children);
+					if (first->type != TOKEN)
 						assert(false);
-					deque_push_ptr_right(((t_tree *)tree->children->head->prev->as_tree)->children, head);
+					lpush(((t_tree *)tree->children->first->prev->as_tree)->children, as_tree(first));
 				}
 			}
 			else
-				deque_extend_right(tree->children, build_tree_recursively(head));
+				lextend(tree->children, build_tree_recursively(first));
 		}
 	}
 	else if (tree->type == COMPLETE_COMMAND_TAIL
@@ -109,22 +112,24 @@ t_deque	*build_tree_recursively(t_tree *tree)
 		|| tree->type == AND_OR)
 	{
 		children = tree->children;
-		while (children->size > 0)
+		while (children->len > 0)
 		{
-			head = deque_pop_left(children)->as_tree;
-			if (head->type == IO_REDIRECT)
+			first = children->first->as_tree;
+			lpop_left(children);
+			if (first->type == IO_REDIRECT)
 			{
-				if (((t_tree *)head->children->head->as_tree)->token->type != TOK_EPSILON)
+				if (((t_tree *)first->children->first->as_tree)->token->type != TOK_EPSILON)
 				{
-					deque_push_ptr_right(flat, head);
-					head = deque_pop_left(children)->as_tree;
-					if (head->type != TOKEN)
+					lpush(flat, as_tree(first));
+					first = children->first->as_tree;
+					lpop_left(children);
+					if (first->type != TOKEN)
 						assert(false);
-					deque_push_ptr_right(((t_tree *)flat->head->prev->as_tree)->children, head);
+					lpush(((t_tree *)flat->first->prev->as_tree)->children, as_tree(first));
 				}
 			}
 			else
-				deque_extend_right(flat, build_tree_recursively(head));
+				lextend(flat, build_tree_recursively(first));
 		}
 	}
 	else
@@ -135,13 +140,16 @@ t_deque	*build_tree_recursively(t_tree *tree)
 	return (flat);
 }
 
-t_tree	*build_ast(t_deque *tokens)
+t_tree	*build_ast(t_list *tokens)
 {
 	t_tree	*parse_tree;
 	t_tree	*ast;
+	t_list	*tmp;
 
 	parse_tree = build_parse_tree(tokens);
-	ast = deque_pop_left(build_tree_recursively(parse_tree))->as_tree;
+	tmp = build_tree_recursively(parse_tree);
+	ast = tmp->first->as_tree;
+	lpop_left(tmp);
 	/* ast = return_example_ast(); */
 	ast->fd_in = -2;
 	ast->fd_out = -2;

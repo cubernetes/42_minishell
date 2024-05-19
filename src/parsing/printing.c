@@ -1,24 +1,24 @@
+#include "minishell.h"
+#include <stdbool.h>
 
 void	tree_print_with_depth(t_tree *tree, int n)
 {
-	t_di			*di;
-
 	ft_putstr_n_clr("|   ", n, true);
 	if (tree->type != TOKEN)
 	{
 		if (tree->type == SIMPLE_COMMAND)
 			ft_printf("- <%s> (%d children, in: %d, out: %d)\n",
 				tree_type_to_string(tree->type),
-				tree->children->size,
+				tree->children->len,
 				tree->fd_in,
 				tree->fd_out);
 		else
 			ft_printf("- <%s> (%d children)\n",
 				tree_type_to_string(tree->type),
-				tree->children->size);
-		di = di_begin(tree->children);
-		while (di_next(di))
-			tree_print_with_depth(di_get(di)->as_tree, n + 1);
+				tree->children->len);
+		liter(tree->children);
+		while (lnext(tree->children))
+			tree_print_with_depth(tree->children->current->as_tree, n + 1);
 	}
 	else
 		ft_printf("- %s (\033[31m%s\033[m)\n",

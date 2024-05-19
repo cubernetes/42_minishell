@@ -1,3 +1,5 @@
+#include "minishell.h"
+
 /* TODO: Not required: hashtable */
 const char	*tree_type_to_string(t_tree_type type)
 {
@@ -36,15 +38,15 @@ bool	tree_is_null(t_tree *tree)
 	return (false);
 }
 
-t_deque	*new_children(t_tree **children)
+t_list	*new_children(t_tree **children)
 {
-	t_deque	*new_children;
+	t_list	*new_children;
 	size_t	i;
 
 	i = 0;
-	new_children = deque_init();
+	new_children = lnew();
 	while (children[i])
-		deque_push_ptr_right(new_children, children[i++]);
+		lpush(new_children, as_tree(children[i++]));
 	return (new_children);
 }
 

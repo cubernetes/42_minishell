@@ -1,3 +1,5 @@
+#include "minishell.h"
+
 t_tree	*new_tree_token(t_token_type type, char *str)
 {
 	return (ft_memdup(\
@@ -16,7 +18,7 @@ t_tree	*new_tree_m_token(t_token_type type, const char *str)
 }
 
 /* children must be allocated on heap: Update, maybe outdated */
-t_tree	*new_tree_nonterm(t_tree_type type, t_deque *children)
+t_tree	*new_tree_nonterm(t_tree_type type, t_list *children)
 {
 	return (ft_memdup(\
 		&(t_tree){

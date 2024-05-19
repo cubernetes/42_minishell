@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 07:51:00 by tosuman           #+#    #+#             */
-/*   Updated: 2024/05/18 17:05:06 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/05/19 06:54:37 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,13 +17,14 @@
 #include <stdbool.h>
 #include <unistd.h>
 
+/* TODO: Reconsider warning in else branch */
 bool	ft_free(void *ptr)
 {
 	if (get_allocator() == malloc)
 		free(ptr);
-	else
-		ft_dprintf(STDERR_FILENO, "Warning, called ft_free(), but garbage "
-				"collection is active. Doing nothing.\n");
+	/* else */
+		/* ft_dprintf(STDERR_FILENO, "Warning, called ft_free(), but garbage " */
+				/* "collection is active. Doing nothing.\n"); */
 	return (true);
 }
 
@@ -65,6 +66,11 @@ t_deque	*gc_add(void *ptr)
 		ptrs = ft_malloc_deque_init();
 	ft_malloc_deque_push_ptr_right(ptrs, ptr);
 	return (ptrs);
+}
+
+char	*gc_add_str(void *ptr)
+{
+	return (gc_add(ptr)->head->prev->as_str);
 }
 
 /* TODO: fix this: calling gc_free more than once causes SIGSEGV */

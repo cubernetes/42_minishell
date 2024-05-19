@@ -1,6 +1,6 @@
 #include "list.h"
 
-/** Advance the iterator of a list.
+/** Advance the iterator of a list using the defined method.
  *
  *  @param list: the list to advance the iterator of
  *  @returns: the list node that the list's iterator points to after advancing;
@@ -8,15 +8,6 @@
  */
 t_list_node	*lnext(t_list list[static 1])
 {
-	if (list->current_idx == list->len - 1)
-	{
-		list->current = list->current_stack->last->as_ptr;
-		list->current_idx = list->current_idx_stack->last->as_size_t;
-		(void)lpop(list->current_stack);
-		(void)lpop(list->current_idx_stack);
-		return (NULL);
-	}
-	list->current = list->current->next;
-	list->current_idx++;
-	return (list->current);
+	return (list->_method(list));
 }
+/* TODO: Edge case? calling lnext when there was never any iterator */

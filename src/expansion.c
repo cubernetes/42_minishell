@@ -42,90 +42,84 @@ static size_t	expand_vars(t_token *token, char *var)
 	return (1);
 }
 
-static void	*new_word_token(char *str)
-{
-	return (new_token(str, TOK_WORD, true));
-}
-
 /* TODO: Not required: use full IFS instead of just the first char */
-static void	expand_word(t_deque *new_tokens, t_deque_node *head)
+static void	expand_word(t_list *new_tokens, t_list_node *first)
 {
 	t_token	*token;
 	char	*token_str;
-	t_deque	*new_toks;
+	t_list	*new_toks;
 
-	token = head->as_token;
+	token = first->as_token;
 	if (token->type != TOK_WORD)
 		return ;
 	token_str = token->str;
 	token->str = "";
 	while (*token_str)
 		token_str += expand_vars(token, token_str);
-	new_toks = string_list_to_deque(ft_split(token->str, IFS[0]), new_word_token);
-	deque_extend_right(new_tokens, new_toks);
+	new_toks = lsplit(token->str, ft_strndup(IFS, 1));
+	lextend(new_tokens, new_toks);
 	if (!token->is_last_subtoken)
-		new_tokens->head->prev->as_token->is_last_subtoken = false;
+		new_tokens->first->prev->as_token->is_last_subtoken = false;
 }
 
-static void	expand_dquote_str(t_deque *new_tokens, t_deque_node *head)
+static void	expand_dquote_str(t_list *new_tokens, t_list_node *first)
 {
 	t_token	*token;
 	char	*token_str;
 
-	token = head->as_token;
+	token = first->as_token;
 	if (token->type != TOK_DQUOTE_STR)
 		return ;
 	token_str = token->str;
 	token->str = "";
 	while (*token_str)
 		token_str += expand_vars(token, token_str);
-	deque_push_ptr_right(new_tokens, token);
+	lpush(new_tokens, as_token(token));
 }
 
-static void	expand(t_deque *new_tokens, t_deque_node *head)
+static void	expand(t_list *new_tokens, t_list_node *first)
 {
-	if (head->as_token->type == TOK_WORD)
-		expand_word(new_tokens, head);
-	else if (head->as_token->type == TOK_DQUOTE_STR)
-		expand_dquote_str(new_tokens, head);
+	if (first->as_token->type == TOK_WORD)
+		expand_word(new_tokens, first);
+	else if (first->as_token->type == TOK_DQUOTE_STR)
+		expand_dquote_str(new_tokens, first);
 	else
-		deque_push_ptr_right(new_tokens, head->as_ptr);
+		lpush(new_tokens, as_token(first->as_token));
 }
 
-void	expand_env_vars(t_deque *tokens)
+void	expand_env_vars(t_list *tokens)
 {
-	t_deque			*new_tokens;
-	t_di			*di;
+	t_list	*new_tokens;
 
-	new_tokens = deque_init();
-	di = di_begin(tokens);
-	while (di_next(di))
-		expand(new_tokens, di_get(di));
-	tokens->head = new_tokens->head;
-	tokens->size = new_tokens->size;
+	new_tokens = lnew();
+	liter(tokens);
+	while (lnext(tokens))
+		expand(new_tokens, tokens->current);
+	tokens->first = new_tokens->first;
+	tokens->len = new_tokens->len;
 }
 
-void	join_tokens(t_deque *tokens)
+void	join_tokens(t_list *tokens)
 {
-	t_deque_node	*head;
-	t_deque			*new_tokens;
-	t_token			*token;
-	t_token			*word_token;
+	t_list_node	*first;
+	t_list		*new_tokens;
+	t_token		*token;
+	t_token		*word_token;
 
-	new_tokens = deque_init();
-	head = tokens->head;
-	if (!head)
+	new_tokens = lnew();
+	first = tokens->first;
+	if (!first)
 		return ;
-	token = head->as_token;
+	token = first->as_token;
 	word_token = NULL;
 	if (token->is_last_subtoken)
-		deque_push_ptr_right(new_tokens, token);
+		lpush(new_tokens, as_token(token));
 	else
 		word_token = new_token(token->str, TOK_WORD, true);
-	while (head->next != tokens->head)
+	while (first->next != tokens->first)
 	{
-		head = head->next;
-		token = head->as_token;
+		first = first->next;
+		token = first->as_token;
 		if (!token->is_last_subtoken)
 		{
 			if (!word_token)
@@ -138,19 +132,19 @@ void	join_tokens(t_deque *tokens)
 			if (!word_token)
 				word_token = new_token("", TOK_WORD, true);
 			word_token->str = ft_strjoin(word_token->str, token->str);
-			deque_push_ptr_right(new_tokens, word_token);
+			lpush(new_tokens, as_token(word_token));
 			word_token = NULL;
 		}
 		else
 		{
 			if (word_token)
 			{
-				deque_push_ptr_right(new_tokens, word_token);
+				lpush(new_tokens, as_token(word_token));
 				word_token = NULL;
 			}
-			deque_push_ptr_right(new_tokens, token);
+			lpush(new_tokens, as_token(token));
 		}
 	}
-	tokens->head = new_tokens->head;
-	tokens->size = new_tokens->size;
+	tokens->first = new_tokens->first;
+	tokens->len = new_tokens->len;
 }

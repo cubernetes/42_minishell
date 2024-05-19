@@ -16,7 +16,7 @@
 #define EXECVE_ERR 3
 #define FORK_ERROR 4
 
-void	close_fds(t_ast_node *simple_command)
+void	close_fds(t_tree *simple_command)
 {
 	int	in;
 	int	out;
@@ -34,7 +34,7 @@ void	close_fds(t_ast_node *simple_command)
 }
 
 /* TODO: Replace magic number -2 with something like FD_UNINITIALIZED, ...*/
-void	set_fds(t_ast_node *simple_command)
+void	set_fds(t_tree *simple_command)
 {
 	int	in;
 	int	out;
@@ -72,34 +72,31 @@ static char	*search_executable(char *program, char **path_parts)
 	return (executable_path);
 }
 
-static char	**make_argv(t_ast_node *simple_command)
+static char	**make_argv(t_tree *simple_command)
 {
-	t_di	*di;
 	char	**argv;
-	t_deque	*d_argv;
+	t_list	*d_argv;
 	int		i;
 
-	d_argv = deque_init();
-	di = di_begin(simple_command->children);
-	while (di_next(di))
-		if (di_get(di)->as_ast_node->type == TOKEN)
-			deque_push_ptr_right(d_argv, di_get(di)->as_ast_node->token->str);
-	argv = ft_malloc(sizeof(*argv) * (d_argv->size + 1));
+	d_argv = lnew();
+	liter(simple_command->children);
+	while (lnext(simple_command->children))
+		if (simple_command->children->current->as_tree->type == TOKEN)
+			lpush(d_argv, as_str(simple_command->children->current->as_tree->token->str));
+	argv = ft_malloc(sizeof(*argv) * (d_argv->len + 1));
 	i = 0;
-	di = di_begin(d_argv);
-	while (di_next(di))
-		argv[i++] = di_get(di)->as_str;
+	liter(d_argv);
+	while (lnext(d_argv))
+		argv[i++] = d_argv->current->as_str;
 	argv[i] = NULL;
 	return (argv);
 }
 
-void	close_other_command_fds(t_deque *commands)
+void	close_other_command_fds(t_list *commands)
 {
-	t_di	*di;
-
-	di = di_begin(commands);
-	while (di_next(di))
-		close_fds(di_get(di)->as_ast_node);
+	liter(commands);
+	while (lnext(commands))
+		close_fds(commands->current->as_tree);
 }
 
 bool	is_builtin(char	*word)
@@ -136,7 +133,7 @@ int	handle_builtin(char	**argv, t_fds fds)
 
 
 /* TODO: Protect all system calls (dup2, fork, close, open, execve, ...) */
-pid_t	execute_simple_command(t_ast_node *simple_command, t_deque *commands)
+pid_t	execute_simple_command(t_tree *simple_command, t_list *commands)
 {
 	pid_t	pid;
 	char	**path_parts;
@@ -158,6 +155,6 @@ pid_t	execute_simple_command(t_ast_node *simple_command, t_deque *commands)
 		return (close_fds(simple_command), pid);
 	(set_fds(simple_command), close_other_command_fds(commands));
 	execve(program, argv, get_env());
-	(gc_free(), rl_clear_history(), clear_vars());
+	(gc_free(), rl_clear_history()/*, clear_vars() */);
 	return (minishell_error(EXECVE_ERR, false, "%s", strerror(errno)), -1);
 }

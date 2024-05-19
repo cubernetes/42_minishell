@@ -18,11 +18,11 @@ static void	lsimple_destroy(t_list list[static 1])
 	while (head != list->first)
 	{
 		head = head->next;
-		if (head->prev->type == STR)
+		if (head->prev->type == TYPE_STR)
 			ft_free(head->prev->as_str);
 		ft_free(head->prev);
 	}
-	if (head->type == STR)
+	if (head->type == TYPE_STR)
 		ft_free(head->as_str);
 	ft_free(head);
 	ft_free(list);
@@ -34,7 +34,6 @@ static void	lsimple_destroy(t_list list[static 1])
  */
 void	ldestroy(t_list list[static 1])
 {
-	lsimple_destroy(list->current_stack);
-	lsimple_destroy(list->current_idx_stack);
+	lsimple_destroy(list->_iterator_stack);
 	lsimple_destroy(list);
 }

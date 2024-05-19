@@ -1,4 +1,7 @@
+#include "minishell.h"
 #include "libft.h"
+
+#include <unistd.h>
 
 /** Return the current working directory, replacing the home directory
  *  (determined from the HOME environment variable) with a tilde ("~").

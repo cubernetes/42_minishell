@@ -1,3 +1,5 @@
+#include "minishell.h"
+
 t_tree	*return_example_parse_tree(void)
 {
 	return (\

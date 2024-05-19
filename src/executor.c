@@ -14,12 +14,12 @@
 #include <stdbool.h>
 
 /* TODO: implement heredoc redirection*/
-/* bool redirect_heredoc(t_ddeque *heredoc, t_ast_node *simple_command)
+/* bool redirect_heredoc(t_ddeque *heredoc, t_tree *simple_command)
 {
 	return (true);
 } */
 
-bool	handle_redirect_input(char *file_path, t_ast_node *simple_command)
+bool	handle_redirect_input(char *file_path, t_tree *simple_command)
 {
 	int	fd;
 	int	sc_fd_in;
@@ -37,7 +37,7 @@ bool	handle_redirect_input(char *file_path, t_ast_node *simple_command)
 	}
 }
 
-bool	handle_redirect_append(char *file_path, t_ast_node *simple_command)
+bool	handle_redirect_append(char *file_path, t_tree *simple_command)
 {
 	int		fd;
 	int		sc_fd_out;
@@ -55,7 +55,7 @@ bool	handle_redirect_append(char *file_path, t_ast_node *simple_command)
 	}
 }
 
-bool	handle_redirect_override(char *file_path, t_ast_node *simple_command)
+bool	handle_redirect_override(char *file_path, t_tree *simple_command)
 {
 	int		fd;
 	int		sc_fd_out;
@@ -73,14 +73,14 @@ bool	handle_redirect_override(char *file_path, t_ast_node *simple_command)
 	}
 }
 
-void	handle_io_redirect(t_ast_node *io_redirect, t_ast_node *simple_command)
+void	handle_io_redirect(t_tree *io_redirect, t_tree *simple_command)
 {
 	bool			err;
 	char			*file_path;
 	t_token_type	type;
 
-	type = io_redirect->children->head->as_ast_node->token->type;
-	file_path = io_redirect->children->head->next->as_ast_node->token->str;
+	type = io_redirect->children->first->as_tree->token->type;
+	file_path = io_redirect->children->first->next->as_tree->token->str;
 	if (type == TOK_OVERRIDE)
 		err = handle_redirect_override(file_path, simple_command);
 	else if (type == TOK_INPUT)
@@ -96,15 +96,13 @@ void	handle_io_redirect(t_ast_node *io_redirect, t_ast_node *simple_command)
 			"redirect error: %s", strerror(errno));
 }
 
-pid_t	execute_simple_command_wrapper(t_ast_node *simple_command,
-	t_deque *commands)
+pid_t	execute_simple_command_wrapper(t_tree *simple_command,
+	t_list *commands)
 {
-	t_di	*di;
-
-	di = di_begin(simple_command->children);
-	while (di_next(di))
-		if (di_get(di)->as_ast_node->type == IO_REDIRECT)
-			handle_io_redirect(di_get(di)->as_ast_node, simple_command);
+	liter(simple_command->children);
+	while (lnext(simple_command->children))
+		if (simple_command->children->current->as_tree->type == IO_REDIRECT)
+			handle_io_redirect(simple_command->children->current->as_tree, simple_command);
 	return (execute_simple_command(simple_command, commands));
 }
 
@@ -121,24 +119,23 @@ void	print_pid(void *ptr, bool first)
 
 /* TODO: Not required: think about set -o pipefail */
 /* return last status */
-unsigned char	wait_pipesequence(t_deque *pids)
+unsigned char	wait_pipesequence(t_list *pids)
 {
-	t_di	*di;
 	int		rtn;
 	int		status;
 
-	di = di_begin(pids);
-	while (di_next(di))
+	liter(pids);
+	while (lnext(pids))
 	{
-		if (*(pid_t *)di_get(di)->as_ptr < 0)
+		if (*(pid_t *)pids->current->as_ptr < 0)
 		{
-			if (*(pid_t *)di_get(di)->as_ptr == -1)
+			if (*(pid_t *)pids->current->as_ptr == -1)
 				status = 127;
-			else if (*(int *)di_get(di)->as_ptr < -255)
-				status = *(int *)di_get(di)->as_ptr + 256;
+			else if (*(int *)pids->current->as_ptr < -255)
+				status = *(int *)pids->current->as_ptr + 256;
 			continue ;
 		}
-		rtn = waitpid(*(pid_t *)di_get(di)->as_ptr, &status, 0);
+		rtn = waitpid(*(pid_t *)pids->current->as_ptr, &status, 0);
 		if (rtn == -1)
 			minishell_error(EXIT_WAIT_ERROR, false, "wait error: %d",
 				strerror(errno));
@@ -153,66 +150,64 @@ unsigned char	wait_pipesequence(t_deque *pids)
 	return ((unsigned char)status);
 }
 
-void	setup_pipes(t_deque *commands)
+void	setup_pipes(t_list *commands)
 {
-	t_di		*di;
-	t_ast_node	*prev;
+	t_tree	*prev;
 	int			fds[2];
 
-	di = di_begin(commands);
+	liter(commands);
 	prev = NULL;
-	while (di_next(di))
+	while (lnext(commands))
 	{
-		di_get(di)->as_ast_node->fd_in = -2;
-		di_get(di)->as_ast_node->fd_out = -2;
-		di_get(di)->as_ast_node->fd_err = -2;
+		commands->current->as_tree->fd_in = -2;
+		commands->current->as_tree->fd_out = -2;
+		commands->current->as_tree->fd_err = -2;
 		if (prev == NULL)
 		{
-			prev = di_get(di)->as_ast_node;
+			prev = commands->current->as_tree;
 			continue ;
 		}
 		pipe(fds);
 		if (prev->fd_out != -2)
 			close(prev->fd_out);
-		if (di_get(di)->as_ast_node->fd_in != -2)
-			close(di_get(di)->as_ast_node->fd_in);
+		if (commands->current->as_tree->fd_in != -2)
+			close(commands->current->as_tree->fd_in);
 		prev->fd_out = fds[1];
-		di_get(di)->as_ast_node->fd_in = fds[0];
-		prev = di_get(di)->as_ast_node;
+		commands->current->as_tree->fd_in = fds[0];
+		prev = commands->current->as_tree;
 	}
 }
 
-pid_t	execute_complete_command_wrapper(t_ast_node *complete_command,
-	t_deque *commands);
+pid_t	execute_complete_command_wrapper(t_tree *complete_command,
+	t_list *commands);
 
 /* TODO: implement COMPLETE_COMMAND execution */
-unsigned char	iterate_pipe_sequence(t_deque *commands)
+unsigned char	iterate_pipe_sequence(t_list *commands)
 {
-	t_di			*di;
 	unsigned char	status;
-	t_deque			*pids;
+	t_list			*pids;
 
 	setup_pipes(commands);
-	pids = deque_init();
-	di = di_begin(commands);
-	while (di_next(di))
+	pids = lnew();
+	liter(commands);
+	while (lnext(commands))
 	{
-		if (di_get(di)->as_ast_node->type == COMPLETE_COMMAND)
-			deque_push_ptr_right(pids, ft_memdup(&(pid_t){\
-					execute_complete_command_wrapper(di_get(di)->as_ast_node, commands)},
-					sizeof(pid_t)));
-		else if (di_get(di)->as_ast_node->type == SIMPLE_COMMAND)
+		if (commands->current->as_tree->type == COMPLETE_COMMAND)
+			lpush(pids, as_ptr(ft_memdup(&(pid_t){\
+					execute_complete_command_wrapper(commands->current->as_tree, commands)},
+					sizeof(pid_t))));
+		else if (commands->current->as_tree->type == SIMPLE_COMMAND)
 		{
-			deque_push_ptr_right(pids, ft_memdup(&(pid_t){\
-				execute_simple_command_wrapper(di_get(di)->as_ast_node, commands)},
-					sizeof(pid_t)));
+			lpush(pids, as_ptr(ft_memdup(&(pid_t){\
+				execute_simple_command_wrapper(commands->current->as_tree, commands)},
+					sizeof(pid_t))));
 		}
 	}
 	status = wait_pipesequence(pids);
 	return (status);
 }
 
-unsigned char	execute_pipe_sequence(t_deque *pipe_sequence)
+unsigned char	execute_pipe_sequence(t_list *pipe_sequence)
 {
 	unsigned char	rtn;
 	/* TODO: set only onetime for unset PATH */
@@ -220,56 +215,58 @@ unsigned char	execute_pipe_sequence(t_deque *pipe_sequence)
 	return (rtn);
 }
 
-unsigned char	execute_tok_and(t_deque_node *tok_and)
+unsigned char	execute_tok_and(t_list_node *tok_and)
 {
-	t_ast_node	*left;
+	t_tree	*left;
 
-	left = tok_and->prev->as_ast_node;
+	left = tok_and->prev->as_tree;
 	return (execute_pipe_sequence(left->children));
 }
 
-unsigned char	execute_tok_or(t_deque_node *tok_or)
+unsigned char	execute_tok_or(t_list_node *tok_or)
 {
-	t_ast_node	*left;
+	t_tree	*left;
 
-	left = tok_or->prev->as_ast_node;
+	left = tok_or->prev->as_tree;
 	return (execute_pipe_sequence(left->children));
 }
 
 /* return value for TOK_AND & TOK_OR to see if command was succesfully executed */
-unsigned char	execute_complete_command(t_ast_node *ast_node)
+unsigned char	execute_complete_command(t_tree *node)
 {
 	unsigned char	rtn;
 	bool			first;
-	t_di			*di;
+	t_list			*chldn;
 
 	first = true;
 	rtn = 0;
-	di = di_begin(ast_node->children);
-	while (di_next(di))
+	chldn = liter(node->children);
+	while (lnext(chldn))
 	{
-		if (di_get(di)->as_ast_node->type == PIPE_SEQUENCE
-			&& di_get(di)->next->as_ast_node->type != TOKEN)
-			rtn = execute_pipe_sequence(di_get(di)->as_ast_node->children);
-		else if (di_get(di)->as_ast_node->type == TOKEN)
+		if (chldn->current->as_tree->type == PIPE_SEQUENCE
+			&& chldn->current->next->as_tree->type != TOKEN)
+			rtn = execute_pipe_sequence(chldn->current->as_tree->children);
+		else if (chldn->current->as_tree->type == TOKEN)
 		{
-			if (di_get(di)->as_ast_node->token->type == TOK_AND)
+			if (chldn->current->as_tree->token->type == TOK_AND)
 			{
 				if (first)
-					rtn = execute_tok_and(di_get(di));
+					rtn = execute_tok_and(chldn->current);
 				first = false;
 				if (rtn == 0)
-					rtn = execute_pipe_sequence(di_get(di)->next->as_ast_node->children);
-				di_next(di);
+					rtn = execute_pipe_sequence(chldn->current->next->as_tree->children);
+				if (lnext(chldn) == NULL)
+					break ;
 			}
-			else if (di_get(di)->as_ast_node->token->type == TOK_OR)
+			else if (chldn->current->as_tree->token->type == TOK_OR)
 			{
 				if (first)
-					rtn = execute_tok_or(di_get(di));
+					rtn = execute_tok_or(chldn->current);
 				first = false;
 				if (rtn != 0)
-					rtn = execute_pipe_sequence(di_get(di)->next->as_ast_node->children);
-				di_next(di);
+					rtn = execute_pipe_sequence(chldn->current->next->as_tree->children);
+				if (lnext(chldn) == NULL)
+					break ;
 			}
 		}
 	}
@@ -278,8 +275,8 @@ unsigned char	execute_complete_command(t_ast_node *ast_node)
 
 #define EXIT_FORK_ERROR 4
 
-pid_t	execute_complete_command_wrapper(t_ast_node *complete_command,
-	t_deque *commands)
+pid_t	execute_complete_command_wrapper(t_tree *complete_command,
+	t_list *commands)
 {
 	pid_t	pid;
 	int		rtn;
@@ -295,18 +292,18 @@ pid_t	execute_complete_command_wrapper(t_ast_node *complete_command,
 	/* close_fds(complete_command); */ /* TODO: why doesn't this work? */
 	gc_free();
 	rl_clear_history();
-	clear_vars();
+	/* clear_vars(); */
 	exit(rtn);
 }
 
-/* ast_node should be the root of the ast */
-/* TODO: think if 0 (success) is a sensible return for ast_node == NULL */
-unsigned char	execute(t_ast_node *ast_node)
+/* node should be the root of the ast */
+/* TODO: think if 0 (success) is a sensible return for node == NULL */
+unsigned char	execute(t_tree *node)
 {
 	unsigned char	rtn;
 
-	if (ast_node == NULL)
+	if (node == NULL)
 		return (0);
-	rtn = execute_complete_command(ast_node);
+	rtn = execute_complete_command(node);
 	return (rtn);
 }

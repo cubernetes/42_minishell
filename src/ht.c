@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/31 12:49:11 by tosuman           #+#    #+#             */
-/*   Updated: 2024/05/09 21:26:16 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/05/19 06:41:35 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,13 +35,13 @@ static uint64_t	hash(char *key)
 	return (fnv_1a_64(key));
 }
 
-void	ht_set(t_kv *ht[TABLE_SIZE], char key[static 1], t_type value)
+void	ht_set(t_kv *ht[MAX_HT_SIZE], char key[static 1], t_type value)
 {
 	int		idx;
 	t_kv	*new_kv;
 	t_kv	**kv;
 
-	idx = (int)(hash(key) % TABLE_SIZE);
+	idx = (int)(hash(key) % MAX_HT_SIZE);
 	kv = &ht[idx];
 	while (*kv && (*kv)->k && ft_strcmp((*kv)->k, key))
 		(*kv) = (*kv)->n;
@@ -61,11 +61,11 @@ void	ht_set(t_kv *ht[TABLE_SIZE], char key[static 1], t_type value)
 	ht[idx] = new_kv;
 }
 
-t_type	ht_get(t_kv *ht[TABLE_SIZE], char key[static 1])
+t_type	ht_get(t_kv *ht[MAX_HT_SIZE], char key[static 1])
 {
 	t_kv	*kv;
 
-	kv = ht[hash(key) % TABLE_SIZE];
+	kv = ht[hash(key) % MAX_HT_SIZE];
 	while (kv && kv->k && ft_strcmp(kv->k, key))
 		kv = kv->n;
 	if (kv && kv->k)
@@ -74,14 +74,14 @@ t_type	ht_get(t_kv *ht[TABLE_SIZE], char key[static 1])
 }
 
 /* print() must not print any newlines */
-void	ht_print(t_kv ht[TABLE_SIZE], void (print)(char *k, void *v))
+void	ht_print(t_kv ht[MAX_HT_SIZE], void (print)(char *k, void *v))
 {
 	int		i;
 	t_kv	*kv;
 	int		j;
 
 	i = -1;
-	while (++i < TABLE_SIZE)
+	while (++i < MAX_HT_SIZE)
 	{
 		ft_printf("%d: ", i);
 		kv = &ht[i];
@@ -100,14 +100,14 @@ void	ht_print(t_kv ht[TABLE_SIZE], void (print)(char *k, void *v))
 }
 
 /* TODO: ONLY add malloc'd strings to ht */
-void	ht_destroy(t_kv *ht[TABLE_SIZE])
+void	ht_destroy(t_kv *ht[MAX_HT_SIZE])
 {
 	int		i;
 	t_kv	*prev;
 	t_kv	*kv;
 
 	i = -1;
-	while (++i < TABLE_SIZE)
+	while (++i < MAX_HT_SIZE)
 	{
 		kv = ht[i];
 		while (kv)

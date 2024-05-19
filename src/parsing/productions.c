@@ -1,4 +1,4 @@
-
+#include "minishell.h"
 
 t_tree	gen_production(char *token_str)
 {
@@ -9,7 +9,7 @@ t_tree	gen_production(char *token_str)
 				&(t_token){\
 					.type = tokens_ht_get(token_str), \
 					.str = "", \
-					.is_ltree_subtoken = true \
+					.is_last_subtoken = true \
 				}, \
 				sizeof(t_token) \
 			), \
@@ -49,7 +49,7 @@ t_tree	**initialize_productions(const char *grammar)
 /* tabsize: 4 */
 t_tree	*get_production(t_tree_type nonterm, t_token *token)
 {
-	static t_tree	**productions = NULL;
+	static t_tree		**productions = NULL;
 	static const char	*grammar = \
 		"<pipe_sequence> <complete_command_tail>"			"\n"	\
 		"TOK_EPSILON"										"\n"	\
@@ -86,15 +86,15 @@ t_tree	*production_to_child(t_tree production)
 	return (child);
 }
 
-t_deque	*productions_to_children(t_tree *productions)
+t_list	*productions_to_children(t_tree *productions)
 {
 	int		size;
-	t_deque	*children;
+	t_list	*children;
 
-	children = deque_init();
+	children = lnew();
 	size = 0;
 	while (!tree_is_null((t_tree *)productions + size))
-		deque_push_ptr_right(children,
-			production_to_child(productions[size++]));
+		lpush(children,
+			as_tree(production_to_child(productions[size++])));
 	return (children);
 }

@@ -6,33 +6,34 @@
  *  if `key' is not NULL:
  *   @param key: the variable name
  *   @param value: the variable value
- *   @param export: whether this variable should be inherited by child processes
+ *   @param exp: whether this variable should be inherited by child processes
  *   @returns: `value'
  *  if `key' is NULL:
  *   @param value: the variable name
  *   @returns: the variable value corresponding to `value';
  *             "" if the variable is unset
  */
-char	*set_var(char *key, char value[static 1], bool export)
+char	*set_var(char *key, char value[static 1], t_flags flags)
 {
 	static t_kv	*shell_vars[MAX_HT_SIZE];
 	char		*ret;
 
 	if (key == NULL)
 	{
-		ret = ht_get(shell_vars, value).as_var->value;
+		ret = ht_get(shell_vars, value).as_var.value;
 		if (ret == NULL)
 			return ("");
 		return (ret);
 	}
-	gc_set_context("SHELL_VARS");
+	/* gc_set_context("SHELL_VARS"); */
 	ht_set(shell_vars, ft_strdup(key),
 		(t_type){.as_ptr = ft_memdup(&(t_var){
-			.export = export,
-			.readonly = false,
+			.exp = flags.exp,
+			.readonly = flags.readonly,
+			.hidden = flags.hidden,
 			.value = ft_strdup(value)
 		}, sizeof(t_var))});
-	gc_set_context("DEFAULT");
+	/* gc_set_context("DEFAULT"); */
 	return (value);
 }
 
@@ -44,5 +45,5 @@ char	*set_var(char *key, char value[static 1], bool export)
  */
 char	*get_var(char key[static 1])
 {
-	return (set_var(NULL, key, false));
+	return (set_var(NULL, key, (t_flags){0}));
 }

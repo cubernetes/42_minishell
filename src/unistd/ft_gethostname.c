@@ -1,6 +1,7 @@
 #include "libft.h"
 
 #include <fcntl.h>
+#include <unistd.h>
 
 /** Return the first line from the file "/etc/hostname".
  *

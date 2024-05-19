@@ -10,8 +10,6 @@
 #include <unistd.h>            /* STDERR_FILENO */
 #include <stdbool.h>
 
-#define MAX_HT_SIZE 1000
-
 int	minishell_error(int exit_code, bool do_exit, const char *fmt, ...)
 {
 	va_list	ap;
@@ -37,21 +35,20 @@ typedef struct s_str_pair
 
 char	*expand_prompt(char *prompt_string)
 {
-	t_deque	*replacements;
-	t_di	*di;
+	t_list	*replacements;
 
-	replacements = deque_init();
-	deque_push_ptr_right(replacements, &(t_str_pair){"\\u", env_lookup("USER")});
-	deque_push_ptr_right(replacements, &(t_str_pair){"\\w", ft_getcwd()});
-	deque_push_ptr_right(replacements, &(t_str_pair){"\\W", string_list_to_deque(ft_split(ft_getcwd(), '/'), (void *(*)(char *))ft_strdup)->head->prev->as_str});
-	deque_push_ptr_right(replacements, &(t_str_pair){"\\h", ft_gethostname()});
-	deque_push_ptr_right(replacements, &(t_str_pair){"\\H", ft_split(ft_gethostname(), '.')[0]});
-	di = di_begin(replacements);
-	while (di_next(di))
-		prompt_string = ft_replace_all(prompt_string, (*(t_str_pair *)di_get(di)->as_ptr).l, uniquize((*(t_str_pair *)di_get(di)->as_ptr).l));
-	di = di_begin(replacements);
-	while (di_next(di))
-		prompt_string = ft_replace_all(prompt_string, uniquize((*(t_str_pair *)di_get(di)->as_ptr).l), (*(t_str_pair *)di_get(di)->as_ptr).r);
+	replacements = lnew();
+	lpush(replacements, as_ptr(&(t_str_pair){"\\u", env_lookup("USER")}));
+	lpush(replacements, as_ptr(&(t_str_pair){"\\w", ft_getcwd()}));
+	lpush(replacements, as_ptr(&(t_str_pair){"\\W", string_list_to_deque(ft_split(ft_getcwd(), '/'), (void *(*)(char *))ft_strdup)->head->prev->as_str}));
+	lpush(replacements, as_ptr(&(t_str_pair){"\\h", ft_gethostname()}));
+	lpush(replacements, as_ptr(&(t_str_pair){"\\H", ft_split(ft_gethostname(), '.')[0]}));
+	liter(replacements);
+	while (lnext(replacements))
+		prompt_string = ft_replace_all(prompt_string, (*(t_str_pair *)replacements->current->as_ptr).l, uniquize((*(t_str_pair *)replacements->current->as_ptr).l));
+	liter(replacements);
+	while (lnext(replacements))
+		prompt_string = ft_replace_all(prompt_string, uniquize((*(t_str_pair *)replacements->current->as_ptr).l), (*(t_str_pair *)replacements->current->as_ptr).r);
 	return (prompt_string);
 }
 
@@ -79,24 +76,25 @@ char	*expand_prompt(char *prompt_string)
 /* TODO: Not required: implement shell variables */
 /* TODO: Implement ./minishell -c '' functionality */
 /* TODO: Use yoda conditions */
+/* TODO: check that where next is called, in case of early return, that llast is called */
 int	main2(int argc, char **argv, char **envp)
 {
-	char			*line;
-	t_deque			*tokens;
-	t_ast_node		*ast_root_node;
+	char		*line;
+	t_list		*tokens;
+	t_tree		*ast_root_node;
 
 	set_allocator(gc_malloc);
 	((void)argc, set_argv(argv), set_env(envp));
 	tokens = NULL;
 	ast_root_node = NULL;
 	setup_signals();
-	set_var("?", ft_strdup("0"), false);
-	set_var("OLDPWD", gc_add_str(getcwd(NULL, 0)), false);
-	set_var("PWD", gc_add_str(getcwd(NULL, 0)), false);
+	set_var("?", ft_strdup("0"), (t_flags){0});
+	set_var("OLDPWD", gc_add_str(getcwd(NULL, 0)), (t_flags){0});
+	set_var("PWD", gc_add_str(getcwd(NULL, 0)), (t_flags){0});
 	while (1)
 	{
-		set_var("PS0", expand_prompt(PS0), false);
-		set_var("PS1", expand_prompt(PS1), false);
+		set_var("PS0", expand_prompt(PS0), (t_flags){0});
+		set_var("PS1", expand_prompt(PS1), (t_flags){0});
 		line = gc_add_str(readline(get_var("PS1")));
 		if (!line)
 			break ;
@@ -105,10 +103,10 @@ int	main2(int argc, char **argv, char **envp)
 		/* deque_print(tokens, print_token); */
 		ast_root_node = build_ast(tokens);
 		/* ast_print(ast_root_node); */
-		set_var("?", ft_itoa(execute(ast_root_node)), false);
+		set_var("?", ft_itoa(execute(ast_root_node)), (t_flags){0});
 		(void)gc_free();
 	}
-	clear_vars();
+	/* clear_vars(); */
 	rl_clear_history();
 	(void)gc_free();
 	return (0);
@@ -118,8 +116,8 @@ int	main2(int argc, char **argv, char **envp)
 
 t_tree	*parse(char *line)
 {
-	t_list	tokens;
-	t_tree	tree;
+	t_list	*tokens;
+	t_tree	*tree;
 
 	tokens = tokenize(line);
 	tree = build_ast(tokens);
@@ -128,15 +126,15 @@ t_tree	*parse(char *line)
 
 void	exec(t_tree *tree)
 {
-	print_tree_node(tree);
+	print_tree_node(tree, true);
 }
 
 void	interpret_lines(t_list *lines)
 {
 	t_tree	*tree;
 
-	start_iterator(lines);
-	while (next(lines))
+	liter(lines);
+	while (lnext(lines))
 	{
 		tree = parse(lines->current->as_str);
 		exec(tree);
@@ -160,7 +158,7 @@ void	repl(void)
 			input = get_next_line(STDIN_FILENO);
 		if (input == NULL)
 			break ;
-		lines = split(input, "\n");
+		lines = lsplit(input, "\n");
 		interpret_lines(lines);
 	}
 }
@@ -182,7 +180,7 @@ void	set_pwd(void)
 		cwd = getcwd(NULL, 0);
 		gc_add_str(cwd);
 	}
-	set_var("PWD", cwd, (t_flags){.exported = true});
+	set_var("PWD", cwd, (t_flags){.exp = true});
 }
 /* On startup, bash sets the value of PWD to getcwd(2) when it is unset.
  * However, when it is set already (through inheritance), then it is not
@@ -198,7 +196,7 @@ void	set_oldpwd(void)
 	cwd = get_var("PWD");
 	if (NULL != cwd)
 	{
-		set_var("OLDPWD", cwd, false);
+		set_var("OLDPWD", cwd, (t_flags){0});
 	}
 }
 
@@ -208,17 +206,15 @@ void	inherit_environment(void)
 
 void	set_initial_shell_variables(void)
 {
-	char	*cwd;
-
 	inherit_environment();
-	set_var("?", "0", (t_flags){.exported = true, .hidden = true});
+	set_var("?", "0", (t_flags){.exp = true, .hidden = true});
 	set_pwd();
 }
 
 void	init(void)
 {
 	set_allocator(gc_malloc);
-	gc_set_context("DEFAULT");
+	/* gc_set_context("DEFAULT"); */
 	set_initial_shell_variables();
 }
 

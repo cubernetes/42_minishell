@@ -31,7 +31,7 @@ void	lprint_rev(t_list *list, void (print)(t_data data, bool first))
 	current_last = list->last;
 	empty = true;
 	liter_rev(list);
-	while (lprev(list))
+	while (lnext(list))
 	{
 		highlight_elements(list->current, current_first, current_current,
 			current_last);
