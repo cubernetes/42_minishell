@@ -20,18 +20,12 @@ int	minishell_error(int exit_code, bool do_exit, const char *fmt, ...)
 	va_end(ap);
 	if (do_exit)
 	{
-		gc_free();
+		gc_free_all();
 		rl_clear_history();
 		exit(exit_code);
 	}
 	return (exit_code);
 }
-
-typedef struct s_str_pair
-{
-	char	*l;
-	char	*r;
-}			t_str_pair;
 
 char	*expand_prompt(char *prompt_string)
 {
@@ -77,7 +71,8 @@ char	*expand_prompt(char *prompt_string)
 /* TODO: Implement ./minishell -c '' functionality */
 /* TODO: Use yoda conditions */
 /* TODO: check that where next is called, in case of early return, that llast is called */
-int	main2(int argc, char **argv, char **envp)
+/* TODO: rigorously test list functions */
+int	main(int argc, char **argv, char **envp)
 {
 	char		*line;
 	t_list		*tokens;
@@ -88,7 +83,7 @@ int	main2(int argc, char **argv, char **envp)
 	tokens = NULL;
 	ast_root_node = NULL;
 	setup_signals();
-	set_var("?", ft_strdup("0"), (t_flags){0});
+	set_var("?", "0", (t_flags){0});
 	set_var("OLDPWD", gc_add_str(getcwd(NULL, 0)), (t_flags){0});
 	set_var("PWD", gc_add_str(getcwd(NULL, 0)), (t_flags){0});
 	while (1)
@@ -96,6 +91,7 @@ int	main2(int argc, char **argv, char **envp)
 		set_var("PS0", expand_prompt(PS0), (t_flags){0});
 		set_var("PS1", expand_prompt(PS1), (t_flags){0});
 		line = gc_add_str(readline(get_var("PS1")));
+		/* line = ft_strdup("echo hi"); */
 		if (!line)
 			break ;
 		add_history(line);
@@ -104,15 +100,13 @@ int	main2(int argc, char **argv, char **envp)
 		ast_root_node = build_ast(tokens);
 		/* ast_print(ast_root_node); */
 		set_var("?", ft_itoa(execute(ast_root_node)), (t_flags){0});
-		(void)gc_free();
+		(void)gc_free("DEFAULT");
 	}
 	/* clear_vars(); */
 	rl_clear_history();
-	(void)gc_free();
+	(void)gc_free_all();
 	return (0);
 }
-
-
 
 t_tree	*parse(char *line)
 {
@@ -166,7 +160,7 @@ void	repl(void)
 void	finish(void)
 {
 	rl_clear_history();
-	gc_free();
+	gc_free_all();
 }
 
 /* TODO: make logic correct */
@@ -214,11 +208,11 @@ void	set_initial_shell_variables(void)
 void	init(void)
 {
 	set_allocator(gc_malloc);
-	/* gc_set_context("DEFAULT"); */
+	gc_set_context("DEFAULT");
 	set_initial_shell_variables();
 }
 
-int	main(int argc, char *argv[], char *envp[])
+int	main2(int argc, char *argv[], char *envp[])
 {
 	(void)argc;
 	(void)argv;
@@ -226,4 +220,5 @@ int	main(int argc, char *argv[], char *envp[])
 	init();
 	repl();
 	finish();
+	return (0);
 }

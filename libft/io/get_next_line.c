@@ -14,8 +14,10 @@ char	*get_next_line(int fd)
 	t_list	*chars;
 	char	*str;
 
-	chars = lnew();
 	bytes_read = read(fd, &c, 1);
+	if (bytes_read < 0)
+		return (NULL);
+	chars = lnew();
 	while (bytes_read)
 	{
 		if (c == '\n')
@@ -33,3 +35,4 @@ char	*get_next_line(int fd)
 	return (str);
 }
 /* this implementation reads character by character */
+/* TODO: Test rigorously */

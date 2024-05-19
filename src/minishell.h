@@ -49,6 +49,12 @@
 # define NUM_NONTERMS 10
 # define NUM_TOKENS 11
 
+typedef struct s_str_pair
+{
+	char	*l;
+	char	*r;
+}			t_str_pair;
+
 typedef struct s_flags
 {
 	bool	exp;
@@ -144,28 +150,6 @@ struct									s_tree
 	};
 };
 
-/* hashtable */
-# define OFFSET_BASIS_64  14695981039346656037UL
-# define FNV_PRIME_64  1099511628211UL
-# define MAX_HT_SIZE 1000
-
-typedef union u_types
-{
-	t_tree_type		t1;
-	t_token_type	t2;
-	void			*as_ptr;
-	char			*as_str;
-	int				as_int;
-	t_var			as_var;
-}					t_type;
-
-typedef struct s_kv
-{
-	char		*k;
-	t_type		v;
-	struct s_kv	*n;
-}				t_kv;
-
 void									setup_signals(void);
 t_list									*tokenize(const char *line); /* static 1 ? */
 t_tree									*build_ast(t_list *tokens);
@@ -193,15 +177,15 @@ char									**set_argv(char **argv);
 char									**get_argv(void);
 unsigned char							execute(t_tree *tree);
 void									glob_tokens(t_list *tokens);
-t_type									ht_get(t_kv *ht[MAX_HT_SIZE],
+t_type									ht_get(t_ht *ht[MAX_HT_SIZE],
 											char key[static 1]);
-void									ht_set(t_kv *ht[MAX_HT_SIZE],
+void									ht_set(t_ht *ht[MAX_HT_SIZE],
 											char key[static 1],
 											t_type value);
-void									ht_print(t_kv ht[MAX_HT_SIZE],
+void									ht_print(t_ht ht[MAX_HT_SIZE],
 											void (print)(char k[static 1],
 												void *v));
-void									ht_destroy(t_kv *ht[MAX_HT_SIZE]);
+void									ht_destroy(t_ht *ht[MAX_HT_SIZE]);
 int										ms_execve(t_tree *command);
 const char								*tree_type_to_string(
 											t_tree_type type);

@@ -1,5 +1,5 @@
 #include "libft.h"
-#include "list.h"
+#include "libft.h"
 
 #include <stdbool.h>
 
@@ -43,6 +43,6 @@ void	lprint_rev(t_list *list, void (print)(t_data data, bool first))
 		empty = false;
 	}
 	if (empty)
-		ft_printf(EMPTY_DEQUE);
+		ft_printf(EMPTY_LIST);
 	ft_printf("\n");
 }

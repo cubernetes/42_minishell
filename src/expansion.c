@@ -42,12 +42,18 @@ static size_t	expand_vars(t_token *token, char *var)
 	return (1);
 }
 
+static void	*new_word_token(char *str)
+{
+	return (new_token(str, TOK_WORD, true));
+}
+
 /* TODO: Not required: use full IFS instead of just the first char */
 static void	expand_word(t_list *new_tokens, t_list_node *first)
 {
 	t_token	*token;
 	char	*token_str;
-	t_list	*new_toks;
+	t_list	*split_words;
+	t_list	*split_tokens;
 
 	token = first->as_token;
 	if (token->type != TOK_WORD)
@@ -56,8 +62,11 @@ static void	expand_word(t_list *new_tokens, t_list_node *first)
 	token->str = "";
 	while (*token_str)
 		token_str += expand_vars(token, token_str);
-	new_toks = lsplit(token->str, ft_strndup(IFS, 1));
-	lextend(new_tokens, new_toks);
+	split_words = lnew();
+	split_tokens = liter(lsplit(token->str, ft_strndup(IFS, 1)));
+	while (lnext(split_tokens))
+		lpush(split_words, as_token(new_word_token(split_tokens->current->as_str)));
+	lextend(new_tokens, split_words);
 	if (!token->is_last_subtoken)
 		new_tokens->first->prev->as_token->is_last_subtoken = false;
 }
@@ -96,6 +105,7 @@ void	expand_env_vars(t_list *tokens)
 	while (lnext(tokens))
 		expand(new_tokens, tokens->current);
 	tokens->first = new_tokens->first;
+	tokens->last = new_tokens->last;
 	tokens->len = new_tokens->len;
 }
 
@@ -146,5 +156,6 @@ void	join_tokens(t_list *tokens)
 		}
 	}
 	tokens->first = new_tokens->first;
+	tokens->last = new_tokens->last;
 	tokens->len = new_tokens->len;
 }

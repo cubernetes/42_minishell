@@ -6,7 +6,7 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:09:11 by tischmid          #+#    #+#              #
-#    Updated: 2024/05/19 07:01:12 by tischmid         ###   ########.fr        #
+#    Updated: 2024/05/19 10:40:15 by tischmid         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -34,11 +34,11 @@ unexport SUBDIRS
 SUBDIRS += string
 SUBDIRS += memory
 SUBDIRS += list
-SUBDIRS += deque
 SUBDIRS += math
 SUBDIRS += io
 SUBDIRS += misc
-SUBDIRS += unistd
+SUBDIRS += hashtable
+SUBDIRS += gc
 
 vpath %.c $(SUBDIRS)
 unexport SRC
@@ -92,13 +92,22 @@ SRC += ft_memcpy.c
 SRC += ft_memdup.c
 SRC += ft_memmove.c
 SRC += ft_memset.c
-SRC += error_handling.c
+
+# gc
+SRC += set_allocator.c
+SRC += get_allocator.c
+SRC += gc_set_context.c
+SRC += gc_malloc.c
+SRC += gc_free.c
+SRC += gc_free_all.c
+SRC += gc_add_str.c
+SRC += gc_add.c
 SRC += ft_malloc.c
-SRC += ft_malloc_deque_free.c
-SRC += ft_malloc_deque_init.c
-SRC += ft_malloc_deque_push_ptr_right.c
+SRC += ft_free.c
+SRC += dont_free.c
 
 # io
+SRC += get_next_line.c
 SRC += ft_putchar_fd.c
 SRC += ft_putendl_fd.c
 SRC += ft_putnbr_fd.c
@@ -118,7 +127,6 @@ SRC += ft_putptr.c
 SRC += ft_printf.c
 SRC += ft_dprintf.c
 SRC += ft_print_memory.c
-SRC += get_next_line.c
 
 # math
 SRC += ft_max.c
@@ -154,32 +162,12 @@ SRC += as_pointer_types.c
 SRC += as_numeric_types.c
 SRC += as_data.c
 
-# deque
-SRC += deque_init.c
-SRC += deque_print.c
-SRC += deque_print_debug.c
-SRC += string_list_to_deque.c
-SRC += deque_index.c
-SRC += deque_slice.c
-SRC += deque_sort.c
-SRC += deque_shallow_copy.c
-SRC += deque_size.c
-SRC += deque_extend_right.c
-SRC += deque_extend_left.c
-SRC += deque_swap.c
-SRC += deque_rotate.c
-SRC += deque_pop_left.c
-SRC += deque_pop_right.c
-SRC += deque_push_node_right.c
-SRC += deque_push_ptr_right.c
-SRC += deque_push_node_left.c
-SRC += deque_push_ptr_left.c
-SRC += deque_equal.c
-SRC += deque_iter.c
-SRC += deque_sum.c
-SRC += di_begin.c
-SRC += di_get.c
-SRC += di_next.c
+# hashtable
+SRC += ht_set.c
+SRC += ht_get.c
+SRC += ht_print.c
+SRC += ht_destroy.c
+SRC += ht_hash.c
 
 _OBJ = $(SRC:.c=.o)
 OBJ = $(addprefix $(OBJDIR)/,$(_OBJ))

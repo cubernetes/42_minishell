@@ -1,4 +1,4 @@
-#include "list.h"
+#include "libft.h"
 
 /** Return a shallow copy of a list
  *

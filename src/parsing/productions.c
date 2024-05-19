@@ -1,3 +1,4 @@
+#include "libft.h"
 #include "minishell.h"
 
 t_tree	gen_production(char *token_str)
@@ -27,6 +28,7 @@ t_tree	**initialize_productions(const char *grammar)
 	int			i;
 	int			j;
 
+	gc_set_context("POST");
 	productions = ft_malloc(sizeof(*productions) * 20);
 	lines = ft_split(grammar, '\n');
 	i = -1;
@@ -42,6 +44,7 @@ t_tree	**initialize_productions(const char *grammar)
 			productions[i][j] = gen_production(tokens[j]);
 		productions[i][j] = (t_tree){0};
 	}
+	gc_set_context("DEFAULT");
 	return (productions);
 }
 
@@ -69,7 +72,7 @@ t_tree	*get_production(t_tree_type nonterm, t_token *token)
 		">>" "\n"	"<<" "\n"	">" "\n"	"<" "\n"				\
 		"TOK_EPSILON";
 
-	if (productions == NULL && (gc_set_null((void **)&productions), 1))
+	if (productions == NULL)
 		productions = initialize_productions(grammar);
 	return (productions[get_production_idx(nonterm, token)]);
 }

@@ -1,4 +1,4 @@
-#include "list.h"
+#include "libft.h"
 
 /* TODO: Document */
 void	lrotate(t_list *list, int n)

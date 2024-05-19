@@ -78,5 +78,6 @@ void	glob_tokens(t_list *tokens)
 		}
 	}
 	tokens->first = new_tokens->first;
+	tokens->last = new_tokens->last;
 	tokens->len = new_tokens->len;
 }

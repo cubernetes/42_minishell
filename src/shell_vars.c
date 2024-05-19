@@ -15,25 +15,25 @@
  */
 char	*set_var(char *key, char value[static 1], t_flags flags)
 {
-	static t_kv	*shell_vars[MAX_HT_SIZE];
+	static t_ht	*shell_vars[MAX_HT_SIZE];
 	char		*ret;
 
 	if (key == NULL)
 	{
-		ret = ht_get(shell_vars, value).as_var.value;
+		ret = ht_get(shell_vars, value).as_var->value;
 		if (ret == NULL)
 			return ("");
 		return (ret);
 	}
-	/* gc_set_context("SHELL_VARS"); */
-	ht_set(shell_vars, ft_strdup(key),
-		(t_type){.as_ptr = ft_memdup(&(t_var){
+	gc_set_context("POST");
+	ht_set(shell_vars, key,
+		(t_type){.as_var = ft_memdup(&(t_var){
 			.exp = flags.exp,
 			.readonly = flags.readonly,
 			.hidden = flags.hidden,
 			.value = ft_strdup(value)
 		}, sizeof(t_var))});
-	/* gc_set_context("DEFAULT"); */
+	gc_set_context("DEFAULT");
 	return (value);
 }
 

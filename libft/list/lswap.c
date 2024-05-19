@@ -1,4 +1,4 @@
-#include "list.h"
+#include "libft.h"
 
 /* TODO: Document */
 void	lswap(t_list *list)
