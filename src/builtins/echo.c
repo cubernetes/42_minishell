@@ -1,18 +1,20 @@
 #include "minishell.h"
+
 #include <unistd.h>
+#include <stdbool.h>
 
 int	builtin_echo(char **argv, t_fds fds)
 {
-	int	i;
-	t_bool	flag;
-	int	j;
+	int		i;
+	bool	flag;
+	int		j;
 
-	flag = FALSE;	
+	flag = false;
 	i = 0;
 	j = 0;
 	if (argv[0] != NULL && ft_strcmp(argv[0], "-n") == 0)
 	{
-		flag = TRUE;
+		flag = true;
 		i++;
 		j++;
 	}
@@ -33,13 +35,13 @@ int	builtin_echo(char **argv, t_fds fds)
 	}
 	if (fds.fd_out != -2)
 	{
-		if (flag == FALSE)
+		if (flag == false)
 			ft_dprintf(fds.fd_out, "\n");
 		close(fds.fd_out);
 	}
 	else
 	{
-		if (flag == FALSE)
+		if (flag == false)
 			ft_printf("\n");
 	}
 	return (0);
