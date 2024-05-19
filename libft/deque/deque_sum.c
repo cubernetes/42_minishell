@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../libft.h"
+#include "libft.h"
 
 int	deque_sum(t_deque *deque, int (*f)(void *ptr))
 {

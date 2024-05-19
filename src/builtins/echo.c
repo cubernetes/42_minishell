@@ -1,4 +1,4 @@
-#include "../../include/minishell.h"
+#include "minishell.h"
 #include <unistd.h>
 
 int	builtin_echo(char **argv, t_fds fds)

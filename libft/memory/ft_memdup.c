@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../libft.h"
+#include "libft.h"
 #include <stddef.h>
 
 void	*ft_memdup(const void *src, size_t size)

@@ -1,45 +1,38 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/22 15:08:47 by tischmid          #+#    #+#             */
-/*   Updated: 2024/04/01 00:18:28 by tosuman          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-#include "../libft.h"
-#include <stdlib.h>
+#include "libft.h"
 #include <unistd.h>
 
-/* might misbehave when using manage_static_ptrs() and manage_ptrs() */
+/** Return the next available line including the newline character (if
+ *  available) from a file descriptor.
+ *
+ *  @param fd: the file descriptor to read from
+ *  @returns: a single line, potentially including a newline character (0x0a)
+ */
 char	*get_next_line(int fd)
 {
-	static t_gnl_vars	x;
+	ssize_t	bytes_read;
+	char	c;
+	t_list	*chars;
+	char	*str;
 
-	while (x.prv[fd] && x.prv[fd][x.len])
-		++x.len;
-	x.buf = ft_malloc((size_t)x.len + GNL_BUFFER_SIZE + 1);
-	x.b = read(fd, x.buf + x.len, GNL_BUFFER_SIZE);
-	if (x.b < 0)
-		return (x.len = 0, x.prv[fd] = NULL);
-	(free(NULL), x.buf[x.len + x.b] = 0, x.i = x.len, x.j = -1);
-	while (--x.len >= 0)
-		x.buf[x.len] = x.prv[fd][x.len];
-	while (x.buf[++x.len] && x.buf[x.len] != '\n')
-		;
-	if (!x.buf[x.len] && x.b == 0)
-		return (x.buf = x.prv[fd], x.prv[fd] = NULL, x.len = 0, x.buf);
-	if (!x.buf[x.len] && x.b == GNL_BUFFER_SIZE)
-		return (x.prv[fd] = x.buf, x.len = 0, get_next_line(fd));
-	if (!x.buf[x.len] || (x.buf[x.len] == '\n' && !x.buf[x.len + 1]))
-		return (x.prv[fd] = NULL, x.len = 0, x.buf);
-	(free(NULL), x.prv[fd] = ft_malloc(sizeof(char) * (size_t)(x.i + ++x.b)));
-	if (!x.prv[fd])
-		return (x.len = 0, x.prv[fd] = NULL);
-	while (x.buf[x.len + 1 + ++x.j])
-		x.prv[fd][x.j] = x.buf[x.len + 1 + x.j];
-	return (x.prv[fd][x.j] = 0, x.buf[x.len + 1] = 0, x.len = 0, x.buf);
+	bytes_read = read(fd, &c, 1);
+	if (bytes_read < 0)
+		return (NULL);
+	chars = lnew();
+	while (bytes_read)
+	{
+		if (c == '\n')
+			break ;
+		lpush(chars, as_char(c));
+		bytes_read = read(fd, &c, 1);
+	}
+	if (bytes_read == 0 && chars->len == 0)
+		return (NULL);
+	str = ft_malloc(sizeof(*str) * (chars->len + 1));
+	str[chars->len] = 0;
+	liter(chars);
+	while (lnext(chars))
+		str[chars->_current_idx] = chars->current->as_char;
+	return (str);
 }
+/* this implementation reads character by character */
+/* TODO: Test rigorously */

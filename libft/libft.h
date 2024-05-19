@@ -1,100 +1,169 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   libft.h                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/22 15:09:08 by tischmid          #+#    #+#             */
-/*   Updated: 2024/04/28 21:57:13 by tischmid         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #ifndef LIBFT_H
 # define LIBFT_H 1
 
-/* TODO: remove debug include */
-# include "../include/minishell_debug.h"
+/***************** INCLUDES *****************/
 # include <stdarg.h>
 # include <stddef.h>
 # include <sys/types.h>
+# include <stdbool.h>
 # include <stdint.h>
 
+/***************** DEFINES *****************/
 # define HEX_DIGITS "0123456789abcdef"
 # define UHEX_DIGITS "0123456789ABCDEF"
 # define NULL_PTR_STR "(null)"
 # define NIL_PTR_STR "(nil)"
 
-# define EMPTY_DEQUE "Empty deque.\n"
+# define EMPTY_LIST "Empty list.\n"
 
-/* get_next_line */
-# ifndef OPEN_MAX
-#  define OPEN_MAX 4096
-# endif
+# define UNIQUE1 "<START_UNIQUE>"
+# define UNIQUE2 "<END_UNIQUE>"
 
-# ifndef GNL_BUFFER_SIZE
-#  define GNL_BUFFER_SIZE 1
-# endif
-
-typedef struct s_gnl_vars
-{
-	char						*prv[OPEN_MAX];
-	char						*buf;
-	ssize_t						b;
-	int							i;
-	int							j;
-	int							len;
-}								t_gnl_vars;
-
-typedef enum e_bool
-{
-	FALSE = 0,
-	TRUE
-}								t_bool;
-
-typedef struct s_list
-{
-	void						*content;
-	struct s_list				*next;
-}								t_list;
-
-/* forward declarations */
-typedef struct s_deque			t_deque;
-typedef struct s_deque_node		t_deque_node;
-typedef struct s_ast_node		t_ast_node;
+# define OFFSET_BASIS_64  14695981039346656037UL
+# define FNV_PRIME_64  1099511628211UL
+# define MAX_HT_SIZE 1000
+/***************** FORWARD DECLARATIONS. *****************/
+typedef struct s_list			t_list;
+typedef struct s_list_node		t_list_node;
 typedef struct s_token			t_token;
+typedef int						t_token_type;
+typedef struct s_tree			t_tree;
+typedef int						t_tree_type;
+typedef struct s_var			t_var;
+typedef struct s_literator		t_literator;
+typedef struct s_data			t_data;
+typedef struct s_ht				t_ht;
+typedef struct s_str_pair		t_str_pair;
+typedef struct s_ctx_meta		t_ctx_meta;
 
-struct							s_deque_node
+/***************** ENUMS *****************/
+/** Comprehensive enumeration of data types, must match union members of t_data.
+ */
+enum e_type
 {
-	t_deque_node				*prev;
-	t_deque_node				*next;
+	TYPE_INT,
+	TYPE_SIZE_T,
+	TYPE_PID_T,
+	TYPE_CHAR,
+	TYPE_STR,
+	TYPE_PTR,
+	TYPE_GC_PTR,
+	TYPE_LITERATOR,
+	TYPE_TOKEN,
+	TYPE_TOKEN_TYPE,
+	TYPE_TREE,
+	TYPE_TREE_TYPE,
+	TYPE_VAR,
+	TYPE_LIST,
+	TYPE_STR_PAIR,
+};
+
+enum						e_method
+{
+	GET_CONTEXT,
+	SET_CONTEXT,
+	DESTROY_CONTEXT,
+	DESTROY_CURRENT_CONTEXT,
+	DESTROY_ALL_CONTEXTS,
+};
+typedef enum e_method		t_method;
+
+/***************** STRUCTURES *****************/
+struct						s_ctx_meta
+{
+	t_ht					*(*ctxs)[MAX_HT_SIZE];
+	char					*ctx_name;
+	t_list					*ctx;
+};
+
+/** Data structure to be used with generic data structure implementations.
+ */
+struct s_data
+{
+	enum e_type		type;
 	union
 	{
-		void					*as_ptr;
-		char					*as_str;
-		t_token					*as_token;
-		t_ast_node				*as_ast_node;
-		long					as_long;
-		int						as_int;
-		char					as_char;
+		int				as_int;
+		size_t			as_size_t;
+		pid_t			as_pid_t;
+		char			as_char;
+		char			*as_str;
+		void			*as_ptr;
+		void			*as_gc_ptr;
+		t_literator		*as_literator;
+		t_token			*as_token;
+		t_token_type	as_token_type;
+		t_tree			*as_tree;
+		t_tree_type		as_tree_type;
+		t_var			*as_var;
+		t_list			*as_list;
+		t_str_pair		*as_str_pair;
 	};
 };
 
-struct							s_deque
+/** List node structure for `next` and `prev' pointers
+ *  and anonymous union that MUST be identical to t_data
+ *  and MUST come as the first member of the structure.
+ */
+struct s_list_node
 {
-	t_deque_node				*head;
-	size_t						size;
+	struct
+	{
+		enum e_type		type;
+		union
+		{
+			int				as_int;
+			size_t			as_size_t;
+			pid_t			as_pid_t;
+			char			as_char;
+			char			*as_str;
+			void			*as_ptr;
+			void			*as_gc_ptr;
+			t_literator		*as_literator;
+			t_token			*as_token;
+			t_token_type	as_token_type;
+			t_tree			*as_tree;
+			t_tree_type		as_tree_type;
+			t_var			*as_var;
+			t_list			*as_list;
+			t_str_pair		*as_str_pair;
+		};
+	};
+	t_list_node	*next;
+	t_list_node	*prev;
 };
 
-/* hashtable */
-typedef struct s_deque_iter
+/** List iterator structure for internal use
+ */
+struct s_literator
 {
-	t_deque						*deque;
-	t_deque_node				*head;
-	t_bool						_first_iter;
-	t_bool						_first_iter_di_get;
-}								t_di;
+	t_list_node	*current;
+	size_t		current_idx;
+	t_list_node	*(*method)(t_list *list);
+};
 
+/** List structure with `first' and `last' pointers,
+ *  `len', and `current' for iteration. Other fields are private.
+ */
+struct s_list
+{
+	size_t			len;
+	t_list_node		*first;
+	t_list_node		*last;
+	t_list_node		*current;
+	size_t			_current_idx; /* internal */
+	t_list_node		*(*_method)(t_list *list); /* internal */
+	t_list			*_iterator_stack; /* internal, don't iterate this one! */
+};
+
+typedef struct s_ht
+{
+	char		*k;
+	t_data		v;
+	t_ht		*n;
+}				t_ht;
+
+/***************** PROTOTYPES *****************/
 /* memory */
 void							*ft_memmove(void *dest, void const *src,
 									size_t n);
@@ -107,19 +176,23 @@ int								ft_memcmp(void const *s1, void const *s2,
 void							*ft_memcpy(void *dest, void const *src,
 									size_t n);
 void							*ft_memdup(const void *src, size_t size);
+
+/* gc */
+bool							dont_free(void *ptr);
+bool							ft_free(void *ptr);
+bool							gc_free(char *ctx);
+bool							gc_free_all(void);
+char							*gc_add_str(void *ptr);
+t_list							*gc_add(void *ptr);
+t_list							*gc_get_context(void);
+char							*gc_get_context_name(void);
+t_list							*gc_set_context(char *new_ctx_name);
+t_ctx_meta						gc_ctx_manager(t_method method, char *_ctx_name);
 void							*ft_malloc(size_t size);
-t_deque							*gc_add(void *ptr);
-t_deque							*gc_set_null(void **ptr);
-t_bool							gc_free(void);
-t_bool							ft_malloc_deque_free(t_deque *deque,
-									t_bool(free_data)(void *));
-t_deque							*ft_malloc_deque_init(void);
-void							ft_malloc_deque_push_ptr_right(
-									t_deque *deque, void *data);
 void							*gc_malloc(size_t size);
+void							*(*get_allocator(void))(size_t size);
 void							*(*set_allocator(void *(*_allocator)
 										(size_t size)))(size_t size);
-void							*(*get_allocator(void))(size_t size);
 
 /* strings */
 int								ft_isalnum(int c);
@@ -138,11 +211,7 @@ int								ft_strncmp(char const *s1, char const *s2,
 									size_t n);
 int								ft_strcmp(char const *s1, char const *s2);
 int								ft_streq(char const *s1, char const *s2);
-size_t							ft_strlen(char const *s);
-char							**ft_split(char const *s, char c);
-char							*ft_strjoin(char const *s1, char const *s2);
-char							*ft_substr(char const *s, unsigned int start,
-									size_t len);
+size_t							ft_strlen(char const s[static 1]);
 int								ft_toupper(int c);
 int								ft_tolower(int c);
 char							*ft_strtrim(char const *s1, char const *set);
@@ -158,9 +227,24 @@ void							ft_striteri(char *s, void (f)(unsigned int,
 										char *));
 int								ft_char_in_charset(char c, char const *charset);
 
+/* string++ */
+char							**ft_split(char const *s, char c);
+char							*ft_strjoin(char const *s1, char const *s2);
+char							*ft_substr(char const *s, unsigned int start,
+									size_t len);
+char							*uniquize(const char str[static 1]);
+size_t							ft_count_all(const char str[static 1],
+									const char pattern[static 1]);
+char							*ft_replace(const char str[static 1],
+									const char pattern[static 1],
+									const char replacement[static 1]);
+char							*ft_replace_all(const char str[static 1],
+									const char pattern[static 1],
+									const char replacement[static 1]);
+
 /* math */
-t_bool							cmp_int_asc(int a, int b);
-t_bool							cmp_int_desc(int a, int b);
+bool							cmp_int_asc(int a, int b);
+bool							cmp_int_desc(int a, int b);
 char							*ft_itoa(int n);
 int								ft_atoi(char const *nptr);
 int								ft_atoi_status(char const *nptr, int *status);
@@ -169,19 +253,8 @@ unsigned int					ft_abs(int n);
 int								ft_max(int a, int b);
 int								ft_min(int a, int b);
 
-/* data list */
-t_list							*ft_lstnew(void *content);
-void							ft_lstadd_front(t_list **lst, t_list *new_head);
-int								ft_lstsize(t_list *lst);
-t_list							*ft_lstlast(t_list *lst);
-void							ft_lstadd_back(t_list **lst, t_list *new_tail);
-void							ft_lstdelone(t_list *lst, void (del)(void *));
-void							ft_lstclear(t_list **lst, void (del)(void *));
-void							ft_lstiter(t_list *lst, void (f)(void *));
-t_list							*ft_lstmap(t_list *lst, void *(f)(void *),
-									void (del)(void *));
-
 /* io */
+char							*get_next_line(int fd);
 int								ft_putendl_fd(char *s, int fd);
 int								ft_putnbr_fd(int nb, int fd);
 int								ft_putchar_fd(char c, int fd);
@@ -192,6 +265,9 @@ int								ft_puthex(unsigned long nbr, int uppercase);
 int								ft_putnbr(int nb);
 int								ft_putchar(char c);
 int								ft_putstr(char *s);
+void							ft_putstr_n(const char *str, int n);
+void							ft_putstr_n_clr(const char *str, int n,
+									bool color);
 int								ft_putptr(void *ptr);
 int								ft_putptr_fd(void *ptr, int fd);
 int								ft_putfmt(const char **fmt, va_list ap);
@@ -202,49 +278,70 @@ int								ft_printf(const char *fmt, ...);
 int								ft_vdprintf(int fd, const char *fmt,
 									va_list ap);
 int								ft_dprintf(int fd, const char *fmt, ...);
-char							*get_next_line(int fd);
 void							*ft_print_memory(void *addr, size_t size);
 
-/* deque */
-t_deque_node					*deque_pop_right(t_deque *deque);
-t_deque_node					*deque_pop_left(t_deque *deque);
-void							deque_push_ptr_left(t_deque *deque,
-									void *data);
-void							deque_push_node_left(t_deque *deque,
-									t_deque_node *node);
-void							deque_push_ptr_right(t_deque *deque,
-									void *data);
-void							deque_push_node_right(t_deque *deque,
-									t_deque_node *node);
-void							deque_swap(t_deque *deque);
-void							deque_rotate(t_deque *deque, int n);
-t_deque							*deque_shallow_copy(t_deque *deque);
-size_t							deque_size(t_deque *deque);
-void							deque_sort(t_deque *deque, int (cmp)(void *,
-										void *));
-void							deque_print(t_deque *deque,
-									void (print)(void *data, t_bool first));
-void							deque_print_debug(t_deque *deque);
-t_deque							*deque_init(void);
-t_deque							*deque_shallow_slice(t_deque *deque, int start,
-									int end, int step);
-int								deque_index(t_deque *deque, void *data,
-									t_bool(cmp)(void *, void *));
-void							deque_extend_right(t_deque *deque_a,
-									t_deque *deque_b);
-void							deque_extend_left(t_deque *deque_a,
-									t_deque *deque_b);
-t_bool							deque_equal(t_deque *deque_a, t_deque *deque_b,
-									t_bool(cmp)(void *, void *));
-void							deque_iter(t_deque *deque,
-									void (f)(void *data));
-int								deque_sum(t_deque *deque, int (f)(void *data));
-t_deque							*string_list_to_deque(char **array_list,
-									void *(new_node)(char *str));
-t_di							*di_begin(t_deque *deque);
-t_deque_node					*di_get(t_di *di);
-t_deque_node					*di_next(t_di *di);
-/* int							deque_argmax(t_deque *deque, int *max_idx); */
+/* data constructors */
+t_data							as_data(t_list_node *list_node);
+t_data							as_int(int as_int);
+t_data							as_size_t(size_t as_size_t);
+t_data							as_char(char as_char);
+t_data							as_pid_t(pid_t as_pid_t);
+t_data							as_var(t_var *as_var);
+t_data							as_str(char *as_str);
+t_data							as_ptr(void *as_ptr);
+t_data							as_literator(t_literator *as_literator);
+t_data							as_token(t_token *as_token);
+t_data							as_tree(t_tree *as_tree);
+t_data							as_token_type(t_token_type as_token_type);
+t_data							as_tree_type(t_tree_type as_tree_type);
+t_data							as_gc_ptr(t_var *as_gc_ptr);
+t_data							as_list(t_list *as_list);
+t_data							as_str_pair(t_str_pair *as_str_pair);
+
+/* list */
+t_list_node						*lbackward(t_list list[static 1]);
+void							lprint_rev(t_list *list,
+									void (print)(t_data data, bool first));
+bool							ldestroy(t_list list[static 1]);
+void							lrotate(t_list *list, int n);
+t_list							*liter(t_list list[static 1]);
+t_list							*lcopy(t_list *list);
+t_list							*liter_rev(t_list list[static 1]);
+t_list							*lpush(t_list list[static 1], t_data data);
+t_list							*lpop(t_list *list);
+t_list							*lpop_left(t_list *list);
+void							lsort(t_list *list,
+									bool (cmp)(t_data data1, t_data data2));
+t_list							*lpush_left(t_list list[static 1],
+									t_data data);
+t_list							*lnew(void);
+t_list_node						*lforward(t_list list[static 1]);
+t_list							*lsplit(const char str[static 1],
+									const char delim[static 2]);
+bool							lequal(t_list *list_a, t_list *list_b,
+									bool (cmp)(t_data data1, t_data data2));
+void							lextend_left(t_list *list_a, t_list *list_b);
+void							lextend(t_list *list_a, t_list *list_b);
+void							lswap(t_list *list);
+t_list							*llast(t_list list[static 1]);
+t_list_node						*lnext(t_list list[static 1]);
+void							lprint(t_list *list,
+									void (print)(t_data data, bool first));
+/* t_list							*lslice(t_list *list, int start, */
+									/* int end, int step); */
+
+/* hashtable */
+void							ht_unset(t_ht *ht[MAX_HT_SIZE],
+									char key[static 1]);
+void							ht_set(t_ht *ht[MAX_HT_SIZE],
+									char key[static 1], t_data data);
+t_data							ht_get(t_ht *ht[MAX_HT_SIZE],
+									char key[static 1]);
+void							ht_print(t_ht ht[MAX_HT_SIZE],
+									void (print)(char *k, t_data v));
+void							ht_destroy(t_ht *ht[MAX_HT_SIZE],
+									bool (*free_data)(t_data data));
+uint64_t						ht_hash(char *key);
 
 /* misc */
 /* TODO: this function contains forbidden functions (backtrace) */

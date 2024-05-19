@@ -1,11 +1,8 @@
-#include "../../include/minishell.h"
-#include <stdlib.h>
+#include "minishell.h"
 
 int	builtin_exit(char **argv, t_fds fds)
 {
-	/*TODO: all freed?*/
-	(void)gc_free();
-	rl_clear_history();
+	finish();
 	exit(0);
 	return (0);
 }

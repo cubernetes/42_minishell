@@ -4,7 +4,6 @@
 # Raw yacc BNF taken from:
 # https://pubs.opengroup.org/onlinepubs/9699919799/utilities/V3_chap02.html#tag_18_10_02
 # Productions not relevant for minishell are removed.
-# TODO: what about TOK_SQUOTE_STR and TOK_DQUOTE_STR ???
 ```c yacc
 %token TOK_WORD
 /* %token TOK_SQUOTE_STR TOK_DQUOTE_STR */

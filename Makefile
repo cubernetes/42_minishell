@@ -6,14 +6,15 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:02:16 by tischmid          #+#    #+#              #
-#    Updated: 2024/04/30 21:03:47 by tischmid         ###   ########.fr        #
+#    Updated: 2024/05/19 11:30:21 by tischmid         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
+# TODO: adapt for MacOS
 # Makefile for [ "$(uname -s)" = "Linux" ]
 
 # TODO: Check gcc and clang
-CC             := cc
+CC             ?= cc
 RM             := /bin/rm -f
 MKDIR          := /bin/mkdir -p
 
@@ -23,48 +24,62 @@ LIBFT           := libft.a
 LIBFT_          := $(patsubst lib%,%,$(patsubst %.a,%,$(LIBFT)))
 
 unexport _SRC
-_SRC           += minishell.c
-_SRC           += signal_handling.c
-_SRC           += parsing.c
-_SRC           += tokenize.c
-_SRC           += expansion.c
-_SRC           += globbing.c
-_SRC           += executor.c
-_SRC           += execve.c
-_SRC           += ht.c
-_SRC           += environment.c
+_SRC += signals.c
+_SRC += ft_getcwd.c
+_SRC += ft_gethostname.c
+_SRC += expansion.c
+_SRC += execve.c
+_SRC += tokenize.c
+_SRC += printing.c
+_SRC += new_tree_tokens.c
+_SRC += helper.c
+_SRC += hashtable.c
+_SRC += productions.c
+_SRC += example_trees.c
+_SRC += build_ast.c
+_SRC += executor.c
+_SRC += shell_vars.c
+_SRC += glob.c
+_SRC += minishell.c
+_SRC += echo.c
+_SRC += unset.c
+_SRC += export.c
+_SRC += pwd.c
+_SRC += env.c
+_SRC += exit.c
+_SRC += cd.c
+_SRC += environment.c
 
-_SRC           += cd.c
-_SRC           += echo.c
-_SRC           += env.c
-_SRC           += exit.c
-_SRC           += export.c
-_SRC           += pwd.c
-_SRC           += unset.c
+vpath %.c             \
+	src               \
+	src/parsing/      \
+	src/tokenization/ \
+	src/builtins/     \
+	src/unistd/
 
-vpath %.c src src/parsing src/signal_handling src/tokenization \
-          src/expansion src/execution/ src/utils/ src/builtins/
+_OBJ             := $(_SRC:.c=.o)
+_HEADERS         := minishell.h
 
-_OBJ           := $(_SRC:.c=.o)
-_HEADERS       := minishell.h
+OBJDIR           := ./obj
+SRCDIR           := ./src
+LIBFT_DIR        := ./libft
+SRC              := $(addprefix $(SRCDIR)/,$(_SRC))
+OBJ              := $(addprefix $(OBJDIR)/,$(_OBJ))
+MINISHELL_HEADER := $(addprefix $(SRCDIR)/,$(_HEADERS))
 
-OBJDIR         := obj
-INCLUDEDIR     := include
-LIBFT_DIR      := ./libft
-SRC            := $(addprefix $(SRCDIR)/,$(_SRC))
-OBJ            := $(addprefix $(OBJDIR)/,$(_OBJ))
-INCLUDE        := $(addprefix $(INCLUDEDIR)/,$(_HEADERS))
-
+# TODO: improve makefile
 # TODO: change -O0 to -O3 and remove -g3
 # TOOD: add back -Werror
 # TODO: add back std=c99 if possible
-CFLAGS         := -O0 -g3 -fPIE -Wall -Wextra \
-                  -pedantic -Wconversion \
-                  -Wunreachable-code -Wshadow \
-                  -fdiagnostics-color=always
-CPPFLAGS       := -I$(LIBFT_DIR) -I$(INCLUDEDIR)
-LDFLAGS        := -L$(LIBFT_DIR) -rdynamic
-LDLIBS         := -l$(LIBFT_) -lreadline
+CFLAGS           := -O0 -g3 -fPIE -Wall -Wextra \
+                    -pedantic -Wconversion \
+                    -Wunreachable-code -Wshadow \
+                    -fdiagnostics-color=always
+CPPFLAGS         := -I$(LIBFT_DIR) -I$(SRCDIR)
+
+# -rdynamic # for backtrace
+LDFLAGS          := -L$(LIBFT_DIR)
+LDLIBS           := -l$(LIBFT_) -lreadline
 
 all: libft $(NAME)
 
@@ -74,8 +89,8 @@ $(NAME): $(LIBFT_DIR)/$(LIBFT) $(OBJ)
 libft:
 	$(MAKE) -C $(LIBFT_DIR)
 
-$(OBJDIR)/%.o: %.c $(INCLUDE) | $(OBJDIR)
-	$(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@ -I$(INCLUDEDIR) $<
+$(OBJDIR)/%.o: %.c $(MINISHELL_HEADER) | $(OBJDIR)
+	$(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
 
 $(OBJDIR):
 	$(MKDIR) $@

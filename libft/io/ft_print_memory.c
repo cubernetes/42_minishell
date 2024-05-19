@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../libft.h"
+#include "libft.h"
 #include <unistd.h>
 #include <stdlib.h>
 #define WIDTH 16

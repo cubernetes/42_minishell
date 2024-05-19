@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../libft.h"
+#include "libft.h"
 
 t_deque	*string_list_to_deque(char **array_list, void *(new_node_ptr)(char *str))
 {
