@@ -6,7 +6,7 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:02:16 by tischmid          #+#    #+#              #
-#    Updated: 2024/05/22 13:27:34 by tosuman          ###   ########.fr        #
+#    Updated: 2024/05/22 23:08:14 by tosuman          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -43,11 +43,15 @@ _SRC += glob.c
 _SRC += minishell.c
 _SRC += echo.c
 _SRC += unset.c
-_SRC += export.c
 _SRC += pwd.c
 _SRC += env.c
 _SRC += exit.c
 _SRC += cd.c
+_SRC += declare.c
+_SRC += declare_utils.c
+_SRC += source.c
+_SRC += readonly.c
+_SRC += export.c
 _SRC += environment.c
 
 vpath %.c             \

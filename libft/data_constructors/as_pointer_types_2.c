@@ -15,6 +15,11 @@ t_data	as_str_pair(t_str_pair *as_str_pair)
 	return ((t_data){.as_str_pair = as_str_pair, .type = TYPE_STR_PAIR});
 }
 
+t_data	as_kv_pair(t_kv_pair *as_kv_pair)
+{
+	return ((t_data){.as_kv_pair = as_kv_pair, .type = TYPE_KV_PAIR});
+}
+
 t_data	as_list(t_list *as_list)
 {
 	return ((t_data){.as_list = as_list, .type = TYPE_LIST});

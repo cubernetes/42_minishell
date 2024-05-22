@@ -8,6 +8,8 @@
  */
 t_list_node	*lnext(t_list list[static 1])
 {
+	if (list->_iterator_stack->len == 0)
+		return (NULL);
 	return (list->_method(list));
 }
 /* TODO: Edge case? calling lnext when there was never any iterator */

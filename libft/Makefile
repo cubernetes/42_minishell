@@ -6,7 +6,7 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:09:11 by tischmid          #+#    #+#              #
-#    Updated: 2024/05/22 14:32:09 by tosuman          ###   ########.fr        #
+#    Updated: 2024/05/22 21:53:57 by tosuman          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -46,6 +46,7 @@ unexport SRC
 # misc
 SRC += error_handling.c
 SRC += cmt.c
+SRC += ft_getopt.c
 
 # string
 SRC += ft_atoi.c
@@ -143,6 +144,7 @@ SRC += cmp_int_asc.c
 # list
 SRC += lswap.c
 SRC += lsplit.c
+SRC += lsplit_n.c
 SRC += lsort.c
 SRC += lrotate.c
 SRC += lpush_left.c
@@ -180,6 +182,7 @@ SRC += ht_set.c
 SRC += ht_get.c
 SRC += ht_print.c
 SRC += ht_destroy.c
+SRC += ht_to_list.c
 SRC += ht_hash.c
 
 _OBJ = $(SRC:.c=.o)

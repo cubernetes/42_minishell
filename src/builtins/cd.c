@@ -7,9 +7,10 @@
 int	builtin_cd(char **argv, t_fds fds)
 {
 	char	*var;
-	int	status;
+	int		status;
+	char	*name;
 
-	(void)fds;
+	name = *argv++;
 	var = getenv("HOME");
 	if (!var)
 		return (minishell_error(1, false, "cd: HOME not set"));
@@ -20,7 +21,7 @@ int	builtin_cd(char **argv, t_fds fds)
 		status = chdir(argv[0]);
 	}
 	if (status == -1)
-		return (minishell_error(1, false, "cd: no such file or directory: %s", argv[0]));
+		return (minishell_error(1, false, "%s: no such file or directory: %s", name, argv[0]));
 	return (0);
 }
 /* TODO: (not required) implement cd - */

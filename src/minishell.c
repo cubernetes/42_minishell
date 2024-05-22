@@ -49,6 +49,20 @@ char	*expand_prompt(char *prompt_string)
 	return (prompt_string);
 }
 
+void	inherit_environment(char *envp[])
+{
+	t_list	*pair;
+
+	while (*envp)
+	{
+		pair = lsplit_n(*envp, "=", 1);
+		set_var(pair->first->as_str,
+			pair->last->as_str,
+			(t_flags){.exp = true});
+		++envp;
+	}
+}
+
 /* TODO: what if readline returns NULL? */
 /* TODO: use/think about rl_end (and other rl vars) */
 /* TODO: remove DEBUG macros */
@@ -76,26 +90,27 @@ char	*expand_prompt(char *prompt_string)
 /* TODO: check that where next is called, in case of early return, that llast is called */
 /* TODO: rigorously test list functions */
 /* TODO: (void) cast all functions where return value is not used */
-int	main(int argc, char **argv, char **envp)
+int	main(int argc, char *argv[], char *envp[])
 {
 	char		*line;
 	t_list		*tokens;
 	t_tree		*ast_root_node;
 
 	set_allocator(gc_malloc);
+	inherit_environment(envp);
 	((void)argc, set_argv(argv), set_env(envp));
 	tokens = NULL;
 	ast_root_node = NULL;
 	setup_signals();
-	set_var("?", "0", (t_flags){0});
+	set_var("?", "0", (t_flags){.special = true});
 	set_var("OLDPWD", gc_add_str(getcwd(NULL, 0)), (t_flags){0});
 	set_var("PWD", gc_add_str(getcwd(NULL, 0)), (t_flags){0});
 	while (1)
 	{
 		set_var("PS0", expand_prompt(PS0), (t_flags){0});
 		set_var("PS1", expand_prompt(PS1), (t_flags){0});
-		line = gc_add_str(readline(get_var("PS1")));
-		/* line = ft_strdup("echo $WHATEVER"); */
+		line = gc_add_str(readline(get_var("PS1")->value));
+		/* line = ft_strdup("export"); */
 		if (!line)
 			break ;
 		add_history(line);
@@ -217,7 +232,7 @@ void	set_pwd(void)
 {
 	char	*cwd;
 
-	cwd = get_var("PWD");
+	cwd = get_var("PWD")->value;
 	if (NULL != cwd)
 	{
 		cwd = getcwd(NULL, 0);
@@ -236,21 +251,17 @@ void	set_oldpwd(void)
 {
 	char	*cwd;
 
-	cwd = get_var("PWD");
+	cwd = get_var("PWD")->value;
 	if (NULL != cwd)
 	{
 		set_var("OLDPWD", cwd, (t_flags){0});
 	}
 }
 
-void	inherit_environment(void)
-{
-}
-
 void	set_initial_shell_variables(void)
 {
-	inherit_environment();
-	set_var("?", "0", (t_flags){.exp = true, .hidden = true});
+	/* inherit_environment(); */
+	set_var("?", "0", (t_flags){.special = true});
 	set_pwd();
 }
 

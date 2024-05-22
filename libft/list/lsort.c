@@ -1,13 +1,14 @@
 #include "libft.h"
 #include <stdbool.h>
 
-/** Sort a list in-place
+/** Sort a list in-place and return the same list
  *
  *  @param list: the list to sort
  *  @param cmp: a comparison function that takes two data unions and returns
  *              a bool
+ *  @returns: `list'
  */
-void	lsort(t_list *list, bool (cmp)(t_data data1, t_data data2))
+t_list	*lsort(t_list *list, bool (cmp)(t_data data1, t_data data2))
 {
 	size_t	i;
 	size_t	j;
@@ -24,4 +25,5 @@ void	lsort(t_list *list, bool (cmp)(t_data data1, t_data data2))
 		}
 		lrotate(list, 1);
 	}
+	return (list);
 }

@@ -2,11 +2,17 @@
 
 int	builtin_unset(char **argv, t_fds fds)
 {
-	(void)fds;
+	int		exit_status;
+	char	*name;
+
+	name = *argv++;
+	exit_status = 0;
 	while (*argv)
 	{
-		set_var(*argv, NULL, (t_flags){0});
+		if (!unset_var(*argv))
+			exit_status = minishell_error(1, false, "%s: %s: cannot unset: readonly variable",
+				name, *argv);
 		++argv;
 	}
-	return (0);
+	return (exit_status);
 }

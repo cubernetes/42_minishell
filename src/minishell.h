@@ -81,39 +81,40 @@
 # define NUM_TOKENS 11
 
 /********************* FORWARD DECLARATIONS *********************/
-typedef struct s_token		t_token;
-typedef int					t_token_type;
-typedef struct s_tree		t_tree;
-typedef int					t_tree_type;
-typedef struct s_fds		t_fds;
-typedef struct s_var		t_var;
-typedef struct s_flags		t_flags;
-typedef struct s_str_pair	t_str_pair;
+typedef struct s_token			t_token;
+typedef int						t_token_type;
+typedef struct s_tree			t_tree;
+typedef int						t_tree_type;
+typedef struct s_fds			t_fds;
+typedef struct s_var			t_var;
+typedef struct s_flags			t_flags;
+typedef struct s_declare_flags	t_declare_flags;
 
 /*** other typedefs ***/
-typedef t_tree				*t_children[];
-typedef struct sigaction	t_sa;
+typedef t_tree					*t_children[];
+typedef struct sigaction		t_sa;
 
 /************************** STRUCTURES *************************/
-
-struct s_str_pair
+struct s_declare_flags
 {
-	char	*l;
-	char	*r;
+	bool	readonly;
+	bool	export;
+	bool	print;
 };
 
 struct s_flags
 {
 	bool	exp;
-	bool	hidden;
 	bool	readonly;
+	bool	special;
 };
 
+/* must be the same as the flags of t_flags */
 struct s_var
 {
 	bool	exp;
 	bool	readonly;
-	bool	hidden;
+	bool	special;
 	char	*value;
 };
 
@@ -153,7 +154,6 @@ struct									s_tree
 		};
 	};
 };
-
 
 /************** PROTOTYPES ******************/
 void									setup_signals(void);
@@ -196,17 +196,24 @@ void									close_fds(t_tree *simple_command);
 void									set_fds(t_tree *simple_command);
 void									close_other_command_fds(
 											t_list *commands);
-char									*set_var(char *key, char *value,
+t_var									*get_var(char key[static 1]);
+bool									unset_var(char key[static 1]);
+void									set_var(char key[static 1],
+											char value[static 1],
 											t_flags flags);
-char									*get_var(char key[static 1]);
+t_ht									**get_vars(void);
 void									clear_vars(void);
 int										builtin_cd(char **argv, t_fds fds);
 int										builtin_echo(char **argv, t_fds fds);
-int										builtin_env(char **argv, t_fds fds, const char *prefix, bool sort);
+int										builtin_env(char **argv, t_fds fds);
 int										builtin_exit(char **argv, t_fds fds);
 int										builtin_export(char **argv, t_fds fds);
+int										builtin_readonly(char **argv,
+											t_fds fds);
+int										builtin_declare(char **argv, t_fds fds);
 int										builtin_pwd(char **argv, t_fds fds);
 int										builtin_unset(char **argv, t_fds fds);
+int										builtin_source(char **argv, t_fds fds);
 char									*ft_gethostname(void);
 char									*ft_getcwd(void);
 t_list									*productions_to_children(

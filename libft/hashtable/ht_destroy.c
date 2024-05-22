@@ -1,7 +1,5 @@
 #include "libft.h"
 
-#include <stdlib.h>
-
 void	ht_destroy(t_ht *ht[MAX_HT_SIZE], bool (*free_data)(t_data data))
 {
 	int		i;

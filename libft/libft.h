@@ -34,6 +34,7 @@ typedef struct s_literator		t_literator;
 typedef struct s_data			t_data;
 typedef struct s_ht				t_ht;
 typedef struct s_str_pair		t_str_pair;
+typedef struct s_kv_pair		t_kv_pair;
 typedef struct s_ctx_meta		t_ctx_meta;
 
 /***************** ENUMS *****************/
@@ -56,6 +57,7 @@ enum e_type
 	TYPE_VAR,
 	TYPE_LIST,
 	TYPE_STR_PAIR,
+	TYPE_KV_PAIR,
 };
 
 enum						e_method
@@ -98,7 +100,20 @@ struct s_data
 		t_var			*as_var;
 		t_list			*as_list;
 		t_str_pair		*as_str_pair;
+		t_kv_pair		*as_kv_pair;
 	};
+};
+
+struct s_kv_pair
+{
+	char	*k;
+	t_data	v;
+};
+
+struct s_str_pair
+{
+	char	*l;
+	char	*r;
 };
 
 /** List node structure for `next` and `prev' pointers
@@ -127,6 +142,7 @@ struct s_list_node
 			t_var			*as_var;
 			t_list			*as_list;
 			t_str_pair		*as_str_pair;
+			t_kv_pair		*as_kv_pair;
 		};
 	};
 	t_list_node	*next;
@@ -151,7 +167,7 @@ struct s_list
 	t_list_node		*first;
 	t_list_node		*last;
 	t_list_node		*current;
-	size_t			_current_idx; /* internal */
+	size_t			current_idx; /* internal */
 	t_list_node		*(*_method)(t_list *list); /* internal */
 	t_list			*_iterator_stack; /* internal, don't iterate this one! */
 };
@@ -207,7 +223,7 @@ char							*ft_strnstr(char const *big, char const *little,
 									size_t len);
 char							*ft_strchr(char const *s, int c);
 char							*ft_strrchr(char const *s, int c);
-char							*ft_strdup(char const *s);
+char							*ft_strdup(char const s[static 1]);
 char							*ft_strndup(char const *s, size_t len);
 int								ft_strncmp(char const *s1, char const *s2,
 									size_t n);
@@ -299,6 +315,7 @@ t_data							as_tree_type(t_tree_type as_tree_type);
 t_data							as_gc_ptr(t_var *as_gc_ptr);
 t_data							as_list(t_list *as_list);
 t_data							as_str_pair(t_str_pair *as_str_pair);
+t_data							as_kv_pair(t_kv_pair *as_kv_pair);
 
 /* list */
 t_list_node						*lbackward(t_list list[static 1]);
@@ -316,12 +333,14 @@ t_list_node						*lpop(t_list *list);
 t_list_node						*ltop(t_list *list);
 t_list_node						*lpop_left(t_list *list);
 t_list_node						*ltop_left(t_list *list);
-void							lsort(t_list *list,
+t_list							*lsort(t_list *list,
 									bool (cmp)(t_data data1, t_data data2));
 t_list							*lnew(void);
 t_list_node						*lforward(t_list list[static 1]);
 t_list							*lsplit(const char str[static 1],
 									const char delim[static 2]);
+t_list							*lsplit_n(const char str[static 1],
+									const char delim[static 2], size_t n);
 bool							lequal(t_list *list_a, t_list *list_b,
 									bool (cmp)(t_data data1, t_data data2));
 void							lextend_left(t_list *list_a, t_list *list_b);
@@ -345,11 +364,16 @@ void							ht_print(t_ht ht[MAX_HT_SIZE],
 									void (print)(char *k, t_data v));
 void							ht_destroy(t_ht *ht[MAX_HT_SIZE],
 									bool (*free_data)(t_data data));
+t_list							*ht_to_list(t_ht *ht[MAX_HT_SIZE]);
 uint64_t						ht_hash(char *key);
 
 /* misc */
 /* TODO: this function contains forbidden functions (backtrace) */
 void							print_callstack(void);
 void							cmt(const char *cmd_str);
+t_list							*ft_getopt(char *const argv[],
+									char valid_opts[static 1],
+									char erropt[static 1],
+									int optind[static 1]);
 
 #endif /* libft.h. */

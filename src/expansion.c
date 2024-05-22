@@ -3,16 +3,6 @@
 
 #include <stdlib.h>
 
-char	*var_lookup(char *key)
-{
-	char	*value;
-
-	value = getenv(key);
-	if (value != NULL)
-		return (value);
-	return (get_var(key));
-}
-
 static size_t	expand_vars(t_token *token, char *var)
 {
 	char	*orig_var;
@@ -28,13 +18,13 @@ static size_t	expand_vars(t_token *token, char *var)
 			++var;
 			++len;
 		}
-		expanded_var = var_lookup(ft_strndup(orig_var, len));
+		expanded_var = get_var(ft_strndup(orig_var, len))->value;
 		token->str = ft_strjoin(token->str, expanded_var);
 		return (len + 1);
 	}
 	else if (var[0] == '$' && var[1] == '?')
 	{
-		expanded_var = get_var("?");
+		expanded_var = get_var("?")->value;
 		token->str = ft_strjoin(token->str, ft_strdup(expanded_var));
 		return (2);
 	}

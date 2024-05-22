@@ -9,6 +9,7 @@ int	builtin_echo(char **argv, t_fds fds)
 	bool	flag;
 	int		j;
 
+	++argv;
 	flag = false;
 	i = 0;
 	j = 0;
@@ -18,7 +19,7 @@ int	builtin_echo(char **argv, t_fds fds)
 		i++;
 		j++;
 	}
-	while(argv[i] != NULL)
+	while (argv[i] != NULL)
 	{
 		if (fds.fd_out != -2)
 		{

@@ -280,6 +280,7 @@ t_list	*tokenize(const char *line)
 			break ;
 		skip_whitespace(&line);
 	}
+	/* TODO: Wrong behaviour */
 	expand_env_vars(tokens);
 	glob_tokens(tokens);
 	join_tokens(tokens);

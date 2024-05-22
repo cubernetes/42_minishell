@@ -107,6 +107,10 @@ bool	is_builtin(char	*word)
 		|| ft_strcmp(word, "exit") == 0
 		|| ft_strcmp(word, "export") == 0
 		|| ft_strcmp(word, "pwd") == 0
+		|| ft_strcmp(word, "readonly") == 0
+		|| ft_strcmp(word, "declare") == 0
+		|| ft_strcmp(word, "source") == 0
+		|| ft_strcmp(word, ".") == 0
 		|| ft_strcmp(word, "unset") == 0);
 }
 
@@ -115,19 +119,27 @@ int	handle_builtin(char	**argv, t_fds fds)
 	if (*argv == NULL)
 		return (1);
 	else if (ft_strcmp(*argv, "cd") == 0)
-		return (builtin_cd(argv + 1, fds));
+		return (builtin_cd(argv, fds));
 	else if (ft_strcmp(*argv, "echo") == 0)
-		return (builtin_echo(argv + 1, fds));
+		return (builtin_echo(argv, fds));
 	else if (ft_strcmp(*argv, "env") == 0)
-		return (builtin_env(get_env(), fds, "", false));
+		return (builtin_env(get_env(), fds));
 	else if (ft_strcmp(*argv, "exit") == 0)
-		return (builtin_exit(argv + 1, fds));
+		return (builtin_exit(argv, fds));
 	else if (ft_strcmp(*argv, "export") == 0)
-		return (builtin_export(argv + 1, fds));
+		return (builtin_export(argv, fds));
 	else if (ft_strcmp(*argv, "pwd") == 0)
-		return (builtin_pwd(argv + 1, fds));
+		return (builtin_pwd(argv, fds));
+	else if (ft_strcmp(*argv, "readonly") == 0)
+		return (builtin_readonly(argv, fds));
+	else if (ft_strcmp(*argv, "declare") == 0)
+		return (builtin_declare(argv, fds));
+	else if (ft_strcmp(*argv, "source") == 0)
+		return (builtin_source(argv, fds));
+	else if (ft_strcmp(*argv, ".") == 0)
+		return (builtin_source(argv, fds));
 	else if (ft_strcmp(*argv, "unset") == 0)
-		return (builtin_unset(argv + 1, fds));
+		return (builtin_unset(argv, fds));
 	return (1);
 }
 
