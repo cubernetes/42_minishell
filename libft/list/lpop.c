@@ -3,10 +3,13 @@
 /** Remove the last element of a list.
  *
  *  @param list: the list to remove the last element of
- *  @returns: `list'
+ *  @returns: the last element
  */
-t_list	*lpop(t_list *list)
+t_list_node	*lpop(t_list *list)
 {
+	t_list_node	*last;
+
+	last = list->last;
 	if (list->len == 1)
 	{
 		list->first = NULL;
@@ -20,5 +23,5 @@ t_list	*lpop(t_list *list)
 		list->last = list->last->prev;
 		list->len--;
 	}
-	return (list);
+	return (last);
 }

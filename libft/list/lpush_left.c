@@ -5,9 +5,9 @@
  *
  *  @param list: the list to prepend `data' to
  *  @param data: the data union to prepend to `list'
- *  @returns: `list'
+ *  @returns: the node added
  */
-t_list	*lpush_left(t_list list[static 1], t_data data)
+t_list_node	*lpush_left(t_list list[static 1], t_data data)
 {
 	struct s_list_node	*node;
 
@@ -28,6 +28,6 @@ t_list	*lpush_left(t_list list[static 1], t_data data)
 	node->prev = list->last;
 	list->first = node;
 	list->len++;
-	return (list);
+	return (list->first);
 }
 /* TODO: Test rigorously */

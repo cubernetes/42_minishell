@@ -187,6 +187,8 @@ t_list							*gc_add(void *ptr);
 t_list							*gc_get_context(void);
 char							*gc_get_context_name(void);
 t_list							*gc_set_context(char *new_ctx_name);
+char							*gc_start_context(char *new_ctx_name);
+char							*gc_end_context(void);
 t_ctx_meta						gc_ctx_manager(t_method method, char *_ctx_name);
 void							*ft_malloc(size_t size);
 void							*gc_malloc(size_t size);
@@ -307,13 +309,15 @@ void							lrotate(t_list *list, int n);
 t_list							*liter(t_list list[static 1]);
 t_list							*lcopy(t_list *list);
 t_list							*liter_rev(t_list list[static 1]);
-t_list							*lpush(t_list list[static 1], t_data data);
-t_list							*lpop(t_list *list);
-t_list							*lpop_left(t_list *list);
+t_list_node						*lpush(t_list list[static 1], t_data data);
+t_list_node						*lpush_left(t_list list[static 1],
+									t_data data);
+t_list_node						*lpop(t_list *list);
+t_list_node						*ltop(t_list *list);
+t_list_node						*lpop_left(t_list *list);
+t_list_node						*ltop_left(t_list *list);
 void							lsort(t_list *list,
 									bool (cmp)(t_data data1, t_data data2));
-t_list							*lpush_left(t_list list[static 1],
-									t_data data);
 t_list							*lnew(void);
 t_list_node						*lforward(t_list list[static 1]);
 t_list							*lsplit(const char str[static 1],

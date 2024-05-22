@@ -6,7 +6,7 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:09:11 by tischmid          #+#    #+#              #
-#    Updated: 2024/05/19 17:37:10 by tischmid         ###   ########.fr        #
+#    Updated: 2024/05/22 14:32:09 by tosuman          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -98,6 +98,8 @@ SRC += set_allocator.c
 SRC += get_allocator.c
 SRC += gc_set_context.c
 SRC += gc_malloc.c
+SRC += gc_start_context.c
+SRC += gc_end_context.c
 SRC += gc_get_context.c
 SRC += gc_get_context_name.c
 SRC += gc_free.c
@@ -148,7 +150,9 @@ SRC += lpush.c
 SRC += lprint_rev.c
 SRC += lprint.c
 SRC += lpop_left.c
+SRC += ltop_left.c
 SRC += lpop.c
+SRC += ltop.c
 SRC += lnext.c
 SRC += lnew.c
 SRC += llast.c

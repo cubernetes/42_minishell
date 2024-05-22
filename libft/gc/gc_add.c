@@ -9,7 +9,8 @@ t_list	*gc_add(void *ptr)
 
 	prev_allocator = get_allocator();
 	set_allocator(malloc);
-	ptrs = lpush(gc_get_context(), as_gc_ptr(ptr));
+	ptrs = gc_get_context();
+	(void)lpush(ptrs, as_gc_ptr(ptr));
 	set_allocator(prev_allocator);
 	return (ptrs);
 }

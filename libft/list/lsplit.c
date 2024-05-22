@@ -10,8 +10,8 @@
 t_list	*lsplit(const char str[static 1], const char delim[static 2])
 {
 	t_list	*list;
-	int		token_start;
-	int		token_end;
+	size_t	token_start;
+	size_t	token_end;
 	size_t	delim_len;
 
 	delim_len = ft_strlen(delim);

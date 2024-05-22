@@ -198,7 +198,7 @@ void									close_other_command_fds(
 											t_list *commands);
 char									*set_var(char *key, char *value,
 											t_flags flags);
-char									*get_var(char *key);
+char									*get_var(char key[static 1]);
 void									clear_vars(void);
 int										builtin_cd(char **argv, t_fds fds);
 int										builtin_echo(char **argv, t_fds fds);

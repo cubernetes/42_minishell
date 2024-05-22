@@ -27,10 +27,8 @@ t_tree	**initialize_productions(const char *grammar)
 	char		**tokens;
 	int			i;
 	int			j;
-	char		*prev_ctx;
 
-	prev_ctx = gc_get_context_name();
-	gc_set_context("POST");
+	gc_start_context("POST");
 	productions = ft_malloc(sizeof(*productions) * 20);
 	lines = ft_split(grammar, '\n');
 	i = -1;
@@ -46,7 +44,7 @@ t_tree	**initialize_productions(const char *grammar)
 			productions[i][j] = gen_production(tokens[j]);
 		productions[i][j] = (t_tree){0};
 	}
-	gc_set_context(prev_ctx);
+	gc_end_context();
 	return (productions);
 }
 

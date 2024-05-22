@@ -75,6 +75,7 @@ char	*expand_prompt(char *prompt_string)
 /* TODO: Use yoda conditions */
 /* TODO: check that where next is called, in case of early return, that llast is called */
 /* TODO: rigorously test list functions */
+/* TODO: (void) cast all functions where return value is not used */
 int	main(int argc, char **argv, char **envp)
 {
 	char		*line;
@@ -99,7 +100,7 @@ int	main(int argc, char **argv, char **envp)
 			break ;
 		add_history(line);
 		tokens = tokenize(line);
-		lprint(tokens, print_token);
+		/* lprint(tokens, print_token); */
 		ast_root_node = build_ast(tokens);
 		/* ast_print(ast_root_node); */
 		set_var("?", ft_itoa(execute(ast_root_node)), (t_flags){0});

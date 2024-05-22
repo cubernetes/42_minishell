@@ -5,9 +5,9 @@
  *
  *  @param list: the list to push `data' to
  *  @param data: the data union to push to `list'
- *  @returns: `list'
+ *  @returns: the node added
  */
-t_list	*lpush(t_list list[static 1], t_data data)
+t_list_node	*lpush(t_list list[static 1], t_data data)
 {
 	struct s_list_node	*node;
 
@@ -28,5 +28,5 @@ t_list	*lpush(t_list list[static 1], t_data data)
 	node->prev = list->last;
 	list->last = node;
 	list->len++;
-	return (list);
+	return (list->last);
 }

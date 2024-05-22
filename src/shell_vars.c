@@ -24,7 +24,6 @@ char	*set_var(char *key, char *value, t_flags flags)
 {
 	static t_ht	*shell_vars[MAX_HT_SIZE];
 	t_var		*ret;
-	char		*prev_ctx;
 
 	if (key == NULL)
 	{
@@ -35,16 +34,15 @@ char	*set_var(char *key, char *value, t_flags flags)
 	}
 	if (value == NULL)
 		return (value);
-	prev_ctx = gc_get_context_name();
-	gc_set_context("POST");
+	gc_start_context("POST");
 	ht_set(shell_vars, key,
-		(t_data){.as_var = ft_memdup(&(t_var){
+		as_var(ft_memdup(&(t_var){
 			.exp = flags.exp,
 			.readonly = flags.readonly,
 			.hidden = flags.hidden,
 			.value = ft_nullable_strdup(value)
-		}, sizeof(t_var))});
-	gc_set_context(prev_ctx);
+		}, sizeof(t_var))));
+	gc_end_context();
 	return (value);
 }
 

@@ -4,12 +4,10 @@
 t_tree_type	tree_ht_get(char *key)
 {
 	static t_ht	*ht[MAX_HT_SIZE + 1];
-	char		*prev_ctx;
 
 	if (ht[MAX_HT_SIZE] != NULL)
 		return (ht_get(ht, key).as_tree_type);
-	prev_ctx = gc_get_context_name();
-	gc_set_context("POST");
+	gc_start_context("POST");
 	ft_bzero(ht, sizeof(*ht) * (MAX_HT_SIZE + 1));
 	ht_set(ht, "<pipe_sequence>", as_tree_type(PIPE_SEQUENCE));
 	ht_set(ht, "<complete_command_tail>", as_tree_type(COMPLETE_COMMAND_TAIL));
@@ -30,19 +28,17 @@ t_tree_type	tree_ht_get(char *key)
 	ht_set(ht, "TOK_EPSILON", as_tree_type(TOKEN));
 	ht_set(ht, "|", as_tree_type(TOKEN));
 	ht[MAX_HT_SIZE] = (void *)1;
-	gc_set_context(prev_ctx);
+	gc_end_context();
 	return (ht_get(ht, key).as_tree_type);
 }
 
 t_token_type	tokens_ht_get(char *key)
 {
 	static t_ht	*ht[MAX_HT_SIZE + 1];
-	char		*prev_ctx;
 
 	if (ht[MAX_HT_SIZE] == NULL)
 	{
-		prev_ctx = gc_get_context_name();
-		gc_set_context("POST");
+		gc_start_context("POST");
 		ft_bzero(ht, sizeof(*ht) * (MAX_HT_SIZE + 1));
 		ht_set(ht, "TOK_EPSILON", as_token_type(TOK_EPSILON));
 		ht_set(ht, "TOK_WORD", as_token_type(TOK_WORD));
@@ -56,7 +52,7 @@ t_token_type	tokens_ht_get(char *key)
 		ht_set(ht, "||", as_token_type(TOK_OR));
 		ht_set(ht, "|", as_token_type(TOK_PIPE));
 		ht[MAX_HT_SIZE] = (void *)1;
-		gc_set_context(prev_ctx);
+		gc_end_context();
 	}
 	return (ht_get(ht, key).as_token_type);
 }

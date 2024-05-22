@@ -3,10 +3,13 @@
 /** Remove the first element of a list.
  *
  *  @param list: the list to remove the first element of
- *  @returns: `list'
+ *  @returns: the first element
  */
-t_list	*lpop_left(t_list *list)
+t_list_node	*lpop_left(t_list *list)
 {
+	t_list_node	*first;
+
+	first = list->first;
 	if (list->len == 1)
 	{
 		list->first = NULL;
@@ -20,6 +23,6 @@ t_list	*lpop_left(t_list *list)
 		list->first = list->first->next;
 		list->len--;
 	}
-	return (list);
+	return (first);
 }
 /* TODO: Test rigorously */
