@@ -22,10 +22,12 @@ static bool	glob_match(const char *pattern, const char *str)
 
 static bool	ft_strcmp2(t_data str1, t_data str2)
 {
-	return ((bool)!ft_strcmp(str1.as_str, str2.as_str));
+	return ((bool) !ft_strcmp(str1.as_str, str2.as_str));
 }
 
-static t_list	*glob_token(t_token *token)
+/* mirroring bash's behaviour of NOT globbing when it fails to open a dir */
+/* TODO: expand .* to hidden files */
+t_list	*glob_token(t_token *token)
 {
 	DIR				*dirp;
 	struct dirent	*dp;
@@ -51,33 +53,38 @@ static t_list	*glob_token(t_token *token)
 	return (tokens);
 }
 
-/* mirroring bash's behaviour of NOT globbing when it fails to open a dir */
 /* TODO: apply DRY */
 /* TODO: apply DRY in the deque/deque functions */
-/* TODO: expand .* to hidden files */
 void	glob_tokens(t_list *tokens)
 {
 	t_list		*new_tokens;
-	t_list_node	*first;
 
 	new_tokens = lnew();
-	first = tokens->first;
-	if (first)
+	liter(tokens);
+	while (lnext(tokens))
 	{
-		if (first->as_token->type == TOK_WORD)
-			lextend(new_tokens, glob_token(first->as_token));
+		if (tokens->current->as_token->type == TOK_WORD)
+			lextend(new_tokens, glob_token(tokens->current->as_token));
 		else
-			lpush(new_tokens, as_token(first->as_token));
-		while (first->next != tokens->first)
-		{
-			first = first->next;
-			if (first->as_token->type == TOK_WORD)
-				lextend(new_tokens, glob_token(first->as_token));
-			else
-				lpush(new_tokens, as_token(first->as_token));
-		}
+			lpush(new_tokens, as_data(tokens->current));
 	}
 	tokens->first = new_tokens->first;
 	tokens->last = new_tokens->last;
 	tokens->len = new_tokens->len;
+}
+
+t_list	*glob_tokens_2(t_list *tokens)
+{
+	t_list		*new_tokens;
+
+	new_tokens = lnew();
+	liter(tokens);
+	while (lnext(tokens))
+	{
+		if (tokens->current->as_token->type == TOK_WORD)
+			lextend(new_tokens, glob_token(tokens->current->as_token));
+		else
+			lpush(new_tokens, as_data(tokens->current));
+	}
+	return (new_tokens);
 }

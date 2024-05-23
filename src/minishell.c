@@ -105,19 +105,20 @@ int	main(int argc, char *argv[], char *envp[])
 	set_var("?", "0", (t_flags){.special = true});
 	set_var("OLDPWD", gc_add_str(getcwd(NULL, 0)), (t_flags){0});
 	set_var("PWD", gc_add_str(getcwd(NULL, 0)), (t_flags){0});
+	set_var("A", ft_strdup("file1.txt * foo.txt"), (t_flags){.exp = true});
 	while (1)
 	{
 		set_var("PS0", expand_prompt(PS0), (t_flags){0});
 		set_var("PS1", expand_prompt(PS1), (t_flags){0});
 		line = gc_add_str(readline(get_var("PS1")->value));
-		/* line = ft_strdup("declare -- -p"); */
+		/* line = ft_strdup("echo hi > $A"); */
 		if (!line)
 			break ;
 		add_history(line);
 		tokens = tokenize(line);
-		/* lprint(tokens, print_token); */
+		lprint(tokens, print_token);
 		ast_root_node = build_ast(tokens);
-		/* ast_print(ast_root_node); */
+		tree_print(ast_root_node);
 		set_var("?", ft_itoa(execute(ast_root_node)), (t_flags){.special = true});
 		(void)gc_free("DEFAULT");
 	}

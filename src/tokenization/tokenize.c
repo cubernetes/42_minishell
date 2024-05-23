@@ -23,6 +23,9 @@ char	*get_token_str_nl(t_list *tokens)
 
 t_token_type	get_token_type(t_list *tokens)
 {
+	if (tokens->first->as_token->type == TOK_SQUOTE_STR
+		|| tokens->first->as_token->type == TOK_DQUOTE_STR)
+		return (TOK_WORD);
 	return (tokens->first->as_token->type);
 }
 
@@ -280,8 +283,8 @@ t_list	*tokenize(const char *line)
 			break ;
 		skip_whitespace(&line);
 	}
-	expand_env_vars(tokens);
-	glob_tokens(tokens);
-	join_tokens(tokens);
+	// expand_env_vars(tokens);
+	// glob_tokens(tokens);
+	// join_tokens(tokens);
 	return (tokens);
 }

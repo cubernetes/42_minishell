@@ -176,6 +176,8 @@ int										minishell_error(int exit_code,
 											bool do_exit,
 											const char *fmt, ...);
 void									expand_env_vars(t_list *tokens);
+t_list									*expand_token(t_token *token);
+t_list									*glob_tokens_2(t_list *tokens);
 void									join_tokens(t_list *tokens);
 char									**set_env(char **envp);
 char									**get_env(void);

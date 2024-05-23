@@ -46,14 +46,12 @@ static void	*new_word_token(char *str)
 }
 
 /* TODO: Not required: use full IFS instead of just the first char */
-static void	expand_word(t_list *new_tokens, t_list_node *first)
+static void	expand_word(t_list *new_tokens, t_token *token)
 {
-	t_token	*token;
 	char	*token_str;
 	t_list	*split_words;
 	t_list	*split_tokens;
 
-	token = first->as_token;
 	if (token->type != TOK_WORD)
 		return ;
 	token_str = token->str;
@@ -69,12 +67,10 @@ static void	expand_word(t_list *new_tokens, t_list_node *first)
 		new_tokens->first->prev->as_token->is_last_subtoken = false;
 }
 
-static void	expand_dquote_str(t_list *new_tokens, t_list_node *first)
+static void	expand_dquote_str(t_list *new_tokens, t_token *token)
 {
-	t_token	*token;
 	char	*token_str;
 
-	token = first->as_token;
 	if (token->type != TOK_DQUOTE_STR)
 		return ;
 	token_str = token->str;
@@ -84,14 +80,28 @@ static void	expand_dquote_str(t_list *new_tokens, t_list_node *first)
 	lpush(new_tokens, as_token(token));
 }
 
-static void	expand(t_list *new_tokens, t_list_node *first)
+static void	expand(t_list *new_tokens, t_token *token)
 {
-	if (first->as_token->type == TOK_WORD)
-		expand_word(new_tokens, first);
-	else if (first->as_token->type == TOK_DQUOTE_STR)
-		expand_dquote_str(new_tokens, first);
+	if (token->type == TOK_WORD)
+		expand_word(new_tokens, token);
+	else if (token->type == TOK_DQUOTE_STR)
+		expand_dquote_str(new_tokens, token);
 	else
-		lpush(new_tokens, as_token(first->as_token));
+		lpush(new_tokens, as_token(token));
+}
+
+t_list	*expand_token(t_token *token)
+{
+	t_list	*new_tokens;
+
+	new_tokens = lnew();
+	if (token->type == TOK_WORD)
+		expand_word(new_tokens, token);
+	else if (token->type == TOK_DQUOTE_STR)
+		expand_dquote_str(new_tokens, token);
+	else
+		lpush(new_tokens, as_token(token));
+	return (new_tokens);
 }
 
 void	expand_env_vars(t_list *tokens)
@@ -101,7 +111,7 @@ void	expand_env_vars(t_list *tokens)
 	new_tokens = lnew();
 	liter(tokens);
 	while (lnext(tokens))
-		expand(new_tokens, tokens->current);
+		expand(new_tokens, tokens->current->as_token);
 	tokens->first = new_tokens->first;
 	tokens->last = new_tokens->last;
 	tokens->len = new_tokens->len;

@@ -1,3 +1,4 @@
+#include "libft.h"
 #include "minishell.h"
 
 /* TODO: Not required: hashtable */
@@ -55,7 +56,7 @@ t_list	*new_children(t_tree **children)
 /* TODO: Not required: Make transition table adaptive (quite a lot of work) */
 int	get_production_idx(t_tree_type nonterm, t_token *token)
 {
-	static int	transition_table[NUM_NONTERMS][NUM_TOKENS] = {
+	static int		transition_table[NUM_NONTERMS][NUM_TOKENS] = {
 	{19, -1, -1, -1, 0, -1, 0, 0, 0, 0, 0},
 	{1, 2, 2, -1, -1, 1, -1, -1, -1, -1, -1},
 	{-1, 3, 4, -1, -1, -1, -1, -1, -1, -1, -1},
@@ -67,9 +68,13 @@ int	get_production_idx(t_tree_type nonterm, t_token *token)
 	{12, 12, 12, 12, -1, 12, 13, 13, 13, 13, 13},
 	{-1, -1, -1, -1, -1, -1, 14, 17, 15, 18, 16}
 	};
-	int			production_idx;
+	int				production_idx;
+	t_token_type	type;
 
-	production_idx = transition_table[nonterm - 1][token->type - 1];
+	type = token->type;
+	if (type == TOK_DQUOTE_STR || type == TOK_SQUOTE_STR)
+		type = TOK_WORD;
+	production_idx = transition_table[nonterm - 1][type - 1];
 	if (production_idx == -1)
 	{
 		if (!*token->str)

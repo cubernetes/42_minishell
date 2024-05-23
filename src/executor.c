@@ -96,9 +96,42 @@ void	handle_io_redirect(t_tree *io_redirect, t_tree *simple_command)
 			"redirect error: %s", strerror(errno));
 }
 
+static t_list	*tokens_to_tree_list(t_list *tokens)
+{
+	t_list	*tree_list;
+
+	tree_list = lnew();
+	liter(tokens);
+	while (lnext(tokens))
+		lpush(tree_list, as_tree(new_tree_token(tokens->current->as_token->type, tokens->current->as_token->str)));
+	return (tree_list);
+}
+
 pid_t	execute_simple_command_wrapper(t_tree *simple_command,
 	t_list *commands)
 {
+	t_list	*new_children;
+	t_list	*tmp;
+	t_list	*redirect_children;
+
+	new_children = lnew();
+	liter(simple_command->children);
+	while (lnext(simple_command->children))
+	{
+		if (simple_command->children->current->as_tree->type == TOKEN)
+			lextend(new_children, tokens_to_tree_list(glob_tokens_2(expand_token(simple_command->children->current->as_tree->token))));
+		else
+		{
+			tmp = tokens_to_tree_list(glob_tokens_2(expand_token(simple_command->children->current->as_tree->children->last->as_tree->token)));
+			redirect_children = lnew();
+			lpush(redirect_children, as_data(simple_command->children->current->as_tree->children->first));
+			lpush(redirect_children, as_data(lpop_left(tmp)));
+			lpush(new_children, as_tree(new_tree_nonterm(IO_REDIRECT, redirect_children)));
+			lextend(new_children, tmp);
+		}
+	}
+	simple_command->children = new_children;
+	tree_print(simple_command);
 	liter(simple_command->children);
 	while (lnext(simple_command->children))
 		if (simple_command->children->current->as_tree->type == IO_REDIRECT)
@@ -127,15 +160,15 @@ unsigned char	wait_pipesequence(t_list *pids)
 	liter(pids);
 	while (lnext(pids))
 	{
-		if (*(pid_t *)pids->current->as_ptr < 0)
+		if (pids->current->as_pid_t < 0)
 		{
-			if (*(pid_t *)pids->current->as_ptr == -1)
+			if (pids->current->as_pid_t == -1)
 				status = 127;
-			else if (*(int *)pids->current->as_ptr < -255)
-				status = *(int *)pids->current->as_ptr + 256;
+			else if (pids->current->as_int < -255)
+				status = pids->current->as_int + 256;
 			continue ;
 		}
-		rtn = waitpid(*(pid_t *)pids->current->as_ptr, &status, 0);
+		rtn = waitpid(pids->current->as_pid_t, &status, 0);
 		if (rtn == -1)
 			minishell_error(EXIT_WAIT_ERROR, false, "wait error: %d",
 				strerror(errno));
@@ -181,8 +214,7 @@ void	setup_pipes(t_list *commands)
 pid_t	execute_complete_command_wrapper(t_tree *complete_command,
 	t_list *commands);
 
-/* TODO: implement COMPLETE_COMMAND execution */
-unsigned char	iterate_pipe_sequence(t_list *commands)
+unsigned char	execute_pipe_sequence(t_list *commands)
 {
 	unsigned char	status;
 	t_list			*pids;
@@ -193,26 +225,14 @@ unsigned char	iterate_pipe_sequence(t_list *commands)
 	while (lnext(commands))
 	{
 		if (commands->current->as_tree->type == COMPLETE_COMMAND)
-			lpush(pids, as_ptr(ft_memdup(&(pid_t){\
-					execute_complete_command_wrapper(commands->current->as_tree, commands)},
-					sizeof(pid_t))));
+			lpush(pids, as_pid_t(execute_complete_command_wrapper(
+						commands->current->as_tree, commands)));
 		else if (commands->current->as_tree->type == SIMPLE_COMMAND)
-		{
-			lpush(pids, as_ptr(ft_memdup(&(pid_t){\
-				execute_simple_command_wrapper(commands->current->as_tree, commands)},
-					sizeof(pid_t))));
-		}
+			lpush(pids, as_pid_t(execute_simple_command_wrapper(
+						commands->current->as_tree, commands)));
 	}
 	status = wait_pipesequence(pids);
 	return (status);
-}
-
-unsigned char	execute_pipe_sequence(t_list *pipe_sequence)
-{
-	unsigned char	rtn;
-	/* TODO: set only onetime for unset PATH */
-	rtn = iterate_pipe_sequence(pipe_sequence);
-	return (rtn);
 }
 
 unsigned char	execute_tok_and(t_list_node *tok_and)

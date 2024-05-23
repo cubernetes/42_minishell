@@ -5,7 +5,6 @@
 #include <stdio.h>
 #include <readline/readline.h>
 #include <errno.h>
-#include <signal.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/wait.h>
