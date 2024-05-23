@@ -110,7 +110,7 @@ int	main(int argc, char *argv[], char *envp[])
 		set_var("PS0", expand_prompt(PS0), (t_flags){0});
 		set_var("PS1", expand_prompt(PS1), (t_flags){0});
 		line = gc_add_str(readline(get_var("PS1")->value));
-		/* line = ft_strdup("export"); */
+		/* line = ft_strdup("declare -- -p"); */
 		if (!line)
 			break ;
 		add_history(line);

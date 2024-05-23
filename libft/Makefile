@@ -6,7 +6,7 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:09:11 by tischmid          #+#    #+#              #
-#    Updated: 2024/05/22 21:53:57 by tosuman          ###   ########.fr        #
+#    Updated: 2024/05/23 02:17:24 by tosuman          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -44,6 +44,7 @@ vpath %.c $(SUBDIRS)
 unexport SRC
 
 # misc
+SRC += ft_arrlen.c
 SRC += error_handling.c
 SRC += cmt.c
 SRC += ft_getopt.c
@@ -59,6 +60,7 @@ SRC += ft_isdigit.c
 SRC += ft_isprint.c
 SRC += ft_strchr.c
 SRC += ft_strdup.c
+SRC += ft_nullable_strdup.c
 SRC += ft_strndup.c
 SRC += ft_strlcat.c
 SRC += ft_strlcpy.c

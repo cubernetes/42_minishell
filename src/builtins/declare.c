@@ -5,7 +5,7 @@
 bool	sort_vars(t_data data1, t_data data2);
 bool	q_impl_p(bool p, bool q);
 void	add_var_flags(char key[static 1],
-			char value[static 1],
+			char *value,
 			t_declare_flags flags,
 			t_var *orig_var);
 char	*flags_to_str(t_var *var);
@@ -133,7 +133,7 @@ static int	declare_print(char *name, char **argv, t_fds fds)
 	{
 		var = get_var(*argv);
 		if (!valid_name(*argv))
-			exit_status = minishell_error(1, false, "%s: `%s': not a valid identifier", name, *argv);
+			exit_status = minishell_error(1, false, "%s: `%s': not found", name, *argv);
 		else if (var == NULL || var->special)
 			exit_status = minishell_error(1, false, "%s: %s: not found", name, *argv);
 		else
@@ -175,7 +175,9 @@ static int	declare_set(char *name, char **argv, t_declare_flags flags, t_fds fds
 		key = key_value->first->as_str;
 		value = key_value->first->next->as_str;
 		orig_var = get_var(key);
-		if (key_value->len == 2)
+		if (!valid_name(key))
+			exit_status = minishell_error(1, false, "%s: `%s': not a valid identifier", name, key);
+		else if (key_value->len == 2)
 		{
 			if (orig_var && orig_var->readonly)
 			{
@@ -185,8 +187,10 @@ static int	declare_set(char *name, char **argv, t_declare_flags flags, t_fds fds
 			}
 			add_var_flags(key, value, flags, orig_var);
 		}
-		else if (key_value->len == 1)
+		else if (key_value->len == 1 && orig_var)
 			add_var_flags(key, orig_var->value, flags, orig_var);
+		else if (key_value->len == 1)
+			add_var_flags(key, NULL, flags, orig_var);
 		++argv;
 	}
 	return (exit_status);

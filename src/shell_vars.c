@@ -31,19 +31,17 @@ static t_ht	**var_manager(char *key_or_ret[static 1], char *value_or_key,
 		*key_or_ret = (char *)ret;
 		return (NULL);
 	}
-	if (value_or_key == NULL)
-	{
+	if (flags.unset)
 		return (ret = ht_get(shell_vars, *key_or_ret).as_var,
 			ht_unset(shell_vars, *key_or_ret),
 			*key_or_ret = ret->value, NULL);
-	}
 	gc_start_context("POST");
 	ht_set(shell_vars, *key_or_ret,
 		as_var(ft_memdup(&(t_var){
 				.exp = flags.exp,
 				.readonly = flags.readonly,
 				.special = flags.special,
-				.value = ft_strdup(value_or_key)
+				.value = ft_nullable_strdup(value_or_key)
 			}, sizeof(t_var))));
 	gc_end_context();
 	return (NULL);
@@ -72,12 +70,12 @@ bool	unset_var(char key[static 1])
 	{
 		if (ht_get(vars, key).as_var->readonly)
 			return (false);
-		var_manager(&key, NULL, (t_flags){0});
+		var_manager(&key, NULL, (t_flags){.unset = true});
 	}
 	return (true);
 }
 
-void	set_var(char key[static 1], char value[static 1], t_flags flags)
+void	set_var(char key[static 1], char *value, t_flags flags)
 {
 	var_manager(&key, value, flags);
 }

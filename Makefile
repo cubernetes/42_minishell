@@ -6,7 +6,7 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:02:16 by tischmid          #+#    #+#              #
-#    Updated: 2024/05/22 23:08:14 by tosuman          ###   ########.fr        #
+#    Updated: 2024/05/23 02:17:07 by tosuman          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -81,9 +81,9 @@ CFLAGS           := -O0 -g3 -fPIE -Wall -Wextra \
                     -fdiagnostics-color=always
 CPPFLAGS         := -I$(LIBFT_DIR) -I$(SRCDIR)
 
-# -rdynamic # for backtrace
 LDFLAGS          := -L$(LIBFT_DIR)
-LDLIBS           := -l$(LIBFT_) -lreadline
+# -rdynamic # for backtrace
+LDLIBS           := -l$(LIBFT_) -lreadline -rdynamic
 
 all: libft $(NAME)
 

@@ -107,6 +107,7 @@ struct s_flags
 	bool	exp;
 	bool	readonly;
 	bool	special;
+	bool	unset;
 };
 
 /* must be the same as the flags of t_flags */
@@ -199,7 +200,7 @@ void									close_other_command_fds(
 t_var									*get_var(char key[static 1]);
 bool									unset_var(char key[static 1]);
 void									set_var(char key[static 1],
-											char value[static 1],
+											char *value,
 											t_flags flags);
 t_ht									**get_vars(void);
 void									clear_vars(void);

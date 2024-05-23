@@ -1,5 +1,7 @@
 #include "libft.h"
+#include <stdlib.h>
 
+/* TODO: Remove ugliness */
 t_list	*ft_getopt(char *const argv[],
 	char valid_opts[static 1],
 	char erropt[static 1],
@@ -9,9 +11,7 @@ t_list	*ft_getopt(char *const argv[],
 	int		i;
 	int		j;
 
-	opts = lnew();
-	i = 0;
-	*erropt = '\0';
+	(free(NULL), opts = lnew(), i = 0, *erropt = '\0');
 	while (argv && argv[++i])
 	{
 		j = 0;
@@ -19,6 +19,8 @@ t_list	*ft_getopt(char *const argv[],
 		{
 			if (argv[i][j + 1] == '\0')
 				return (*optind = i, opts);
+			if (argv[i][j + 1] == '-' && argv[i][j + 2] == '\0')
+				return (*optind = i + 1, opts);
 			while (argv[i][++j] != '\0')
 			{
 				if (!ft_strchr(valid_opts, argv[i][j]))
@@ -31,5 +33,3 @@ t_list	*ft_getopt(char *const argv[],
 	}
 	return (*optind = i, opts);
 }
-/* Not handling -- for end of opts */
-

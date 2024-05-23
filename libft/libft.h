@@ -224,6 +224,7 @@ char							*ft_strnstr(char const *big, char const *little,
 char							*ft_strchr(char const *s, int c);
 char							*ft_strrchr(char const *s, int c);
 char							*ft_strdup(char const s[static 1]);
+char							*ft_nullable_strdup(char const *s);
 char							*ft_strndup(char const *s, size_t len);
 int								ft_strncmp(char const *s1, char const *s2,
 									size_t n);
@@ -371,6 +372,7 @@ uint64_t						ht_hash(char *key);
 /* TODO: this function contains forbidden functions (backtrace) */
 void							print_callstack(void);
 void							cmt(const char *cmd_str);
+size_t							ft_arrlen(char **strv);
 t_list							*ft_getopt(char *const argv[],
 									char valid_opts[static 1],
 									char erropt[static 1],

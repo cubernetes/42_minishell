@@ -7,7 +7,9 @@ int	builtin_env(char **argv, t_fds fds)
 
 	vars = liter(ht_to_list(get_vars()));
 	while (lnext(vars))
-		if (vars->current->as_kv_pair->v.as_var->exp)
+		if (vars->current->as_kv_pair->v.as_var->exp
+			&& !vars->current->as_kv_pair->v.as_var->special
+			&& vars->current->as_kv_pair->v.as_var->value)
 			ft_printf("%s=%s\n",
 				vars->current->as_kv_pair->k,
 				vars->current->as_kv_pair->v.as_var->value);

@@ -19,7 +19,7 @@ t_list	*liter_rev(t_list list[static 1])
 		list->current = list->last->next;
 	else
 		list->current = NULL;
-	list->current_idx = (size_t)-1;
+	list->current_idx = (size_t)(-1);
 	list->_method = lbackward;
 	return (list);
 }

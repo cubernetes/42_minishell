@@ -3,7 +3,9 @@
 
 bool	sort_vars(t_data data1, t_data data2)
 {
-	return (!ft_strcmp(data1.as_str, data2.as_str));
+	if (ft_strcmp(data1.as_kv_pair->k, data2.as_kv_pair->k) > 0)
+		return (true);
+	return (false);
 }
 
 bool	q_impl_p(bool p, bool q)
@@ -26,9 +28,9 @@ char	*flags_to_str(t_var *var)
 }
 
 void	add_var_flags(char key[static 1],
-	char value[static 1],
+	char *value,
 	t_declare_flags flags,
-	t_var orig_var[static 1])
+	t_var *orig_var)
 {
 	set_var(key, value, (t_flags){
 		.exp = flags.export | (orig_var && orig_var->exp),
