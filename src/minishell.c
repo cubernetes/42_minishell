@@ -118,7 +118,7 @@ int	main(int argc, char *argv[], char *envp[])
 		/* lprint(tokens, print_token); */
 		ast_root_node = build_ast(tokens);
 		/* ast_print(ast_root_node); */
-		set_var("?", ft_itoa(execute(ast_root_node)), (t_flags){0});
+		set_var("?", ft_itoa(execute(ast_root_node)), (t_flags){.special = true});
 		(void)gc_free("DEFAULT");
 	}
 	finish();

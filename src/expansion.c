@@ -1,7 +1,15 @@
 #include "minishell.h"
 #include "libft.h"
 
-#include <stdlib.h>
+static char	*var_lookup(char *key)
+{
+	t_var	*var;
+
+	var = get_var(key);
+	if (var)
+		return (var->value);
+	return ("");
+}
 
 static size_t	expand_vars(t_token *token, char *var)
 {
@@ -18,13 +26,13 @@ static size_t	expand_vars(t_token *token, char *var)
 			++var;
 			++len;
 		}
-		expanded_var = get_var(ft_strndup(orig_var, len))->value;
+		expanded_var = var_lookup(ft_strndup(orig_var, len));
 		token->str = ft_strjoin(token->str, expanded_var);
 		return (len + 1);
 	}
 	else if (var[0] == '$' && var[1] == '?')
 	{
-		expanded_var = get_var("?")->value;
+		expanded_var = var_lookup("?");
 		token->str = ft_strjoin(token->str, ft_strdup(expanded_var));
 		return (2);
 	}

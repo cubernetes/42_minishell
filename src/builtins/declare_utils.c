@@ -8,11 +8,6 @@ bool	sort_vars(t_data data1, t_data data2)
 	return (false);
 }
 
-bool	q_impl_p(bool p, bool q)
-{
-	return (!q || p);
-}
-
 char	*flags_to_str(t_var *var)
 {
 	char	*flags;

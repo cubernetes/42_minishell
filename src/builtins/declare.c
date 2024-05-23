@@ -3,7 +3,6 @@
 
 /* From declare_utils.c, normally static, but you know, max 5 functions... */
 bool	sort_vars(t_data data1, t_data data2);
-bool	q_impl_p(bool p, bool q);
 void	add_var_flags(char key[static 1],
 			char *value,
 			t_declare_flags flags,
@@ -60,7 +59,7 @@ static char	*quote_double(char *s)
 	while (*s)
 	{
 		if (*s == '$')
-			ret = ft_strjoin(ret, "\\$");
+			ret = ft_strjoin(ret, "\"'$'\"");
 		else if (*s == '"')
 			ret = ft_strjoin(ret, "\"'\"'\"");
 		else
@@ -70,6 +69,7 @@ static char	*quote_double(char *s)
 	return (ft_strjoin(ret, "\""));
 }
 /* Rules are adapted for minishell, not bash, so ` and \ are not escaped */
+/* $ is not backslash escaped, since not required */
 /* Runs in quadratic time... */
 
 static char	*quote_ansi_c(char *s, bool bare_declare)
@@ -143,6 +143,22 @@ static int	declare_print(char *name, char **argv, t_fds fds)
 	return (exit_status);
 }
 
+static bool	has_flag(t_var *var, t_declare_flags flags)
+{
+	bool	has;
+
+	has = false;
+	if (flags.export)
+		if (var->exp)
+			has = true;
+	if (flags.readonly)
+		if (var->readonly)
+			has = true;
+	if (!(flags.export || flags.readonly))
+		has = true;
+	return (has);
+}
+
 static int	declare_print_all(t_declare_flags flags, t_fds fds)
 {
 	t_list	*vars;
@@ -150,10 +166,7 @@ static int	declare_print_all(t_declare_flags flags, t_fds fds)
 	vars = liter(lsort(ht_to_list(get_vars()), sort_vars));
 	while (lnext(vars))
 	{
-		if ((q_impl_p(vars->current->as_kv_pair->v.as_var->exp,
-					flags.export)
-				&& q_impl_p(vars->current->as_kv_pair->v.as_var->readonly,
-					flags.readonly))
+		if (has_flag(vars->current->as_kv_pair->v.as_var, flags)
 			&& !vars->current->as_kv_pair->v.as_var->special)
 			print_var(vars->current->as_kv_pair, fds);
 	}
@@ -203,7 +216,8 @@ static int	declare_print_set_vars(t_fds fds)
 	vars = liter(lsort(ht_to_list(get_vars()), sort_vars));
 	while (lnext(vars))
 	{
-		if (vars->current->as_kv_pair->v.as_var->value)
+		if (vars->current->as_kv_pair->v.as_var->value
+			&& !vars->current->as_kv_pair->v.as_var->special)
 			ft_printf("%s=%s\n",
 				vars->current->as_kv_pair->k,
 				quote(vars->current->as_kv_pair->v.as_var->value, true));
@@ -234,7 +248,7 @@ int	builtin_declare(char **argv, t_fds fds)
 	}
 	if (flags.print && argv[optind] != NULL)
 		return (declare_print(argv[0], argv + optind, fds));
-	else if (flags.print)
+	else if (flags.print || (argv[optind] == NULL && (flags.export || flags.readonly)))
 		return (declare_print_all(flags, fds));
 	else if (argv[optind] == NULL)
 		return (declare_print_set_vars(fds));

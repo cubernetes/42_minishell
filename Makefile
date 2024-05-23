@@ -6,7 +6,7 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:02:16 by tischmid          #+#    #+#              #
-#    Updated: 2024/05/23 02:17:07 by tosuman          ###   ########.fr        #
+#    Updated: 2024/05/23 17:50:32 by tosuman          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -82,7 +82,7 @@ CFLAGS           := -O0 -g3 -fPIE -Wall -Wextra \
 CPPFLAGS         := -I$(LIBFT_DIR) -I$(SRCDIR)
 
 LDFLAGS          := -L$(LIBFT_DIR)
-# -rdynamic # for backtrace
+# TODO: Remove -rdynamic # for backtrace
 LDLIBS           := -l$(LIBFT_) -lreadline -rdynamic
 
 all: libft $(NAME)
