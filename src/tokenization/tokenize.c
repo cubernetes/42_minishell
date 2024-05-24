@@ -91,6 +91,23 @@ void	print_token(t_data data, bool first)
 			token_type_to_string(token->type));
 }
 
+static char	*was_quoted(t_token_type type)
+{
+	if (type == TOK_SQUOTE_STR || type == TOK_DQUOTE_STR)
+		return ("1");
+	return ("0");
+}
+
+char	*repeat_string(char *str, size_t n)
+{
+	char	*res;
+
+	res = "";
+	while (n--)
+		res = ft_strjoin(res, str);
+	return (res);
+}
+
 /* TODO: change return type to t_token later */
 void	*new_token(char *str, t_token_type type, bool is_last_subtoken)
 {
@@ -98,13 +115,14 @@ void	*new_token(char *str, t_token_type type, bool is_last_subtoken)
 		&(t_token){
 			.str = str,
 			.type = type,
-			.is_last_subtoken = is_last_subtoken
+			.is_last_subtoken = is_last_subtoken,
+			.quoting_info = repeat_string(was_quoted(type), ft_strlen(str))
 		},
 		sizeof(t_token)
 	));
 }
 
-/* TODO: TODO: FIX PARSING BUG!!! */
+/* TODO: TODO: FIX PARSING BUG!!!: Update: possibly done */
 bool	push_token(const char **line, t_list *tokens, size_t token_len,
 	t_token_type type)
 {
@@ -120,7 +138,7 @@ bool	push_token(const char **line, t_list *tokens, size_t token_len,
 	is_last = ft_isspace((*line)[token_len]) || type == TOK_EOL
 		|| (*line)[token_len] == '\0';
 	is_last_quote = ((*line)[token_len] == '\'' || (*line)[token_len] == '"')
-		&& (*line)[token_len + 1] == '\0';
+		&& ((*line)[token_len + 1] == '\0' || ft_isspace((*line)[token_len + 1]));
 	if (is_last || is_last_quote || !is_str_tok)
 		is_last_subtoken = true;
 	else

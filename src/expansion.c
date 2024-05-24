@@ -143,6 +143,7 @@ void	join_tokens(t_list *tokens)
 			if (!word_token)
 				word_token = new_token("", TOK_WORD, true);
 			word_token->str = ft_strjoin(word_token->str, token->str);
+			word_token->quoting_info = ft_strjoin(word_token->quoting_info, token->quoting_info);
 		}
 		else if (token->type == TOK_WORD || token->type == TOK_SQUOTE_STR
 			|| token->type == TOK_DQUOTE_STR)
@@ -150,6 +151,7 @@ void	join_tokens(t_list *tokens)
 			if (!word_token)
 				word_token = new_token("", TOK_WORD, true);
 			word_token->str = ft_strjoin(word_token->str, token->str);
+			word_token->quoting_info = ft_strjoin(word_token->quoting_info, token->quoting_info);
 			lpush(new_tokens, as_token(word_token));
 			word_token = NULL;
 		}

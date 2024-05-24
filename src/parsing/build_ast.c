@@ -42,7 +42,7 @@ t_tree	*build_parse_tree(t_list *tokens)
 				break ;
 			else if (get_token_type(tokens) == top->token->type)
 			{
-				tree->token->str = get_token_str(tokens);
+				tree->token = tokens->first->as_token;
 				tree = stack->first->as_tree;
 				lrotate(tokens, 1);
 			}

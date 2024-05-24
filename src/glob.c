@@ -5,18 +5,19 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-static bool	glob_match(const char *pattern, const char *str)
+static bool	glob_match(const char *pattern, const char *quoting_info,
+	const char *str)
 {
 	if (*pattern == '\0')
 		return (*str == '\0');
-	else if (*pattern == '*')
+	else if (*pattern == '*' && *quoting_info == '0')
 	{
-		if (*str != '\0' && glob_match(pattern, str + 1))
+		if (*str != '\0' && glob_match(pattern, quoting_info, str + 1))
 			return (true);
-		return (glob_match(pattern + 1, str));
+		return (glob_match(pattern + 1, quoting_info + 1, str));
 	}
-	else if (*pattern == '?' || *str == *pattern)
-		return (glob_match(pattern + 1, str + 1));
+	else if ((*pattern == '?' && *quoting_info == '0') || *str == *pattern)
+		return (glob_match(pattern + 1, quoting_info + 1, str + 1));
 	return (false);
 }
 
@@ -41,7 +42,7 @@ t_list	*glob_token(t_token *token)
 	while (dp != NULL)
 	{
 		if (ft_strncmp(dp->d_name, ".", 1)
-			&& glob_match(token->str, dp->d_name))
+			&& glob_match(token->str, token->quoting_info, dp->d_name))
 			lpush(tokens,
 				as_token(new_token(ft_strdup(dp->d_name), TOK_WORD, true)));
 		dp = readdir(dirp);

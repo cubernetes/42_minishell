@@ -124,6 +124,7 @@ struct s_token
 	t_token_type						type;
 	char								*str;
 	bool								is_last_subtoken;
+	char								*quoting_info;
 };
 
 struct s_fds
