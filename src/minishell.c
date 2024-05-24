@@ -116,9 +116,9 @@ int	main(int argc, char *argv[], char *envp[])
 			break ;
 		add_history(line);
 		tokens = tokenize(line);
-		lprint(tokens, print_token);
+		/* lprint(tokens, print_token); */
 		ast_root_node = build_ast(tokens);
-		tree_print(ast_root_node);
+		/* tree_print(ast_root_node); */
 		set_var("?", ft_itoa(execute(ast_root_node)), (t_flags){.special = true});
 		(void)gc_free("DEFAULT");
 	}

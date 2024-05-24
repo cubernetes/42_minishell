@@ -17,7 +17,11 @@ static bool	glob_match(const char *pattern, const char *quoting_info,
 		return (glob_match(pattern + 1, quoting_info + 1, str));
 	}
 	else if ((*pattern == '?' && *quoting_info == '0') || *str == *pattern)
+	{
+		if (*str == '\0')
+			return (false);
 		return (glob_match(pattern + 1, quoting_info + 1, str + 1));
+	}
 	return (false);
 }
 

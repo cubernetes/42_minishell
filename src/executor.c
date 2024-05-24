@@ -96,17 +96,6 @@ void	handle_io_redirect(t_tree *io_redirect, t_tree *simple_command)
 			"redirect error: %s", strerror(errno));
 }
 
-static t_list	*tokens_to_tree_list(t_list *tokens)
-{
-	t_list	*tree_list;
-
-	tree_list = lnew();
-	liter(tokens);
-	while (lnext(tokens))
-		lpush(tree_list, as_tree(new_tree_token(tokens->current->as_token->type, tokens->current->as_token->str)));
-	return (tree_list);
-}
-
 pid_t	execute_simple_command_wrapper(t_tree *simple_command,
 	t_list *commands)
 {
@@ -117,36 +106,20 @@ pid_t	execute_simple_command_wrapper(t_tree *simple_command,
 	liter(simple_command->children);
 	while (lnext(simple_command->children))
 	{
-		if (simple_command->children->current->as_tree->type == TOKEN
-			|| simple_command->children->current->as_tree->type == TOK_DQUOTE_STR)
-			lextend(new_children, expand_token(simple_command->children->current->as_tree->token));
-		else if (simple_command->children->current->as_tree->type == TOK_SQUOTE_STR)
-			lpush(new_children, as_token(simple_command->children->current->as_tree->token));
-		else if (simple_command->children->current->as_tree->type == IO_REDIRECT)
-		{
-			liter(simple_command->children->current->as_tree->children);
+		if (simple_command->children->current->as_tree->type == IO_REDIRECT
+			&& liter(simple_command->children->current->as_tree->children))
 			while (lnext(simple_command->children->current->as_tree->children))
-			{
-				if (simple_command->children->current->as_tree->children->current->as_tree->type == TOKEN
-					|| simple_command->children->current->as_tree->children->current->as_tree->type == TOK_DQUOTE_STR)
-					lextend(new_children, expand_token(simple_command->children->current->as_tree->children->current->as_tree->token));
-				else if (simple_command->children->current->as_tree->children->current->as_tree->type == TOK_SQUOTE_STR)
-					lpush(new_children, as_token(simple_command->children->current->as_tree->children->current->as_tree->token));
-			}
-			// tmp = tokens_to_tree_list(glob_tokens_2(expand_token(simple_command->children->current->as_tree->children->last->as_tree->token)));
-			// redirect_children = lnew();
-			// lpush(redirect_children, as_data(simple_command->children->current->as_tree->children->first));
-			// lpush(redirect_children, as_data(lpop_left(tmp)));
-			// lpush(new_children, as_tree(new_tree_nonterm(IO_REDIRECT, redirect_children)));
-			// lextend(new_children, tmp);
-		}
+				lpush(new_children, as_token(simple_command->children->current->as_tree->children->current->as_tree->token));
+		else
+			lpush(new_children, as_token(simple_command->children->current->as_tree->token));
 	}
 	lpush(new_children, as_token(new_token("", TOK_EOL, true)));
+	expand_env_vars(new_children);
 	join_tokens(new_children);
 	glob_tokens(new_children);
 	new_children = build_ast(new_children)->children->first->as_tree->children->first->as_tree->children;
 	simple_command->children = new_children;
-	tree_print(simple_command);
+	/* tree_print(simple_command); */
 	liter(simple_command->children);
 	while (lnext(simple_command->children))
 		if (simple_command->children->current->as_tree->type == IO_REDIRECT)
