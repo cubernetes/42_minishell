@@ -119,7 +119,7 @@ int	main(int argc, char *argv[], char *envp[])
 		add_history(line);
 		tokens = tokenize(line);
 		/* lprint(tokens, print_token); */
-		ast_root_node = build_ast(tokens);
+		ast_root_node = build_ast(tokens, true);
 		/* tree_print(ast_root_node); */
 		set_var("?", ft_itoa(execute(ast_root_node)), (t_flags){.special = true});
 		(void)gc_free("DEFAULT");
@@ -181,7 +181,7 @@ t_tree	*parse(char *line)
 	t_tree	*tree;
 
 	tokens = tokenize(line);
-	tree = build_ast(tokens);
+	tree = build_ast(tokens, true);
 	return (tree);
 }
 

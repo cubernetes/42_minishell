@@ -59,7 +59,7 @@ t_tree	*build_parse_tree(t_list *tokens)
 	return (tree_root);
 }
 
-t_list	*build_tree_recursively(t_tree *tree)
+t_list	*build_tree_recursively(t_tree *tree, bool create_heredocs)
 {
 	t_list	*children;
 	t_tree	*first;
@@ -94,12 +94,13 @@ t_list	*build_tree_recursively(t_tree *tree)
 					first = lpop_left(children)->as_tree;
 					if (first->type != TOKEN)
 						assert(false);
-					first->token->str = create_heredoc(first->token->str);
+					if (create_heredocs)
+						first->token->str = create_heredoc(first->token->str);
 					(void)lpush(tree->children->last->as_tree->children, as_tree(first));
 				}
 			}
 			else
-				lextend(tree->children, build_tree_recursively(first));
+				lextend(tree->children, build_tree_recursively(first, create_heredocs));
 		}
 	}
 	else if (tree->type == COMPLETE_COMMAND_TAIL
@@ -121,11 +122,13 @@ t_list	*build_tree_recursively(t_tree *tree)
 					first = lpop_left(children)->as_tree;
 					if (first->type != TOKEN)
 						assert(false);
+					if (create_heredocs)
+						first->token->str = create_heredoc(first->token->str);
 					(void)lpush(flat->last->as_tree->children, as_tree(first));
 				}
 			}
 			else
-				lextend(flat, build_tree_recursively(first));
+				lextend(flat, build_tree_recursively(first, create_heredocs));
 		}
 	}
 	else
@@ -136,13 +139,13 @@ t_list	*build_tree_recursively(t_tree *tree)
 	return (flat);
 }
 
-t_tree	*build_ast(t_list *tokens)
+t_tree	*build_ast(t_list *tokens, bool create_heredocs)
 {
 	t_tree	*parse_tree;
 	t_tree	*ast;
 
 	parse_tree = build_parse_tree(tokens);
-	ast = lpop_left(build_tree_recursively(parse_tree))->as_tree;
+	ast = lpop_left(build_tree_recursively(parse_tree, create_heredocs))->as_tree;
 	/* ast = return_example_ast(); */
 	ast->fd_in = -2;
 	ast->fd_out = -2;
