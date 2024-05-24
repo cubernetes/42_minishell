@@ -27,3 +27,5 @@ test.txt
 
 # TODO: remove error cases
 # open_fds_input.txt
+
+minishell_tester/
