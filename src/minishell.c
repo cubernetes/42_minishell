@@ -90,6 +90,7 @@ void	inherit_environment(char *envp[])
 /* TODO: check that where next is called, in case of early return, that llast is called */
 /* TODO: rigorously test list functions */
 /* TODO: (void) cast all functions where return value is not used */
+/* TODO: Remove asserts */
 int	main(int argc, char *argv[], char *envp[])
 {
 	char		*line;
@@ -110,6 +111,7 @@ int	main(int argc, char *argv[], char *envp[])
 	{
 		set_var("PS0", expand_prompt(PS0), (t_flags){0});
 		set_var("PS1", expand_prompt(PS1), (t_flags){0});
+		set_var("PS2", expand_prompt(PS2), (t_flags){0});
 		line = gc_add_str(readline(get_var("PS1")->value));
 		/* line = ft_strdup("echo hi > $A"); */
 		if (!line)

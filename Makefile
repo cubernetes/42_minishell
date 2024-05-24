@@ -6,7 +6,7 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:02:16 by tischmid          #+#    #+#              #
-#    Updated: 2024/05/23 17:50:32 by tosuman          ###   ########.fr        #
+#    Updated: 2024/05/24 21:41:13 by tosuman          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -53,6 +53,8 @@ _SRC += source.c
 _SRC += readonly.c
 _SRC += export.c
 _SRC += environment.c
+_SRC += ft_mktemp.c
+_SRC += heredoc.c
 
 vpath %.c             \
 	src               \

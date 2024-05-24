@@ -18,7 +18,7 @@ t_tree	*build_parse_tree(t_list *tokens)
 	lpush(stack, as_tree(production_to_child(\
 		(t_tree){COMPLETE_COMMAND, {0}, {{0}}})));
 	lpush(stack, as_tree(production_to_child(\
-		(t_tree){TOKEN, {.token = &(t_token){TOK_EOL, "", true}}, {{0}}})));
+		(t_tree){TOKEN, {.token = &(t_token){TOK_EOL, "", true, ""}}, {{0}}})));
 	tree = new_tree_nonterm(COMPLETE_COMMAND, NULL);
 	tree_root = tree;
 	while (1)
@@ -88,13 +88,14 @@ t_list	*build_tree_recursively(t_tree *tree)
 			first = lpop_left(children)->as_tree;
 			if (first->type == IO_REDIRECT)
 			{
-				if (((t_tree *)first->children->first->as_tree)->token->type != TOK_EPSILON)
+				if (first->children->first->as_tree->token->type != TOK_EPSILON)
 				{
 					(void)lpush(tree->children, as_tree(first));
 					first = lpop_left(children)->as_tree;
 					if (first->type != TOKEN)
 						assert(false);
-					(void)lpush(((t_tree *)tree->children->first->prev->as_tree)->children, as_tree(first));
+					first->token->str = create_heredoc(first->token->str);
+					(void)lpush(tree->children->last->as_tree->children, as_tree(first));
 				}
 			}
 			else
@@ -114,13 +115,13 @@ t_list	*build_tree_recursively(t_tree *tree)
 			first = lpop_left(children)->as_tree;
 			if (first->type == IO_REDIRECT)
 			{
-				if (((t_tree *)first->children->first->as_tree)->token->type != TOK_EPSILON)
+				if (first->children->first->as_tree->token->type != TOK_EPSILON)
 				{
 					(void)lpush(flat, as_tree(first));
 					first = lpop_left(children)->as_tree;
 					if (first->type != TOKEN)
 						assert(false);
-					(void)lpush(((t_tree *)flat->first->prev->as_tree)->children, as_tree(first));
+					(void)lpush(flat->last->as_tree->children, as_tree(first));
 				}
 			}
 			else

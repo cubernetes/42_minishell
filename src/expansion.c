@@ -64,7 +64,7 @@ static void	expand_word(t_list *new_tokens, t_token *token)
 		lpush(split_words, as_token(new_word_token(split_tokens->current->as_str)));
 	lextend(new_tokens, split_words);
 	if (!token->is_last_subtoken)
-		new_tokens->first->prev->as_token->is_last_subtoken = false;
+		new_tokens->last->as_token->is_last_subtoken = false;
 }
 
 static void	expand_dquote_str(t_list *new_tokens, t_token *token)

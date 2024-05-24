@@ -297,7 +297,7 @@ t_list	*tokenize(const char *line)
 	{
 		if (!tokenize_fixed_len_tokens(&line, tokens))
 			tokenize_variable_len_tokens(&line, tokens);
-		if (tokens->first->prev->as_token->type == TOK_EOL)
+		if (tokens->last->as_token->type == TOK_EOL)
 			break ;
 		skip_whitespace(&line);
 	}

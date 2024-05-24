@@ -13,11 +13,23 @@
 #include <sys/wait.h>
 #include <stdbool.h>
 
-/* TODO: implement heredoc redirection*/
-/* bool redirect_heredoc(t_ddeque *heredoc, t_tree *simple_command)
+bool	redirect_heredoc(char *file_path, t_tree *simple_command)
 {
-	return (true);
-} */
+	int	fd;
+	int	sc_fd_in;
+
+	fd = open(file_path, O_RDONLY);
+	if (fd == -1)
+		return (false);
+	else
+	{
+		sc_fd_in = simple_command->fd_in;
+		if (sc_fd_in != -2)
+			close(sc_fd_in);
+		simple_command->fd_in = fd;
+		return (true);
+	}
+}
 
 bool	handle_redirect_input(char *file_path, t_tree *simple_command)
 {
@@ -87,10 +99,10 @@ void	handle_io_redirect(t_tree *io_redirect, t_tree *simple_command)
 		err = handle_redirect_input(file_path, simple_command);
 	else if (type == TOK_APPEND)
 		err = handle_redirect_append(file_path, simple_command);
+	else if (type == TOK_HEREDOC)
+		err = redirect_heredoc(file_path, simple_command);
 	else
 		err = false;
-	/* else if (type == TOK_HEREDOC) */
-		/* err = redirect_heredoc(file_path, simple_command); */
 	if (err == false)
 		minishell_error(EXIT_FAILURE, true,
 			"redirect error: %s", strerror(errno));
@@ -100,7 +112,6 @@ pid_t	execute_simple_command_wrapper(t_tree *simple_command,
 	t_list *commands)
 {
 	t_list	*new_children;
-	t_list	*redirect_children;
 
 	new_children = lnew();
 	liter(simple_command->children);

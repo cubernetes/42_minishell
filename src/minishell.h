@@ -7,9 +7,10 @@
 # include <stdbool.h>
 
 /************************** DEFINES *************************/
-# define PS0 "> "
+# define PS0 "" // TODO: Not required: Handle PS0
 /* # define PS1 "\033[31m\\u@\\h:\\w\033[m\n❯ " */
 # define PS1 "\033[31m\\u\033[m@\033[94m\\h\033[m@\033[92mminishell\033[m [\033[32m\\w\033[m]\n> "
+# define PS2 "> "
 
 # define MINISHELL_NAME "minishell"
 
@@ -240,5 +241,7 @@ t_token_type							tokens_ht_get(char *key);
 int										get_production_idx(t_tree_type nonterm,
 											t_token *token);
 void									finish(void);
+char									*ft_mktemp(char *prefix);
+char									*create_heredoc(char *delimiter);
 
 #endif /* minishell.h. */
