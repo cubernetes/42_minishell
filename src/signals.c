@@ -1,33 +1,24 @@
 #include "minishell.h"
-#include "libft.h"
 
 #include <signal.h>
-#include <unistd.h>
 #include <stdio.h>
 #include <readline/readline.h>
 
-static int	event(void)
-{
-	return (0);
-}
-
-static void	handle_sigint(int sig)
+static void	interactive_interupt(int sig)
 {
 	(void)sig;
 	rl_replace_line("", 0);
 	rl_done = 1;
 }
 
-void	setup_signals(void)
+void	interactive_signals(void)
 {
-	t_sa	sa_int;
-	t_sa	sa_quit;
+	sigaction(SIGINT, &(t_sa){.sa_handler = &interactive_interupt}, NULL);
+	sigaction(SIGQUIT, &(t_sa){.sa_handler = SIG_IGN}, NULL);
+}
 
-	rl_event_hook = event;
-	sa_int = (t_sa){0};
-	sa_quit = (t_sa){0};
-	sa_int.sa_handler = &handle_sigint;
-	sigaction(SIGINT, &sa_int, NULL);
-	sa_quit.sa_handler = SIG_IGN;
-	sigaction(SIGQUIT, &sa_quit, NULL);
+void	noninteractive_signals(void)
+{
+	sigaction(SIGINT, &(t_sa){.sa_handler = SIG_DFL}, NULL);
+	sigaction(SIGQUIT, &(t_sa){.sa_handler = SIG_DFL}, NULL);
 }

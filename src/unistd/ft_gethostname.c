@@ -27,3 +27,4 @@ char	*ft_gethostname(void)
 		return ("");
 	return (line);
 }
+/* Implement fallbacks */

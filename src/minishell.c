@@ -26,6 +26,7 @@ int	minishell_error(int exit_code, bool do_exit, const char *fmt, ...)
 	return (exit_code);
 }
 
+/* TODO: Implement fallbacks for USER */
 char	*expand_prompt(char *prompt_string)
 {
 	t_list	*replacements;
@@ -63,6 +64,145 @@ void	inherit_environment(char *envp[])
 	}
 }
 
+t_tree	*parse(char *line)
+{
+	t_list	*tokens;
+	t_tree	*tree;
+
+	tokens = tokenize(line);
+	tree = build_ast(tokens, true);
+	return (tree);
+}
+
+void	exec(t_tree *tree)
+{
+	unsigned char	exit_status;
+
+	if (tree == NULL)
+		exit_status = 0;
+	else
+		exit_status = execute_complete_command(tree);
+	set_var("?", ft_itoa(exit_status), (t_flags){.special = true});
+}
+
+void	interpret_lines(t_list *lines)
+{
+	t_tree	*tree;
+
+	liter(lines);
+	while (lnext(lines))
+	{
+		tree = parse(lines->current->as_str);
+		exec(tree);
+	}
+}
+
+t_list	*get_lines(int fd)
+{
+	char	*input;
+	char	*ps1;
+
+	if (isatty(fd))
+	{
+		ps1 = get_var("PS1")->value;
+		interactive_signals();
+		input = readline(ps1);
+		/* noninteractive_signals(); */
+		gc_add(input);
+	}
+	else
+		input = get_next_line(fd);
+	if (input == NULL)
+		return (lnew());
+	add_history(input);
+	return (lsplit(input, "\n"));
+}
+
+void	expand_prompts(void)
+{
+	set_var("PS0", expand_prompt(PS0), (t_flags){0});
+	set_var("PS1", expand_prompt(PS1), (t_flags){0});
+	set_var("PS2", expand_prompt(PS2), (t_flags){0});
+}
+
+/* read-eval-print-loop */
+void	repl(void)
+{
+	t_list	*lines;
+
+	while (true)
+	{
+		expand_prompts();
+		lines = get_lines(STDIN_FILENO);
+		if (lines->len == 0)
+			break ;
+		interpret_lines(lines);
+		gc_free("DEFAULT");
+	}
+}
+
+void	finish(void)
+{
+	rl_clear_history();
+	(void)gc_free_all();
+}
+
+/* TODO: make logic correct */
+void	set_pwd(void)
+{
+	char	*cwd;
+
+	cwd = get_var("PWD")->value;
+	if (NULL != cwd)
+	{
+		cwd = getcwd(NULL, 0);
+		gc_add(cwd);
+	}
+	set_var("PWD", cwd, (t_flags){.exp = true});
+}
+/* On startup, bash sets the value of PWD to getcwd(2) when it is unset.
+ * However, when it is set already (through inheritance), then it is not
+ * updated until the next chdir(2) UNLESS the directory described by PWD
+ * does not exist, does not refer to the same inode number as the directory
+ * described by getcwd(2), in which case it is set to getcwd(2).
+ */
+
+void	set_oldpwd(void)
+{
+	char	*cwd;
+
+	cwd = get_var("OLDPWD")->value;
+	if (NULL != cwd)
+	{
+		/* TODO: Do not unset OLDPWD if it exists */
+		unset_var("OLDPWD");
+	}
+}
+
+void	set_initial_shell_variables(char *argv[], char *envp[])
+{
+	/* TODO: Remove set_env */
+	set_env(envp);
+	inherit_environment(envp);
+	set_argv(argv);
+	set_var("?", "0", (t_flags){.special = true});
+	set_oldpwd();
+	set_pwd();
+}
+
+static int	noop(void)
+{
+	return (0);
+}
+
+void	init(char *argv[], char *envp[])
+{
+	set_allocator(gc_malloc);
+	gc_set_context("DEFAULT");
+	set_initial_shell_variables(argv, envp);
+	rl_event_hook = noop;
+}
+
 /* TODO: what if readline returns NULL? */
 /* TODO: use/think about rl_end (and other rl vars) */
 /* TODO: remove DEBUG macros */
@@ -93,194 +233,8 @@ void	inherit_environment(char *envp[])
 /* TODO: Remove asserts */
 int	main(int argc, char *argv[], char *envp[])
 {
-	char		*line;
-	t_list		*tokens;
-	t_tree		*ast_root_node;
-
-	set_allocator(gc_malloc);
-	inherit_environment(envp);
-	((void)argc, set_argv(argv), set_env(envp));
-	tokens = NULL;
-	ast_root_node = NULL;
-	setup_signals();
-	set_var("?", "0", (t_flags){.special = true});
-	set_var("OLDPWD", gc_add_str(getcwd(NULL, 0)), (t_flags){0});
-	set_var("PWD", gc_add_str(getcwd(NULL, 0)), (t_flags){0});
-	set_var("A", ft_strdup("file1.txt * foo.txt"), (t_flags){.exp = true});
-	while (1)
-	{
-		set_var("PS0", expand_prompt(PS0), (t_flags){0});
-		set_var("PS1", expand_prompt(PS1), (t_flags){0});
-		set_var("PS2", expand_prompt(PS2), (t_flags){0});
-		line = gc_add_str(readline(get_var("PS1")->value));
-		/* line = ft_strdup("echo hi > $A"); */
-		if (!line)
-			break ;
-		add_history(line);
-		tokens = tokenize(line);
-		/* lprint(tokens, print_token); */
-		ast_root_node = build_ast(tokens, true);
-		/* tree_print(ast_root_node); */
-		set_var("?", ft_itoa(execute(ast_root_node)), (t_flags){.special = true});
-		(void)gc_free("DEFAULT");
-	}
-	finish();
-	return (0);
-}
-/*
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-*/
-t_tree	*parse(char *line)
-{
-	t_list	*tokens;
-	t_tree	*tree;
-
-	tokens = tokenize(line);
-	tree = build_ast(tokens, true);
-	return (tree);
-}
-
-void	exec(t_tree *tree)
-{
-	print_tree_node(tree, true);
-}
-
-void	interpret_lines(t_list *lines)
-{
-	t_tree	*tree;
-
-	liter(lines);
-	while (lnext(lines))
-	{
-		tree = parse(lines->current->as_str);
-		exec(tree);
-	}
-}
-
-/* read-eval-print-loop */
-void	repl(void)
-{
-	char	*input;
-	t_list	*lines;
-
-	while (true)
-	{
-		if (isatty(STDIN_FILENO))
-		{
-			input = readline(">>> ");
-			gc_add_str(input);
-		}
-		else
-			input = get_next_line(STDIN_FILENO);
-		if (input == NULL)
-			break ;
-		lines = lsplit(input, "\n");
-		interpret_lines(lines);
-	}
-}
-
-void	finish(void)
-{
-	rl_clear_history();
-	(void)gc_free_all();
-}
-
-/* TODO: make logic correct */
-void	set_pwd(void)
-{
-	char	*cwd;
-
-	cwd = get_var("PWD")->value;
-	if (NULL != cwd)
-	{
-		cwd = getcwd(NULL, 0);
-		gc_add_str(cwd);
-	}
-	set_var("PWD", cwd, (t_flags){.exp = true});
-}
-/* On startup, bash sets the value of PWD to getcwd(2) when it is unset.
- * However, when it is set already (through inheritance), then it is not
- * updated until the next chdir(2) UNLESS the directory described by PWD
- * does not exist, does not refer to the same inode number as the directory
- * described by getcwd(2), in which case it is set to getcwd(2).
- */
-
-void	set_oldpwd(void)
-{
-	char	*cwd;
-
-	cwd = get_var("PWD")->value;
-	if (NULL != cwd)
-	{
-		set_var("OLDPWD", cwd, (t_flags){0});
-	}
-}
-
-void	set_initial_shell_variables(void)
-{
-	/* inherit_environment(); */
-	set_var("?", "0", (t_flags){.special = true});
-	set_pwd();
-}
-
-void	init(void)
-{
-	set_allocator(gc_malloc);
-	gc_set_context("DEFAULT");
-	set_initial_shell_variables();
-}
-
-int	main2(int argc, char *argv[], char *envp[])
-{
 	(void)argc;
-	(void)argv;
-	(void)envp;
-	init();
+	init(argv, envp);
 	repl();
 	finish();
 	return (0);

@@ -159,7 +159,8 @@ struct									s_tree
 };
 
 /************** PROTOTYPES ******************/
-void									setup_signals(void);
+void									interactive_signals(void);
+void									noninteractive_signals(void);
 t_list									*tokenize(const char *line); /* static 1 ? */
 t_tree									*build_ast(t_list *tokens, bool create_heredocs);
 void									tree_print(t_tree *tree);
@@ -186,7 +187,7 @@ char									**get_env(void);
 char									*env_lookup(char *var);
 char									**set_argv(char **argv);
 char									**get_argv(void);
-unsigned char							execute(t_tree *tree);
+unsigned char							execute_complete_command(t_tree *node);
 void									glob_tokens(t_list *tokens);
 int										ms_execve(t_tree *command);
 const char								*tree_type_to_string(
