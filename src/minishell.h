@@ -160,6 +160,7 @@ struct									s_tree
 
 /************** PROTOTYPES ******************/
 void									interactive_signals(void);
+void									interactive_signals_heredoc(void);
 void									noninteractive_signals(void);
 t_list									*tokenize(const char *line); /* static 1 ? */
 t_tree									*build_ast(t_list *tokens, bool create_heredocs);
