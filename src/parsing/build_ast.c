@@ -90,6 +90,7 @@ t_list	*build_tree_recursively(t_tree *tree, bool create_heredocs)
 			{
 				if (first->children->first->as_tree->token->type != TOK_EPSILON)
 				{
+					create_heredocs = create_heredocs && first->children->first->as_tree->token->type == TOK_HEREDOC;
 					(void)lpush(tree->children, as_tree(first));
 					first = lpop_left(children)->as_tree;
 					if (first->type != TOKEN)
@@ -118,6 +119,7 @@ t_list	*build_tree_recursively(t_tree *tree, bool create_heredocs)
 			{
 				if (first->children->first->as_tree->token->type != TOK_EPSILON)
 				{
+					create_heredocs = create_heredocs && first->children->first->as_tree->token->type == TOK_HEREDOC;
 					(void)lpush(flat, as_tree(first));
 					first = lpop_left(children)->as_tree;
 					if (first->type != TOKEN)
