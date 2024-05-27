@@ -108,6 +108,8 @@ void	handle_io_redirect(t_tree *io_redirect, t_tree *simple_command)
 			"redirect error: %s", strerror(errno));
 }
 
+/* TODO: get rid of this wrapper mess */
+/* TOOD: abstract away into new function */
 pid_t	execute_simple_command_wrapper(t_tree *simple_command,
 	t_list *commands)
 {
@@ -143,6 +145,8 @@ pid_t	execute_simple_command_wrapper(t_tree *simple_command,
 
 /* TODO: Not required: think about set -o pipefail */
 /* return last status */
+/* TODO: Exit code 126 */
+/* TODO: Clean up this mess */
 unsigned char	wait_pipesequence(t_list *pids)
 {
 	int		rtn;

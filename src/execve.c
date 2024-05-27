@@ -153,6 +153,8 @@ pid_t	execute_simple_command(t_tree *simple_command, t_list *commands)
 
 	path_parts = ft_split(env_lookup("PATH"), ':');
 	argv = make_argv(simple_command);
+	if (argv[0] == NULL)
+		return (close_fds(simple_command), -256);
 	if (is_builtin(argv[0]))
 		return (handle_builtin(argv, simple_command->fds) - 256);
 	program = search_executable(argv[0], path_parts);
