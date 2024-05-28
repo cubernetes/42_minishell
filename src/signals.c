@@ -18,6 +18,12 @@ static void	noninteractive_interrupt(int sig)
 	ft_printf("\n");
 }
 
+static void	noninteractive_quit(int sig)
+{
+	(void)sig;
+	ft_printf("Quit (core dumped)\n");
+}
+
 static void	interactive_interupt_heredoc(int sig)
 {
 	interactive_interupt(sig);
@@ -39,5 +45,5 @@ void	interactive_signals_heredoc(void)
 void	noninteractive_signals(void)
 {
 	sigaction(SIGINT, &(t_sa){.sa_handler = &noninteractive_interrupt, .sa_flags = SA_RESTART}, NULL);
-	sigaction(SIGQUIT, &(t_sa){.sa_handler = SIG_IGN}, NULL);
+	sigaction(SIGQUIT, &(t_sa){.sa_handler = &noninteractive_quit, .sa_flags = SA_RESTART}, NULL);
 }
