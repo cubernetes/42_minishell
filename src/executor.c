@@ -255,7 +255,7 @@ unsigned char	execute_complete_command(t_tree *node)
 	t_list			*chldn;
 
 	first = true;
-	rtn = 0;
+	rtn = get_last_exit_status();
 	chldn = liter(node->children);
 	while (lnext(chldn))
 	{
@@ -286,6 +286,7 @@ unsigned char	execute_complete_command(t_tree *node)
 			}
 		}
 	}
+	set_last_exit_status(rtn);
 	return (rtn);
 }
 

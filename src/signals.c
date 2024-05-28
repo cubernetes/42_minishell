@@ -5,11 +5,26 @@
 #include <readline/readline.h>
 #include <stdlib.h>
 
+unsigned char	get_last_exit_status(void)
+{
+	return (set_last_exit_status(-1));
+}
+
+unsigned char	set_last_exit_status(int new_exit_status)
+{
+	static unsigned char	exit_status = 0;
+
+	if (new_exit_status >= 0)
+		exit_status = (unsigned char)new_exit_status;
+	return (exit_status);
+}
+
 static void	interactive_interupt(int sig)
 {
 	(void)sig;
 	rl_replace_line("", 0);
 	rl_done = 1;
+	set_last_exit_status(130);
 }
 
 static void	noninteractive_interrupt(int sig)
