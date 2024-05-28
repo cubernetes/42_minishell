@@ -15,7 +15,9 @@ static void	interactive_interupt_heredoc(int sig)
 {
 	(void)sig;
 	rl_replace_line("", 0);
+	rl_redisplay();
 	rl_done = 1;
+	heredoc_aborted(1);
 }
 
 void	interactive_signals(void)

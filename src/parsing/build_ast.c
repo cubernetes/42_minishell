@@ -147,6 +147,7 @@ t_tree	*build_ast(t_list *tokens, bool create_heredocs)
 	t_tree	*ast;
 
 	parse_tree = build_parse_tree(tokens);
+	heredoc_aborted(0);
 	ast = lpop_left(build_as_recursively(parse_tree, create_heredocs))->as_tree;
 	/* ast = return_example_ast(); */
 	ast->fd_in = -2;

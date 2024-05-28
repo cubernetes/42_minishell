@@ -245,5 +245,6 @@ int										get_production_idx(t_tree_type nonterm,
 void									finish(void);
 char									*ft_mktemp(char *prefix);
 char									*create_heredoc(char *delimiter);
+bool									heredoc_aborted(int op);
 
 #endif /* minishell.h. */
