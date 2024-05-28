@@ -166,8 +166,10 @@ pid_t	execute_simple_command(t_tree *simple_command, t_list *commands)
 		minishell_error(FORK_ERROR, true, "%s", strerror(errno));
 	if (pid > 0)
 		return (close_fds(simple_command), pid);
-	(set_fds(simple_command), close_other_command_fds(commands));
+	set_fds(simple_command);
+	close_other_command_fds(commands);
 	execve(program, argv, get_env());
+	minishell_error(EXECVE_ERR, false, "%s", strerror(errno));
 	finish();
-	return (minishell_error(EXECVE_ERR, false, "%s", strerror(errno)), -1);
+	return (-1);
 }

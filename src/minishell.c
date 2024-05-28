@@ -108,11 +108,14 @@ t_list	*get_lines(int fd)
 		ps1 = get_var("PS1")->value;
 		interactive_signals();
 		input = readline(ps1);
-		/* noninteractive_signals(); */
+		noninteractive_signals();
 		gc_add(input);
 	}
 	else
+	{
+		noninteractive_signals();
 		input = get_next_line(fd);
+	}
 	if (input == NULL)
 		return (lnew());
 	add_history(input);

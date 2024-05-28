@@ -163,9 +163,10 @@ unsigned char	wait_pipesequence(t_list *pids)
 				status = pids->current->as_int + 256;
 			continue ;
 		}
+		noninteractive_signals();
 		rtn = waitpid(pids->current->as_pid_t, &status, 0);
 		if (rtn == -1)
-			minishell_error(EXIT_WAIT_ERROR, false, "wait error: %d",
+			minishell_error(EXIT_WAIT_ERROR, false, "wait error: %s",
 				strerror(errno));
 		if (WIFEXITED(status))
 			status = WEXITSTATUS(status);

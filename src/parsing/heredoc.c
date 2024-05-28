@@ -23,15 +23,19 @@ char	*create_heredoc(char *delimiter)
 	char	*heredoc_file;
 	char	*line;
 	int		fd;
+	char	*ps2;
 
 	if (heredoc_aborted(-1))
 		return ("");
 	heredoc_file = ft_mktemp("minishell.");
 	fd = open(heredoc_file, O_CREAT | O_TRUNC | O_WRONLY, 0600);
-	interactive_signals_heredoc();
 	while (1)
 	{
-		line = gc_add_str(readline(get_var("PS2")->value));
+		ps2 = get_var("PS2")->value;
+		interactive_signals_heredoc();
+		line = readline(ps2);
+		noninteractive_signals();
+		(void)gc_add(line);
 		if (line == NULL || !ft_strcmp(line, delimiter) || heredoc_aborted(-1))
 			break ;
 		write(fd, line, ft_strlen(line));
@@ -41,6 +45,5 @@ char	*create_heredoc(char *delimiter)
 		minishell_error(0, false,
 			"warning: here-document delimited by end-of-file (wanted `%s')",
 			delimiter);
-	interactive_signals();
 	return (heredoc_file);
 }
