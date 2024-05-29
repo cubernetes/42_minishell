@@ -6,7 +6,7 @@
 #include <stdbool.h>
 
 /* LL(1) parser */
-t_tree	*build_parse_tree(t_list *tokens)
+static t_tree	*build_parse_tree(t_list tokens[static 1])
 {
 	t_tree	*tree;
 	t_tree	*tree_root;
@@ -150,6 +150,8 @@ t_tree	*build_ast(t_list *tokens, bool create_heredocs)
 	t_tree	*parse_tree;
 	t_tree	*ast;
 
+	if (tokens == NULL)
+		return (NULL);
 	parse_tree = build_parse_tree(tokens);
 	if (parse_tree == NULL)
 		return (NULL);

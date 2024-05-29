@@ -267,7 +267,7 @@ bool	tokenize_word(const char **line, t_list *tokens)
 	return (false);
 }
 
-void	tokenize_variable_len_tokens(const char **line, t_list *tokens)
+bool	tokenize_variable_len_tokens(const char **line, t_list *tokens)
 {
 	bool	pushed;
 
@@ -276,10 +276,9 @@ void	tokenize_variable_len_tokens(const char **line, t_list *tokens)
 	pushed += tokenize_double_quoted_string(line, tokens);
 	pushed += tokenize_word(line, tokens);
 	if (!pushed)
-	{
-		minishell_error(EXIT_FAILURE, true, "could not tokenize `%s'",
-			get_token_str(tokens));
-	}
+		return (minishell_error(EXIT_FAILURE, false, "could not tokenize `%s'",
+			get_token_str(tokens)), false);
+	return (true);
 }
 
 /* environment variable expansion is NOT happening in the tokenization phase*/
@@ -296,13 +295,11 @@ t_list	*tokenize(const char *line)
 	while (true)
 	{
 		if (!tokenize_fixed_len_tokens(&line, tokens))
-			tokenize_variable_len_tokens(&line, tokens);
+			if (!tokenize_variable_len_tokens(&line, tokens))
+				return (NULL);
 		if (tokens->last->as_token->type == TOK_EOL)
 			break ;
 		skip_whitespace(&line);
 	}
-	// expand_env_vars(tokens);
-	// glob_tokens(tokens);
-	// join_tokens(tokens);
 	return (tokens);
 }
