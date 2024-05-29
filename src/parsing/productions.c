@@ -71,13 +71,17 @@ t_tree	*get_production(t_tree_type nonterm, t_token *token)
 		"TOK_EPSILON"										"\n"	\
 		">>" "\n"	"<<" "\n"	">" "\n"	"<" "\n"				\
 		"TOK_EPSILON";
+	int					idx;
 
 	if (productions == NULL)
 		productions = initialize_productions(grammar);
-	return (productions[get_production_idx(nonterm, token)]);
+	idx = get_production_idx(nonterm, token);
+	if (idx != -1)
+		return (productions[idx]);
+	return (NULL);
 }
 
-t_tree	*production_to_child(t_tree production)
+t_tree	*production_part_to_child(t_tree production)
 {
 	t_tree	*child;
 
@@ -89,15 +93,15 @@ t_tree	*production_to_child(t_tree production)
 	return (child);
 }
 
-t_list	*productions_to_children(t_tree *productions)
+t_list	*production_to_children(t_tree *production)
 {
 	int		size;
 	t_list	*children;
 
 	children = lnew();
 	size = 0;
-	while (!tree_is_null((t_tree *)productions + size))
+	while (!tree_is_null((t_tree *)production + size))
 		lpush(children,
-			as_tree(production_to_child(productions[size++])));
+			as_tree(production_part_to_child(production[size++])));
 	return (children);
 }

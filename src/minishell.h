@@ -223,9 +223,9 @@ int										builtin_unset(char **argv, t_fds fds);
 int										builtin_source(char **argv, t_fds fds);
 char									*ft_gethostname(void);
 char									*ft_getcwd(void);
-t_list									*productions_to_children(
-											t_tree *productions);
-t_tree									*production_to_child(t_tree production);
+t_list									*production_to_children(
+											t_tree *production);
+t_tree									*production_part_to_child(t_tree production);
 bool									tree_is_null(t_tree *tree);
 t_tree									*new_tree_token(t_token_type type,
 											char *str);

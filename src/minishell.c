@@ -93,7 +93,7 @@ void	interpret_lines(t_list *lines)
 	while (lnext(lines))
 	{
 		tree = parse(lines->current->as_str);
-		if (heredoc_aborted(-1) == false)
+		if (heredoc_aborted(-1) == false || tree == NULL)
 			exec(tree);
 	}
 }

@@ -13,11 +13,12 @@ t_tree	*build_parse_tree(t_list *tokens)
 	t_list	*stack;
 	t_tree	*top;
 	t_list	*children;
+	t_tree	*production;
 
 	stack = lnew();
-	lpush(stack, as_tree(production_to_child(\
+	lpush(stack, as_tree(production_part_to_child(\
 		(t_tree){COMPLETE_COMMAND, {0}, {{0}}})));
-	lpush(stack, as_tree(production_to_child(\
+	lpush(stack, as_tree(production_part_to_child(\
 		(t_tree){TOKEN, {.token = &(t_token){TOK_EOL, "", true, ""}}, {{0}}})));
 	tree = new_tree_nonterm(COMPLETE_COMMAND, NULL);
 	tree_root = tree;
@@ -26,7 +27,10 @@ t_tree	*build_parse_tree(t_list *tokens)
 		top = lpop_left(stack)->as_tree;
 		if (top->type != TOKEN)
 		{
-			children = productions_to_children(get_production(top->type, tokens->first->as_token));
+			production = get_production(top->type, tokens->first->as_token);
+			if (production == NULL)
+				return (NULL);
+			children = production_to_children(production);
 			lextend_left(stack, lcopy(children));
 			tree->children = children;
 			tree = tree->children->first->as_tree;
@@ -47,13 +51,13 @@ t_tree	*build_parse_tree(t_list *tokens)
 				lrotate(tokens, 1);
 			}
 			else if (get_token_type(tokens) == TOK_EOL)
-				minishell_error(2, true,
+				return (minishell_error(2, false,
 					"syntax error near unexpected token `%s'",
-					get_token_str_nl(tokens));
+					get_token_str_nl(tokens)), NULL);
 			else
-				minishell_error(2, true,
+				return (minishell_error(2, false,
 					"syntax error near unexpected token `%s'",
-					get_token_str_nl(tokens));
+					get_token_str_nl(tokens)), NULL);
 		}
 	}
 	return (tree_root);
@@ -147,6 +151,8 @@ t_tree	*build_ast(t_list *tokens, bool create_heredocs)
 	t_tree	*ast;
 
 	parse_tree = build_parse_tree(tokens);
+	if (parse_tree == NULL)
+		return (NULL);
 	heredoc_aborted(0);
 	ast = lpop_left(build_as_recursively(parse_tree, create_heredocs))->as_tree;
 	/* ast = return_example_ast(); */

@@ -78,11 +78,11 @@ int	get_production_idx(t_tree_type nonterm, t_token *token)
 	if (production_idx == -1)
 	{
 		if (!*token->str)
-			minishell_error(2, true,
+			minishell_error(2, false,
 				"syntax error near unexpected token `newline'");
-		minishell_error(2, true, "syntax error near unexpected token `%s'",
-			token->str);
+		else
+			minishell_error(2, false, "syntax error near unexpected token `%s'",
+				token->str);
 	}
 	return (production_idx);
 }
-
