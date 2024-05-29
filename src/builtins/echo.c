@@ -9,6 +9,8 @@ int	builtin_echo(char **argv, t_fds fds)
 	bool	flag;
 	int		j;
 
+	if (fds.fd_out == -2)
+		fds.fd_out = STDOUT_FILENO;
 	++argv;
 	flag = false;
 	i = 0;
@@ -30,20 +32,21 @@ int	builtin_echo(char **argv, t_fds fds)
 		else
 		{
 			if (i > j)
-				ft_printf(" ");
-			ft_printf("%s", argv[i++]);
+				ft_dprintf(fds.fd_out, " ");
+			ft_dprintf(fds.fd_out, "%s", argv[i++]);
 		}
 	}
 	if (fds.fd_out != -2)
 	{
 		if (flag == false)
 			ft_dprintf(fds.fd_out, "\n");
-		close(fds.fd_out);
+		if (fds.fd_out != STDOUT_FILENO)
+			close(fds.fd_out);
 	}
 	else
 	{
 		if (flag == false)
-			ft_printf("\n");
+			ft_dprintf(fds.fd_out, "\n");
 	}
 	return (0);
 }
