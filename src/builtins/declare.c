@@ -1,6 +1,8 @@
 #include "libft.h"
 #include "minishell.h"
 
+#include <unistd.h>
+
 /* From declare_utils.c, normally static, but you know, max 5 functions... */
 bool	sort_vars(t_data data1, t_data data2);
 void	add_var_flags(char key[static 1],
@@ -229,7 +231,6 @@ int	builtin_declare(char **argv, t_fds fds)
 {
 	t_list			*opts;
 	char			erropt;
-	int				optind;
 	t_declare_flags	flags;
 
 	opts = liter(ft_getopt(argv, "pxr", &erropt, &optind));

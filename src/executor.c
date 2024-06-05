@@ -132,7 +132,6 @@ pid_t	execute_simple_command_wrapper(t_tree *simple_command,
 	glob_tokens(new_children);
 	new_children = build_ast(new_children, false)->children->first->as_tree->children->first->as_tree->children;
 	simple_command->children = new_children;
-	/* tree_print(simple_command); */
 	liter(simple_command->children);
 	while (lnext(simple_command->children))
 		if (simple_command->children->current->as_tree->type == IO_REDIRECT)

@@ -10,7 +10,7 @@ int	builtin_env(char **argv, t_fds fds)
 		if (vars->current->as_kv_pair->v.as_var->exp
 			&& !vars->current->as_kv_pair->v.as_var->special
 			&& vars->current->as_kv_pair->v.as_var->value)
-			ft_printf("%s=%s\n",
+			ft_dprintf(fds.fd_out, "%s=%s\n",
 				vars->current->as_kv_pair->k,
 				vars->current->as_kv_pair->v.as_var->value);
 	return (0);

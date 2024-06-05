@@ -375,7 +375,7 @@ void							cmt(const char *cmd_str);
 size_t							ft_arrlen(char **strv);
 t_list							*ft_getopt(char *const argv[],
 									char valid_opts[static 1],
-									char erropt[static 1],
+									char *erropt,
 									int optind[static 1]);
 
 #endif /* libft.h. */
