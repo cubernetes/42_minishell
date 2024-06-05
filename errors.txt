@@ -1,2 +1,3 @@
 $ echo | ( nl ) | ( echo hi )
 $ /a
+$ echo | ( nl ) | ( echo hi ) | echo hi>/dev/null

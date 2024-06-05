@@ -145,32 +145,32 @@ int	handle_builtin(char	*argv[], t_fds fds)
 	return (1);
 }
 
-int	handle_builtin_wrapper(char	*argv[], t_fds fds)
+int	handle_builtin_wrapper(char	*argv[], t_tree *simple_command)
 {
 	int	exit_status;
 	int	orig_in;
 	int	orig_out;
 	int	orig_err;
 
-	orig_in = fds.fd_in;
-	orig_out = fds.fd_out;
-	orig_err = fds.fd_err;
-	if (fds.fd_in == -2)
-		fds.fd_in = STDIN_FILENO;
-	if (fds.fd_out == -2)
-		fds.fd_out = STDOUT_FILENO;
-	if (fds.fd_err == -2)
-		fds.fd_err = STDERR_FILENO;
-	exit_status = handle_builtin(argv, fds);
+	orig_in = simple_command->fd_in;
+	orig_out = simple_command->fd_out;
+	orig_err = simple_command->fd_err;
+	if (simple_command->fd_in == -2)
+		simple_command->fd_in = STDIN_FILENO;
+	if (simple_command->fd_out == -2)
+		simple_command->fd_out = STDOUT_FILENO;
+	if (simple_command->fd_err == -2)
+		simple_command->fd_err = STDERR_FILENO;
+	exit_status = handle_builtin(argv, simple_command->fds);
 	if (orig_in != -2)
 		close(orig_in);
 	if (orig_out != -2)
 		close(orig_out);
 	if (orig_err != -2)
 		close(orig_err);
-	fds.fd_in = -2;
-	fds.fd_out = -2;
-	fds.fd_err = -2;
+	simple_command->fd_in = -2;
+	simple_command->fd_out = -2;
+	simple_command->fd_err = -2;
 	return (exit_status);
 }
 
@@ -187,7 +187,7 @@ pid_t	execute_simple_command(t_tree *simple_command, t_list *commands)
 	if (argv[0] == NULL)
 		return (close_fds(simple_command), -256);
 	if (is_builtin(argv[0]))
-		return (handle_builtin_wrapper(argv, simple_command->fds) - 256);
+		return (handle_builtin_wrapper(argv, simple_command) - 256);
 	program = search_executable(argv[0], path_parts);
 	if (!program)
 		return (minishell_error(EXIT_COMMAND_NOT_FOUND, false,
