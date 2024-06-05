@@ -5,6 +5,7 @@ int	builtin_env(char **argv, t_fds fds)
 {
 	t_list		*vars;
 
+	(void)argv;
 	vars = liter(ht_to_list(get_vars()));
 	while (lnext(vars))
 		if (vars->current->as_kv_pair->v.as_var->exp

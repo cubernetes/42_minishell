@@ -147,6 +147,8 @@ void	repl(void)
 
 void	finish(void)
 {
+	if (isatty(STDIN_FILENO))
+		ft_dprintf(STDERR_FILENO, "exit\n");
 	rl_clear_history();
 	(void)gc_free_all();
 }
