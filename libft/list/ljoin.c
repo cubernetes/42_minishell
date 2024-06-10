@@ -9,7 +9,7 @@ char	*ljoin(t_list list[static 1], const char delim[static 1])
 	joined = list->first->as_str;
 	if (list->len == 1)
 		return (joined);
-	liter(list);
+	lnext(liter(list));
 	while (lnext(list))
 	{
 		joined = ft_strjoin(joined, delim);

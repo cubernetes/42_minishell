@@ -105,10 +105,10 @@ static char	*quote(char *s, bool bare_declare)
 static void	print_var(t_kv_pair *kv, t_fds fds)
 {
 	if (kv->v.as_var->value)
-		ft_printf("declare -%s %s=%s\n", flags_to_str(kv->v.as_var), kv->k,
+		ft_dprintf(fds.fd_out, "declare -%s %s=%s\n", flags_to_str(kv->v.as_var), kv->k,
 			quote(kv->v.as_var->value, false));
 	else
-		ft_printf("declare -%s %s\n", flags_to_str(kv->v.as_var), kv->k);
+		ft_dprintf(fds.fd_out, "declare -%s %s\n", flags_to_str(kv->v.as_var), kv->k);
 }
 
 bool	valid_name(char *s)
@@ -175,7 +175,7 @@ static int	declare_print_all(t_declare_flags flags, t_fds fds)
 	return (0);
 }
 
-static int	declare_set(char *name, char **argv, t_declare_flags flags, t_fds fds)
+static int	declare_set(char *name, char **argv, t_declare_flags flags)
 {
 	t_list	*key_value;
 	char	*key;
@@ -220,7 +220,7 @@ static int	declare_print_set_vars(t_fds fds)
 	{
 		if (vars->current->as_kv_pair->v.as_var->value
 			&& !vars->current->as_kv_pair->v.as_var->special)
-			ft_printf("%s=%s\n",
+			ft_dprintf(fds.fd_out, "%s=%s\n",
 				vars->current->as_kv_pair->k,
 				quote(vars->current->as_kv_pair->v.as_var->value, true));
 	}
@@ -254,6 +254,6 @@ int	builtin_declare(char **argv, t_fds fds)
 	else if (argv[optind] == NULL)
 		return (declare_print_set_vars(fds));
 	else
-		return (declare_set(argv[0], argv + optind, flags, fds));
+		return (declare_set(argv[0], argv + optind, flags));
 }
 /* Cannot use `+' for removing attributes */

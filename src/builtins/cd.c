@@ -42,12 +42,15 @@ int	builtin_cd(char **argv, t_fds fds)
 	{
 		if (get_var("OLDPWD") == NULL)
 			return (minishell_error(1, false, "%s: OLDPWD no set", name));
+		*argv = get_var("OLDPWD")->value;
+		argv[1] = "-";
+		ft_dprintf(fds.fd_out, "%s\n", get_var("OLDPWD")->value);
 		status = chdir(get_var("OLDPWD")->value);
 	}
 	else
 		status = chdir(*argv);
 	if (status == -1)
-		return (minishell_error(1, false, "%s: no such file or directory: %s", name, argv[0]));
+		return (minishell_error(1, false, "%s: no such file or directory: %s", name, *argv));
 	else
 	{
 		if (get_var("PWD") == NULL)
@@ -55,7 +58,10 @@ int	builtin_cd(char **argv, t_fds fds)
 		else
 			pwd = get_var("PWD")->value;
 		set_var("OLDPWD", pwd, get_flags("OLDPWD"));
-		set_var("PWD", normalize(*argv), get_flags("PWD"));
+		if (**argv == '/' || (argv[1] && !ft_strcmp(argv[1], "-")))
+			set_var("PWD", normalize(*argv), get_flags("PWD"));
+		else
+			set_var("PWD", normalize(ft_strjoin(pwd, ft_strjoin("/", *argv))), get_flags("PWD"));
 	}
 	return (0);
 }
