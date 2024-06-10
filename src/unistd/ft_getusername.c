@@ -10,23 +10,22 @@
 
 static char	*get_username_from_etc_passwd(char *uid)
 {
-	// int		fd;
-	// size_t	len;
+	int		fd;
+	char	*line;
 
-	(void)uid;
+	fd = open("/etc/passwd", O_RDONLY);
+	if (fd < 0)
+		return (var_lookup("USER"));
+	while (1)
+	{
+		line = get_next_line(fd);
+		if (line == NULL)
+			break ;
+		if (ft_strnstr(line, ft_strjoin("x:", ft_strjoin(uid, ":")), ft_strlen(line)) || ft_strnstr(line, ft_strjoin("*:", ft_strjoin(uid, ":")), ft_strlen(line)))
+			return (close(fd), lsplit(line, ":")->first->as_str);
+	}
+	close(fd);
 	return ("");
-	// fd = open("/etc/passwd", O_RDONLY);
-	// if (fd < 0)
-	// 	return (ft_gethostname_from_proc());
-	// uid = get_next_line(fd);
-	// len = ft_strlen(uid);
-	// if (uid[len - 1] == '\n')
-	// 	uid[len - 1] = 0;
-	// close(fd);
-	// get_next_line(fd);
-	// if (uid == NULL)
-	// 	return (var_lookup("USER"));
-	// return (ft_uid_to_name(ft_atoi(uid)));
 }
 
 static int	parse_header(int fd)
@@ -92,11 +91,11 @@ static char	*get_uid_from_status(void)
 			parts = liter(lsplit(line, "\t"));
 			while (lnext(parts))
 				if (ft_isdigit(*parts->current->as_str))
-					return (parts->current->as_str);
-			return ("");
+					return (close(fd), parts->current->as_str);
+			return (close(fd), "");
 		}
 	}
-	return ("");
+	return (close(fd), "");
 }
 
 static char	*get_uid(void)
@@ -180,7 +179,10 @@ char	*ft_getusername(void)
 		if (fd < 0)
 			username = get_username_from_etc_passwd(uid);
 		else
+		{
 			username = get_username_from_krb_file(fd);
+			close(fd);
+		}
 	}
 	if (*username == '\0')
 	{
