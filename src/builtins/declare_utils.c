@@ -22,6 +22,23 @@ char	*flags_to_str(t_var *var)
 	return (flags);
 }
 
+t_flags	get_flags(char key[static 1])
+{
+	t_var	*var;
+	t_flags	flags;
+
+	var = get_var(key);
+	if (var)
+		return ((t_flags){
+			.exp = var->exp,
+			.readonly = var->readonly,
+			.special = var->special,
+			.unset = false,
+		});
+	else
+		return ((t_flags){0});
+}
+
 void	add_var_flags(char key[static 1],
 	char *value,
 	t_declare_flags flags,

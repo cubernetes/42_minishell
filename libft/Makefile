@@ -6,7 +6,7 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:09:11 by tischmid          #+#    #+#              #
-#    Updated: 2024/05/23 02:17:24 by tosuman          ###   ########.fr        #
+#    Updated: 2024/06/10 16:50:11 by tischmid         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -145,6 +145,7 @@ SRC += cmp_int_asc.c
 
 # list
 SRC += lswap.c
+SRC += ljoin.c
 SRC += lsplit.c
 SRC += lsplit_n.c
 SRC += lsort.c

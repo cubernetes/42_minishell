@@ -124,9 +124,9 @@ t_list	*get_lines(int fd)
 
 void	expand_prompts(void)
 {
-	set_var("PS0", expand_prompt(PS0), (t_flags){0});
-	set_var("PS1", expand_prompt(PS1), (t_flags){0});
-	set_var("PS2", expand_prompt(PS2), (t_flags){0});
+	set_var("PS0", expand_prompt(PS0), get_flags("PS0"));
+	set_var("PS1", expand_prompt(PS1), get_flags("PS1"));
+	set_var("PS2", expand_prompt(PS2), get_flags("PS2"));
 }
 
 /* read-eval-print-loop */

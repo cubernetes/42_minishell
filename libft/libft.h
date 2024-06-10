@@ -342,6 +342,8 @@ t_list							*lsplit(const char str[static 1],
 									const char delim[static 2]);
 t_list							*lsplit_n(const char str[static 1],
 									const char delim[static 2], size_t n);
+char							*ljoin(t_list list[static 1],
+									const char delim[static 1]);
 bool							lequal(t_list *list_a, t_list *list_b,
 									bool (cmp)(t_data data1, t_data data2));
 void							lextend_left(t_list *list_a, t_list *list_b);

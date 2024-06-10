@@ -4,30 +4,23 @@
 
 static char	*normalize(char *path)
 {
-	char	*new_path;
-	int		i;
+	t_list	*parts;
+	t_list	*new_parts;
 
-	path = ft_strjoin(path, "/");
-	new_path = "";
-	i = 0;
-	while (path[i])
+	parts = liter(lsplit(path, "/"));
+	new_parts = lnew();
+	while (lnext(parts))
 	{
-		if (path[i] == '/' && path[i + 1] == '/')
-		{
-			new_path = ft_strjoin(new_path, "/");
-			if (path[++i] == '\0')
-				break ;
-		}
+		if (!ft_strcmp(parts->current->as_str, ""));
+		else if (!ft_strcmp(parts->current->as_str, "."));
+		else if (!ft_strcmp(parts->current->as_str, ".."))
+			lpop(new_parts);
 		else
-			new_path = ft_strjoin(new_path, ft_strndup(&path[i], 1))
-		++i;
+			lpush(new_parts, as_data(parts->current));
 	}
-    // ft_replace_all(new_path, "/..", "/");
-	return (new_path);
+	return (ft_strjoin("/", ljoin(new_parts, "/")));
 }
 
-/*fd_in, fd_out, fd_err*/
-/*ft_dprintf(fd, normale printf*/
 int	builtin_cd(char **argv, t_fds fds)
 {
 	char	*var;
@@ -36,13 +29,15 @@ int	builtin_cd(char **argv, t_fds fds)
 	char	*pwd;
 
 	name = *argv++;
-	var = NULL;
-	if (get_var("HOME") != NULL)
-		var = get_var("HOME")->value;
-	if (!var)
-		return (minishell_error(1, false, "%s: HOME not set", name));
-	if (!*argv)
+	if (*argv == NULL)
+	{
+		var = NULL;
+		if (get_var("HOME") != NULL)
+			var = get_var("HOME")->value;
+		if (!var)
+			return (minishell_error(1, false, "%s: HOME not set", name));
 		status = chdir(var);
+	}
 	else if (!ft_strcmp(*argv, "-"))
 	{
 		if (get_var("OLDPWD") == NULL)
@@ -50,7 +45,7 @@ int	builtin_cd(char **argv, t_fds fds)
 		status = chdir(get_var("OLDPWD")->value);
 	}
 	else
-		status = chdir(argv[0]);
+		status = chdir(*argv);
 	if (status == -1)
 		return (minishell_error(1, false, "%s: no such file or directory: %s", name, argv[0]));
 	else
@@ -59,8 +54,8 @@ int	builtin_cd(char **argv, t_fds fds)
 			pwd = gc_add_str(getcwd(NULL, 0));
 		else
 			pwd = get_var("PWD")->value;
-		set_var("OLDPWD", pwd, (t_flags){0});
-		set_var("PWD", argv[0], (t_flags){0});
+		set_var("OLDPWD", pwd, get_flags("OLDPWD"));
+		set_var("PWD", normalize(*argv), get_flags("PWD"));
 	}
 	return (0);
 }

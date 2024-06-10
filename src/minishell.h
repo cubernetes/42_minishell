@@ -246,5 +246,6 @@ char									*create_heredoc(char *delimiter);
 bool									heredoc_aborted(int op);
 unsigned char							set_last_exit_status(int exit_status);
 unsigned char							get_last_exit_status(void);
+t_flags									get_flags(char key[static 1]);
 
 #endif /* minishell.h. */
