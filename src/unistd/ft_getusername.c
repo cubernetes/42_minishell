@@ -168,13 +168,25 @@ char	*ft_getusername(void)
 {
 	int		fd;
 	char	*uid;
+	char	*username;
 	
+	username = "";
 	uid = get_uid();
 	if (*uid == '\0')
-		return (var_lookup("USER"));
-	fd = open(get_krb_ticket_file(uid), O_RDONLY);
-	if (fd < 0)
-		return (get_username_from_etc_passwd(uid));
+		username = var_lookup("USER");
 	else
-		return (get_username_from_krb_file(fd));
+	{
+		fd = open(get_krb_ticket_file(uid), O_RDONLY);
+		if (fd < 0)
+			username = get_username_from_etc_passwd(uid);
+		else
+			username = get_username_from_krb_file(fd);
+	}
+	if (*username == '\0')
+	{
+		if (*uid)
+			return (ft_strjoin("u0_a", uid));
+		return ("u0_anon");
+	}
+	return (username);
 }
