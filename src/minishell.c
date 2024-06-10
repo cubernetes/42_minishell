@@ -26,7 +26,7 @@ int	minishell_error(int exit_code, bool do_exit, const char *fmt, ...)
 	return (exit_code);
 }
 
-/* TODO: Implement fallbacks for USER */
+/* TODO: Expand variables */
 char	*expand_prompt(char *prompt_string)
 {
 	t_list	*replacements;
@@ -100,8 +100,9 @@ void	interpret_lines(t_list *lines)
 
 t_list	*get_lines(int fd)
 {
-	char	*input;
-	char	*ps1;
+	char		*input;
+	char		*ps1;
+	static char	*prev_input = "";
 
 	if (isatty(fd))
 	{
@@ -118,7 +119,11 @@ t_list	*get_lines(int fd)
 	}
 	if (input == NULL)
 		return (lnew());
-	add_history(input);
+	if (*input && ft_strcmp(input, prev_input))
+		add_history(input);
+	gc_start_context("POST");
+	prev_input = ft_strdup(input);
+	gc_end_context();
 	return (lsplit(input, "\n"));
 }
 

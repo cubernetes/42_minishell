@@ -5,7 +5,10 @@
 
 int	builtin_exit(char **argv, t_fds fds)
 {
+	int	exit_status;
+
+	exit_status = ft_atoi(get_var("?")->value);
 	finish();
-	exit(0);
+	exit(exit_status);
 	return (0);
 }
