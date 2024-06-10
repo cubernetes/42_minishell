@@ -89,9 +89,9 @@ static char	*get_uid_from_status(void)
 		if (ft_strnstr(line, "Uid:", ft_strlen(line)))
 		{
 			line += 4;
-			parts = liter(lsplit(line, " "));
+			parts = liter(lsplit(line, "\t"));
 			while (lnext(parts))
-				if (*parts->current->as_str)
+				if (ft_isdigit(*parts->current->as_str))
 					return (parts->current->as_str);
 			return ("");
 		}
