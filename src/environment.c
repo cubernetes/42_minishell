@@ -6,25 +6,11 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/01 02:48:15 by tosuman           #+#    #+#             */
-/*   Updated: 2024/05/09 21:22:16 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/06/09 18:01:25 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-char	**set_env(char **envp)
-{
-	static char	**_envp = NULL;
-
-	if (envp)
-		_envp = envp;
-	return (_envp);
-}
-
-char	**get_env(void)
-{
-	return (set_env(NULL));
-}
 
 char	**set_argv(char **argv)
 {
@@ -40,19 +26,26 @@ char	**get_argv(void)
 	return (set_argv(NULL));
 }
 
-char	*env_lookup(char *var)
+char	**get_env(void)
 {
-	char	**envp;
-	size_t	len;
+	t_list		*vars;
+	t_list		*env_vars;
+	char		**envp;
 
-	envp = get_env();
-	while (envp && envp[0])
-	{
-		len = ft_strlen(var);
-		if (!ft_strncmp(envp[0], var, len)
-			&& envp[0][len] == '=')
-			return (envp[0] + len + 1);
-		++envp;
-	}
-	return ("");
+	vars = liter(ht_to_list(get_vars()));
+	env_vars = lnew();
+	while (lnext(vars))
+		if (vars->current->as_kv_pair->v.as_var->exp
+			&& !vars->current->as_kv_pair->v.as_var->special
+			&& vars->current->as_kv_pair->v.as_var->value)
+			lpush(env_vars, as_data(vars->current));
+	// ft_dprintf(fds.fd_out, "%s=%s\n",
+	// 	vars->current->as_kv_pair->k,
+	// 	vars->current->as_kv_pair->v.as_var->value);
+	envp = ft_malloc(sizeof(*envp) * (env_vars->len + 1));
+	envp[env_vars->len] = NULL;
+	liter(env_vars);
+	while (lnext(env_vars))
+		envp[env_vars->current_idx] = ft_strjoin(ft_strjoin(env_vars->current->as_kv_pair->k, "="), env_vars->current->as_kv_pair->v.as_var->value);
+	return (envp);
 }

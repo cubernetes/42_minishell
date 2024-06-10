@@ -125,7 +125,7 @@ int	handle_builtin(char	*argv[], t_fds fds)
 	else if (ft_strcmp(*argv, "echo") == 0)
 		return (builtin_echo(argv, fds));
 	else if (ft_strcmp(*argv, "env") == 0)
-		return (builtin_env(get_env(), fds));
+		return (builtin_env(argv, fds));
 	else if (ft_strcmp(*argv, "exit") == 0)
 		return (builtin_exit(argv, fds));
 	else if (ft_strcmp(*argv, "export") == 0)
@@ -182,7 +182,7 @@ pid_t	execute_simple_command(t_tree *simple_command, t_list *commands)
 	char	**argv;
 	char	*program;
 
-	path_parts = ft_split(env_lookup("PATH"), ':');
+	path_parts = ft_split(var_lookup("PATH"), ':'); // TOOD: what about empty PATH
 	argv = make_argv(simple_command);
 	if (argv[0] == NULL)
 		return (close_fds(simple_command), -256);

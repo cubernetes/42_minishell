@@ -32,7 +32,7 @@ char	*expand_prompt(char *prompt_string)
 	t_list	*replacements;
 
 	replacements = lnew();
-	lpush(replacements, as_str_pair(&(t_str_pair){"\\u", env_lookup("USER")}));
+	lpush(replacements, as_str_pair(&(t_str_pair){"\\u", ft_getusername()}));
 	lpush(replacements, as_str_pair(&(t_str_pair){"\\w", ft_getcwd()}));
 	lpush(replacements, as_str_pair(&(t_str_pair){"\\W", lsplit(ft_getcwd(), "/")->last->as_str}));
 	lpush(replacements, as_str_pair(&(t_str_pair){"\\h", ft_gethostname()}));
@@ -187,8 +187,6 @@ void	set_oldpwd(void)
 
 void	set_initial_shell_variables(char *argv[], char *envp[])
 {
-	/* TODO: Remove set_env */
-	set_env(envp);
 	inherit_environment(envp);
 	set_argv(argv);
 	set_var("?", "0", (t_flags){.special = true});

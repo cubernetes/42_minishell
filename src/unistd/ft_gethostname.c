@@ -1,7 +1,28 @@
+#include "minishell.h"
 #include "libft.h"
 
 #include <fcntl.h>
 #include <unistd.h>
+
+static char	*ft_gethostname_from_proc(void)
+{
+	int		fd;
+	char	*line;
+	size_t	len;
+
+	fd = open("/proc/sys/kernel/hostname", O_RDONLY);
+	if (fd < 0)
+		return (var_lookup("HOSTNAME"));
+	line = get_next_line(fd);
+	len = ft_strlen(line);
+	if (line[len - 1] == '\n')
+		line[len - 1] = 0;
+	close(fd);
+	get_next_line(fd);
+	if (line == NULL)
+		return ("");
+	return (line);
+}
 
 /** Return the first line from the file "/etc/hostname".
  *
@@ -16,7 +37,7 @@ char	*ft_gethostname(void)
 
 	fd = open("/etc/hostname", O_RDONLY);
 	if (fd < 0)
-		return ("");
+		return (ft_gethostname_from_proc());
 	line = get_next_line(fd);
 	len = ft_strlen(line);
 	if (line[len - 1] == '\n')
@@ -27,4 +48,3 @@ char	*ft_gethostname(void)
 		return ("");
 	return (line);
 }
-/* Implement fallbacks */

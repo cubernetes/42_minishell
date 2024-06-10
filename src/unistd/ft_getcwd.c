@@ -15,8 +15,8 @@ char	*ft_getcwd(void)
 	char	*home_dir;
 
 	cwd = gc_add_str(getcwd(NULL, 0));
-	home_dir = env_lookup("HOME");
-	if (!ft_strncmp(home_dir, cwd, ft_strlen(home_dir)))
+	home_dir = var_lookup("HOME");
+	if (*home_dir && !ft_strncmp(home_dir, cwd, ft_strlen(home_dir)))
 		cwd = ft_replace(cwd, home_dir, "~");
 	return (cwd);
 }

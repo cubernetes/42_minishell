@@ -6,7 +6,7 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:02:16 by tischmid          #+#    #+#              #
-#    Updated: 2024/05/24 21:41:13 by tosuman          ###   ########.fr        #
+#    Updated: 2024/06/10 01:42:39 by tischmid         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,6 +27,7 @@ unexport _SRC
 _SRC += signals.c
 _SRC += ft_getcwd.c
 _SRC += ft_gethostname.c
+_SRC += ft_getusername.c
 _SRC += expansion.c
 _SRC += execve.c
 _SRC += tokenize.c

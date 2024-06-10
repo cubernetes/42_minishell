@@ -1,7 +1,7 @@
 #include "minishell.h"
 #include "libft.h"
 
-static char	*var_lookup(char *key)
+char	*var_lookup(char *key)
 {
 	t_var	*var;
 

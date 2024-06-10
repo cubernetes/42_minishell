@@ -183,9 +183,8 @@ void									expand_env_vars(t_list *tokens);
 t_list									*expand_token(t_token *token);
 t_list									*glob_tokens_2(t_list *tokens);
 void									join_tokens(t_list *tokens);
-char									**set_env(char **envp);
 char									**get_env(void);
-char									*env_lookup(char *var);
+char									*var_lookup(char *key);
 char									**set_argv(char **argv);
 char									**get_argv(void);
 unsigned char							execute_complete_command(t_tree *node);
@@ -222,6 +221,7 @@ int										builtin_pwd(char **argv, t_fds fds);
 int										builtin_unset(char **argv, t_fds fds);
 int										builtin_source(char **argv, t_fds fds);
 char									*ft_gethostname(void);
+char									*ft_getusername(void);
 char									*ft_getcwd(void);
 t_list									*production_to_children(
 											t_tree *production);
@@ -235,8 +235,6 @@ t_tree									*new_tree_nonterm(t_tree_type type,
 											t_list *children);
 t_tree									*get_production(t_tree_type nonterm,
 											t_token *token);
-char									*ft_gethostname(void);
-char									*ft_getcwd(void);
 t_list									*new_children(t_tree **children);
 t_tree_type								tree_ht_get(char *key);
 t_token_type							tokens_ht_get(char *key);
