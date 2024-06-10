@@ -118,7 +118,7 @@ static char	*get_krb_ticket_file(char *uid)
 	DIR				*dirp;
 	struct dirent	*dp;
 
-	if (!access("/tmp", F_OK))
+	if (access("/tmp", F_OK))
 		return ("");
 	dirp = opendir("/tmp");
 	dp = readdir(dirp);
