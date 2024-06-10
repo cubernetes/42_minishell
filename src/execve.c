@@ -111,7 +111,6 @@ bool	is_builtin(char	*word)
 		|| ft_strcmp(word, "pwd") == 0
 		|| ft_strcmp(word, "readonly") == 0
 		|| ft_strcmp(word, "declare") == 0
-		|| ft_strcmp(word, "source") == 0
 		|| ft_strcmp(word, ".") == 0
 		|| ft_strcmp(word, "unset") == 0);
 }
@@ -136,10 +135,6 @@ int	handle_builtin(char	*argv[], t_fds fds)
 		return (builtin_readonly(argv, fds));
 	else if (ft_strcmp(*argv, "declare") == 0)
 		return (builtin_declare(argv, fds));
-	else if (ft_strcmp(*argv, "source") == 0)
-		return (builtin_source(argv, fds));
-	else if (ft_strcmp(*argv, ".") == 0)
-		return (builtin_source(argv, fds));
 	else if (ft_strcmp(*argv, "unset") == 0)
 		return (builtin_unset(argv, fds));
 	return (1);

@@ -6,7 +6,7 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:02:16 by tischmid          #+#    #+#              #
-#    Updated: 2024/06/10 01:42:39 by tischmid         ###   ########.fr        #
+#    Updated: 2024/06/10 18:29:53 by marvin           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -50,7 +50,6 @@ _SRC += exit.c
 _SRC += cd.c
 _SRC += declare.c
 _SRC += declare_utils.c
-_SRC += source.c
 _SRC += readonly.c
 _SRC += export.c
 _SRC += environment.c
