@@ -267,6 +267,7 @@ bool							cmp_int_desc(int a, int b);
 char							*ft_itoa(int n);
 int								ft_atoi(char const *nptr);
 int								ft_atoi_status(char const *nptr, int *status);
+long 							ft_atol_status(char const *nptr, int *status);
 double							ft_atof(const char *s);
 unsigned int					ft_abs(int n);
 int								ft_max(int a, int b);

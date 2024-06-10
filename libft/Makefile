@@ -6,7 +6,7 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:09:11 by tischmid          #+#    #+#              #
-#    Updated: 2024/06/10 16:50:11 by tischmid         ###   ########.fr        #
+#    Updated: 2024/06/10 21:58:27 by tischmid         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -52,6 +52,7 @@ SRC += ft_getopt.c
 # string
 SRC += ft_atoi.c
 SRC += ft_atoi_status.c
+SRC += ft_atol_status.c
 SRC += ft_atof.c
 SRC += ft_isalnum.c
 SRC += ft_isalpha.c

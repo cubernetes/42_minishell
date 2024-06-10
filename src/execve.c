@@ -196,6 +196,6 @@ pid_t	execute_simple_command(t_tree *simple_command, t_list *commands)
 	close_other_command_fds(commands);
 	execve(program, argv, get_env());
 	minishell_error(EXECVE_ERR, false, "%s", strerror(errno));
-	finish();
+	finish(false);
 	return (-1);
 }

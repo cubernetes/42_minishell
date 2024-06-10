@@ -239,7 +239,7 @@ t_tree_type								tree_ht_get(char *key);
 t_token_type							tokens_ht_get(char *key);
 int										get_production_idx(t_tree_type nonterm,
 											t_token *token);
-void									finish(void);
+void									finish(bool print_exit);
 char									*ft_mktemp(char *prefix);
 char									*create_heredoc(char *delimiter);
 bool									heredoc_aborted(int op);

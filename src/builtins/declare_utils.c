@@ -25,7 +25,6 @@ char	*flags_to_str(t_var *var)
 t_flags	get_flags(char key[static 1])
 {
 	t_var	*var;
-	t_flags	flags;
 
 	var = get_var(key);
 	if (var)

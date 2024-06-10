@@ -14,13 +14,14 @@ int	minishell_error(int exit_code, bool do_exit, const char *fmt, ...)
 {
 	va_list	ap;
 
+	if (isatty(STDIN_FILENO))
+		ft_dprintf(STDERR_FILENO, "exit\n");
 	va_start(ap, fmt);
-	ft_vdprintf(STDERR_FILENO, ft_strjoin(ft_strjoin(MINISHELL_NAME ": ", fmt),
-			"\n"), ap);
+	ft_vdprintf(STDERR_FILENO, ft_strjoin(ft_strjoin(MINISHELL_NAME ": ", fmt), "\n"), ap);
 	va_end(ap);
 	if (do_exit)
 	{
-		finish();
+		finish(false);
 		exit(exit_code);
 	}
 	return (exit_code);
@@ -150,9 +151,9 @@ void	repl(void)
 	}
 }
 
-void	finish(void)
+void	finish(bool print_exit)
 {
-	if (isatty(STDIN_FILENO))
+	if (print_exit && isatty(STDIN_FILENO))
 		ft_dprintf(STDERR_FILENO, "exit\n");
 	rl_clear_history();
 	(void)gc_free_all();
@@ -238,6 +239,6 @@ int	main(int argc, char *argv[], char *envp[])
 	(void)argc;
 	init(argv, envp);
 	repl();
-	finish();
+	finish(true);
 	return (0);
 }

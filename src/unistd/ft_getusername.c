@@ -4,7 +4,6 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <sys/types.h>
 #include <dirent.h>
 
@@ -44,7 +43,7 @@ static int	parse_header(int fd)
 		return (4);
 	if (read(fd, (char *)&length + 0, 1) < 1) // msb
 		return (5);
-	buffer = malloc(sizeof(char) * (size_t)length);
+	buffer = ft_malloc(sizeof(char) * (size_t)length);
 	if (read(fd, buffer, (size_t)length) < length) // header
 		return (6);
 	return (0);
@@ -67,7 +66,7 @@ static int	parse_till_real(int fd)
 		return (5);
 	if (read(fd, (char *)&length + 0, 1) < 1)
 		return (6);
-	buffer = malloc(sizeof(char) * (size_t)length);
+	buffer = ft_malloc(sizeof(char) * (size_t)length);
 	if (read(fd, buffer, (size_t)length) < length) // realm
 		return (7);
 	return (0);
@@ -107,6 +106,7 @@ static char	*get_uid(void)
 	fd = open("/proc/self/loginuid", O_RDONLY);
 	bytes_read = read(fd, buf, BUFSIZ);
 	buf[bytes_read] = 0;
+	close(fd);
 	if (!ft_strcmp(buf, "4294967295"))
 		return (get_uid_from_status());
 	return (ft_strdup(buf));
@@ -116,6 +116,7 @@ static char	*get_krb_ticket_file(char *uid)
 {
 	DIR				*dirp;
 	struct dirent	*dp;
+	char			*name;
 
 	if (access("/tmp", F_OK))
 		return ("");
@@ -130,9 +131,7 @@ static char	*get_krb_ticket_file(char *uid)
 		if (big)
 			len = ft_strlen(big);
 		if (big && ft_strnstr(big, little, len))
-		{
-			return (closedir(dirp), ft_strjoin("/tmp/", dp->d_name));
-		}
+			return (name = ft_strdup(dp->d_name), closedir(dirp), ft_strjoin("/tmp/", name));
 		dp = readdir(dirp);
 	}
 	closedir(dirp);
@@ -156,7 +155,7 @@ static char	*get_username_from_krb_file(int fd)
 		return (close(fd), "");
 	if (read(fd, (char *)&length + 0, 1) < 1)
 		return (close(fd), "");
-	buffer = malloc(sizeof(char) * (size_t)(length + 1));
+	buffer = ft_malloc(sizeof(char) * (size_t)(length + 1));
 	buffer[length] = 0;
 	if (read(fd, buffer, (size_t)length) < length) // component1
 		return (close(fd), "");
