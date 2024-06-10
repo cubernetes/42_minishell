@@ -20,7 +20,7 @@ static char	*ft_gethostname_from_proc(void)
 	close(fd);
 	get_next_line(fd);
 	if (line == NULL)
-		return ("");
+		return ("localhost");
 	return (line);
 }
 
@@ -45,6 +45,6 @@ char	*ft_gethostname(void)
 	close(fd);
 	get_next_line(fd);
 	if (line == NULL)
-		return ("");
+		return ("localhost");
 	return (line);
 }
