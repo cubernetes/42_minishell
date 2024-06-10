@@ -14,7 +14,7 @@ static char	*get_username_from_etc_passwd(char *uid)
 	// size_t	len;
 
 	(void)uid;
-	return ("hey");
+	return ("");
 	// fd = open("/etc/passwd", O_RDONLY);
 	// if (fd < 0)
 	// 	return (ft_gethostname_from_proc());
