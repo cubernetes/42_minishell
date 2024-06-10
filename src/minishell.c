@@ -156,15 +156,20 @@ void	finish(void)
 /* TODO: make logic correct */
 void	set_pwd(void)
 {
-	char	*cwd;
+	t_var	*pwd_var;
 
-	cwd = get_var("PWD")->value;
-	if (NULL != cwd)
+	pwd_var = get_var("PWD");
+	if (pwd_var == NULL)
 	{
-		cwd = getcwd(NULL, 0);
-		gc_add(cwd);
+		pwd_var = ft_malloc(sizeof(*pwd_var));
+		pwd_var->value = NULL;
 	}
-	set_var("PWD", cwd, (t_flags){.exp = true});
+	if (pwd_var->value == NULL)
+	{
+		pwd_var->value = getcwd(NULL, 0);
+		gc_add(pwd_var->value);
+	}
+	set_var("PWD", pwd_var->value, (t_flags){.exp = true});
 }
 /* On startup, bash sets the value of PWD to getcwd(2) when it is unset.
  * However, when it is set already (through inheritance), then it is not
@@ -173,24 +178,11 @@ void	set_pwd(void)
  * described by getcwd(2), in which case it is set to getcwd(2).
  */
 
-void	set_oldpwd(void)
-{
-	char	*cwd;
-
-	cwd = get_var("OLDPWD")->value;
-	if (NULL != cwd)
-	{
-		/* TODO: Do not unset OLDPWD if it exists */
-		unset_var("OLDPWD");
-	}
-}
-
 void	set_initial_shell_variables(char *argv[], char *envp[])
 {
 	inherit_environment(envp);
 	set_argv(argv);
 	set_var("?", "0", (t_flags){.special = true});
-	set_oldpwd();
 	set_pwd();
 }
 

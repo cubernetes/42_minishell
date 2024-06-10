@@ -6,7 +6,7 @@ char	*var_lookup(char *key)
 	t_var	*var;
 
 	var = get_var(key);
-	if (var)
+	if (var && var->value)
 		return (var->value);
 	return ("");
 }
