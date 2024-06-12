@@ -130,6 +130,8 @@ pid_t	execute_simple_command_wrapper(t_tree *simple_command,
 	}
 	lpush(new_children, as_token(new_token("", TOK_EOL, true)));
 	expand_env_vars(new_children);
+	if (new_children->len <= 1)
+		return (close_fds(simple_command), -258);
 	join_tokens(new_children);
 	glob_tokens(new_children);
 	new_children = build_ast(new_children, false)->children->first->as_tree->children->first->as_tree->children;
@@ -161,8 +163,10 @@ unsigned char	wait_pipe_sequence(t_list *pids)
 		{
 			if (pids->current->as_int == -1)
 				status = 127;
-			else if (pids->current->as_int <= -2)
+			else if (pids->current->as_int <= -2 && pids->current->as_int >= -257)
 				status = pids->current->as_int + 257;
+			else if (pids->current->as_int == -258)
+				status = 0;
 			continue ;
 		}
 		noninteractive_signals();

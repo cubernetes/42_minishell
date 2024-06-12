@@ -72,7 +72,8 @@ static int	parse_till_real(int fd)
 	return (0);
 }
 
-static char	*get_uid_from_status(void)
+/* Return EUID from /proc/self/status */
+char	*ft_getuid(void)
 {
 	char	*line;
 	int		fd;
@@ -86,31 +87,30 @@ static char	*get_uid_from_status(void)
 			break ;
 		if (ft_strnstr(line, "Uid:", ft_strlen(line)))
 		{
-			line += 4;
 			parts = liter(lsplit(line, "\t"));
-			while (lnext(parts))
-				if (ft_isdigit(*parts->current->as_str))
-					return (close(fd), parts->current->as_str);
-			return (close(fd), "");
+			close(fd);
+			if (parts->len == 5)
+				return (parts->first->next->next->as_str);
+			return (var_lookup("EUID"));
 		}
 	}
-	return (close(fd), "");
+	return (close(fd), var_lookup("EUID"));
 }
 
-static char	*get_uid(void)
-{
-	int		fd;
-	char	buf[BUFSIZ];
-	ssize_t	bytes_read;
-
-	fd = open("/proc/self/loginuid", O_RDONLY);
-	bytes_read = read(fd, buf, BUFSIZ);
-	buf[bytes_read] = 0;
-	close(fd);
-	if (!ft_strcmp(buf, "4294967295"))
-		return (get_uid_from_status());
-	return (ft_strdup(buf));
-}
+// static char	*ft_getloginuid(void)
+// {
+// 	int		fd;
+// 	char	buf[BUFSIZ];
+// 	ssize_t	bytes_read;
+// 
+// 	fd = open("/proc/self/loginuid", O_RDONLY);
+// 	bytes_read = read(fd, buf, BUFSIZ);
+// 	buf[bytes_read] = 0;
+// 	close(fd);
+// 	if (!ft_strcmp(buf, "4294967295"))
+// 		return (var_lookup("EUID"));
+// 	return (ft_strdup(buf));
+// }
 
 static char	*get_krb_ticket_file(char *uid)
 {
@@ -169,7 +169,7 @@ char	*ft_getusername(void)
 	char	*username;
 	
 	username = "";
-	uid = get_uid();
+	uid = ft_getuid();
 	if (*uid == '\0')
 		username = var_lookup("USER");
 	else

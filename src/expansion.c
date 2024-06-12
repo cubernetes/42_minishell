@@ -61,7 +61,8 @@ static void	expand_word(t_list *new_tokens, t_token *token)
 	split_words = lnew();
 	split_tokens = liter(lsplit(token->str, ft_strndup(IFS, 1)));
 	while (lnext(split_tokens))
-		lpush(split_words, as_token(new_word_token(split_tokens->current->as_str)));
+		if (*split_tokens->current->as_str)
+			lpush(split_words, as_token(new_word_token(split_tokens->current->as_str)));
 	lextend(new_tokens, split_words);
 	if (!token->is_last_subtoken)
 		new_tokens->last->as_token->is_last_subtoken = false;

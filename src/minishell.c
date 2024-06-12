@@ -27,6 +27,13 @@ int	minishell_error(int exit_code, bool do_exit, const char *fmt, ...)
 	return (exit_code);
 }
 
+static char	*get_dollar_prompt(void)
+{
+	if (ft_atoi(ft_getuid()) == 0)
+		return ("#");
+	return ("$");
+}
+
 /* TODO: Expand variables */
 char	*expand_prompt(char *prompt_string)
 {
@@ -38,6 +45,7 @@ char	*expand_prompt(char *prompt_string)
 	lpush(replacements, as_str_pair(&(t_str_pair){"\\W", lsplit(ft_getcwd(), "/")->last->as_str}));
 	lpush(replacements, as_str_pair(&(t_str_pair){"\\h", ft_gethostname()}));
 	lpush(replacements, as_str_pair(&(t_str_pair){"\\H", ft_split(ft_gethostname(), '.')[0]}));
+	lpush(replacements, as_str_pair(&(t_str_pair){"\\$", get_dollar_prompt()}));
 	liter(replacements);
 	while (lnext(replacements))
 		prompt_string = ft_replace_all(prompt_string,
