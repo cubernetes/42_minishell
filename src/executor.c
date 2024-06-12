@@ -13,99 +13,101 @@
 #include <sys/wait.h>
 #include <stdbool.h>
 
-bool	redirect_heredoc(char *file_path, t_tree *simple_command)
+void	redirect_heredoc(char *file_path, t_tree *simple_command)
 {
 	int	fd;
 	int	sc_fd_in;
 
 	fd = open(file_path, O_RDONLY);
 	if (fd == -1)
-		return (false);
+		simple_command->error = minishell_error(1, false,
+				"%s: %s", file_path, strerror(errno));
 	else
 	{
 		sc_fd_in = simple_command->fd_in;
 		if (sc_fd_in != -2)
 			close(sc_fd_in);
 		simple_command->fd_in = fd;
-		return (true);
+		simple_command->error = 0;
 	}
 }
 
-bool	handle_redirect_input(char *file_path, t_tree *simple_command)
+void	handle_redirect_input(char *file_path, t_tree *simple_command)
 {
 	int	fd;
 	int	sc_fd_in;
 
 	fd = open(file_path, O_RDONLY);
 	if (fd == -1)
-		return (false);
+		simple_command->error = minishell_error(1, false,
+				"%s: %s", file_path, strerror(errno));
 	else
 	{
 		sc_fd_in = simple_command->fd_in;
 		if (sc_fd_in != -2)
 			close(sc_fd_in);
 		simple_command->fd_in = fd;
-		return (true);
+		simple_command->error = 0;
 	}
 }
 
-bool	handle_redirect_append(char *file_path, t_tree *simple_command)
+void	handle_redirect_append(char *file_path, t_tree *simple_command)
 {
 	int		fd;
 	int		sc_fd_out;
 
 	fd = open(file_path, O_WRONLY | O_APPEND | O_CREAT, 0644);
 	if (fd == -1)
-		return (false);
+		simple_command->error = minishell_error(1, false,
+				"%s: %s", file_path, strerror(errno));
 	else
 	{
 		sc_fd_out = simple_command->fd_out;
 		if (sc_fd_out != -2)
 			close(sc_fd_out);
 		simple_command->fd_out = fd;
-		return (true);
+		simple_command->error = 0;
 	}
 }
 
-bool	handle_redirect_override(char *file_path, t_tree *simple_command)
+void	handle_redirect_override(char *file_path, t_tree *simple_command)
 {
 	int		fd;
 	int		sc_fd_out;
 
 	fd = open(file_path, O_WRONLY | O_TRUNC | O_CREAT, 0644);
 	if (fd == -1)
-		return (false);
+		simple_command->error = minishell_error(1, false,
+				"%s: %s", file_path, strerror(errno));
 	else
 	{
 		sc_fd_out = simple_command->fd_out;
 		if (sc_fd_out != -2)
 			close(sc_fd_out);
 		simple_command->fd_out = fd;
-		return (true);
+		simple_command->error = 0;
 	}
 }
 
-void	handle_io_redirect(t_tree *io_redirect, t_tree *simple_command)
+int	handle_io_redirect(t_tree *io_redirect, t_tree *simple_command)
 {
-	bool			err;
 	char			*file_path;
 	t_token_type	type;
 
 	type = io_redirect->children->first->as_tree->token->type;
 	file_path = io_redirect->children->first->next->as_tree->token->str;
 	if (type == TOK_OVERRIDE)
-		err = handle_redirect_override(file_path, simple_command);
+		handle_redirect_override(file_path, simple_command);
 	else if (type == TOK_INPUT)
-		err = handle_redirect_input(file_path, simple_command);
+		handle_redirect_input(file_path, simple_command);
 	else if (type == TOK_APPEND)
-		err = handle_redirect_append(file_path, simple_command);
+		handle_redirect_append(file_path, simple_command);
 	else if (type == TOK_HEREDOC)
-		err = redirect_heredoc(file_path, simple_command);
+		redirect_heredoc(file_path, simple_command);
 	else
-		err = false;
-	if (err == false)
-		minishell_error(EXIT_FAILURE, true,
-			"redirect error: %s", strerror(errno));
+	{
+	}
+	return (simple_command->error);
 }
 
 /* TODO: get rid of this wrapper mess */
@@ -135,7 +137,8 @@ pid_t	execute_simple_command_wrapper(t_tree *simple_command,
 	liter(simple_command->children);
 	while (lnext(simple_command->children))
 		if (simple_command->children->current->as_tree->type == IO_REDIRECT)
-			handle_io_redirect(simple_command->children->current->as_tree, simple_command);
+			if (handle_io_redirect(simple_command->children->current->as_tree, simple_command))
+				return (close_fds(simple_command), simple_command->error - 257);
 	return (execute_simple_command(simple_command, commands));
 }
 
@@ -158,8 +161,8 @@ unsigned char	wait_pipe_sequence(t_list *pids)
 		{
 			if (pids->current->as_int == -1)
 				status = 127;
-			else if (pids->current->as_int < -1)
-				status = pids->current->as_int + 256;
+			else if (pids->current->as_int <= -2)
+				status = pids->current->as_int + 257;
 			continue ;
 		}
 		noninteractive_signals();

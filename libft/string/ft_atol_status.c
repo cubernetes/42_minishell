@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 15:08:37 by tischmid          #+#    #+#             */
-/*   Updated: 2024/06/10 22:13:19 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/06/12 19:03:21 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,5 +76,7 @@ long ft_atol_status(char const *nptr, int *status)
 		++nptr;
 		return (ft_atol_status_neg(nptr, status));
 	}
+	if (*nptr == '+')
+		++nptr;
 	return (ft_atol_status_pos(nptr, status));
 }

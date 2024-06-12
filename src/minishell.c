@@ -205,14 +205,9 @@ void	init(char *argv[], char *envp[])
 	rl_event_hook = noop;
 }
 
-/* TODO: what if readline returns NULL? */
-/* TODO: use/think about rl_end (and other rl vars) */
 /* TODO: remove DEBUG macros */
 /* TODO: remove deque_print(tokens, print_token); */
 /* TODO: glob expansion, env var expansion, and quote handling */
-/* TOOD: parsing */
-/* TODO: execution */
-/* TODO: signal handling */
 /* TODO: protect all mallocs (e.g. xmalloc(size_t n, int lineno), etc.) */
 /* TODO: check for NULL when using any function that returns a malloced ptr */
 /* TODO: make functions static where needed */
@@ -226,15 +221,14 @@ void	init(char *argv[], char *envp[])
 /* TODO: remove unnecessary indentation in variables declarations */
 /* TODO: use ptr[static 1] where needed */
 /* TOOD: Not required: think about flexible array members? */
-/* TODO: Not required: implement shell variables */
-/* TODO: Implement ./minishell -c '' functionality */
-/* TODO: Use yoda conditions */
+/* TODO: Not required: Implement ./minishell -c '' functionality */
 /* TODO: check that where next is called, in case of early return, that llast is called */
 /* TODO: rigorously test list functions */
 /* TODO: (void) cast all functions where return value is not used */
 /* TODO: Remove asserts */
 /* TODO: builtin simple_command vs simple_command in a pipeline */
 /* TODO: test executing directories */
+/* TODO: ambiguous redirect */
 int	main(int argc, char *argv[], char *envp[])
 {
 	close(3); close(63);

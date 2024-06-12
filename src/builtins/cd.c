@@ -29,6 +29,8 @@ int	builtin_cd(char **argv, t_fds fds)
 	char	*pwd;
 
 	name = *argv++;
+	if (argv[1] != NULL)
+		return (minishell_error(1, false, "%s: too many arguments", name));
 	if (*argv == NULL)
 	{
 		var = NULL;
@@ -50,7 +52,7 @@ int	builtin_cd(char **argv, t_fds fds)
 	else
 		status = chdir(*argv);
 	if (status == -1)
-		return (minishell_error(1, false, "%s: no such file or directory: %s", name, *argv));
+		return (minishell_error(1, false, "%s: %s: No such file or directory", name, *argv));
 	else
 	{
 		if (get_var("PWD") == NULL)

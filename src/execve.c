@@ -182,9 +182,9 @@ pid_t	execute_simple_command(t_tree *simple_command, t_list *commands)
 	path_parts = ft_split(var_lookup("PATH"), ':'); // TOOD: what about empty PATH
 	argv = make_argv(simple_command);
 	if (argv[0] == NULL)
-		return (close_fds(simple_command), -256);
+		return (close_fds(simple_command), -257);
 	if (is_builtin(argv[0]) && simple_command->fd_in == -2 && simple_command->fd_out == -2)
-		return (handle_builtin_wrapper(argv, simple_command) - 256);
+		return (handle_builtin_wrapper(argv, simple_command) - 257);
 	program = search_executable(argv[0], path_parts);
 	if (!program && !is_builtin(argv[0]))
 		return (/*close_fds(simple_command),*/ minishell_error(EXIT_COMMAND_NOT_FOUND, false,
@@ -203,7 +203,13 @@ pid_t	execute_simple_command(t_tree *simple_command, t_list *commands)
 		exit(exit_status);
 	}
 	execve(program, argv, get_env());
-	minishell_error(EXECVE_ERR, false, "%s: %s", program, strerror(errno));
+	exit_status = errno;
+	if (open(program, O_DIRECTORY) != -1)
+		minishell_error(EXECVE_ERR, false, "%s: %s", program, "Is a directory");
+	else
+		minishell_error(EXECVE_ERR, false, "%s: %s", program, strerror(exit_status));
 	finish(false);
+	if (exit_status == EACCES)
+		exit(126);
 	exit(127);
 }

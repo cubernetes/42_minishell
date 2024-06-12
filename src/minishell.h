@@ -8,8 +8,9 @@
 
 /************************** DEFINES *************************/
 # define PS0 "" // TODO: Not required: Handle PS0
+# define PS1 "\033[31m\\u@\\h:\\w\033[m$ "
 /* # define PS1 "\033[31m\\u@\\h:\\w\033[m\n❯ " */
-# define PS1 "\033[31m\\u\033[m@\033[94m\\h\033[m@\033[92mminishell\033[m [\033[32m\\w\033[m]\n> "
+/* # define PS1 "\033[31m\\u\033[m@\033[94m\\h\033[m@\033[92mminishell\033[m [\033[32m\\w\033[m]\n> " */
 # define PS2 "> "
 
 # define MINISHELL_NAME "minishell"
@@ -143,9 +144,10 @@ struct									s_tree
 	t_tree_type						type;
 	union
 	{
-		t_token							*token;
-		t_list							*children;
+		t_token						*token;
+		t_list						*children;
 	};
+	int								error;
 	union
 	{
 		t_fds	fds;
