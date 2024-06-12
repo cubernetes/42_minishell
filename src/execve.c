@@ -193,7 +193,7 @@ pid_t	execute_simple_command(t_tree *simple_command, t_list *commands)
 	if (pid < 0)
 		(close_fds(simple_command), minishell_error(FORK_ERROR, true, "%s", strerror(errno)));
 	if (pid > 0)
-		return (close_fds(simple_command), ft_printf("CHILD: %d, %s, %d\n", pid, program, is_builtin(argv[0])), pid);
+		return (close_fds(simple_command), pid);
 	set_fds(simple_command);
 	close_other_command_fds(commands);
 	if (is_builtin(argv[0]))
@@ -203,7 +203,7 @@ pid_t	execute_simple_command(t_tree *simple_command, t_list *commands)
 		exit(exit_status);
 	}
 	execve(program, argv, get_env());
-	minishell_error(EXECVE_ERR, false, "%s", strerror(errno));
+	minishell_error(EXECVE_ERR, false, "%s: %s", program, strerror(errno));
 	finish(false);
-	return (-1);
+	exit(127);
 }

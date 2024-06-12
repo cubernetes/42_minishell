@@ -231,14 +231,14 @@ bool	tokenize_double_quoted_string(const char **line, t_list *tokens)
 	return (false);
 }
 
+/* Not including `&' since we do not have job control */
 bool	is_word_char(char c)
 {
-	return ((bool)c);
-	// return ((bool)(
-	// 	ft_isprint(c)
-	// 	&& !ft_isspace(c)
-	// 	&& !ft_strchr("><()'\"|", c)
-	// ));
+	return ((bool)(
+		c
+		&& !ft_isspace(c)
+		&& !ft_strchr("><()'\"|", c)
+	));
 }
 
 bool	is_not_and_and(const char *line)
