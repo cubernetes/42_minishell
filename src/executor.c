@@ -144,9 +144,9 @@ pid_t	execute_simple_command_wrapper(t_tree *simple_command,
 
 /* TODO: Not required: think about set -o pipefail */
 /* return last status */
-/* TODO: Exit code 126 */
+/* TODO: Exit code 126 -> chmod -x */
 /* TODO: Clean up this mess */
-unsigned char	wait_pipesequence(t_list *pids)
+unsigned char	wait_pipe_sequence(t_list *pids)
 {
 	int		rtn;
 	int		status;
@@ -154,11 +154,11 @@ unsigned char	wait_pipesequence(t_list *pids)
 	liter(pids);
 	while (lnext(pids))
 	{
-		if (pids->current->as_pid_t < 0)
+		if (pids->current->as_int < 0)
 		{
-			if (pids->current->as_pid_t == -1)
+			if (pids->current->as_int == -1)
 				status = 127;
-			else if (pids->current->as_int < -255)
+			else if (pids->current->as_int < -1)
 				status = pids->current->as_int + 256;
 			continue ;
 		}
@@ -211,7 +211,6 @@ pid_t	execute_complete_command_wrapper(t_tree *complete_command,
 
 unsigned char	execute_pipe_sequence(t_list *commands)
 {
-	unsigned char	status;
 	t_list			*pids;
 
 	setup_pipes(commands);
@@ -226,8 +225,7 @@ unsigned char	execute_pipe_sequence(t_list *commands)
 			lpush(pids, as_pid_t(execute_simple_command_wrapper(
 						commands->current->as_tree, commands)));
 	}
-	status = wait_pipesequence(pids);
-	return (status);
+	return (wait_pipe_sequence(pids));
 }
 
 unsigned char	execute_tok_and(t_list_node *tok_and)

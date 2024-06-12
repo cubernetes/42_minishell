@@ -21,7 +21,7 @@ bool	heredoc_aborted(int op)
 char	*create_heredoc(char *delimiter)
 {
 	char	*heredoc_file;
-	char	*line;
+	char	*input;
 	int		fd;
 	char	*ps2;
 
@@ -31,17 +31,25 @@ char	*create_heredoc(char *delimiter)
 	fd = open(heredoc_file, O_CREAT | O_TRUNC | O_WRONLY, 0600);
 	while (1)
 	{
-		ps2 = get_var("PS2")->value;
-		interactive_signals_heredoc();
-		line = readline(ps2);
-		noninteractive_signals();
-		(void)gc_add(line);
-		if (line == NULL || !ft_strcmp(line, delimiter) || heredoc_aborted(-1))
+		if (isatty(fd))
+		{
+			ps2 = get_var("PS2")->value;
+			interactive_signals();
+			input = readline(ps2);
+			noninteractive_signals();
+			gc_add(input);
+		}
+		else
+		{
+			noninteractive_signals();
+			input = get_next_line(STDIN_FILENO);
+		}
+		if (input == NULL || !ft_strcmp(input, delimiter) || heredoc_aborted(-1))
 			break ;
-		write(fd, line, ft_strlen(line));
+		write(fd, input, ft_strlen(input));
 		write(fd, "\n", 1);
 	}
-	if (line == NULL)
+	if (input == NULL)
 		minishell_error(0, false,
 			"warning: here-document delimited by end-of-file (wanted `%s')",
 			delimiter);

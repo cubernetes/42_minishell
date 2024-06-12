@@ -10,6 +10,7 @@
 #include <sys/wait.h>
 #include <string.h>
 #include <stdbool.h>
+#include <stdlib.h>
 
 /* TODO: What to do in case of execve error? */
 #define EXECVE_ERR 3
@@ -176,24 +177,31 @@ pid_t	execute_simple_command(t_tree *simple_command, t_list *commands)
 	char	**path_parts;
 	char	**argv;
 	char	*program;
+	int		exit_status;
 
 	path_parts = ft_split(var_lookup("PATH"), ':'); // TOOD: what about empty PATH
 	argv = make_argv(simple_command);
 	if (argv[0] == NULL)
 		return (close_fds(simple_command), -256);
-	if (is_builtin(argv[0]))
+	if (is_builtin(argv[0]) && simple_command->fd_in == -2 && simple_command->fd_out == -2)
 		return (handle_builtin_wrapper(argv, simple_command) - 256);
 	program = search_executable(argv[0], path_parts);
-	if (!program)
-		return (minishell_error(EXIT_COMMAND_NOT_FOUND, false,
+	if (!program && !is_builtin(argv[0]))
+		return (close_fds(simple_command), minishell_error(EXIT_COMMAND_NOT_FOUND, false,
 				"%s: command not found", argv[0]), -1);
 	pid = fork();
 	if (pid < 0)
-		minishell_error(FORK_ERROR, true, "%s", strerror(errno));
+		(close_fds(simple_command), minishell_error(FORK_ERROR, true, "%s", strerror(errno)));
 	if (pid > 0)
 		return (close_fds(simple_command), pid);
 	set_fds(simple_command);
 	close_other_command_fds(commands);
+	if (is_builtin(argv[0]))
+	{
+		exit_status = handle_builtin_wrapper(argv, simple_command) - 256;
+		finish(false);
+		exit(exit_status);
+	}
 	execve(program, argv, get_env());
 	minishell_error(EXECVE_ERR, false, "%s", strerror(errno));
 	finish(false);

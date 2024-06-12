@@ -14,7 +14,7 @@ int	minishell_error(int exit_code, bool do_exit, const char *fmt, ...)
 {
 	va_list	ap;
 
-	if (isatty(STDIN_FILENO))
+	if (isatty(STDIN_FILENO) && do_exit)
 		ft_dprintf(STDERR_FILENO, "exit\n");
 	va_start(ap, fmt);
 	ft_vdprintf(STDERR_FILENO, ft_strjoin(ft_strjoin(MINISHELL_NAME ": ", fmt), "\n"), ap);
@@ -236,6 +236,7 @@ void	init(char *argv[], char *envp[])
 /* TODO: builtin simple_command vs simple_command in a pipeline */
 int	main(int argc, char *argv[], char *envp[])
 {
+	close(3); close(63);
 	(void)argc;
 	init(argv, envp);
 	repl();
