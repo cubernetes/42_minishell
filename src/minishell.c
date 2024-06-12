@@ -234,6 +234,7 @@ void	init(char *argv[], char *envp[])
 /* TODO: (void) cast all functions where return value is not used */
 /* TODO: Remove asserts */
 /* TODO: builtin simple_command vs simple_command in a pipeline */
+/* TODO: test executing directories */
 int	main(int argc, char *argv[], char *envp[])
 {
 	close(3); close(63);

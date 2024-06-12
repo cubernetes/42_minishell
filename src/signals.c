@@ -19,7 +19,7 @@ unsigned char	set_last_exit_status(int new_exit_status)
 	return (exit_status);
 }
 
-static void	interactive_interupt(int sig)
+static void	interactive_interrupt(int sig)
 {
 	(void)sig;
 	rl_replace_line("", 0);
@@ -39,21 +39,21 @@ static void	noninteractive_quit(int sig)
 	ft_printf("Quit (core dumped)\n");
 }
 
-static void	interactive_interupt_heredoc(int sig)
+static void	interactive_interrupt_heredoc(int sig)
 {
-	interactive_interupt(sig);
+	interactive_interrupt(sig);
 	heredoc_aborted(1);
 }
 
 void	interactive_signals(void)
 {
-	sigaction(SIGINT, &(t_sa){.sa_handler = &interactive_interupt, .sa_flags = SA_RESTART}, NULL);
+	sigaction(SIGINT, &(t_sa){.sa_handler = &interactive_interrupt, .sa_flags = SA_RESTART}, NULL);
 	sigaction(SIGQUIT, &(t_sa){.sa_handler = SIG_IGN}, NULL);
 }
 
 void	interactive_signals_heredoc(void)
 {
-	sigaction(SIGINT, &(t_sa){.sa_handler = &interactive_interupt_heredoc}, NULL);
+	sigaction(SIGINT, &(t_sa){.sa_handler = &interactive_interrupt_heredoc}, NULL);
 	sigaction(SIGQUIT, &(t_sa){.sa_handler = SIG_IGN}, NULL);
 }
 

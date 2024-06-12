@@ -233,11 +233,12 @@ bool	tokenize_double_quoted_string(const char **line, t_list *tokens)
 
 bool	is_word_char(char c)
 {
-	return ((bool)(
-		ft_isprint(c)
-		&& !ft_isspace(c)
-		&& !ft_strchr("><()'\"|", c)
-	));
+	return ((bool)c);
+	// return ((bool)(
+	// 	ft_isprint(c)
+	// 	&& !ft_isspace(c)
+	// 	&& !ft_strchr("><()'\"|", c)
+	// ));
 }
 
 bool	is_not_and_and(const char *line)
@@ -272,19 +273,15 @@ bool	tokenize_variable_len_tokens(const char **line, t_list *tokens)
 	bool	pushed;
 
 	pushed = false;
-	pushed += tokenize_single_quoted_string(line, tokens);
-	pushed += tokenize_double_quoted_string(line, tokens);
-	pushed += tokenize_word(line, tokens);
+	pushed |= tokenize_single_quoted_string(line, tokens);
+	pushed |= tokenize_double_quoted_string(line, tokens);
+	pushed |= tokenize_word(line, tokens);
 	if (!pushed)
 		return (minishell_error(EXIT_FAILURE, false, "could not tokenize `%s'",
 			get_token_str(tokens)), false);
 	return (true);
 }
 
-/* environment variable expansion is NOT happening in the tokenization phase*/
-/* wildcard expansion (globbing) is also not happening here*/
-/* those are responsibilities while or after building the AST */
-/* TODO: well, I think you kinda have to do env expansion and globbing here.. */
 /* TODO: set is_last_subtoken member for each token */
 t_list	*tokenize(const char *line)
 {

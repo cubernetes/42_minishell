@@ -187,13 +187,13 @@ pid_t	execute_simple_command(t_tree *simple_command, t_list *commands)
 		return (handle_builtin_wrapper(argv, simple_command) - 256);
 	program = search_executable(argv[0], path_parts);
 	if (!program && !is_builtin(argv[0]))
-		return (close_fds(simple_command), minishell_error(EXIT_COMMAND_NOT_FOUND, false,
+		return (/*close_fds(simple_command),*/ minishell_error(EXIT_COMMAND_NOT_FOUND, false,
 				"%s: command not found", argv[0]), -1);
 	pid = fork();
 	if (pid < 0)
 		(close_fds(simple_command), minishell_error(FORK_ERROR, true, "%s", strerror(errno)));
 	if (pid > 0)
-		return (close_fds(simple_command), pid);
+		return (close_fds(simple_command), ft_printf("CHILD: %d, %s, %d\n", pid, program, is_builtin(argv[0])), pid);
 	set_fds(simple_command);
 	close_other_command_fds(commands);
 	if (is_builtin(argv[0]))
