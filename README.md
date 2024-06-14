@@ -12,7 +12,7 @@
 - 0 memory/fd leaks and memory corruptions
 
 ## Bonus features
-- AND (`&&"` and OR (`||`) lists
+- AND (`&&` and OR (`||`) lists
 - parenthesis (`(` and `)`) for priorities
 - globbing (`*`) for the current working directory
 
