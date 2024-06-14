@@ -16,7 +16,7 @@
 - parenthesis (`(` and `)`) for priorities
 - globbing (`*`) for the current working directory
 
-## Extra features
+## Extra features (not required by the subject)
 - declare (also with `-p`) and readonly builtin
 - declare, readonly, and export without args, with correct(!) quoting
     - try `declare A='cd "$HOME" && echo "Changed dir!" || echo "Sorry $USER, no chaning :("' && declare -p A`
