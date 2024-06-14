@@ -43,7 +43,7 @@
     - try `bash -c 'exit 42'`; `exit 1 1`; `echo $?` vs. `true`; `exit 1 1`; `echo $?`
 - `cd` with `-` argument
 - handling of ambiguous redirects
-- the weird export edge case (`export l='ls -al' e=export && export newls=$l && $e newls2=$l`)
+- the weird export edge case (`export l='ls -al' e=export && export newls=$l || true && $e newls2=$l || true && echo $newls && echo $newls2`)
 - `?` glob character
 
 ## Notable implementation details
@@ -52,6 +52,6 @@
 - 0-declaration (reverse-)iterators for the circular deques (besides hashtable the only datastructure being used)
 - ft_getopt (try `declare -prxxx -x -r -xpxprpxp -- VAR=1 X`)
 - LL(1) grammar and parser
-- AST with tagget unions
+- AST with tagged unions
 - generic deque implementation using tagged unions
 - custom implementation of mktemp (for heredoc tmp files) using `/dev/urandom`
