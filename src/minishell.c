@@ -240,6 +240,7 @@ void	init(char *argv[], char *envp[])
 /* TODO: add default PATH */
 /* TODO: heredoc history */
 /* TODO: unlink heredoc */
+/* TODO: set ifs */
 int	main(int argc, char *argv[], char *envp[])
 {
 	close(3); close(63);

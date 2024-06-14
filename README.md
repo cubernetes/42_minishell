@@ -1,4 +1,5 @@
-# Feature summary
+# Minishell -- Feature summary (not exhaustive)
+
 ## Mandatory Features
 - input prompt with history (readline, non-persistent)
 - program execution based on `PATH`
@@ -17,9 +18,10 @@
 - globbing (`*`) for the current working directory
 
 ## Extra features (not required by the subject)
+- Multicharacter IFS (try `unset IFS`, `declare IFS=`, `declare IFS=x`, then `declare A=" one     two     " && echo $A | cat -A`)
 - declare (also with `-p`) and readonly builtin
 - declare, readonly, and export without args, with correct(!) quoting
-    - try `declare A='cd "$HOME" && echo "Changed dir!" || echo "Sorry $USER, no chaning :("' && declare -p A`
+    - try `declare A='cd "$HOME" && echo "Changed dir!" || echo "Sorry $USER, no changing :("' && declare -p A`
 - shell (unexported) variables (`declare A=1`)
 - readonly variables (`declare -r A=1`, `readonly B=1`)
 - unset, yet declared variables (`declare A`, `export X`)
@@ -33,8 +35,8 @@
 - fallback mechanisms for hostname resolution in prompt (`/etc/hostname`, then `/proc/sys/kernel/hostname`)
 - `-c` option
 - creation of subshells when using parenthesis
-- consecutive expansion of lists (try `export A=1 && echo $A`)
-- consecutive expansion of heredocs in lists (try `export A=1 && cat << EOF\nA: $A\nEOF`)
+- sequential expansion of lists (try `export A=1 && echo $A`)
+- sequential expansion of heredocs from lists (try `export A=1 && cat << EOF\nA: $A\nEOF`)
 - correct handling of non-tty stdin, also for heredocs(!) (try `printf '<<EOF cat\nline\nEOF' | ./minishell`)
 - correct handling of multiline input
 - correct handling of multiline prompt

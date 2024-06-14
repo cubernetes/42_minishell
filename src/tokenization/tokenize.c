@@ -137,8 +137,10 @@ bool	push_token(const char **line, t_list *tokens, size_t token_len,
 		|| type == TOK_WORD;
 	is_last = ft_isspace((*line)[token_len]) || type == TOK_EOL
 		|| (*line)[token_len] == '\0';
-	is_last_quote = ((*line)[token_len] == '\'' || (*line)[token_len] == '"')
-		&& ((*line)[token_len + 1] == '\0' || ft_isspace((*line)[token_len + 1]));
+	if (type == TOK_SQUOTE_STR || type == TOK_DQUOTE_STR)
+		is_last_quote = ((*line)[token_len + 1] == '\0' || ft_isspace((*line)[token_len + 1]));
+	else
+		is_last_quote = false;
 	if (is_last || is_last_quote || !is_str_tok)
 		is_last_subtoken = true;
 	else

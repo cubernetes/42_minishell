@@ -11,6 +11,7 @@ char	*var_lookup(char *key)
 	return ("");
 }
 
+/* TODO: Not required: think about implementing $- and $$ */
 static size_t	expand_vars(char **str, char *var)
 {
 	char	*orig_var;
@@ -55,20 +56,51 @@ char	*expand_all_vars(char *token_str)
 	return (expanded_str);
 }
 
-/* TODO: Not required: use full IFS instead of just the first char */
+static char	*normalize_to_ifs0(char *str, char *ifs)
+{
+	size_t	ifs_len;
+	size_t	idx;
+	char	*ifs0;
+	size_t	prev_strlen;
+
+	ifs_len = ft_strlen(ifs);
+	idx = 0;
+	ifs0 = ft_strndup(ifs, 1);
+	while (++idx < ifs_len)
+		str = ft_replace_all(str, ft_strndup(ifs + idx, 1), ifs0);
+	prev_strlen = ft_strlen(str);
+	while (1)
+	{
+		str = ft_replace(str, ft_strjoin(ifs0, ifs0), ifs0);
+		if (ft_strlen(str) == prev_strlen)
+			break ;
+		prev_strlen = ft_strlen(str);
+	}
+	return (ft_strtrim(str, ifs0));
+}
+
 static void	expand_word(t_list *new_tokens, t_token *token)
 {
 	t_list	*split_words;
 	t_list	*split_tokens;
+	t_var	*ifs;
 
 	if (token->type != TOK_WORD)
 		return ;
+	ifs = get_var("IFS");
+	if (ifs == NULL || ifs->value == NULL)
+		ifs = &(t_var){.value = DEFAULT_IFS};
+	if (*ifs->value == '\0')
+		return ;
 	token->str = expand_all_vars(token->str);
-	split_words = lnew();
-	split_tokens = liter(lsplit(token->str, ft_strndup(IFS, 1)));
+	token->str = normalize_to_ifs0(token->str, ifs->value);
+	split_tokens = liter(lsplit(token->str, ft_strndup(ifs->value, 1)));
 	while (lnext(split_tokens))
-		if (*split_tokens->current->as_str)
-			lpush(split_words, as_token(new_word_token(split_tokens->current->as_str)));
+		ft_printf("token:<%s>\n", split_tokens->current->as_str);
+	split_words = lnew();
+	liter(split_tokens);
+	while (lnext(split_tokens))
+		lpush(split_words, as_token(new_word_token(split_tokens->current->as_str)));
 	lextend(new_tokens, split_words);
 	if (!token->is_last_subtoken)
 		new_tokens->last->as_token->is_last_subtoken = false;

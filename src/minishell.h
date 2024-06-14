@@ -15,7 +15,7 @@
 
 # define MINISHELL_NAME "minishell"
 
-# define IFS " \n\t"
+# define DEFAULT_IFS " \t\n"
 
 # define EXIT_COMMAND_NOT_FOUND 127
 
