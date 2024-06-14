@@ -15,19 +15,46 @@
 
 void	redirect_heredoc(char *file_path, t_tree *simple_command)
 {
-	int	fd;
-	int	sc_fd_in;
+	int			fd;
+	int			new_hd_fd;
+	int			sc_fd_in;
+	t_fatptr	line;
+	char		*new_hd;
 
 	fd = open(file_path, O_RDONLY);
-	if (fd == -1)
+	new_hd = ft_mktemp("minishell.");
+	new_hd_fd = open(new_hd, O_CREAT | O_TRUNC | O_RDWR, 0600);
+	if (fd == -1 || new_hd_fd == -1)
+	{
+		if (fd != -1)
+			close(fd);
+		if (new_hd_fd != -1)
+			close(new_hd_fd);
 		simple_command->error = minishell_error(1, false,
 				"%s: %s", file_path, strerror(errno));
+	}
 	else
 	{
+		while (1)
+		{
+			line = get_next_fat_line(fd);
+			if (!line.data)
+				break ;
+			ft_dprintf(new_hd_fd, "%s", expand_all_vars(strip_nul(line.data, line.size)));
+		}
+		close(new_hd_fd);
+		close(fd);
+		new_hd_fd = open(new_hd, O_RDONLY);
+		if (new_hd_fd == -1)
+		{
+			simple_command->error = minishell_error(1, false,
+					"%s: %s", file_path, strerror(errno));
+			return ;
+		}
 		sc_fd_in = simple_command->fd_in;
 		if (sc_fd_in != -2)
 			close(sc_fd_in);
-		simple_command->fd_in = fd;
+		simple_command->fd_in = new_hd_fd;
 		simple_command->error = 0;
 	}
 }

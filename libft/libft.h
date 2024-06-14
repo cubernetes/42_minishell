@@ -32,6 +32,7 @@ typedef int						t_tree_type;
 typedef struct s_var			t_var;
 typedef struct s_literator		t_literator;
 typedef struct s_data			t_data;
+typedef struct s_fatptr			t_fatptr;
 typedef struct s_ht				t_ht;
 typedef struct s_str_pair		t_str_pair;
 typedef struct s_kv_pair		t_kv_pair;
@@ -68,7 +69,8 @@ enum						e_method
 	DESTROY_CURRENT_CONTEXT,
 	DESTROY_ALL_CONTEXTS,
 };
-typedef enum e_method		t_method;
+
+typedef enum e_method			t_method;
 
 /***************** STRUCTURES *****************/
 struct						s_ctx_meta
@@ -76,6 +78,12 @@ struct						s_ctx_meta
 	t_ht					*(*ctxs)[MAX_HT_SIZE];
 	char					*ctx_name;
 	t_list					*ctx;
+};
+
+struct						s_fatptr
+{
+	void	*data;
+	size_t	size;
 };
 
 /** Data structure to be used with generic data structure implementations.
@@ -192,6 +200,7 @@ int								ft_memcmp(void const *s1, void const *s2,
 void							*ft_memcpy(void *dest, void const *src,
 									size_t n);
 void							*ft_memdup(const void *src, size_t size);
+char							*strip_nul(char	*bytes, size_t size);
 
 /* gc */
 bool							dont_free(void *ptr);
@@ -275,6 +284,7 @@ int								ft_min(int a, int b);
 
 /* io */
 char							*get_next_line(int fd);
+t_fatptr						get_next_fat_line(int fd);
 int								ft_putendl_fd(char *s, int fd);
 int								ft_putnbr_fd(int nb, int fd);
 int								ft_putchar_fd(char c, int fd);

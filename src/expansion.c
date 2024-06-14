@@ -11,7 +11,7 @@ char	*var_lookup(char *key)
 	return ("");
 }
 
-static size_t	expand_vars(t_token *token, char *var)
+static size_t	expand_vars(char **str, char *var)
 {
 	char	*orig_var;
 	size_t	len;
@@ -27,16 +27,16 @@ static size_t	expand_vars(t_token *token, char *var)
 			++len;
 		}
 		expanded_var = var_lookup(ft_strndup(orig_var, len));
-		token->str = ft_strjoin(token->str, expanded_var);
+		*str = ft_strjoin(*str, expanded_var);
 		return (len + 1);
 	}
 	else if (var[0] == '$' && var[1] == '?')
 	{
 		expanded_var = var_lookup("?");
-		token->str = ft_strjoin(token->str, ft_strdup(expanded_var));
+		*str = ft_strjoin(*str, ft_strdup(expanded_var));
 		return (2);
 	}
-	token->str = ft_strjoin(token->str, ft_strndup(var, 1));
+	*str = ft_strjoin(*str, ft_strndup(var, 1));
 	return (1);
 }
 
@@ -45,19 +45,25 @@ static void	*new_word_token(char *str)
 	return (new_token(str, TOK_WORD, true));
 }
 
+char	*expand_all_vars(char *token_str)
+{
+	char	*expanded_str;
+
+	expanded_str = "";
+	while (*token_str)
+		token_str += expand_vars(&expanded_str, token_str);
+	return (expanded_str);
+}
+
 /* TODO: Not required: use full IFS instead of just the first char */
 static void	expand_word(t_list *new_tokens, t_token *token)
 {
-	char	*token_str;
 	t_list	*split_words;
 	t_list	*split_tokens;
 
 	if (token->type != TOK_WORD)
 		return ;
-	token_str = token->str;
-	token->str = "";
-	while (*token_str)
-		token_str += expand_vars(token, token_str);
+	token->str = expand_all_vars(token->str);
 	split_words = lnew();
 	split_tokens = liter(lsplit(token->str, ft_strndup(IFS, 1)));
 	while (lnext(split_tokens))
@@ -70,14 +76,9 @@ static void	expand_word(t_list *new_tokens, t_token *token)
 
 static void	expand_dquote_str(t_list *new_tokens, t_token *token)
 {
-	char	*token_str;
-
 	if (token->type != TOK_DQUOTE_STR)
 		return ;
-	token_str = token->str;
-	token->str = "";
-	while (*token_str)
-		token_str += expand_vars(token, token_str);
+	token->str = expand_all_vars(token->str);
 	lpush(new_tokens, as_token(token));
 }
 

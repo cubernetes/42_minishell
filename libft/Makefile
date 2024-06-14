@@ -6,7 +6,7 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:09:11 by tischmid          #+#    #+#              #
-#    Updated: 2024/06/10 21:58:27 by tischmid         ###   ########.fr        #
+#    Updated: 2024/06/14 22:52:56 by tosuman          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -96,6 +96,7 @@ SRC += ft_memcpy.c
 SRC += ft_memdup.c
 SRC += ft_memmove.c
 SRC += ft_memset.c
+SRC += strip_nul.c
 
 # gc
 SRC += set_allocator.c
@@ -117,6 +118,7 @@ SRC += dont_free.c
 
 # io
 SRC += get_next_line.c
+SRC += get_next_fat_line.c
 SRC += ft_putchar_fd.c
 SRC += ft_putendl_fd.c
 SRC += ft_putnbr_fd.c

@@ -20,9 +20,9 @@ char	*get_next_line(int fd)
 	chars = lnew();
 	while (bytes_read)
 	{
+		lpush(chars, as_char(c));
 		if (c == '\n')
 			break ;
-		lpush(chars, as_char(c));
 		bytes_read = read(fd, &c, 1);
 	}
 	if (bytes_read == 0 && chars->len == 0)

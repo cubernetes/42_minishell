@@ -239,6 +239,7 @@ void	init(char *argv[], char *envp[])
 /* TODO: ambiguous redirect */
 /* TODO: add default PATH */
 /* TODO: heredoc history */
+/* TODO: unlink heredoc */
 int	main(int argc, char *argv[], char *envp[])
 {
 	close(3); close(63);

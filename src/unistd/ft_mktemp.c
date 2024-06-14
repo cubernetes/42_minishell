@@ -44,6 +44,7 @@ char	*ft_mktemp(char *prefix)
 	rd_fd = open("/dev/urandom", O_RDONLY);
 	if (read(rd_fd, random_bytes + 5 + ft_strlen(prefix), 10) != 10)
 	{
+		close(rd_fd);
 		mktemp_error("ft_mktemp: couldn't gather randomness from /dev/urandom, "
 			"creating heredoc file with name '/tmp/tmp.heredoc%d'",
 			heredoc_idx);
@@ -52,6 +53,7 @@ char	*ft_mktemp(char *prefix)
 			str, ft_strlen(str) + 1);
 		return (ft_strdup(random_bytes));
 	}
+	close(rd_fd);
 	idx = (int)ft_strlen(prefix) + 4;
 	while (++idx < (int)ft_strlen(prefix) + 15)
 		random_bytes[idx] = translate_to_alnum(random_bytes[idx]);
