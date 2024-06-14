@@ -237,6 +237,8 @@ void	init(char *argv[], char *envp[])
 /* TODO: builtin simple_command vs simple_command in a pipeline */
 /* TODO: test executing directories */
 /* TODO: ambiguous redirect */
+/* TODO: add default PATH */
+/* TODO: heredoc history */
 int	main(int argc, char *argv[], char *envp[])
 {
 	close(3); close(63);

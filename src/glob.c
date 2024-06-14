@@ -39,22 +39,19 @@ t_list	*glob_token(t_token *token)
 	t_list			*tokens;
 
 	tokens = lnew();
-	if (false)
+	dirp = opendir(".");
+	if (!dirp)
+		return (lpush(tokens, as_token(token)), tokens);
+	dp = readdir(dirp);
+	while (dp != NULL)
 	{
-		dirp = opendir(".");
-		if (!dirp)
-			return (lpush(tokens, as_token(token)), tokens);
+		if (ft_strncmp(dp->d_name, ".", 1)
+			&& glob_match(token->str, token->quoting_info, dp->d_name))
+			lpush(tokens,
+				as_token(new_token(ft_strdup(dp->d_name), TOK_WORD, true)));
 		dp = readdir(dirp);
-		while (dp != NULL)
-		{
-			if (ft_strncmp(dp->d_name, ".", 1)
-				&& glob_match(token->str, token->quoting_info, dp->d_name))
-				lpush(tokens,
-					as_token(new_token(ft_strdup(dp->d_name), TOK_WORD, true)));
-			dp = readdir(dirp);
-		}
-		closedir(dirp);
 	}
+	closedir(dirp);
 	if (tokens->len == 0)
 		lpush(tokens, as_token(token));
 	lsort(tokens, ft_strcmp2);
