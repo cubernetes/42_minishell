@@ -65,11 +65,11 @@
 - Not inheriting IFS to prevent exploits
 
 # Generate locale-specific whitespace
-The requirements for this project disallow the use of isspace, which respects
-the current locale(7). However, we need this locale information if we want to
-do word splitting correctly, since the IFS whitespace defintion is determined
-from the LC_CTYPE "space" character class, which in turn inherits " \f\n\r\t\v".
-Other locales, like am_ET define further whitespace in this class.
+The requirements for this project disallow the use of `isspace(3)`, which respects
+the current `locale(7)`. However, we need this locale information if we want to
+do word splitting correctly, since the `IFS` whitespace defintion is determined
+from the `LC_CTYPE` "space" character class, which in turn inherits `" \f\n\r\t\v"` (`locale(5)`).
+Other locales, like `am_ET` define further whitespace in this class.
 
 We can obtain all the ASCII characters which are whitespace in the current locale
 byte defining them in a header. To obtain them, one can leverage C or bash:
