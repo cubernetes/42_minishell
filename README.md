@@ -18,7 +18,9 @@
 - globbing (`*`) for the current working directory
 
 ## Extra features (not required by the subject)
-- Multicharacter IFS (try `unset IFS`, `declare IFS=`, `declare IFS=x`, then `declare A=" one     two     " && echo $A | cat -A`)
+- Wordsplitting after parameter expansion using multicharacter IFS (exactly like bash)
+    - try one of `unset IFS`, `declare IFS=`, `declare IFS=x`
+    - then `declare A=" one     two  threexxxxxfour   " && /bin/printf '"%s"\n' before-$A-after | /bin/cat -A`
 - declare (also with `-p`) and readonly builtin
 - declare, readonly, and export without args, with correct(!) quoting
     - try `declare A='cd "$HOME" && echo "Changed dir!" || echo "Sorry $USER, no changing :("' && declare -p A`
@@ -33,7 +35,6 @@
     2. manual parsing of `/etc/passwd`
     3. `EUID` env var
 - fallback mechanisms for hostname resolution in prompt (`/etc/hostname`, then `/proc/sys/kernel/hostname`)
-- `-c` option
 - creation of subshells when using parenthesis
 - sequential expansion of lists (try `export A=1 && echo $A`)
 - sequential expansion of heredocs from lists (try `export A=1 && cat << EOF\nA: $A\nEOF`)
@@ -43,10 +44,14 @@
 - bash-identical implementation of the very quirky(!) `exit` builtin
     - try `exit 9223372036854775808 1` vs. `exit 9223372036854775807 1` vs. `exit word 1`
     - try `bash -c 'exit 42'`; `exit 1 1`; `echo $?` vs. `true`; `exit 1 1`; `echo $?`
-- `cd` with `-` argument
 - handling of ambiguous redirects
 - the weird export edge case (`export l='ls -al' e=export && export newls=$l || true && $e newls2=$l || true && echo $newls && echo $newls2`)
 - `?` glob character
+- `$-` and `$$` special parameters
+- `$0` to `$9` positional parameters
+- `cd` with `-` argument
+- `-c` option with argv handling
+<!-- TODO: Finish -->
 
 ## Notable implementation details
 - optional(!) garbage collection with custom(!) contexts
@@ -57,3 +62,31 @@
 - AST with tagged unions
 - generic deque implementation using tagged unions
 - custom implementation of mktemp (for heredoc tmp files) using `/dev/urandom`
+- Not inheriting IFS to prevent exploits
+
+# Generate Locale-specific Whitespace
+The requirements for this project disallow the use of isspace, which respects
+the current locale(7). However, we need this locale information if we want to
+do word splitting correctly, since the IFS whitespace defintion is determined
+from the LC_CTYPE "space" character class, which in turn inherits " \f\n\r\t\v".
+Other locales, like am_ET define further whitespace in this class.
+
+We can obtain all the ASCII characters which are whitespace in the current locale
+byte defining them in a header. To obtain them, one can leverage C or bash:
+```bash
+#! /usr/bin/env bash
+
+true Find suitable dump command              &&#
+    { command -v xxd                         &&#
+    dump='xxd -ps -c1'                       ||#
+    { command -v hexdump                     &&#
+    dump="hexdump -ve '/1 "'"'"%02x\n"'"'"'" ||#
+    { command -v od                          &&#
+    dump='od -An -vtx1 -w1 | cut -c2-'       ||#
+    dump='printf "\033[31m%s\033[m\n" "No dumper found, please install either xxd, hexdump, or od. Providing default locale." >/dev/tty | printf "20\n09\n0a\n0b\n0c\n0d"'; }; }; } 1>/dev/null 2>&1
+
+for i in {1..127}; do
+    char="$(printf "\\$(printf '%03o' "$i").")"
+    [[ "${char%.}" == [[:space:]] ]] && printf "%s" "${char%.}" # [:space:] character class respects the locale
+done | eval "$dump" | sed 's/^/\\x/' | tr -d '\n' | sed 's/^/"/; s/$/"\n/'
+```
