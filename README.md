@@ -64,7 +64,7 @@
 - custom implementation of mktemp (for heredoc tmp files) using `/dev/urandom`
 - Not inheriting IFS to prevent exploits
 
-# Generate Locale-specific Whitespace
+# Generate locale-specific whitespace
 The requirements for this project disallow the use of isspace, which respects
 the current locale(7). However, we need this locale information if we want to
 do word splitting correctly, since the IFS whitespace defintion is determined
