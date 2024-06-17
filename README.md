@@ -47,8 +47,13 @@
 - handling of ambiguous redirects
 - the weird export edge case (`export l='ls -al' e=export && export newls=$l || true && $e newls2=$l || true && echo $newls && echo $newls2`)
 - `?` glob character
-- `$-` and `$$` special parameters
-- `$0` to `$9` positional parameters
+- additional special parameters:
+    1. `$-` expanding to the active shell options
+    2. `$$` expanding to the the current PID of the shell
+    3. `$0` to `$9` expanding the positional arguments of minishell (specified after `-c`)
+    4. `$@` expanding to all positional argument, with word splitting when quoted
+    5. `$*` expanding to all positional argument, joining with `IFS[0]` when quoted
+- shift builtin
 - `cd` with `-` argument
 - `-c` option with argv handling
 <!-- TODO: Finish -->
@@ -76,14 +81,17 @@ byte defining them in a header. To obtain them, one can leverage C or bash:
 ```bash
 #! /usr/bin/env bash
 
-true Find suitable dump command              &&#
-    { command -v xxd                         &&#
-    dump='xxd -ps -c1'                       ||#
-    { command -v hexdump                     &&#
-    dump="hexdump -ve '/1 "'"'"%02x\n"'"'"'" ||#
-    { command -v od                          &&#
-    dump='od -An -vtx1 -w1 | cut -c2-'       ||#
-    dump='printf "\033[31m%s\033[m\n" "No dumper found, please install either xxd, hexdump, or od. Providing default locale." >/dev/tty | printf "20\n09\n0a\n0b\n0c\n0d"'; }; }; } 1>/dev/null 2>&1
+true Find suitable dump command                                                             &&#
+    { command -v xxd                                                                        &&#
+    dump='xxd -ps -c1'                                                                      ||#
+    { command -v hexdump                                                                    &&#
+    dump="hexdump -ve '/1 "'"'"%02x\n"'"'"'"                                                ||#
+    { command -v od                                                                         &&#
+    dump='od -An -vtx1 -w1 | cut -c2-'                                                      ||#
+    { command -v printf                                                                     &&#
+    dump='while LC_ALL=C IFS= read -r -d "" -n 1 byte; do printf "%02X\n" "'"'"'$byte"; done' ||#
+    dump='printf "\033[31m%s\033[m\n" "No dumper (not event printf?) found, please install either xxd, hexdump, or od. Providing default locale." >/dev/tty | printf "20\n09\n0a\n0b\n0c\n0d"'; }; }; }; } 1>/dev/null 2>&1
+
 
 for i in {1..127}; do
     char="$(printf "\\$(printf '%03o' "$i").")"
