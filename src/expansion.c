@@ -11,8 +11,7 @@ char	*var_lookup(char *key)
 	return ("");
 }
 
-/* TODO: Not required: think about implementing $- and $$ */
-static size_t	expand_vars(char **str, char *var)
+static size_t	expand_var(char **str, char *var)
 {
 	char	*orig_var;
 	size_t	len;
@@ -52,8 +51,20 @@ char	*expand_all_vars(char *token_str)
 
 	expanded_str = "";
 	while (*token_str)
-		token_str += expand_vars(&expanded_str, token_str);
+		token_str += expand_var(&expanded_str, token_str);
 	return (expanded_str);
+}
+
+char	*get_ifs(void)
+{
+	t_var	*ifs_var;
+
+	ifs_var = get_var("ifs_var");
+	if (ifs_var == NULL || ifs_var->value == NULL)
+		return (DEFAULT_IFS);
+	if (*ifs_var->value == '\0')
+		return ("");
+	return (ifs_var->value);
 }
 
 static char	*normalize_to_ifs0(char *str, char *ifs)
@@ -95,111 +106,63 @@ static void	expand_word(t_list *new_tokens, t_token *token)
 	token->str = expand_all_vars(token->str);
 	token->str = normalize_to_ifs0(token->str, ifs->value);
 	split_tokens = liter(lsplit(token->str, ft_strndup(ifs->value, 1)));
-	while (lnext(split_tokens))
-		ft_printf("token:<%s>\n", split_tokens->current->as_str);
 	split_words = lnew();
-	liter(split_tokens);
 	while (lnext(split_tokens))
 		lpush(split_words, as_token(new_word_token(split_tokens->current->as_str)));
 	lextend(new_tokens, split_words);
-	if (!token->is_last_subtoken)
-		new_tokens->last->as_token->is_last_subtoken = false;
+	if (!token->is_last_token)
+		new_tokens->last->as_token->is_last_token = false;
 }
 
-static void	expand_dquote_str(t_list *new_tokens, t_token *token)
-{
-	if (token->type != TOK_DQUOTE_STR)
-		return ;
-	token->str = expand_all_vars(token->str);
-	lpush(new_tokens, as_token(token));
-}
-
-static void	expand(t_list *new_tokens, t_token *token)
-{
-	if (token->type == TOK_WORD)
-		expand_word(new_tokens, token);
-	else if (token->type == TOK_DQUOTE_STR)
-		expand_dquote_str(new_tokens, token);
-	else
-		lpush(new_tokens, as_token(token));
-}
-
-t_list	*expand_token(t_token *token)
+char	*expand_parameters(const char *str)
 {
 	t_list	*new_tokens;
+	int		idx;
+	int		start;
+	int		num_tokens_after_split;
 
+	num_tokens_after_split = 0;
 	new_tokens = lnew();
-	if (token->type == TOK_WORD)
-		expand_word(new_tokens, token);
-	else if (token->type == TOK_DQUOTE_STR)
-		expand_dquote_str(new_tokens, token);
-	else
-		lpush(new_tokens, as_token(token));
+	if (*str == '\0')
+	{
+		lpush(new_tokens, as_token(new_token("", TOK_WORD, is_last_token)));
+		new_tokens->last->as_token->num_tokens_after_split
+			= num_tokens_after_split;
+		return (new_tokens);
+	}
+	idx = 0;
+	start = 0;
+	while (1)
+	{
+		if (str[idx] == '\0')
+			lpush(new_tokens, as_token(new_token(ft_strndup(str + start, idx - start), TOK_WORD, true))); // TODO: fix is_last_token logic
+		if (str[idx] == '$')
+			lpush(new_tokens, as_token(new_token(ft_strndup(str + start, idx - start), TOK_WORD, true))); // TODO: fix is_last_token logic
+		++idx;
+	}
+	liter(new_tokens);
+	while (lnext(new_tokens))
+		new_tokens->current->as_token->num_tokens_after_split
+			= num_tokens_after_split;
 	return (new_tokens);
 }
 
-void	expand_env_vars(t_list *tokens)
+t_list	*expand_tokens(t_list *tokens)
 {
 	t_list	*new_tokens;
+	char	*split_ctx;
 
 	new_tokens = lnew();
 	liter(tokens);
 	while (lnext(tokens))
-		expand(new_tokens, tokens->current->as_token);
-	tokens->first = new_tokens->first;
-	tokens->last = new_tokens->last;
-	tokens->len = new_tokens->len;
-}
-
-void	join_tokens(t_list *tokens)
-{
-	t_list_node	*first;
-	t_list		*new_tokens;
-	t_token		*token;
-	t_token		*word_token;
-
-	new_tokens = lnew();
-	first = tokens->first;
-	if (!first)
-		return ;
-	token = first->as_token;
-	word_token = NULL;
-	if (token->is_last_subtoken)
-		lpush(new_tokens, as_token(token));
-	else
-		word_token = new_token(token->str, TOK_WORD, true);
-	while (first->next != tokens->first)
 	{
-		first = first->next;
-		token = first->as_token;
-		if (!token->is_last_subtoken)
+		if (tokens->current->as_token->type == TOK_WORD || tokens->current->as_token->type == TOK_DQUOTE_STR)
 		{
-			if (!word_token)
-				word_token = new_token("", TOK_WORD, true);
-			word_token->str = ft_strjoin(word_token->str, token->str);
-			word_token->quoting_info = ft_strjoin(word_token->quoting_info, token->quoting_info);
-		}
-		else if (token->type == TOK_WORD || token->type == TOK_SQUOTE_STR
-			|| token->type == TOK_DQUOTE_STR)
-		{
-			if (!word_token)
-				word_token = new_token("", TOK_WORD, true);
-			word_token->str = ft_strjoin(word_token->str, token->str);
-			word_token->quoting_info = ft_strjoin(word_token->quoting_info, token->quoting_info);
-			lpush(new_tokens, as_token(word_token));
-			word_token = NULL;
+			tokens->current->as_token->str = expand_parameters(tokens->current->as_token->str, &split_ctx);
+			tokens->current->as_token->split_ctx = split_ctx;
 		}
 		else
-		{
-			if (word_token)
-			{
-				lpush(new_tokens, as_token(word_token));
-				word_token = NULL;
-			}
-			lpush(new_tokens, as_token(token));
-		}
+			lpush(new_tokens, as_data(tokens->current));
 	}
-	tokens->first = new_tokens->first;
-	tokens->last = new_tokens->last;
-	tokens->len = new_tokens->len;
+	return (new_tokens);
 }

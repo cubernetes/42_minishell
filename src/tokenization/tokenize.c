@@ -79,7 +79,7 @@ void	print_token(t_data data, bool first)
 	char	*clr;
 
 	token = data.as_token;
-	if (token->is_last_subtoken)
+	if (token->is_last_token)
 		clr = "";
 	else
 		clr = "\033[33m";
@@ -109,14 +109,15 @@ char	*repeat_string(char *str, size_t n)
 }
 
 /* TODO: change return type to t_token later */
-void	*new_token(char *str, t_token_type type, bool is_last_subtoken)
+void	*new_token(char *str, t_token_type type, bool is_last_token)
 {
 	return (ft_memdup(\
 		&(t_token){
 			.str = str,
 			.type = type,
-			.is_last_subtoken = is_last_subtoken,
-			.quoting_info = repeat_string(was_quoted(type), ft_strlen(str))
+			.is_last_token = is_last_token,
+			.quoting_info = repeat_string(was_quoted(type), ft_strlen(str)),
+			.num_tokens_after_split = 1
 		},
 		sizeof(t_token)
 	));
@@ -127,7 +128,7 @@ bool	push_token(const char **line, t_list *tokens, size_t token_len,
 	t_token_type type)
 {
 	char	*str;
-	bool	is_last_subtoken;
+	bool	is_last_token;
 	bool	is_str_tok;
 	bool	is_last;
 	bool	is_last_quote;
@@ -142,10 +143,10 @@ bool	push_token(const char **line, t_list *tokens, size_t token_len,
 	else
 		is_last_quote = false;
 	if (is_last || is_last_quote || !is_str_tok)
-		is_last_subtoken = true;
+		is_last_token = true;
 	else
-		is_last_subtoken = false;
-	lpush(tokens, as_token(new_token(str, type, is_last_subtoken)));
+		is_last_token = false;
+	lpush(tokens, as_token(new_token(str, type, is_last_token)));
 	*line += token_len;
 	return (true);
 }
@@ -284,7 +285,7 @@ bool	tokenize_variable_len_tokens(const char **line, t_list *tokens)
 	return (true);
 }
 
-/* TODO: set is_last_subtoken member for each token */
+/* TODO: set is_last_token member for each token */
 t_list	*tokenize(const char *line)
 {
 	t_list	*tokens;

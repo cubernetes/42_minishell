@@ -72,8 +72,8 @@ static int	parse_till_real(int fd)
 	return (0);
 }
 
-/* Return EUID from /proc/self/status */
-char	*ft_getuid(void)
+/* Return UID (0=real, effective, set saved, 3=filesystem) from /proc/self/status */
+char	*ft_get_specific_uid(int uid_type)
 {
 	char	*line;
 	int		fd;
@@ -89,12 +89,29 @@ char	*ft_getuid(void)
 		{
 			parts = liter(lsplit(line, "\t"));
 			close(fd);
+			lrotate(uid_type);
 			if (parts->len == 5)
-				return (parts->first->next->next->as_str);
+				return (parts->first->next->as_str);
+			if (uid_type == 0)
+				return (var_lookup("UID"));
 			return (var_lookup("EUID"));
 		}
 	}
+	if (uid_type == 0)
+		return (close(fd), var_lookup("UID"));
 	return (close(fd), var_lookup("EUID"));
+}
+
+/* Return real UID from /proc/self/status */
+char	*ft_getuid(void)
+{
+	return ft_get_specific_uid(0);
+}
+
+/* Return effective UID from /proc/self/status */
+char	*ft_geteuid(void)
+{
+	return ft_get_specific_uid(1);
 }
 
 // static char	*ft_getloginuid(void)

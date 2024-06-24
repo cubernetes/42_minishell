@@ -125,8 +125,10 @@ struct s_token
 {
 	t_token_type						type;
 	char								*str;
-	bool								is_last_subtoken;
+	bool								is_last_token;
 	char								*quoting_info;
+	char								*split_ctx;
+	int									num_tokens_after_split;
 };
 
 struct s_fds
@@ -174,7 +176,7 @@ void									print_tree(void *data,
 const char								*token_type_to_string(
 											t_token_type type);
 void									*new_token(char *str, t_token_type type,
-											bool is_last_subtoken);
+											bool is_last_token);
 char									*get_token_str(t_list *tokens);
 char									*get_token_str_nl(t_list *tokens);
 t_token_type							get_token_type(t_list *tokens);
@@ -250,5 +252,7 @@ unsigned char							set_last_exit_status(int exit_status);
 unsigned char							get_last_exit_status(void);
 t_flags									get_flags(char key[static 1]);
 char									*ft_getuid(void);
+char									*ft_geteuid(void);
+char									*get_ifs(void);
 
 #endif /* minishell.h. */

@@ -10,7 +10,7 @@ t_tree	gen_production(char *token_str)
 				&(t_token){\
 					.type = tokens_ht_get(token_str), \
 					.str = "", \
-					.is_last_subtoken = true \
+					.is_last_token = true \
 				}, \
 				sizeof(t_token) \
 			), \

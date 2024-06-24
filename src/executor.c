@@ -40,7 +40,7 @@ void	redirect_heredoc(char *file_path, t_tree *simple_command)
 			line = get_next_fat_line(fd);
 			if (!line.data)
 				break ;
-			ft_dprintf(new_hd_fd, "%s", expand_all_vars(strip_nul(line.data, line.size)));
+			ft_dprintf(new_hd_fd, "%s", expand_parameters(strip_nul(line.data, line.size), "", true)->first->as_token->str);
 		}
 		close(new_hd_fd);
 		close(fd);
@@ -142,7 +142,8 @@ int	handle_io_redirect(t_tree *io_redirect, t_tree *simple_command)
 pid_t	execute_simple_command_wrapper(t_tree *simple_command,
 	t_list *commands)
 {
-	t_list	*new_children;
+	t_list	*new_children; // TODO: Shadows function new_children
+	t_list	*expanded_children; // TODO: Shadows function new_children
 
 	new_children = lnew();
 	liter(simple_command->children);
@@ -156,7 +157,7 @@ pid_t	execute_simple_command_wrapper(t_tree *simple_command,
 			lpush(new_children, as_token(simple_command->children->current->as_tree->token));
 	}
 	lpush(new_children, as_token(new_token("", TOK_EOL, true)));
-	expand_env_vars(new_children);
+	new_children = expand_tokens(new_children);
 	if (new_children->len <= 1)
 		return (close_fds(simple_command), -258);
 	join_tokens(new_children);

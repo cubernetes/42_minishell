@@ -89,7 +89,7 @@ true Find suitable dump command                                                 
     { command -v od                                                                         &&#
     dump='od -An -vtx1 -w1 | cut -c2-'                                                      ||#
     { command -v printf                                                                     &&#
-    dump='while LC_ALL=C IFS= read -r -d "" -n 1 byte; do printf "%02X\n" "'"'"'$byte"; done' ||#
+    dump='while LC_ALL=POSIX IFS= read -r -d "" -n 1 byte; do printf "%02X\n" "'"'"'$byte"; done' ||#
     dump='printf "\033[31m%s\033[m\n" "No dumper (not event printf?) found, please install either xxd, hexdump, or od. Providing default locale." >/dev/tty | printf "20\n09\n0a\n0b\n0c\n0d"'; }; }; }; } 1>/dev/null 2>&1
 
 

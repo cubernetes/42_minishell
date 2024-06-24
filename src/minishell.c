@@ -29,7 +29,7 @@ int	minishell_error(int exit_code, bool do_exit, const char *fmt, ...)
 
 static char	*get_dollar_prompt(void)
 {
-	if (ft_atoi(ft_getuid()) == 0)
+	if (ft_atoi(ft_geteuid()) == 0)
 		return ("#");
 	return ("$");
 }
@@ -240,7 +240,8 @@ void	init(char *argv[], char *envp[])
 /* TODO: add default PATH */
 /* TODO: heredoc history */
 /* TODO: unlink heredoc */
-/* TODO: set ifs */
+/* TODO: set default ifs, do not inherit */
+/* TODO: set default hostname to localhost in ft_gethostname */
 int	main(int argc, char *argv[], char *envp[])
 {
 	close(3); close(63);
