@@ -37,15 +37,15 @@ void	close_fds(t_tree *command)
 }
 
 /* TODO: Replace magic number -2 with something like FD_UNINITIALIZED, ...*/
-void	set_fds(t_tree *simple_command)
+void	set_fds(t_tree *command)
 {
 	int	in;
 	int	out;
 	int	err;
 
-	in = simple_command->fd_in;
-	out = simple_command->fd_out;
-	err = simple_command->fd_err;
+	in = command->fd_in;
+	out = command->fd_out;
+	err = command->fd_err;
 	if (in != -2)
 		dup2(in, STDIN_FILENO);
 	if (out != -2)
