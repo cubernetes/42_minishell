@@ -189,7 +189,6 @@ void									expand_env_vars(t_list *tokens);
 /* t_list									*expand_token(t_token *token); */
 t_list									*expand_tokens(t_list *tokens);
 char									*expand_all_vars(char *token_str);
-t_list									*glob_tokens_2(t_list *tokens);
 void									join_tokens(t_list *tokens);
 char									**get_env(void);
 char									*var_lookup(char *key);

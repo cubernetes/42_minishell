@@ -354,8 +354,6 @@ t_list	*expand_tokens(t_list *tokens)
 
 	new_tokens = lnew();
 	liter(tokens);
-	lprint(tokens, print_token_debug);
-	ft_printf("\n");
 	while (lnext(tokens))
 	{
 		if (tokens->current->as_token->type != TOK_WORD && tokens->current->as_token->type != TOK_DQUOTE_STR)

@@ -124,6 +124,8 @@ int	handle_io_redirect(t_tree *io_redirect, t_tree *simple_command)
 
 	type = io_redirect->children->first->as_tree->token->type;
 	file_path = io_redirect->children->first->next->as_tree->token->str;
+	if (io_redirect->children->first->next->as_tree->token->num_tokens_after_split != 1)
+		return (simple_command->error = minishell_error(1, false, "%s: ambiguous redirect", "whatever"));
 	if (type == TOK_OVERRIDE)
 		handle_redirect_override(file_path, simple_command);
 	else if (type == TOK_INPUT)
@@ -158,14 +160,10 @@ pid_t	execute_simple_command_wrapper(t_tree *simple_command,
 	}
 	lpush(new_children, as_token(new_token("", TOK_EOL, true)));
 	new_children = expand_tokens(new_children);
-	lprint(new_children, print_token_debug);
-	ft_printf("\n");
 	join_tokens(new_children);
-	lprint(new_children, print_token_debug);
-	minishell_error(0, true, "EARLY EXIT");
+	glob_tokens(new_children);
 	if (new_children->len <= 1)
 		return (close_fds(simple_command), -258);
-	glob_tokens(new_children);
 	new_children = build_ast(new_children, false)->children->first->as_tree->children->first->as_tree->children;
 	simple_command->children = new_children;
 	liter(simple_command->children);

@@ -21,9 +21,11 @@ void	tree_print_with_depth(t_tree *tree, int n)
 			tree_print_with_depth(tree->children->current->as_tree, n + 1);
 	}
 	else
-		ft_printf("- %s (\033[31m%s\033[m)\n",
+		ft_printf("- %s (\033[31m%s, %d\033[m)\n",
 			token_type_to_string(tree->token->type),
-			tree->token->str);
+			tree->token->str,
+			tree->token->num_tokens_after_split
+			);
 }
 
 void	tree_print(t_tree *tree)

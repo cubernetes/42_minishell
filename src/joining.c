@@ -24,17 +24,27 @@ void	join_tokens(t_list *tokens)
 		if (!token->is_last_token)
 		{
 			if (!word_token)
+			{
 				word_token = new_token("", TOK_WORD, true);
+				word_token->num_tokens_after_split = 0;
+			}
+			word_token->num_tokens_after_split += token->num_tokens_after_split;
 			word_token->str = ft_strjoin(word_token->str, token->str);
 			word_token->quoting_ctx = ft_strjoin(word_token->quoting_ctx, token->quoting_ctx);
+			word_token->expansion_ctx = ft_strjoin(word_token->expansion_ctx, token->expansion_ctx);
 		}
 		else if (token->type == TOK_WORD || token->type == TOK_SQUOTE_STR
 			|| token->type == TOK_DQUOTE_STR)
 		{
 			if (!word_token)
+			{
 				word_token = new_token("", TOK_WORD, true);
+				word_token->num_tokens_after_split = 0;
+			}
+			word_token->num_tokens_after_split += token->num_tokens_after_split;
 			word_token->str = ft_strjoin(word_token->str, token->str);
 			word_token->quoting_ctx = ft_strjoin(word_token->quoting_ctx, token->quoting_ctx);
+			word_token->expansion_ctx = ft_strjoin(word_token->expansion_ctx, token->expansion_ctx);
 			lpush(new_tokens, as_token(word_token));
 			word_token = NULL;
 		}
