@@ -1,13 +1,18 @@
-
 ########################### word splitting algorithm ###########################
+this algorithm is found in src/expansion.c. The version described here is
+simplified, as in reality, the algorithm must handle a string that has an
+"expansion context", which is an ancillary string of the same length consisting
+of either 0's or 1's, where 1 means the byte at the corresponding position in
+the real string was the result of a parameter expansion, and 0 means it wasn't.
+This is important, because a command like `echo:hello` shouldn't be split on
+the colon when IFS=":", but expansion containing a colon should.
 
+# Expample
 IFS=<space><colon>
-
 '   :one two    three   :: :  :   four:five :six\0'
+result should be: '', 'one', 'two', 'three', '', '', '', 'four', 'five', 'six'
 
-result should be: 'one', 'two', 'three', '', '', '', 'four', 'five', 'six'
-
-algorithm:
+# Algorithm
 	- IFS= # whatever
 	- IFS_whitespace= # depends on locale
 	- str # string to split
