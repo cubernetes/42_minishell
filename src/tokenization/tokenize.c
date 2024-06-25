@@ -67,9 +67,9 @@ const char	*token_type_to_string(t_token_type type)
 	return (STR_TOK_UNKNOWN);
 }
 
-void	skip_whitespace(const char **line)
+void	skip_space_tab(const char **line)
 {
-	while (ft_isspace(**line))
+	while (**line == ' ' || **line == '\t')
 		++(*line);
 }
 
@@ -318,7 +318,7 @@ t_list	*tokenize(const char *line)
 	t_list	*tokens;
 
 	tokens = lnew();
-	skip_whitespace(&line);
+	skip_space_tab(&line);
 	while (true)
 	{
 		if (!tokenize_fixed_len_tokens(&line, tokens))
@@ -326,7 +326,7 @@ t_list	*tokenize(const char *line)
 				return (NULL);
 		if (tokens->last->as_token->type == TOK_EOL)
 			break ;
-		skip_whitespace(&line);
+		skip_space_tab(&line);
 	}
 	return (tokens);
 }
