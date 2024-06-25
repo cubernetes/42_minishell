@@ -60,7 +60,7 @@ char	*get_ifs(void)
 {
 	t_var	*ifs_var;
 
-	ifs_var = get_var("ifs_var");
+	ifs_var = get_var("IFS");
 	if (ifs_var == NULL || ifs_var->value == NULL)
 		return (DEFAULT_IFS);
 	return (ifs_var->value);
@@ -275,8 +275,7 @@ t_list	*split_into_words(t_token *token)
 	bool	push;
 
 	words = lnew();
-	/* ifs = get_ifs(); */
-	ifs = " :";
+	ifs = get_ifs();
 	idx = -1;
 	start = -1;
 	push = false;
@@ -351,10 +350,12 @@ t_list	*expand_tokens(t_list *tokens)
 	t_token	*joined_token;
 	t_list	*subwords;
 	t_list	*new_tokens;
+	t_list	*split_tokens;
 
 	new_tokens = lnew();
 	liter(tokens);
 	lprint(tokens, print_token_debug);
+	ft_printf("\n");
 	while (lnext(tokens))
 	{
 		if (tokens->current->as_token->type != TOK_WORD && tokens->current->as_token->type != TOK_DQUOTE_STR)
@@ -375,11 +376,12 @@ t_list	*expand_tokens(t_list *tokens)
 		}
 		if (tokens->current->as_token->type == TOK_WORD)
 		{
-			if (ft_strchr(get_ifs(), joined_token->str[0]))
-				if (new_tokens->last->as_token->is_last_token == false)
+			if (joined_token->str[0] != '\0' && ft_strchr(get_ifs(), joined_token->str[0]))
+				if (new_tokens->last != NULL && new_tokens->last->as_token->is_last_token == false)
 					new_tokens->last->as_token->is_last_token = true;
-			lextend(new_tokens, split_into_words(joined_token));
-			if (!ft_strchr(get_ifs(), joined_token->str[ft_strlen(joined_token->str) - 1]))
+			split_tokens = split_into_words(joined_token);
+			lextend(new_tokens, lcopy(split_tokens));
+			if (split_tokens->last->as_token->num_tokens_after_split == 0 || !ft_strchr(get_ifs(), joined_token->str[ft_strlen(joined_token->str) - 1]))
 				if (tokens->current->as_token->is_last_token == false)
 					new_tokens->last->as_token->is_last_token = false;
 		}

@@ -159,10 +159,12 @@ pid_t	execute_simple_command_wrapper(t_tree *simple_command,
 	lpush(new_children, as_token(new_token("", TOK_EOL, true)));
 	new_children = expand_tokens(new_children);
 	lprint(new_children, print_token_debug);
+	ft_printf("\n");
+	join_tokens(new_children);
+	lprint(new_children, print_token_debug);
 	minishell_error(0, true, "EARLY EXIT");
 	if (new_children->len <= 1)
 		return (close_fds(simple_command), -258);
-	join_tokens(new_children);
 	glob_tokens(new_children);
 	new_children = build_ast(new_children, false)->children->first->as_tree->children->first->as_tree->children;
 	simple_command->children = new_children;
