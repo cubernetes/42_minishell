@@ -39,7 +39,7 @@ bool	tree_is_null(t_tree *tree)
 	return (false);
 }
 
-t_list	*new_children(t_tree **children)
+t_list	*creat_new_children(t_tree **children)
 {
 	t_list	*new_children;
 	size_t	i;

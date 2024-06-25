@@ -144,7 +144,6 @@ pid_t	execute_simple_command_wrapper(t_tree *simple_command,
 	t_list *commands)
 {
 	t_list	*new_children; // TODO: Shadows function new_children
-	t_list	*expanded_children; // TODO: Shadows function new_children
 
 	new_children = lnew();
 	liter(simple_command->children);

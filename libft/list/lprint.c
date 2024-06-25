@@ -32,7 +32,7 @@ void	lprint(t_list *list, void (print)(t_data data, int n))
 	{
 		highlight_elements(list->current, current_first, current_current,
 			current_last);
-		print(as_data(list->current), list->current_idx);
+		print(as_data(list->current), (int)list->current_idx);
 		if (list->current == current_first
 				|| list->current == current_current
 				|| list->current == current_last)

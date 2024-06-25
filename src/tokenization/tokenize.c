@@ -88,10 +88,10 @@ void	print_token_debug(t_data data, int n)
 		clr = "\033[33m";
 	if (n == 0)
 		ft_printf("<\033[31m%s\033[m>%s%s%s\033[m%s%d%s<%s>%s<%s>", token->str, sep, clr,
-			token_type_to_string(token->type), sep, token->num_tokens_after_split, sep, token->split_ctx, sep, token->quoting_info);
+			token_type_to_string(token->type), sep, token->num_tokens_after_split, sep, token->expansion_ctx, sep, token->quoting_ctx);
 	else
 		ft_printf("\n<\033[31m%s\033[m>%s%s%s\033[m%s%d%s<%s>%s<%s>", token->str, sep, clr,
-			token_type_to_string(token->type), sep, token->num_tokens_after_split, sep, token->split_ctx, sep, token->quoting_info);
+			token_type_to_string(token->type), sep, token->num_tokens_after_split, sep, token->expansion_ctx, sep, token->quoting_ctx);
 }
 
 void	print_token(t_data data, int n)
@@ -132,14 +132,19 @@ char	*repeat_string(char *str, size_t n)
 /* TODO: change return type to t_token later */
 void	*new_token(char *str, t_token_type type, bool is_last_token)
 {
+	int	s;
+
+	s = 1;
+	if (type == TOK_EOL)
+		s = 0;
 	return (ft_memdup(\
 		&(t_token){
 			.str = str,
 			.type = type,
 			.is_last_token = is_last_token,
-			.quoting_info = repeat_string(was_quoted(type), ft_strlen(str)),
-			.split_ctx = repeat_string("0", ft_strlen(str)),
-			.num_tokens_after_split = 1
+			.quoting_ctx = repeat_string(was_quoted(type), ft_strlen(str)),
+			.expansion_ctx = repeat_string("0", ft_strlen(str)),
+			.num_tokens_after_split = s
 		},
 		sizeof(t_token)
 	));

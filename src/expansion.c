@@ -149,7 +149,7 @@ char	*get_ifs(void)
 // t_list	*expand_tokens(t_list *tokens)
 // {
 // 	t_list	*new_tokens;
-// 	char	*split_ctx;
+// 	char	*expansion_ctx;
 // 	t_token	*token;
 // 
 // 	new_tokens = lnew();
@@ -163,8 +163,8 @@ char	*get_ifs(void)
 // 		}
 // 		else if (token->type == TOK_DQUOTE_STR)
 // 		{
-// 			token->str = expand_word(token->str, &split_ctx);
-// 			token->split_ctx = split_ctx;
+// 			token->str = expand_word(token->str, &expansion_ctx);
+// 			token->expansion_ctx = expansion_ctx;
 // 		}
 // 		else
 // 			lpush(new_tokens, as_data(tokens->current));
@@ -198,12 +198,12 @@ t_list	*expand_subwords(t_list	*words)
 		if (words->current->as_token->str[0] == '$')
 		{
 			expanded_token = new_token(var_lookup(words->current->as_token->str + 1), TOK_WORD, true);
-			expanded_token->split_ctx = repeat_string("1", ft_strlen(expanded_token->str));
+			expanded_token->expansion_ctx = repeat_string("1", ft_strlen(expanded_token->str));
 			lpush(new_words, as_token(expanded_token));
 		}
 		else
 		{
-			words->current->as_token->split_ctx = repeat_string("0", ft_strlen(words->current->as_token->str));
+			words->current->as_token->expansion_ctx = repeat_string("0", ft_strlen(words->current->as_token->str));
 			lpush(new_words, as_data(words->current));
 		}
 	}
@@ -259,8 +259,8 @@ static t_token	*new_word_token(t_token *token, int start, int end)
 	t_token	*new_tok;
 
 	new_tok = new_token(ft_strndup(token->str + start, (size_t)(end - start)), TOK_WORD, true);
-	new_tok->quoting_info = ft_strndup(token->quoting_info + start, (size_t)(end - start));
-	new_tok->split_ctx = ft_strndup(token->split_ctx + start, (size_t)(end - start));
+	new_tok->quoting_ctx = ft_strndup(token->quoting_ctx + start, (size_t)(end - start));
+	new_tok->expansion_ctx = ft_strndup(token->expansion_ctx + start, (size_t)(end - start));
 	return (new_tok);
 }
 
@@ -282,7 +282,7 @@ t_list	*split_into_words(t_token *token)
 	push = false;
 	while (token->str[++idx])
 	{
-		if (token->split_ctx[idx] == '1')
+		if (token->expansion_ctx[idx] == '1')
 		{
 			if (ft_strchr(ifs, token->str[idx]))
 			{
@@ -329,7 +329,7 @@ t_list	*split_into_words(t_token *token)
 			}
 		}
 	}
-	if (start != -1 && push == true && (token->split_ctx[start] == '0' || !ft_strchr(ifs, token->str[start])))
+	if (start != -1 && push == true && (token->expansion_ctx[start] == '0' || !ft_strchr(ifs, token->str[start])))
 		lpush(words, as_token(new_word_token(token, start, idx)));
 	if (words->len == 0)
 	{
@@ -366,12 +366,12 @@ t_list	*expand_tokens(t_list *tokens)
 		subwords = expand_subwords(subwords);
 		subwords = liter(remove_empty_words(subwords));
 		joined_token = new_token("", TOK_WORD, true);
-		joined_token->split_ctx = "";
+		joined_token->expansion_ctx = "";
 		while (lnext(subwords))
 		{
 			joined_token->str = ft_strjoin(joined_token->str, subwords->current->as_token->str);
-			joined_token->split_ctx = ft_strjoin(joined_token->split_ctx, subwords->current->as_token->split_ctx);
-			joined_token->quoting_info = ft_strjoin(joined_token->quoting_info, subwords->current->as_token->quoting_info);
+			joined_token->expansion_ctx = ft_strjoin(joined_token->expansion_ctx, subwords->current->as_token->expansion_ctx);
+			joined_token->quoting_ctx = ft_strjoin(joined_token->quoting_ctx, subwords->current->as_token->quoting_ctx);
 		}
 		if (tokens->current->as_token->type == TOK_WORD)
 		{
@@ -386,7 +386,7 @@ t_list	*expand_tokens(t_list *tokens)
 		else
 		{
 			joined_token->type = TOK_DQUOTE_STR;
-			joined_token->quoting_info = repeat_string("1", ft_strlen(joined_token->str));
+			joined_token->quoting_ctx = repeat_string("1", ft_strlen(joined_token->str));
 			lpush(new_tokens, as_token(joined_token));
 			if (tokens->current->as_token->is_last_token == false)
 				new_tokens->last->as_token->is_last_token = false;

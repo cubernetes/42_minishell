@@ -127,8 +127,8 @@ struct s_token
 	t_token_type						type;
 	char								*str;
 	bool								is_last_token;
-	char								*quoting_info;
-	char								*split_ctx;
+	char								*quoting_ctx;
+	char								*expansion_ctx;
 	int									num_tokens_after_split;
 };
 
@@ -242,7 +242,7 @@ t_tree									*new_tree_nonterm(t_tree_type type,
 											t_list *children);
 t_tree									*get_production(t_tree_type nonterm,
 											t_token *token);
-t_list									*new_children(t_tree **children);
+t_list									*creat_new_children(t_tree **children);
 t_tree_type								tree_ht_get(char *key);
 t_token_type							tokens_ht_get(char *key);
 int										get_production_idx(t_tree_type nonterm,

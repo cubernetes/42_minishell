@@ -19,7 +19,7 @@ static t_tree	*build_parse_tree(t_list tokens[static 1])
 	lpush(stack, as_tree(production_part_to_child(\
 		(t_tree){COMPLETE_COMMAND, {0}, 0, {{0}}})));
 	lpush(stack, as_tree(production_part_to_child(\
-		(t_tree){TOKEN, {.token = &(t_token){TOK_EOL, "", true, ""}}, 0, {{0}}})));
+		(t_tree){TOKEN, {.token = &(t_token){TOK_EOL, "", true, "", "", 0}}, 0, {{0}}})));
 	tree = new_tree_nonterm(COMPLETE_COMMAND, NULL);
 	tree_root = tree;
 	while (1)
