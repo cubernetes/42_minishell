@@ -354,6 +354,7 @@ t_list	*expand_tokens(t_list *tokens)
 
 	new_tokens = lnew();
 	liter(tokens);
+	lprint(tokens, print_token_debug);
 	while (lnext(tokens))
 	{
 		if (tokens->current->as_token->type != TOK_WORD && tokens->current->as_token->type != TOK_DQUOTE_STR)
@@ -373,12 +374,22 @@ t_list	*expand_tokens(t_list *tokens)
 			joined_token->quoting_info = ft_strjoin(joined_token->quoting_info, subwords->current->as_token->quoting_info);
 		}
 		if (tokens->current->as_token->type == TOK_WORD)
+		{
+			if (ft_strchr(get_ifs(), joined_token->str[0]))
+				if (new_tokens->last->as_token->is_last_token == false)
+					new_tokens->last->as_token->is_last_token = true;
 			lextend(new_tokens, split_into_words(joined_token));
+			if (!ft_strchr(get_ifs(), joined_token->str[ft_strlen(joined_token->str) - 1]))
+				if (tokens->current->as_token->is_last_token == false)
+					new_tokens->last->as_token->is_last_token = false;
+		}
 		else
 		{
 			joined_token->type = TOK_DQUOTE_STR;
 			joined_token->quoting_info = repeat_string("1", ft_strlen(joined_token->str));
 			lpush(new_tokens, as_token(joined_token));
+			if (tokens->current->as_token->is_last_token == false)
+				new_tokens->last->as_token->is_last_token = false;
 		}
 	}
 	return (new_tokens);
