@@ -1,9 +1,11 @@
 #include "minishell.h"
+#include "libft.h"
 
 void	join_tokens(t_list *tokens)
 {
 	t_list_node	*first;
 	t_list		*new_tokens;
+	t_list		*cleaned_tokens;
 	t_token		*token;
 	t_token		*word_token;
 
@@ -28,7 +30,7 @@ void	join_tokens(t_list *tokens)
 				word_token = new_token("", TOK_WORD, true);
 				word_token->num_tokens_after_split = 0;
 			}
-			word_token->num_tokens_after_split += token->num_tokens_after_split;
+			word_token->num_tokens_after_split = ft_max(word_token->num_tokens_after_split, token->num_tokens_after_split);
 			word_token->str = ft_strjoin(word_token->str, token->str);
 			word_token->quoting_ctx = ft_strjoin(word_token->quoting_ctx, token->quoting_ctx);
 			word_token->expansion_ctx = ft_strjoin(word_token->expansion_ctx, token->expansion_ctx);
@@ -41,7 +43,7 @@ void	join_tokens(t_list *tokens)
 				word_token = new_token("", TOK_WORD, true);
 				word_token->num_tokens_after_split = 0;
 			}
-			word_token->num_tokens_after_split += token->num_tokens_after_split;
+			word_token->num_tokens_after_split = ft_max(word_token->num_tokens_after_split, token->num_tokens_after_split);
 			word_token->str = ft_strjoin(word_token->str, token->str);
 			word_token->quoting_ctx = ft_strjoin(word_token->quoting_ctx, token->quoting_ctx);
 			word_token->expansion_ctx = ft_strjoin(word_token->expansion_ctx, token->expansion_ctx);
@@ -58,7 +60,12 @@ void	join_tokens(t_list *tokens)
 			lpush(new_tokens, as_token(token));
 		}
 	}
-	tokens->first = new_tokens->first;
-	tokens->last = new_tokens->last;
-	tokens->len = new_tokens->len;
+	cleaned_tokens = lnew();
+	liter(new_tokens);
+	while (lnext(new_tokens))
+		if (new_tokens->current->as_token->str[0] != '\0' || new_tokens->current->as_token->type == TOK_EOL)
+			lpush(cleaned_tokens, as_data(new_tokens->current));
+	tokens->first = cleaned_tokens->first;
+	tokens->last = cleaned_tokens->last;
+	tokens->len = cleaned_tokens->len;
 }

@@ -197,9 +197,14 @@ t_list	*expand_subwords(t_list	*words)
 	{
 		if (words->current->as_token->str[0] == '$')
 		{
-			expanded_token = new_token(var_lookup(words->current->as_token->str + 1), TOK_WORD, true);
-			expanded_token->expansion_ctx = repeat_string("1", ft_strlen(expanded_token->str));
-			lpush(new_words, as_token(expanded_token));
+			if (words->current->as_token->str[1] == '\0')
+				lpush(new_words, as_data(words->current));
+			else
+			{
+				expanded_token = new_token(var_lookup(words->current->as_token->str + 1), TOK_WORD, true);
+				expanded_token->expansion_ctx = repeat_string("1", ft_strlen(expanded_token->str));
+				lpush(new_words, as_token(expanded_token));
+			}
 		}
 		else
 		{
