@@ -19,8 +19,8 @@
 
 ## Extra features (not required by the subject)
 - Wordsplitting after parameter expansion using multicharacter IFS (exactly like bash)
-    - try one of `unset IFS`, `declare IFS=`, `declare IFS=x`
-    - then `declare A=" one     two  threexxxxxfour   " && /bin/printf '"%s"\n' before-$A-after | /bin/cat -A`
+    - try one of `unset IFS`, `declare IFS=`, `declare IFS=:`, `declare IFS=": "`
+    - then `declare A=" :one     two  three:::::four:   " && /bin/printf '"%s"\n' $A-one-$A-two-$A`
 - declare (also with `-p`) and readonly builtin
 - declare, readonly, and export without args, with correct(!) quoting
     - try `declare A='cd "$HOME" && echo "Changed dir!" || echo "Sorry $USER, no changing :("' && declare -p A`

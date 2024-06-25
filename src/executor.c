@@ -20,6 +20,7 @@ void	redirect_heredoc(char *file_path, t_tree *simple_command)
 	int			sc_fd_in;
 	t_fatptr	line;
 	char		*new_hd;
+	t_list		*tokens;
 
 	fd = open(file_path, O_RDONLY);
 	new_hd = ft_mktemp("minishell.");
@@ -32,6 +33,8 @@ void	redirect_heredoc(char *file_path, t_tree *simple_command)
 			close(new_hd_fd);
 		simple_command->error = minishell_error(1, false,
 				"%s: %s", file_path, strerror(errno));
+		(void)unlink(new_hd);
+		(void)unlink(file_path);
 	}
 	else
 	{
@@ -40,12 +43,16 @@ void	redirect_heredoc(char *file_path, t_tree *simple_command)
 			line = get_next_fat_line(fd);
 			if (!line.data)
 				break ;
-			/* ft_dprintf(new_hd_fd, "%s", expand_parameters(strip_nul(line.data, line.size), "", true)->first->as_token->str); */
-			ft_dprintf(new_hd_fd, "%s", strip_nul(line.data, line.size));
+			tokens = lnew();
+			lpush(tokens, as_token(new_token(strip_nul(line.data, line.size), TOK_DQUOTE_STR, true)));
+			tokens = expand_tokens(tokens);
+			ft_dprintf(new_hd_fd, "%s", tokens->first->as_token->str);
 		}
 		close(new_hd_fd);
 		close(fd);
 		new_hd_fd = open(new_hd, O_RDONLY);
+		(void)unlink(new_hd);
+		(void)unlink(file_path);
 		if (new_hd_fd == -1)
 		{
 			simple_command->error = minishell_error(1, false,
