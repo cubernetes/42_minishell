@@ -78,9 +78,9 @@ from the `LC_CTYPE` "space" character class, which in turn inherits `" \f\n\r\t\
 Other locales, like `am_ET` define further whitespace in this class.
 
 We can obtain all the ASCII characters which are whitespace in the current locale
-byte defining them in a header. To obtain them, one can leverage C or bash:
-```bash
-#! /usr/bin/env bash
+by defining them in a header. To obtain them, one can leverage C or POSIX sh:
+```sh
+#! /bin/sh
 
 true Find suitable dump command                                                             &&#
     { command -v xxd                                                                        &&#
@@ -98,8 +98,9 @@ $(locale)
 LOCALE
 [ -n "${LC_CTYPE}" ] && locale_info=" /* LC_CTYPE="'"'"${LC_CTYPE}"'" */' || locale_info=
 
+printf '\n'
 for i in {1..127}; do
     char="$(printf "\\$(printf '%03o' "$i").")"
-    [[ "${char%.}" == [[:space:]] ]] && printf "%s" "${char%.}" # [:space:] character class respects the locale
+    case "${char%.}" in [^[:space:]]) false;; esac && printf "%s" "${char%.}" # [:space:] character class respects the locale
 done | eval "$dump" | sed 's/^/\\x/' | tr -d '\n' | sed 's/^/# define IFS_WHITESPACE "/; s|$|"'"${locale_info}"'\n|'
 ```
