@@ -73,7 +73,28 @@ void	skip_whitespace(const char **line)
 		++(*line);
 }
 
-void	print_token(t_data data, bool first)
+void	print_token_debug(t_data data, int n)
+{
+	t_token	*token;
+	char	*clr;
+	char	*sep;
+
+	/* sep = "\t|\t"; */
+	sep = "|";
+	token = data.as_token;
+	if (token->is_last_token)
+		clr = "";
+	else
+		clr = "\033[33m";
+	if (n == 0)
+		ft_printf("<\033[31m%s\033[m>%s%s%s\033[m%s%d%s<%s>%s<%s>", token->str, sep, clr,
+			token_type_to_string(token->type), sep, token->num_tokens_after_split, sep, token->split_ctx, sep, token->quoting_info);
+	else
+		ft_printf("\n<\033[31m%s\033[m>%s%s%s\033[m%s%d%s<%s>%s<%s>", token->str, sep, clr,
+			token_type_to_string(token->type), sep, token->num_tokens_after_split, sep, token->split_ctx, sep, token->quoting_info);
+}
+
+void	print_token(t_data data, int n)
 {
 	t_token	*token;
 	char	*clr;
@@ -83,7 +104,7 @@ void	print_token(t_data data, bool first)
 		clr = "";
 	else
 		clr = "\033[33m";
-	if (first)
+	if (n == 0)
 		ft_printf("<\033[31m%s\033[m> (%s%s\033[m)", token->str, clr,
 			token_type_to_string(token->type));
 	else
@@ -117,6 +138,7 @@ void	*new_token(char *str, t_token_type type, bool is_last_token)
 			.type = type,
 			.is_last_token = is_last_token,
 			.quoting_info = repeat_string(was_quoted(type), ft_strlen(str)),
+			.split_ctx = repeat_string("0", ft_strlen(str)),
 			.num_tokens_after_split = 1
 		},
 		sizeof(t_token)

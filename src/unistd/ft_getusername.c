@@ -89,7 +89,7 @@ char	*ft_get_specific_uid(int uid_type)
 		{
 			parts = liter(lsplit(line, "\t"));
 			close(fd);
-			lrotate(uid_type);
+			lrotate(parts, 1);
 			if (parts->len == 5)
 				return (parts->first->next->as_str);
 			if (uid_type == 0)

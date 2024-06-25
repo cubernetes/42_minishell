@@ -14,10 +14,10 @@ int	minishell_error(int exit_code, bool do_exit, const char *fmt, ...)
 {
 	va_list	ap;
 
-	if (isatty(STDIN_FILENO) && do_exit)
-		ft_dprintf(STDERR_FILENO, "exit\n");
+	/* if (isatty(STDIN_FILENO) && do_exit) */
+		/* ft_dprintf(STDERR_FILENO, "exit\n"); */
 	va_start(ap, fmt);
-	ft_vdprintf(STDERR_FILENO, ft_strjoin(ft_strjoin(MINISHELL_NAME ": ", fmt), "\n"), ap);
+	/* ft_vdprintf(STDERR_FILENO, ft_strjoin(ft_strjoin(MINISHELL_NAME ": ", fmt), "\n"), ap); */
 	va_end(ap);
 	if (do_exit)
 	{
@@ -244,7 +244,7 @@ void	init(char *argv[], char *envp[])
 /* TODO: set default hostname to localhost in ft_gethostname */
 int	main(int argc, char *argv[], char *envp[])
 {
-	close(3); close(63);
+	/* close(3); close(63); */
 	(void)argc;
 	init(argv, envp);
 	repl();

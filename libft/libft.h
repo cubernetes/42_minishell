@@ -332,7 +332,7 @@ t_data							as_kv_pair(t_kv_pair *as_kv_pair);
 /* list */
 t_list_node						*lbackward(t_list list[static 1]);
 void							lprint_rev(t_list *list,
-									void (print)(t_data data, bool first));
+									void (print)(t_data data, int n));
 bool							ldestroy(t_list list[static 1]);
 void							lrotate(t_list *list, int n);
 t_list							*liter(t_list list[static 1]);
@@ -363,7 +363,7 @@ void							lswap(t_list *list);
 t_list							*llast(t_list list[static 1]);
 t_list_node						*lnext(t_list list[static 1]);
 void							lprint(t_list *list,
-									void (print)(t_data data, bool first));
+									void (print)(t_data data, int n));
 /* t_list							*lslice(t_list *list, int start, */
 									/* int end, int step); */
 

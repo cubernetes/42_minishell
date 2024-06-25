@@ -53,12 +53,12 @@ void	print_productions(t_tree **prods, int max_i)
 	}
 }
 
-void	print_tree_node(void *data, bool first)
+void	print_tree_node(void *data, int n)
 {
 	t_tree	*tree;
 
 	tree = (t_tree *)data;
-	if (first)
+	if (n == 0)
 	{
 		if (tree->type == TOKEN)
 			ft_printf("%s (%s)", tree_type_to_string(tree->type),

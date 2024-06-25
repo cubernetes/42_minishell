@@ -50,7 +50,8 @@
 - additional special parameters:
     1. `$-` expanding to the active shell options
     2. `$$` expanding to the the current PID of the shell
-    3. `$0` to `$9` expanding the positional arguments of minishell (specified after `-c`)
+    3. `$0` to `$9` expanding to the positional arguments of minishell (specified after `-c`)
+    3. `$#` expanding to the number of positional argument
     4. `$@` expanding to all positional argument, with word splitting when quoted
     5. `$*` expanding to all positional argument, joining with `IFS[0]` when quoted
 - shift builtin
@@ -90,11 +91,15 @@ true Find suitable dump command                                                 
     dump='od -An -vtx1 -w1 | cut -c2-'                                                      ||#
     { command -v printf                                                                     &&#
     dump='while LC_ALL=POSIX IFS= read -r -d "" -n 1 byte; do printf "%02X\n" "'"'"'$byte"; done' ||#
-    dump='printf "\033[31m%s\033[m\n" "No dumper (not event printf?) found, please install either xxd, hexdump, or od. Providing default locale." >/dev/tty | printf "20\n09\n0a\n0b\n0c\n0d"'; }; }; }; } 1>/dev/null 2>&1
+    dump='printf "\033[31m%s\033[m\n" "No dumper (not event printf?) found, please install either xxd, hexdump, or od. Providing default locale." >/dev/tty | printf "20\n09\n0a\n0b\n0c\n0d"'; }; }; }; } 2>/dev/null 1>&2
 
+2>/dev/null 1>&2 command -v locale && . /dev/stdin << LOCALE
+$(locale)
+LOCALE
+[ -n "${LC_CTYPE}" ] && locale_info=" /* LC_CTYPE="'"'"${LC_CTYPE}"'" */' || locale_info=
 
 for i in {1..127}; do
     char="$(printf "\\$(printf '%03o' "$i").")"
     [[ "${char%.}" == [[:space:]] ]] && printf "%s" "${char%.}" # [:space:] character class respects the locale
-done | eval "$dump" | sed 's/^/\\x/' | tr -d '\n' | sed 's/^/"/; s/$/"\n/'
+done | eval "$dump" | sed 's/^/\\x/' | tr -d '\n' | sed 's/^/# define IFS_WHITESPACE "/; s|$|"'"${locale_info}"'\n|'
 ```

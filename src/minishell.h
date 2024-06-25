@@ -16,6 +16,7 @@
 # define MINISHELL_NAME "minishell"
 
 # define DEFAULT_IFS " \t\n"
+# define IFS_WHITESPACE "\x09\x0a\x0b\x0c\x0d\x20" /* LC_CTYPE="en_US.UTF-8" */
 
 # define EXIT_COMMAND_NOT_FOUND 127
 
@@ -169,8 +170,9 @@ void									noninteractive_signals(void);
 t_list									*tokenize(const char *line); /* static 1 ? */
 t_tree									*build_ast(t_list *tokens, bool create_heredocs);
 void									tree_print(t_tree *tree);
-void									print_token(t_data data, bool first);
-void									print_tree_node(void *data, bool first);
+void									print_token(t_data data, int n);
+void									print_token_debug(t_data data, int n);
+void									print_tree_node(void *data, int n);
 void									print_tree(void *data,
 											bool first);
 const char								*token_type_to_string(
@@ -184,7 +186,8 @@ int										minishell_error(int exit_code,
 											bool do_exit,
 											const char *fmt, ...);
 void									expand_env_vars(t_list *tokens);
-t_list									*expand_token(t_token *token);
+/* t_list									*expand_token(t_token *token); */
+t_list									*expand_tokens(t_list *tokens);
 char									*expand_all_vars(char *token_str);
 t_list									*glob_tokens_2(t_list *tokens);
 void									join_tokens(t_list *tokens);
@@ -254,5 +257,6 @@ t_flags									get_flags(char key[static 1]);
 char									*ft_getuid(void);
 char									*ft_geteuid(void);
 char									*get_ifs(void);
+char									*repeat_string(char *str, size_t n);
 
 #endif /* minishell.h. */
