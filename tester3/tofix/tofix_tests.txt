@@ -1,0 +1,5 @@
+export --TEST=123
+export -TEST=100
+export -TEST=123
+export TEST+=100
+env | grep "SHLVL"
