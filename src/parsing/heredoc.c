@@ -34,7 +34,7 @@ char	*create_heredoc(char *delimiter)
 	{
 		if (shopt_enabled('i'))
 		{
-			ps2 = get_var("PS2")->value;
+			ps2 = expand_prompt(get_var("PS2")->value); // TODO: Can we ensure that there's always PS2?
 			interactive_signals();
 			input = readline(ps2);
 			noninteractive_signals();

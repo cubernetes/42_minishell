@@ -285,5 +285,6 @@ char									*quote_single(char *s);
 char									*quote_double(char *s);
 char									*quote_ansi_c(char *s,
 											bool bare_declare);
+char									*expand_prompt(char *prompt_string);
 
 #endif /* minishell.h. */

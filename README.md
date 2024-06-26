@@ -27,7 +27,7 @@
 - 🟩 shell (unexported) variables (`declare A=1`)
 - 🟩 readonly variables (`declare -r A=1`, `readonly B=1`)
 - 🟩 unset, yet declared variables (`declare A`, `export X`)
-- 🟧 different prompts (`PS0`, `PS1`, `PS2`, `PS4`)
+- 🟩 different prompts (`PS0`, `PS1`, `PS2`, `PS4`)
 - 🟩 prompt expansion (`\u, \w, \W, \h, \H, \$`)
 - 🟩 fallback mechanisms for username resolution in prompt
     1. 🟩 manual parsing of the binary Kerberos credential cache file (`/tmp/krb5cc_$EUID_...`)
@@ -45,7 +45,7 @@
     - 🟩 try `exit 9223372036854775808 1` vs. `exit 9223372036854775807 1` vs. `exit word 1`
     - 🟩 try `bash -c 'exit 42'`; `exit 1 1`; `echo $?` vs. `true`; `exit 1 1`; `echo $?`
 - 🟩 handling of ambiguous redirects
-- 🟥 the weird export edge case (`export l='ls -al' e=export && export newls=$l || true && $e newls2=$l || true && echo $newls && echo $newls2`)
+- 🟥 the weird export/declare/readonly edge case (`export l='ls -al' e=export && export newls=$l || true && $e newls2=$l || true && echo $newls && echo $newls2`).
 - 🟩 `?` glob character
 - 🟩 additional special parameters:
     1. 🟩 `$-` expanding to the active shell options
@@ -77,6 +77,7 @@
     - 🟥 `-v` to print every input line after it's read
     - 🟥 `-x` to print the arguments of a command before it's executed
     - 🟥 `-C` to disallow overwriting of existing regular files via redirections
+- 🟥 set builtin that can set all of the options from above (except `-s`, `-c`, `-l`, and `-i`) and set positional arguments
 - 🟥 execution of scripts via arguments
 - 🟥 sourcing of $HOME/.mshrc if it exists
 - 🟥 when invoked with `-l` or the first character of argv0 is a hyphen (`-`) (login shell)

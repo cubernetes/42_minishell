@@ -143,7 +143,7 @@ t_list	*get_lines(int fd)
 
 	if (shopt_enabled('c'))
 		return (lsplit(var_lookup("MINISHELL_EXECUTION_STRING"), "\n"));
-	ps1 = get_var("PS1")->value; // TOOD: Can we ensure that ps1 != NULL?
+	ps1 = expand_prompt(get_var("PS1")->value); // TOOD: Can we ensure that there's always PS1?
 	if (isatty(STDIN_FILENO))
 	{
 		interactive_signals();
@@ -165,18 +165,13 @@ t_list	*get_lines(int fd)
 		return (lnew());
 	if (*input && ft_strcmp(input, prev_input))
 		add_history(input);
+	if (shopt_enabled('n'))
+		ft_dprintf(STDERR_FILENO, "%s\n", input);
+	ft_dprintf(STDERR_FILENO, "%s", var_lookup("PS0"));
 	gc_start_context("POST");
 	prev_input = ft_strdup(input);
 	gc_end_context();
 	return (lsplit(input, "\n"));
-}
-
-void	expand_prompts(void)
-{
-	set_var("PS0", expand_prompt(PS0), get_flags("PS0"));
-	set_var("PS1", expand_prompt(PS1), get_flags("PS1"));
-	set_var("PS2", expand_prompt(PS2), get_flags("PS2"));
-	set_var("PS4", expand_prompt(PS4), get_flags("PS4"));
 }
 
 /* read-eval-print-loop */
@@ -186,7 +181,6 @@ void	repl(void)
 
 	while (true)
 	{
-		expand_prompts();
 		lines = get_lines(STDIN_FILENO);
 		if (lines->len == 0)
 			break ;
@@ -240,6 +234,10 @@ void	set_initial_shell_variables(char *argv[], char *envp[])
 	set_var("PPID", ft_getppid(), (t_flags){.readonly = true});
 	set_var("LINENO", "1", (t_flags){0});
 	set_var("SHLVL", ft_itoa(ft_atoi(var_lookup("SHLVL")) + 1), (t_flags){.exp = true});
+	set_var("PS0", PS0, (t_flags){0});
+	set_var("PS1", PS1, (t_flags){0});
+	set_var("PS2", PS2, (t_flags){0});
+	set_var("PS4", PS4, (t_flags){0});
 	set_pwd();
 }
 
