@@ -29,8 +29,10 @@ int	minishell_error(int exit_code, bool do_exit, const char *fmt, ...)
 
 static char	*get_dollar_prompt(void)
 {
-	if (ft_atoi(ft_geteuid()) == 0)
+	if (!ft_strcmp(ft_geteuid(), "0"))
 		return ("#");
+	else if (ft_geteuid()[0] == '\0')
+		return ("?");
 	return ("$");
 }
 
@@ -205,11 +207,114 @@ static int	noop(void)
 	return (0);
 }
 
+// default
+// (none)
+// default -i
+// i
+// default interactive (i cannot be removed)
+// is (adds i and s)
+// default non-interactive
+// s (adds s)
+// default -c
+// c (adds c)
+// default non-interactive with -i
+// is (adds i and s)
+// default -c with -i
+// ic (adds i and c)
+//
+// + - doesn't matter (cannot be negated)
+// cs
+// + - does matter, last one counts
+// aefintuvxC
+
+static void	set_shell_options(char *const argv[])
+{
+	t_list	*options;
+	bool	has_c;
+	char	erropt;
+	char	*opts;
+	int		i;
+	bool	implicit_s;
+
+	implicit_s = false;
+	has_c = false;
+	options = liter(ft_getopt_plus(argv, "acefinstuvxC", &erropt, &optind));
+	if (erropt)
+	{
+		(void)minishell_error(2, false, "-%c: invalid option", erropt);
+		ft_dprintf(STDERR_FILENO, "Usage:\t%s [option] ...\n\t%s [option] script-file ...\nShell options:\n\t-i or -c command (invocation only)\n\t-aefnstuvxC\n", MINISHELL_NAME, MINISHELL_NAME);
+		finish(false);
+		exit(2);
+	}
+	opts = "";
+	liter(options);
+	while (lnext(options))
+	{
+		if ((char)options->current->as_getopt_arg == 'c')
+		{
+			if (!ft_strchr(opts, 'c'))
+				opts = ft_strjoin(opts, "c");
+		}
+		else if ((char)options->current->as_getopt_arg == 's')
+		{
+			if (!ft_strchr(opts, 's'))
+				opts = ft_strjoin(opts, "s");
+		}
+		else if (options->current->as_getopt_arg & 1 << 8 && ft_strchr(opts, (char)options->current->as_getopt_arg))
+			opts = ljoin(lsplit(opts, ft_strndup(&(char){(char)options->current->as_getopt_arg}, 1)), "");
+		else if (!ft_strchr(opts, (char)options->current->as_getopt_arg))
+			opts = ft_strjoin(opts, ft_strndup(&(char){(char)options->current->as_getopt_arg}, 1));
+
+	}
+	if (!ft_strchr(opts, 'c'))
+	{
+		if (!ft_strchr(opts, 's'))
+		{
+			opts = ft_strjoin(opts, "s");
+			implicit_s = true;
+		}
+		if (isatty(STDIN_FILENO))
+			if (!ft_strchr(opts, 'i'))
+				opts = ft_strjoin(opts, "i");
+	}
+	set_var("$", ft_getpid(), (t_flags){.special = true});
+	set_var("PPID", ft_getppid(), (t_flags){.readonly = true});
+	set_var("-", opts, (t_flags){.special = true});
+	set_var("0", argv[0], (t_flags){.special = true});
+	argv += optind;
+	if (ft_strchr(opts, 'c'))
+	{
+		if (*argv == NULL)
+			minishell_error(2, true, "-c: option requires an argument");
+		set_var("MINISHELL_EXECUTION_STRING", *argv, (t_flags){0});
+		++argv;
+	}
+	if (ft_strchr(opts, 'c') || (ft_strchr(opts, 's') && !implicit_s))
+	{
+		i = 1;
+		if (ft_strchr(opts, 'c'))
+			i = 0;
+		while (*argv)
+		{
+			set_var(ft_itoa(i), *argv, (t_flags){.special = true});
+			++argv;
+			++i;
+		}
+		set_var("#", ft_itoa(i - 1), (t_flags){.special = true});
+	}
+	else if (*argv != NULL)
+	{
+		ft_printf("Not implemented yet...\n");
+		// run/source script or smth
+	}
+}
+
 void	init(char *argv[], char *envp[])
 {
 	set_allocator(gc_malloc);
 	gc_set_context("DEFAULT");
 	set_initial_shell_variables(argv, envp);
+	set_shell_options(argv);
 	rl_event_hook = noop;
 }
 
@@ -242,6 +347,15 @@ void	init(char *argv[], char *envp[])
 /* TODO: unlink heredoc */
 /* TODO: set default ifs, do not inherit */
 /* TODO: set default hostname to localhost in ft_gethostname */
+/* TODO: Empty IFS? */
+/* TODO: Empty delimiter with ljoin? */
+/* TODO: Empty delimiter with lsplit? */
+/* TODO: Usage infos for builtins */
+/* TODO: help builtin */
+/* TODO: Source builtin */
+/* TODO: shift builtin */
+/* TODO: ; control operator */
+/* TODO: ASSIGNMENT_WORDS */
 int	main(int argc, char *argv[], char *envp[])
 {
 	/* close(3); close(63); */

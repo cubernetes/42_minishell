@@ -5,7 +5,7 @@
 
 /* From declare_utils.c, normally static, but you know, max 5 functions... */
 bool	sort_vars(t_data data1, t_data data2);
-void	add_var_flags(char key[static 1],
+int		add_var_flags(char key[static 1],
 			char *value,
 			t_declare_flags flags,
 			t_var *orig_var);
@@ -147,18 +147,14 @@ static int	declare_print(char *name, char **argv, t_fds fds)
 
 static bool	has_flag(t_var *var, t_declare_flags flags)
 {
-	bool	has;
 
-	has = false;
-	if (flags.export)
-		if (var->exp)
-			has = true;
-	if (flags.readonly)
-		if (var->readonly)
-			has = true;
+	if (flags.export && var->exp)
+		return (true);
+	if (flags.readonly &&var->readonly)
+		return (true);
 	if (!(flags.export || flags.readonly))
-		has = true;
-	return (has);
+		return (true);
+	return (false);
 }
 
 static int	declare_print_all(t_declare_flags flags, t_fds fds)
@@ -200,12 +196,12 @@ static int	declare_set(char *name, char **argv, t_declare_flags flags)
 						"%s: %s: readonly variable", name, key);
 				value = orig_var->value;
 			}
-			add_var_flags(key, value, flags, orig_var);
+			exit_status = add_var_flags(key, value, flags, orig_var);
 		}
 		else if (key_value->len == 1 && orig_var)
-			add_var_flags(key, orig_var->value, flags, orig_var);
+			exit_status = add_var_flags(key, orig_var->value, flags, orig_var);
 		else if (key_value->len == 1)
-			add_var_flags(key, NULL, flags, orig_var);
+			exit_status = add_var_flags(key, NULL, flags, orig_var); // TODO: Must not change value of readonly var!
 		++argv;
 	}
 	return (exit_status);
@@ -233,19 +229,29 @@ int	builtin_declare(char **argv, t_fds fds)
 	char			erropt;
 	t_declare_flags	flags;
 
-	opts = liter(ft_getopt(argv, "pxr", &erropt, &optind));
+	opts = liter(ft_getopt_plus(argv, "pxr", &erropt, &optind));
 	if (erropt)
 		return (llast(opts), minishell_error(1, false,
 				"%s: -%c: invalid option", argv[0], erropt));
 	flags = (struct s_declare_flags){0};
 	while (lnext(opts))
 	{
-		if (opts->current->as_char == 'p')
+		if ((char)opts->current->as_getopt_arg == 'p')
 			flags.print = true;
-		if (opts->current->as_char == 'r')
-			flags.readonly = true;
-		if (opts->current->as_char == 'x')
-			flags.export = true;
+		if ((char)opts->current->as_getopt_arg == 'r')
+		{
+			if (opts->current->as_getopt_arg & 1 << 8)
+				flags.not_readonly = true;
+			else
+				flags.readonly = true;
+		}
+		if ((char)opts->current->as_getopt_arg == 'x')
+		{
+			if (opts->current->as_getopt_arg & 1 << 8)
+				flags.not_export = true;
+			else
+				flags.export = true;
+		}
 	}
 	if (flags.print && argv[optind] != NULL)
 		return (declare_print(argv[0], argv + optind, fds));

@@ -101,7 +101,9 @@ typedef struct sigaction		t_sa;
 struct s_declare_flags
 {
 	bool	readonly;
+	bool	not_readonly;
 	bool	export;
+	bool	not_export;
 	bool	print;
 };
 
@@ -255,6 +257,8 @@ unsigned char							get_last_exit_status(void);
 t_flags									get_flags(char key[static 1]);
 char									*ft_getuid(void);
 char									*ft_geteuid(void);
+char									*ft_getpid(void);
+char									*ft_getppid(void);
 char									*get_ifs(void);
 char									*repeat_string(char *str, size_t n);
 

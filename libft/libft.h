@@ -46,6 +46,7 @@ enum e_type
 	TYPE_INT,
 	TYPE_SIZE_T,
 	TYPE_PID_T,
+	TYPE_GETOPT_ARG,
 	TYPE_CHAR,
 	TYPE_STR,
 	TYPE_PTR,
@@ -96,6 +97,7 @@ struct s_data
 		int				as_int;
 		size_t			as_size_t;
 		pid_t			as_pid_t;
+		int				as_getopt_arg;
 		char			as_char;
 		char			*as_str;
 		void			*as_ptr;
@@ -138,6 +140,7 @@ struct s_list_node
 			int				as_int;
 			size_t			as_size_t;
 			pid_t			as_pid_t;
+			int				as_getopt_arg;
 			char			as_char;
 			char			*as_str;
 			void			*as_ptr;
@@ -237,7 +240,10 @@ char							*ft_nullable_strdup(char const *s);
 char							*ft_strndup(char const *s, size_t len);
 int								ft_strncmp(char const *s1, char const *s2,
 									size_t n);
-int								ft_strcmp(char const *s1, char const *s2);
+int								ft_strcmp(char const s1[static 1],
+									char const s2[static 1]);
+int								ft_nullable_strcmp(char const *s1,
+									char const *s2);
 int								ft_streq(char const *s1, char const *s2);
 size_t							ft_strlen(char const s[static 1]);
 int								ft_toupper(int c);
@@ -316,6 +322,7 @@ t_data							as_int(int as_int);
 t_data							as_size_t(size_t as_size_t);
 t_data							as_char(char as_char);
 t_data							as_pid_t(pid_t as_pid_t);
+t_data							as_getopt_arg(int as_getopt_arg);
 t_data							as_var(t_var *as_var);
 t_data							as_str(char *as_str);
 t_data							as_ptr(void *as_ptr);
@@ -387,6 +394,10 @@ void							print_callstack(void);
 void							cmt(const char *cmd_str);
 size_t							ft_arrlen(char **strv);
 t_list							*ft_getopt(char *const argv[],
+									char valid_opts[static 1],
+									char *erropt,
+									int optind[static 1]);
+t_list							*ft_getopt_plus(char *const argv[],
 									char valid_opts[static 1],
 									char *erropt,
 									int optind[static 1]);

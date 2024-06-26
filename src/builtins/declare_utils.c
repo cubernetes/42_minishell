@@ -38,15 +38,36 @@ t_flags	get_flags(char key[static 1])
 		return ((t_flags){0});
 }
 
-void	add_var_flags(char key[static 1],
+/* TODO: Change name, since we're also setting vars */
+int	add_var_flags(char key[static 1],
 	char *value,
 	t_declare_flags flags,
 	t_var *orig_var)
 {
+	bool	readonly;
+	bool	export;
+	int		exit_status;
+
+	readonly = orig_var && orig_var->readonly;
+	export = orig_var && orig_var->exp;
+	exit_status = 0;
+	if (readonly && ft_nullable_strcmp(value, orig_var->value))
+		exit_status = minishell_error(1, false,
+			"declare: %s: readonly variable", key); // TODO: This is always "declare", is it?
+	if (flags.not_readonly && readonly && exit_status == 0)
+		exit_status = minishell_error(1, false,
+			"declare: %s: readonly variable", key); // TODO: This is always "declare", is it?
+	else if (flags.readonly && exit_status == 0)
+		readonly = true;
+	if (flags.not_export && exit_status == 0)
+		export = false;
+	else if (flags.export && exit_status == 0)
+		export = true;
 	set_var(key, value, (t_flags){
-		.exp = flags.export | (orig_var && orig_var->exp),
-		.readonly = flags.readonly | (orig_var && orig_var->readonly),
+		.exp = export,
+		.readonly = readonly,
 		.special = (orig_var && orig_var->special)
 	});
+	return (exit_status);
 }
 /* Not doing readonly checking here! */

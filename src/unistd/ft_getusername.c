@@ -1,6 +1,7 @@
 #include "minishell.h"
 #include "libft.h"
 
+/* TODO: Remove unnecessary headers */
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdio.h>
@@ -72,68 +73,15 @@ static int	parse_till_real(int fd)
 	return (0);
 }
 
-/* Return UID (0=real, effective, set saved, 3=filesystem) from /proc/self/status */
-char	*ft_get_specific_uid(int uid_type)
-{
-	char	*line;
-	int		fd;
-	t_list	*parts;
-
-	fd = open("/proc/self/status", O_RDONLY);
-	while (1)
-	{
-		line = get_next_line(fd);
-		if (line == NULL)
-			break ;
-		if (ft_strnstr(line, "Uid:", ft_strlen(line)))
-		{
-			parts = liter(lsplit(line, "\t"));
-			close(fd);
-			lrotate(parts, 1);
-			if (parts->len == 5)
-				return (parts->first->next->as_str);
-			if (uid_type == 0)
-				return (var_lookup("UID"));
-			return (var_lookup("EUID"));
-		}
-	}
-	if (uid_type == 0)
-		return (close(fd), var_lookup("UID"));
-	return (close(fd), var_lookup("EUID"));
-}
-
-/* Return real UID from /proc/self/status */
-char	*ft_getuid(void)
-{
-	return ft_get_specific_uid(0);
-}
-
-/* Return effective UID from /proc/self/status */
-char	*ft_geteuid(void)
-{
-	return ft_get_specific_uid(1);
-}
-
-// static char	*ft_getloginuid(void)
-// {
-// 	int		fd;
-// 	char	buf[BUFSIZ];
-// 	ssize_t	bytes_read;
-// 
-// 	fd = open("/proc/self/loginuid", O_RDONLY);
-// 	bytes_read = read(fd, buf, BUFSIZ);
-// 	buf[bytes_read] = 0;
-// 	close(fd);
-// 	if (!ft_strcmp(buf, "4294967295"))
-// 		return (var_lookup("EUID"));
-// 	return (ft_strdup(buf));
-// }
-
 static char	*get_krb_ticket_file(char *uid)
 {
 	DIR				*dirp;
 	struct dirent	*dp;
 	char			*name;
+	size_t			len;
+	char			*big;
+	char			*uid_u;
+	char			*little;
 
 	if (access("/tmp", F_OK))
 		return ("");
@@ -141,10 +89,10 @@ static char	*get_krb_ticket_file(char *uid)
 	dp = readdir(dirp);
 	while (dp != NULL)
 	{
-		size_t len = ft_strlen(dp->d_name);
-		char *big = ft_strnstr(dp->d_name, "krb5cc_", len);
-		char *uid_u = ft_strjoin(uid, "_");
-		char *little = ft_strjoin("_", uid_u);
+		len = ft_strlen(dp->d_name);
+		big = ft_strnstr(dp->d_name, "krb5cc_", len);
+		uid_u = ft_strjoin(uid, "_");
+		little = ft_strjoin("_", uid_u);
 		if (big)
 			len = ft_strlen(big);
 		if (big && ft_strnstr(big, little, len))

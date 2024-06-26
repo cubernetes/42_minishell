@@ -6,11 +6,11 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 15:06:03 by tischmid          #+#    #+#             */
-/*   Updated: 2023/11/22 15:06:04 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/06/26 00:44:16 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-int	ft_strcmp(char const *s1, char const *s2)
+int	ft_strcmp(char const s1[static 1], char const s2[static 1])
 {
 	unsigned char	*us1;
 	unsigned char	*us2;

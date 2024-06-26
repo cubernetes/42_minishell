@@ -6,7 +6,7 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:09:11 by tischmid          #+#    #+#              #
-#    Updated: 2024/06/14 22:52:56 by tosuman          ###   ########.fr        #
+#    Updated: 2024/06/26 00:44:51 by tischmid         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -68,6 +68,7 @@ SRC += ft_strlcpy.c
 SRC += ft_strlen.c
 SRC += ft_strncmp.c
 SRC += ft_strcmp.c
+SRC += ft_nullable_strcmp.c
 SRC += ft_streq.c
 SRC += ft_strnstr.c
 SRC += ft_strrchr.c

@@ -12,6 +12,7 @@ typedef struct s_args
 	char		*erropt;
 	t_list		*tmp;
 	char		*valid_opts;
+	bool		plus_arg;
 }	t_args;
 
 #endif /* ft_getopt.h. */

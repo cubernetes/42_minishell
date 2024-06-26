@@ -24,8 +24,8 @@ static bool	parse_arg(t_args *screw_norminette)
 				= screw_norminette->argv[*screw_norminette->i]
 				[*screw_norminette->j], *screw_norminette->optind
 				= *screw_norminette->i, true);
-		lpush(screw_norminette->tmp, as_char(screw_norminette->argv
-			[*screw_norminette->i][*screw_norminette->j]));
+		lpush(screw_norminette->tmp, as_getopt_arg((screw_norminette->plus_arg << 8) | (int)(screw_norminette->argv
+			[*screw_norminette->i][*screw_norminette->j])));
 	}
 	return (false);
 }
@@ -53,7 +53,50 @@ t_list	*ft_getopt(char *const argv[],
 				return (*optind = i + 1, opts);
 			tmp = lnew();
 			if (parse_arg(&(t_args){
-					argv, &i, &j, optind, erropt, tmp, valid_opts}))
+					argv, &i, &j, optind, erropt, tmp, valid_opts, 0}))
+				return (opts);
+			lextend(opts, tmp);
+		}
+		else
+			return (*optind = i, opts);
+	}
+	return (*optind = i, opts);
+}
+
+/* TODO: Remove ugliness */
+t_list	*ft_getopt_plus(char *const argv[],
+	char valid_opts[static 1],
+	char *erropt,
+	int optind[static 1])
+{
+	t_list	*opts;
+	t_list	*tmp;
+	int		i;
+	int		j;
+
+	init(&opts, &i, &erropt);
+	while (argv && argv[++i])
+	{
+		j = 0;
+		if (argv[i][j] == '-')
+		{
+			if (argv[i][j + 1] == '\0')
+				return (*optind = i, opts);
+			if (argv[i][j + 1] == '-' && argv[i][j + 2] == '\0')
+				return (*optind = i + 1, opts);
+			tmp = lnew();
+			if (parse_arg(&(t_args){
+					argv, &i, &j, optind, erropt, tmp, valid_opts, 0}))
+				return (opts);
+			lextend(opts, tmp);
+		}
+		else if (argv[i][j] == '+')
+		{
+			if (argv[i][j + 1] == '\0')
+				return (*optind = i, opts);
+			tmp = lnew();
+			if (parse_arg(&(t_args){
+					argv, &i, &j, optind, erropt, tmp, valid_opts, 1}))
 				return (opts);
 			lextend(opts, tmp);
 		}
