@@ -261,5 +261,6 @@ char									*ft_getpid(void);
 char									*ft_getppid(void);
 char									*get_ifs(void);
 char									*repeat_string(char *str, size_t n);
+bool									shopt_enabled(char opt);
 
 #endif /* minishell.h. */

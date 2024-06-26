@@ -14,7 +14,7 @@ int	minishell_error(int exit_code, bool do_exit, const char *fmt, ...)
 {
 	va_list	ap;
 
-	if (isatty(STDIN_FILENO) && do_exit)
+	if (shopt_enabled('i') && do_exit)
 		ft_dprintf(STDERR_FILENO, "exit\n");
 	va_start(ap, fmt);
 	ft_vdprintf(STDERR_FILENO, ft_strjoin(ft_strjoin(MINISHELL_NAME ": ", fmt), "\n"), ap);
@@ -109,16 +109,24 @@ void	interpret_lines(t_list *lines)
 	}
 }
 
+bool	shopt_enabled(char opt)
+{
+	return (ft_strchr(var_lookup("-"), opt) != NULL);
+}
+
 t_list	*get_lines(int fd)
 {
 	char		*input;
 	char		*ps1;
 	static char	*prev_input = "";
 
-	if (isatty(fd))
+	if (shopt_enabled('c'))
+		return (lsplit(var_lookup("MINISHELL_EXECUTION_STRING"), "\n"));
+	ps1 = get_var("PS1")->value; // TOOD: Can we ensure that ps1 != NULL?
+	if (isatty(STDIN_FILENO))
 	{
-		ps1 = get_var("PS1")->value;
 		interactive_signals();
+		rl_outstream = stderr;
 		input = readline(ps1);
 		noninteractive_signals();
 		gc_add(input);
@@ -127,6 +135,10 @@ t_list	*get_lines(int fd)
 	{
 		noninteractive_signals();
 		input = get_next_line(fd);
+		if (shopt_enabled('i') && input != NULL)
+			ft_dprintf(STDERR_FILENO, "%s", ft_strjoin(ps1, input));
+		else if (shopt_enabled('i'))
+			ft_dprintf(STDERR_FILENO, "%s", ps1);
 	}
 	if (input == NULL)
 		return (lnew());
@@ -157,13 +169,15 @@ void	repl(void)
 		if (lines->len == 0)
 			break ;
 		interpret_lines(lines);
+		if (shopt_enabled('c'))
+			break ;
 		gc_free("DEFAULT");
 	}
 }
 
 void	finish(bool print_exit)
 {
-	if (print_exit && isatty(STDIN_FILENO))
+	if (print_exit && (shopt_enabled('i') && !shopt_enabled('c')))
 		ft_dprintf(STDERR_FILENO, "exit\n");
 	rl_clear_history();
 	(void)gc_free_all();
@@ -309,6 +323,18 @@ static void	set_shell_options(char *const argv[])
 	}
 }
 
+static int	msh_getc(FILE *stream)
+{
+	int	c;
+
+	c = getc(stream);
+	if (!isatty(STDERR_FILENO))
+		ft_dprintf(0, "%c", c);
+	if (c == '\r' && !isatty(STDERR_FILENO))
+		ft_dprintf(0 ,"\n");
+	return (c);
+}
+
 void	init(char *argv[], char *envp[])
 {
 	set_allocator(gc_malloc);
@@ -316,6 +342,7 @@ void	init(char *argv[], char *envp[])
 	set_initial_shell_variables(argv, envp);
 	set_shell_options(argv);
 	rl_event_hook = noop;
+	rl_getc_function = msh_getc;
 }
 
 /* TODO: remove DEBUG macros */

@@ -59,6 +59,10 @@
 - shift builtin
 - `cd` with `-` argument
 - `-c` option with argv handling
+- Correct handling of:
+    - `./minishell 2>/dev/null`
+    - `./minishell | ./minishell | ...`
+    - `./minishell 2>/dev/null`
 <!-- TODO: Finish -->
 
 ## Notable implementation details

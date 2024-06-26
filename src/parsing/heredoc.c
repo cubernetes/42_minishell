@@ -32,7 +32,7 @@ char	*create_heredoc(char *delimiter)
 	fd = open(heredoc_file, O_CREAT | O_TRUNC | O_WRONLY, 0600);
 	while (1)
 	{
-		if (isatty(STDIN_FILENO))
+		if (shopt_enabled('i'))
 		{
 			ps2 = get_var("PS2")->value;
 			interactive_signals();
