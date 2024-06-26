@@ -38,6 +38,7 @@ int	builtin_cd(char **argv, t_fds fds)
 			var = get_var("HOME")->value;
 		if (!var)
 			return (minishell_error(1, false, "%s: HOME not set", name));
+		*argv = var;
 		status = chdir(var);
 	}
 	else if (!ft_strcmp(*argv, "-"))

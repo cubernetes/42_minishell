@@ -282,13 +282,19 @@ bool	tokenize_word(const char **line, t_list *tokens)
 {
 	size_t		len;
 	const char	*tmp;
+	bool		escaped;
 
 	if (is_word_char(**line) && is_not_and_and(*line))
 	{
 		len = 0;
 		tmp = *line;
-		while (is_word_char(*tmp) && is_not_and_and(tmp))
+		escaped = false;
+		while (escaped || (is_word_char(*tmp) && is_not_and_and(tmp)))
 		{
+			if (escaped == true)
+				escaped = false;
+			else if (*tmp == '\\')
+				escaped = true;
 			++tmp;
 			++len;
 		}
@@ -312,11 +318,72 @@ bool	tokenize_variable_len_tokens(const char **line, t_list *tokens)
 	return (true);
 }
 
+/* line will never contain a newline */
+/* context = 0 -> not quoted */
+/* context = 1 -> double quoted */
+/* context = 2 -> single quoted */
+static char	*process_backslashes(const char *line)
+{
+	int		context;
+	t_list	*result_chars;
+	int		idx;
+
+	context = 0;
+	result_chars = lnew();
+	idx = -1;
+	while (line[++idx])
+	{
+		if (line[idx] == '\\')
+		{
+			if (context == 2)
+				lpush(result_chars, as_str("\\"));
+			else if (context == 1)
+			{
+				if (ft_strchr("\"$\\", line[idx + 1]))
+				{
+					lpush(result_chars, as_str("\"'"));
+					lpush(result_chars, as_str(ft_strndup(&line[idx + 1], 1)));
+					lpush(result_chars, as_str("'\""));
+					++idx;
+				}
+				else
+					lpush(result_chars, as_str("\\"));
+			}
+			else
+			{
+				if (line[idx + 1] == '\'')
+					lpush(result_chars, as_str("\"'\""));
+				else
+				{
+					lpush(result_chars, as_str("'"));
+					lpush(result_chars, as_str(ft_strndup(&line[idx + 1], 1)));
+					lpush(result_chars, as_str("'"));
+				}
+				++idx;
+			}
+		}
+		else
+		{
+			lpush(result_chars, as_str(ft_strndup(&line[idx], 1)));
+			if (context == 0 && line[idx] == '\'')
+				context = 2;
+			else if (context == 0 && line[idx] == '"')
+				context = 1;
+			else if (context == 1 && line[idx] == '"')
+				context = 0;
+			else if (context == 2 && line[idx] == '\'')
+				context = 0;
+		}
+	}
+	return (ljoin(result_chars, ""));
+}
+
 /* TODO: set is_last_token member for each token */
 t_list	*tokenize(const char *line)
 {
 	t_list	*tokens;
 
+	/* line = process_backslashes(line); */
 	tokens = lnew();
 	skip_space_tab(&line);
 	while (true)

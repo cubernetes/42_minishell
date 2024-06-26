@@ -81,6 +81,19 @@
 - sourcing of $HOME/.mshrc if it exists
 - when invoked with `-l` or the first character of argv0 is a hyphen (`-`) (login shell)
     - sourcing of $HOME/.msh_profile if it exists, otherwise $HOME/.profile if it exists
+- handling of line continuations in the following contexts:
+    - unfinished single quote
+    - unfinished double quote
+    - escaped newline
+    - unfinished subshell
+    - unfinished pipeline
+    - unfinished control operator (`&&`, `||`)
+    - here-documents
+- The exlamation point (`!`) reserved word for negation of the exit status of a pipeline
+- comments using the hash symbol (`#`)
+- the semicolon control operator (`;`)
+- handling of backslash-escaping in unquoted and double-quoted contexts
+- ANSI C quoting
 <!-- TODO: Finish -->
 
 ## Notable implementation details
