@@ -13,7 +13,7 @@
 # define PS1 "\033[31m\\u\033[m@\033[94m\\h\033[m@\033[92mminishell\033[m [\033[32m\\w\033[m]\n\\$ "
 # define PS2 "> "
 
-# define MINISHELL_NAME "minishell"
+# define MINISHELL_NAME "minishell" // TODO: USE $0
 
 # define DEFAULT_IFS " \t\n"
 # define IFS_WHITESPACE "\x09\x0a\x0b\x0c\x0d\x20" /* LC_CTYPE="en_US.UTF-8" */

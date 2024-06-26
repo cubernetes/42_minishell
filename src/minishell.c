@@ -252,11 +252,11 @@ static void	set_shell_options(char *const argv[])
 
 	implicit_s = false;
 	has_c = false;
-	options = liter(ft_getopt_plus(argv, "acefinstuvxC", &erropt, &optind));
+	options = liter(ft_getopt_plus(argv, "acefilnstuvxC", &erropt, &optind));
 	if (erropt)
 	{
 		(void)minishell_error(2, false, "-%c: invalid option", erropt);
-		ft_dprintf(STDERR_FILENO, "Usage:\t%s [option] ...\n\t%s [option] script-file ...\nShell options:\n\t-i or -c command (invocation only)\n\t-aefnstuvxC\n", MINISHELL_NAME, MINISHELL_NAME);
+		ft_dprintf(STDERR_FILENO, "Usage:\t%s [option] ...\n\t%s [option] script-file ...\nShell options:\n\t-ils or -c command (invocation only)\n\t-aefnstuvxC\n", MINISHELL_NAME, MINISHELL_NAME);
 		finish(false);
 		exit(2);
 	}
@@ -276,7 +276,7 @@ static void	set_shell_options(char *const argv[])
 		}
 		else if (options->current->as_getopt_arg & 1 << 8 && ft_strchr(opts, (char)options->current->as_getopt_arg))
 			opts = ljoin(lsplit(opts, ft_strndup(&(char){(char)options->current->as_getopt_arg}, 1)), "");
-		else if (!ft_strchr(opts, (char)options->current->as_getopt_arg))
+		else if (!ft_strchr(opts, (char)options->current->as_getopt_arg) && (char)options->current->as_getopt_arg != 'l')
 			opts = ft_strjoin(opts, ft_strndup(&(char){(char)options->current->as_getopt_arg}, 1));
 
 	}
