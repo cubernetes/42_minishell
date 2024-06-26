@@ -30,10 +30,10 @@
 - 🟧 different prompts (`PS0`, `PS1`, `PS2`, `PS4`)
 - 🟩 prompt expansion (`\u, \w, \W, \h, \H, \$`)
 - 🟩 fallback mechanisms for username resolution in prompt
-    1 🟩 manual parsing of the binary Kerberos credential cache file (`/tmp/krb5cc_$EUID_...`)
+    1. 🟩 manual parsing of the binary Kerberos credential cache file (`/tmp/krb5cc_$EUID_...`)
         - 🟩 `EUID` retrieved via manual parsing of `/proc/self/status`
-    2 🟩 manual parsing of `/etc/passwd`
-    3 🟩 `EUID` env var
+    2. 🟩 manual parsing of `/etc/passwd`
+    3. 🟩 `EUID` env var
 - 🟩 fallback mechanisms for hostname resolution in prompt (`/etc/hostname`, then `/proc/sys/kernel/hostname`)
 - 🟩 creation of subshells when using parenthesis
 - 🟩 sequential expansion of lists (try `export A=1 && echo $A`)
@@ -48,12 +48,12 @@
 - 🟥 the weird export edge case (`export l='ls -al' e=export && export newls=$l || true && $e newls2=$l || true && echo $newls && echo $newls2`)
 - 🟩 `?` glob character
 - 🟩 additional special parameters:
-    1 🟩 `$-` expanding to the active shell options
-    2 🟩 `$$` expanding to the the current PID of the shell
-    3 🟩 `$0` to `$9` expanding to the positional arguments of minishell (specified after `-c`)
-    3 🟩 `$#` expanding to the number of positional argument
-    4 🟥 `$@` expanding to all positional argument, with word splitting when quoted
-    5 🟥 `$*` expanding to all positional argument, joining with `IFS[0]` when quoted
+    1. 🟩 `$-` expanding to the active shell options
+    2. 🟩 `$$` expanding to the the current PID of the shell
+    3. 🟩 `$0` to `$9` expanding to the positional arguments of minishell (specified after `-c`)
+    3. 🟩 `$#` expanding to the number of positional argument
+    4. 🟥 `$@` expanding to all positional argument, with word splitting when quoted
+    5. 🟥 `$*` expanding to all positional argument, joining with `IFS[0]` when quoted
 - 🟩 default (and automatic/special) variables
     - 🟩 PPID, MINISHELL_EXECUTION_STRING, LINENO/CURRENT_LINE
 - 🟥 shift builtin
