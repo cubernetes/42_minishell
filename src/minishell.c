@@ -119,14 +119,19 @@ void	interpret_lines(t_list *lines)
 {
 	t_tree	*tree;
 
-	liter(lines);
-	while (lnext(lines))
+	while (lines->len > 0)
 	{
-		set_var("CURRENT_LINE", lines->current->as_str, (t_flags){0});
-		tree = parse(lines->current->as_str);
+		set_var("CURRENT_LINE", lines->first->as_str, (t_flags){0});
+		tree = parse(lines->first->as_str);
 		if (heredoc_aborted(-1) == false || tree == NULL)
 			exec(tree);
 		set_var("LINENO", ft_itoa(ft_atoi(var_lookup("LINENO")) + 1), get_flags("LINENO"));
+		lpop_left(lines);
+		if (get_var("MINISHELL_SOURCE_EXECUTION_STRING") && get_var("MINISHELL_SOURCE_EXECUTION_STRING")->value)
+		{
+			lextend(lines, lsplit(var_lookup("MINISHELL_SOURCE_EXECUTION_STRING"), "\n"));
+			set_var("MINISHELL_SOURCE_EXECUTION_STRING", NULL, get_flags("MINISHELL_SOURCE_EXECUTION_STRING"));
+		}
 	}
 }
 
@@ -233,11 +238,14 @@ void	set_initial_shell_variables(char *argv[], char *envp[])
 	set_var("$", ft_getpid(), (t_flags){.special = true});
 	set_var("PPID", ft_getppid(), (t_flags){.readonly = true});
 	set_var("LINENO", "1", (t_flags){0});
+	// TODO: Depends on if interactive or not
 	set_var("SHLVL", ft_itoa(ft_atoi(var_lookup("SHLVL")) + 1), (t_flags){.exp = true});
+	set_var("_", argv[0], (t_flags){0});
 	set_var("PS0", PS0, (t_flags){0});
 	set_var("PS1", PS1, (t_flags){0});
 	set_var("PS2", PS2, (t_flags){0});
 	set_var("PS4", PS4, (t_flags){0});
+	set_var("MINISHELL_SOURCE_EXECUTION_STRING", NULL, (t_flags){.readonly = true});
 	set_pwd();
 }
 

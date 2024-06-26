@@ -371,7 +371,7 @@ bool	is_word_char(char c)
 	return ((bool)(
 		c
 		&& c != ' ' && c != '\t'
-		&& !ft_strchr("><()'\"|", c)
+		&& !ft_strchr(";><()'\"|", c)
 	));
 }
 

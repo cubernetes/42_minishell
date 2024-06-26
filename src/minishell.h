@@ -208,7 +208,7 @@ void									expand_env_vars(t_list *tokens);
 t_list									*expand_tokens(t_list *tokens);
 char									*expand_all_vars(char *token_str);
 void									join_tokens(t_list *tokens);
-char									**get_env(void);
+char									**get_env(char *program);
 char									*var_lookup(char *key);
 char									**set_argv(char **argv);
 char									**get_argv(void);
@@ -244,6 +244,7 @@ int										builtin_readonly(char **argv,
 int										builtin_declare(char **argv, t_fds fds);
 int										builtin_pwd(char **argv, t_fds fds);
 int										builtin_unset(char **argv, t_fds fds);
+int										builtin_source(char **argv, t_fds fds);
 char									*ft_gethostname(void);
 char									*ft_getusername(void);
 char									*ft_getcwd(void);

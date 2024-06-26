@@ -1,6 +1,9 @@
 #include "minishell.h"
+
 #include <unistd.h>
+#include <string.h>
 #include <stdlib.h>
+#include <errno.h>
 
 static char	*normalize(char *path)
 {
@@ -53,7 +56,7 @@ int	builtin_cd(char **argv, t_fds fds)
 	else
 		status = chdir(*argv);
 	if (status == -1)
-		return (minishell_error(1, false, false, "%s: %s: No such file or directory", name, *argv));
+		return (minishell_error(1, false, false, "%s: %s: %s", name, *argv, strerror(errno)));
 	else
 	{
 		if (get_var("PWD") == NULL)

@@ -55,7 +55,7 @@
     4. 🟥 `$@` expanding to all positional argument, with word splitting when quoted
     5. 🟥 `$*` expanding to all positional argument, joining with `IFS[0]` when quoted
 - 🟩 default (and automatic/special) variables
-    - 🟩 PPID, MINISHELL_EXECUTION_STRING, LINENO/CURRENT_LINE
+    - 🟩 PPID, _, MINISHELL_EXECUTION_STRING, LINENO/CURRENT_LINE, SHLVL
 - 🟥 shift builtin
 - 🟥 source builtin
 - 🟩 `cd` with `-` argument

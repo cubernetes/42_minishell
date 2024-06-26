@@ -54,7 +54,7 @@ void	set_fds(t_tree *command)
 		dup2(err, STDERR_FILENO);
 }
 
-static char	*search_executable(char *program, char **path_parts)
+static char	*search_executable(char *program, char **path_parts) // TODO: Not correct, not searching for executables, maybe use stat instead
 {
 	char	*path;
 	char	*executable_path;
@@ -66,7 +66,7 @@ static char	*search_executable(char *program, char **path_parts)
 	{
 		path = ft_strjoin(*path_parts, "/");
 		executable_path = ft_strjoin(path, program);
-		if (!access(executable_path, R_OK)
+		if (!access(executable_path, X_OK)
 			&& open(executable_path, O_DIRECTORY) == -1)
 			break ;
 		executable_path = NULL;
@@ -92,6 +92,8 @@ static char	**make_argv(t_tree *simple_command)
 	while (lnext(d_argv))
 		argv[i++] = d_argv->current->as_str;
 	argv[i] = NULL;
+	// if (i > 0)
+	// 	set_var("_", argv[i - 1], (t_flags){0});
 	return (argv);
 }
 
@@ -102,16 +104,19 @@ void	close_other_command_fds(t_list *commands)
 		close_fds(commands->current->as_tree);
 }
 
+/* deliberately disable env, since wtf, env should NOT be a builtin */
+/* pedago fu'ed up here */
+		/* || ft_strcmp(word, "env") == 0 */
 bool	is_builtin(char	*word)
 {
 	return (ft_strcmp(word, "cd") == 0
 		|| ft_strcmp(word, "echo") == 0
-		|| ft_strcmp(word, "env") == 0
 		|| ft_strcmp(word, "exit") == 0
 		|| ft_strcmp(word, "export") == 0
 		|| ft_strcmp(word, "pwd") == 0
 		|| ft_strcmp(word, "readonly") == 0
 		|| ft_strcmp(word, "declare") == 0
+		|| ft_strcmp(word, "source") == 0
 		|| ft_strcmp(word, ".") == 0
 		|| ft_strcmp(word, "unset") == 0);
 }
@@ -138,7 +143,21 @@ int	handle_builtin(char	*argv[], t_fds fds)
 		return (builtin_declare(argv, fds));
 	else if (ft_strcmp(*argv, "unset") == 0)
 		return (builtin_unset(argv, fds));
+	else if (ft_strcmp(*argv, "source") == 0)
+		return (builtin_source(argv, fds));
+	else if (ft_strcmp(*argv, ".") == 0)
+		return (builtin_source(argv, fds));
 	return (1);
+}
+
+static void	set_underscore(char *const argv[])
+{
+	if (*argv == NULL)
+		return ;
+	while (*argv)
+		++argv;
+	--argv;
+	set_var("_", *argv, (t_flags){0});
 }
 
 int	handle_builtin_wrapper(char	*argv[], t_tree *simple_command)
@@ -167,6 +186,7 @@ int	handle_builtin_wrapper(char	*argv[], t_tree *simple_command)
 	simple_command->fd_in = -2;
 	simple_command->fd_out = -2;
 	simple_command->fd_err = -2;
+	set_underscore(argv);
 	return (exit_status);
 }
 
@@ -214,13 +234,19 @@ pid_t	execute_simple_command(t_tree *simple_command, t_list *commands)
 		return (handle_builtin_wrapper(argv, simple_command) - 257);
 	program = search_executable(argv[0], path_parts);
 	if (!program && !is_builtin(argv[0]))
-		return (/*close_fds(simple_command),*/ minishell_error(EXIT_COMMAND_NOT_FOUND, false, false,
-				"%s: command not found", argv[0]), -1);
+	{
+		/*close_fds(simple_command),*/
+		minishell_error(EXIT_COMMAND_NOT_FOUND, false, false, "%s: command not found", argv[0]);
+		if (simple_command->fd_in == -2 && simple_command->fd_out == -2) // only set underscore in foreground cmds
+			set_underscore(argv);
+		return (-1);
+	}
 	pid = fork();
 	if (pid < 0)
 		(close_fds(simple_command), minishell_error(FORK_ERROR, true, false, "%s", strerror(errno)));
 	if (pid > 0)
 		return (close_fds(simple_command), pid);
+	set_var("_", get_argv()[0], (t_flags){0});
 	set_fds(simple_command);
 	close_other_command_fds(commands);
 	if (is_builtin(argv[0]))
@@ -229,7 +255,7 @@ pid_t	execute_simple_command(t_tree *simple_command, t_list *commands)
 		finish(false);
 		exit(exit_status);
 	}
-	execve(program, argv, get_env());
+	execve(program, argv, get_env(program));
 	exit_status = errno;
 	if (open(program, O_DIRECTORY) != -1)
 		minishell_error(EXECVE_ERR, false, false, "%s: %s", program, "Is a directory");
