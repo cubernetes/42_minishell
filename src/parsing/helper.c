@@ -1,5 +1,5 @@
-#include "libft.h"
 #include "minishell.h"
+#include "libft.h"
 
 /* TODO: Not required: hashtable */
 const char	*tree_type_to_string(t_tree_type type)
@@ -84,10 +84,10 @@ int	get_production_idx(t_tree_type nonterm, t_token *token)
 	if (production_idx == -1)
 	{
 		if (!*token->str)
-			minishell_error(2, false,
+			minishell_error(2, !shopt_enabled('i'), true,
 				"syntax error near unexpected token `newline'");
 		else
-			minishell_error(2, false, "syntax error near unexpected token `%s'",
+			minishell_error(2, !shopt_enabled('i'), true, "syntax error near unexpected token `%s'",
 				token->str);
 	}
 	return (production_idx);

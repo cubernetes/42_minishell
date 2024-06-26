@@ -54,8 +54,8 @@
     3. `$#` expanding to the number of positional argument
     4. `$@` expanding to all positional argument, with word splitting when quoted
     5. `$*` expanding to all positional argument, joining with `IFS[0]` when quoted
-- default variables
-    - PPID, MINISHELL_EXECUTION_STRING
+- default (and automatic/special) variables
+    - PPID, MINISHELL_EXECUTION_STRING, LINENO/CURRENT_LINE
 - shift builtin
 - source builtin
 - `cd` with `-` argument

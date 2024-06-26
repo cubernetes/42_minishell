@@ -52,10 +52,10 @@ int	add_var_flags(char key[static 1],
 	export = orig_var && orig_var->exp;
 	exit_status = 0;
 	if (readonly && ft_nullable_strcmp(value, orig_var->value))
-		exit_status = minishell_error(1, false,
+		exit_status = minishell_error(1, false, false,
 			"declare: %s: readonly variable", key); // TODO: This is always "declare", is it?
 	if (flags.not_readonly && readonly && exit_status == 0)
-		exit_status = minishell_error(1, false,
+		exit_status = minishell_error(1, false, false,
 			"declare: %s: readonly variable", key); // TODO: This is always "declare", is it?
 	else if (flags.readonly && exit_status == 0)
 		readonly = true;

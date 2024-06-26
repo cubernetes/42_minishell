@@ -57,7 +57,7 @@ char	*create_heredoc(char *delimiter)
 	}
 	close(fd);
 	if (input == NULL)
-		minishell_error(0, false,
+		minishell_error(0, false, false,
 			"warning: here-document delimited by end-of-file (wanted `%s')",
 			delimiter);
 	return (heredoc_file);

@@ -10,15 +10,34 @@
 #include <unistd.h>            /* STDERR_FILENO */
 #include <stdbool.h>
 
-int	minishell_error(int exit_code, bool do_exit, const char *fmt, ...)
+int	minishell_error(int exit_code, bool do_exit, bool syntax_error, const char *fmt, ...)
 {
 	va_list	ap;
+	char	*errfmt;
+	char	*err;
 
 	if (shopt_enabled('i') && do_exit)
 		ft_dprintf(STDERR_FILENO, "exit\n");
 	va_start(ap, fmt);
-	ft_vdprintf(STDERR_FILENO, ft_strjoin(ft_strjoin(MINISHELL_NAME ": ", fmt), "\n"), ap);
+	errfmt = ft_strjoin(var_lookup("0"), ": ");
+	/* errfmt = ft_strjoin("bash", ": "); */
+	if (!shopt_enabled('i'))
+	{
+		if (shopt_enabled('c') && syntax_error)
+			errfmt = ft_strjoin(errfmt, "-c: ");
+		errfmt = ft_strjoin(errfmt, ft_strjoin("line ",
+					ft_strjoin(var_lookup("LINENO"), ": ")));
+	}
+	errfmt = ft_replace_all(errfmt, "%", "%%");
+	err = ft_strjoin(errfmt, fmt);
+	err = ft_strjoin(err, "\n");
+	ft_vdprintf(STDERR_FILENO, err, ap);
 	va_end(ap);
+	if (!shopt_enabled('i') && syntax_error)
+	{
+		err = ft_strjoin(errfmt, "`%s'\n");
+		ft_dprintf(STDERR_FILENO, err, var_lookup("CURRENT_LINE"));
+	}
 	if (do_exit)
 	{
 		finish(false);
@@ -103,9 +122,11 @@ void	interpret_lines(t_list *lines)
 	liter(lines);
 	while (lnext(lines))
 	{
+		set_var("CURRENT_LINE", lines->current->as_str, (t_flags){0});
 		tree = parse(lines->current->as_str);
 		if (heredoc_aborted(-1) == false || tree == NULL)
 			exec(tree);
+		set_var("LINENO", ft_itoa(ft_atoi(var_lookup("LINENO")) + 1), get_flags("LINENO"));
 	}
 }
 
@@ -217,6 +238,8 @@ void	set_initial_shell_variables(char *argv[], char *envp[])
 	unset_var("MINISHELL_XTRACEFD"); // TODO: If it has a value and is unset or set to a new value, the fd corresponding to the old value shall be closed.
 	set_var("$", ft_getpid(), (t_flags){.special = true});
 	set_var("PPID", ft_getppid(), (t_flags){.readonly = true});
+	set_var("LINENO", "1", (t_flags){0});
+	set_var("SHLVL", ft_itoa(ft_atoi(var_lookup("SHLVL")) + 1), (t_flags){.exp = true});
 	set_pwd();
 }
 
@@ -259,7 +282,7 @@ static void	set_shell_options(char *const argv[])
 	options = liter(ft_getopt_plus(argv, "acefilnstuvxC", &erropt, &optind));
 	if (erropt)
 	{
-		(void)minishell_error(2, false, "-%c: invalid option", erropt);
+		(void)minishell_error(2, false, false, "-%c: invalid option", erropt);
 		ft_dprintf(STDERR_FILENO, "Usage:\t%s [option] ...\n\t%s [option] script-file ...\nShell options:\n\t-ils or -c command (invocation only)\n\t-aefnstuvxC\n", MINISHELL_NAME, MINISHELL_NAME);
 		finish(false);
 		exit(2);
@@ -301,7 +324,7 @@ static void	set_shell_options(char *const argv[])
 	if (ft_strchr(opts, 'c'))
 	{
 		if (*argv == NULL)
-			minishell_error(2, true, "-c: option requires an argument");
+			minishell_error(2, true, false, "-c: option requires an argument");
 		set_var("MINISHELL_EXECUTION_STRING", *argv, (t_flags){0});
 		++argv;
 	}

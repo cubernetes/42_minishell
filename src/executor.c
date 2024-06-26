@@ -31,7 +31,7 @@ void	redirect_heredoc(char *file_path, t_tree *simple_command)
 			close(fd);
 		if (new_hd_fd != -1)
 			close(new_hd_fd);
-		simple_command->error = minishell_error(1, false,
+		simple_command->error = minishell_error(1, false, false,
 				"%s: %s", file_path, strerror(errno));
 		(void)unlink(new_hd);
 		(void)unlink(file_path);
@@ -55,7 +55,7 @@ void	redirect_heredoc(char *file_path, t_tree *simple_command)
 		(void)unlink(file_path);
 		if (new_hd_fd == -1)
 		{
-			simple_command->error = minishell_error(1, false,
+			simple_command->error = minishell_error(1, false, false,
 					"%s: %s", file_path, strerror(errno));
 			return ;
 		}
@@ -74,7 +74,7 @@ void	handle_redirect_input(char *file_path, t_tree *simple_command)
 
 	fd = open(file_path, O_RDONLY);
 	if (fd == -1)
-		simple_command->error = minishell_error(1, false,
+		simple_command->error = minishell_error(1, false, false,
 				"%s: %s", file_path, strerror(errno));
 	else
 	{
@@ -91,9 +91,9 @@ void	handle_redirect_append(char *file_path, t_tree *simple_command, bool red_er
 	int		fd;
 	int		sc_fd;
 
-	fd = open(file_path, O_WRONLY | O_APPEND | O_CREAT, ft_getumask());
+	fd = open(file_path, O_WRONLY | O_APPEND | O_CREAT, 0666 & ~ft_getumask());
 	if (fd == -1)
-		simple_command->error = minishell_error(1, false,
+		simple_command->error = minishell_error(1, false, false,
 				"%s: %s", file_path, strerror(errno));
 	else
 	{
@@ -118,9 +118,9 @@ void	handle_redirect_override(char *file_path, t_tree *simple_command, bool red_
 
 	if (shopt_enabled('C'))
 		; // TODO: Implement
-	fd = open(file_path, O_WRONLY | O_TRUNC | O_CREAT, ft_getumask());
+	fd = open(file_path, O_WRONLY | O_TRUNC | O_CREAT, 0666 & ~ft_getumask());
 	if (fd == -1)
-		simple_command->error = minishell_error(1, false,
+		simple_command->error = minishell_error(1, false, false,
 				"%s: %s", file_path, strerror(errno));
 	else
 	{
@@ -146,7 +146,7 @@ int	handle_io_redirect(t_tree *io_redirect, t_tree *simple_command)
 	type = io_redirect->children->first->as_tree->token->type;
 	file_path = io_redirect->children->first->next->as_tree->token->str;
 	if (io_redirect->children->first->next->as_tree->token->num_tokens_after_split != 1)
-		return (simple_command->error = minishell_error(1, false, "%s: ambiguous redirect", io_redirect->children->first->next->as_tree->token->origin));
+		return (simple_command->error = minishell_error(1, false, false, "%s: ambiguous redirect", io_redirect->children->first->next->as_tree->token->origin));
 	if (type == TOK_OVERRIDE)
 		handle_redirect_override(file_path, simple_command, false);
 	else if (type == TOK_OVERRIDE_ERR)
@@ -227,14 +227,14 @@ unsigned char	wait_pipe_sequence(t_list *pids)
 		noninteractive_signals();
 		rtn = waitpid(pids->current->as_pid_t, &status, 0);
 		if (rtn == -1)
-			minishell_error(EXIT_WAIT_ERROR, false, "wait error: %s",
+			minishell_error(EXIT_WAIT_ERROR, false, false, "wait error: %s",
 				strerror(errno));
 		if (WIFEXITED(status))
 			status = WEXITSTATUS(status);
 		else if (WIFSIGNALED(status))
 			status = 128 + WTERMSIG(status);
 		else
-			minishell_error(EXIT_WAIT_ERROR, false, "process ended unexpectedly",
+			minishell_error(EXIT_WAIT_ERROR, false, false, "process ended unexpectedly",
 				strerror(errno));
 	}
 	return ((unsigned char)status);
@@ -368,7 +368,7 @@ pid_t	execute_complete_command_wrapper(t_tree *complete_command,
 
 	pid = fork();
 	if (pid < 0)
-		minishell_error(EXIT_FORK_ERROR, true, "%s", strerror(errno));
+		minishell_error(EXIT_FORK_ERROR, true, false, "%s", strerror(errno));
 	else if (pid > 0)
 		return (close_fds(complete_command), pid);
 	set_fds(complete_command);

@@ -19,9 +19,9 @@ int	builtin_exit(char **argv, t_fds fds)
 	{
 		exit_status = ft_atol_status(*argv, &status);
 		if (status & 5)
-			minishell_error(2, true, "%s: %s: numeric argument required",
+			minishell_error(2, true, false, "%s: %s: numeric argument required",
 				name, *argv);
-		if (argv[1] && minishell_error(1, false, "%s: too many arguments", name))
+		if (argv[1] && minishell_error(1, false, false, "%s: too many arguments", name))
 		{
 			exit_status = get_last_exit_status();
 			if (exit_status)

@@ -417,7 +417,7 @@ bool	tokenize_variable_len_tokens(const char **line, t_list *tokens)
 	pushed |= tokenize_double_quoted_string(line, tokens);
 	pushed |= tokenize_word(line, tokens);
 	if (!pushed)
-		return (minishell_error(EXIT_FAILURE, false, "could not tokenize `%s'",
+		return (minishell_error(EXIT_FAILURE, false, false, "could not tokenize `%s'",
 			get_token_str(tokens)), false);
 	return (true);
 }

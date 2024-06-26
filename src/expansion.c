@@ -230,7 +230,7 @@ t_list	*split_into_subwords(t_token *token)
 	parse_param = 0;
 	while (token->str[++idx])
 	{
-		if (token->str[idx] == '$' && parse_param == 0 && token->escape_ctx[idx] == '0')
+		if (token->str[idx] == '$' /* && parse_param == 0 */ && token->escape_ctx[idx] == '0')
 		{
 			tok = new_token(ft_strndup(token->str + start, (size_t)(idx - start)), TOK_WORD, true);
 			tok->escape_ctx = ft_strndup(token->escape_ctx + start, (size_t)(idx - start + 1));
@@ -363,6 +363,27 @@ t_list	*split_into_words(t_token *token)
 	return (words);
 }
 
+static t_token	*tilde_expand(t_token *token)
+{
+	t_var	*home_var;
+
+	if (token->str[0] != '~')
+		return (token);
+	if (token->escape_ctx[0] == '1')
+		return (token);
+	else if (token->type != TOK_WORD)
+		return (token);
+	else if (token->str[1] != '/' && token->str[1] != '\0')
+		return (token);
+	else if (token->escape_ctx[1] == '1' && token->str[1] != '\0')
+		return (token);
+	home_var = get_var("HOME");
+	if (home_var == NULL)
+		return (token);
+	token->str = ft_strjoin(home_var->value, token->str + 1);
+	return (token);
+}
+
 t_list	*expand_tokens(t_list *tokens)
 {
 	t_token	*joined_token;
@@ -379,7 +400,7 @@ t_list	*expand_tokens(t_list *tokens)
 			lpush(new_tokens, as_data(tokens->current));
 			continue ;
 		}
-		subwords = split_into_subwords(tokens->current->as_token);
+		subwords = split_into_subwords(tilde_expand(tokens->current->as_token));
 		subwords = expand_subwords(subwords);
 		subwords = liter(remove_empty_words(subwords));
 		joined_token = new_token("", TOK_WORD, true);

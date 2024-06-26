@@ -30,21 +30,21 @@ int	builtin_cd(char **argv, t_fds fds)
 
 	name = *argv++;
 	if (argv[1] != NULL)
-		return (minishell_error(1, false, "%s: too many arguments", name));
+		return (minishell_error(1, false, false, "%s: too many arguments", name));
 	if (*argv == NULL)
 	{
 		var = NULL;
 		if (get_var("HOME") != NULL)
 			var = get_var("HOME")->value;
 		if (!var)
-			return (minishell_error(1, false, "%s: HOME not set", name));
+			return (minishell_error(1, false, false, "%s: HOME not set", name));
 		*argv = var;
 		status = chdir(var);
 	}
 	else if (!ft_strcmp(*argv, "-"))
 	{
 		if (get_var("OLDPWD") == NULL)
-			return (minishell_error(1, false, "%s: OLDPWD no set", name));
+			return (minishell_error(1, false, false, "%s: OLDPWD no set", name));
 		*argv = get_var("OLDPWD")->value;
 		argv[1] = "-";
 		ft_dprintf(fds.fd_out, "%s\n", get_var("OLDPWD")->value);
@@ -53,7 +53,7 @@ int	builtin_cd(char **argv, t_fds fds)
 	else
 		status = chdir(*argv);
 	if (status == -1)
-		return (minishell_error(1, false, "%s: %s: No such file or directory", name, *argv));
+		return (minishell_error(1, false, false, "%s: %s: No such file or directory", name, *argv));
 	else
 	{
 		if (get_var("PWD") == NULL)

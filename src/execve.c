@@ -214,11 +214,11 @@ pid_t	execute_simple_command(t_tree *simple_command, t_list *commands)
 		return (handle_builtin_wrapper(argv, simple_command) - 257);
 	program = search_executable(argv[0], path_parts);
 	if (!program && !is_builtin(argv[0]))
-		return (/*close_fds(simple_command),*/ minishell_error(EXIT_COMMAND_NOT_FOUND, false,
+		return (/*close_fds(simple_command),*/ minishell_error(EXIT_COMMAND_NOT_FOUND, false, false,
 				"%s: command not found", argv[0]), -1);
 	pid = fork();
 	if (pid < 0)
-		(close_fds(simple_command), minishell_error(FORK_ERROR, true, "%s", strerror(errno)));
+		(close_fds(simple_command), minishell_error(FORK_ERROR, true, false, "%s", strerror(errno)));
 	if (pid > 0)
 		return (close_fds(simple_command), pid);
 	set_fds(simple_command);
@@ -232,9 +232,9 @@ pid_t	execute_simple_command(t_tree *simple_command, t_list *commands)
 	execve(program, argv, get_env());
 	exit_status = errno;
 	if (open(program, O_DIRECTORY) != -1)
-		minishell_error(EXECVE_ERR, false, "%s: %s", program, "Is a directory");
+		minishell_error(EXECVE_ERR, false, false, "%s: %s", program, "Is a directory");
 	else
-		minishell_error(EXECVE_ERR, false, "%s: %s", program, strerror(exit_status));
+		minishell_error(EXECVE_ERR, false, false, "%s: %s", program, strerror(exit_status));
 	finish(false);
 	if (exit_status == EACCES)
 		exit(126);

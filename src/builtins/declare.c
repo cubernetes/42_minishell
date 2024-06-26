@@ -131,9 +131,9 @@ static int	declare_print(char *name, char **argv, t_fds fds)
 	{
 		var = get_var(*argv);
 		if (!valid_name(*argv))
-			exit_status = minishell_error(1, false, "%s: `%s': not found", name, *argv);
+			exit_status = minishell_error(1, false, false, "%s: `%s': not found", name, *argv);
 		else if (var == NULL || var->special)
-			exit_status = minishell_error(1, false, "%s: %s: not found", name, *argv);
+			exit_status = minishell_error(1, false, false, "%s: %s: not found", name, *argv);
 		else
 			print_var(&(t_kv_pair){.k = *argv, .v = as_var(var)}, fds);
 		++argv;
@@ -183,12 +183,12 @@ static int	declare_set(char *name, char **argv, t_declare_flags flags)
 		value = key_value->first->next->as_str;
 		orig_var = get_var(key);
 		if (!valid_name(key))
-			exit_status = minishell_error(1, false, "%s: `%s': not a valid identifier", name, key);
+			exit_status = minishell_error(1, false, false, "%s: `%s': not a valid identifier", name, key);
 		else if (key_value->len == 2)
 		{
 			if (orig_var && orig_var->readonly)
 			{
-				exit_status = minishell_error(1, false,
+				exit_status = minishell_error(1, false, false,
 						"%s: %s: readonly variable", name, key);
 				value = orig_var->value;
 			}
@@ -227,7 +227,7 @@ int	builtin_declare(char **argv, t_fds fds)
 
 	opts = liter(ft_getopt_plus(argv, "pxr", &erropt, &optind));
 	if (erropt)
-		return (llast(opts), minishell_error(1, false,
+		return (llast(opts), minishell_error(1, false, false,
 				"%s: -%c: invalid option", argv[0], erropt));
 	flags = (struct s_declare_flags){0};
 	while (lnext(opts))

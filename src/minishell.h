@@ -201,7 +201,7 @@ char									*get_token_str(t_list *tokens);
 char									*get_token_str_nl(t_list *tokens);
 t_token_type							get_token_type(t_list *tokens);
 int										minishell_error(int exit_code,
-											bool do_exit,
+											bool do_exit, bool syntax_error,
 											const char *fmt, ...);
 void									expand_env_vars(t_list *tokens);
 /* t_list									*expand_token(t_token *token); */
