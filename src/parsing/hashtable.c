@@ -44,12 +44,15 @@ t_token_type	tokens_ht_get(char *key)
 		ht_set(ht, "TOK_WORD", as_token_type(TOK_WORD));
 		ht_set(ht, "<<", as_token_type(TOK_HEREDOC));
 		ht_set(ht, ">>", as_token_type(TOK_APPEND));
+		ht_set(ht, "2>>", as_token_type(TOK_APPEND_ERR));
 		ht_set(ht, "<", as_token_type(TOK_INPUT));
 		ht_set(ht, ">", as_token_type(TOK_OVERRIDE));
+		ht_set(ht, "2>", as_token_type(TOK_OVERRIDE_ERR));
 		ht_set(ht, "(", as_token_type(TOK_L_PAREN));
 		ht_set(ht, ")", as_token_type(TOK_R_PAREN));
 		ht_set(ht, "&&", as_token_type(TOK_AND));
 		ht_set(ht, "||", as_token_type(TOK_OR));
+		ht_set(ht, ";", as_token_type(TOK_SEMI));
 		ht_set(ht, "|", as_token_type(TOK_PIPE));
 		ht[MAX_HT_SIZE] = (void *)1;
 		gc_end_context();

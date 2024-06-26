@@ -6,7 +6,7 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:02:16 by tischmid          #+#    #+#              #
-#    Updated: 2024/06/26 03:19:28 by tischmid         ###   ########.fr        #
+#    Updated: 2024/06/26 10:20:46 by tischmid         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,6 +30,7 @@ _SRC += ft_gethostname.c
 _SRC += ft_getuid.c
 _SRC += ft_getusername.c
 _SRC += ft_getpid.c
+_SRC += ft_getumask.c
 _SRC += expansion.c
 _SRC += joining.c
 _SRC += execve.c

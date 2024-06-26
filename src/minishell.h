@@ -12,6 +12,9 @@
 /* # define PS1 "\033[31m\\u@\\h:\\w\033[m\n❯ " */
 # define PS1 "\033[31m\\u\033[m@\033[94m\\h\033[m@\033[92mminishell\033[m [\033[32m\\w\033[m]\n\\$ "
 # define PS2 "> "
+# define PS4 "+ "
+
+# define MINISHELL_DEFAULT_XTRACEFD 2
 
 # define MINISHELL_NAME "minishell" // TODO: USE $0
 
@@ -20,22 +23,25 @@
 
 # define EXIT_COMMAND_NOT_FOUND 127
 
-# define STR_TOK_OVERRIDE   "TOK_OVERRIDE"
-# define STR_TOK_INPUT      "TOK_INPUT"
-# define STR_TOK_APPEND     "TOK_APPEND"
-# define STR_TOK_HEREDOC    "TOK_HEREDOC"
-# define STR_TOK_PIPE       "TOK_PIPE"
-# define STR_TOK_AND        "TOK_AND"
-# define STR_TOK_OR         "TOK_OR"
-# define STR_TOK_L_PAREN    "TOK_L_PAREN"
-# define STR_TOK_R_PAREN    "TOK_R_PAREN"
-# define STR_TOK_SQUOTE_STR "TOK_SQUOTE_STR"
-# define STR_TOK_DQUOTE_STR "TOK_DQUOTE_STR"
-# define STR_TOK_WORD       "TOK_WORD"
-# define STR_TOK_EOL        "TOK_EOL"
-# define STR_TOK_ERROR      "TOK_ERROR"
-# define STR_TOK_EPSILON    "TOK_EPSILON"
-# define STR_TOK_UNKNOWN    "TOK_UNKNOWN"
+# define STR_TOK_OVERRIDE     "TOK_OVERRIDE"
+# define STR_TOK_OVERRIDE_ERR "TOK_OVERRIDE_ERR"
+# define STR_TOK_INPUT        "TOK_INPUT"
+# define STR_TOK_APPEND       "TOK_APPEND"
+# define STR_TOK_APPEND_ERR   "TOK_APPEND_ERR"
+# define STR_TOK_HEREDOC      "TOK_HEREDOC"
+# define STR_TOK_PIPE         "TOK_PIPE"
+# define STR_TOK_AND          "TOK_AND"
+# define STR_TOK_OR           "TOK_OR"
+# define STR_TOK_SEMI         "TOK_SEMI"
+# define STR_TOK_L_PAREN      "TOK_L_PAREN"
+# define STR_TOK_R_PAREN      "TOK_R_PAREN"
+# define STR_TOK_SQUOTE_STR   "TOK_SQUOTE_STR"
+# define STR_TOK_DQUOTE_STR   "TOK_DQUOTE_STR"
+# define STR_TOK_WORD         "TOK_WORD"
+# define STR_TOK_EOL          "TOK_EOL"
+# define STR_TOK_ERROR        "TOK_ERROR"
+# define STR_TOK_EPSILON      "TOK_EPSILON"
+# define STR_TOK_UNKNOWN      "TOK_UNKNOWN"
 
 # define STR_COMPLETE_COMMAND      "COMPLETE_COMMAND"
 # define STR_COMPLETE_COMMAND_TAIL "COMPLETE_COMMAND_TAIL"
@@ -50,21 +56,24 @@
 # define STR_TOKEN                 "TOKEN"
 # define STR_TREE_TYPE_UNKNOWN     "TREE_TYPE_UNKNOWN"
 
-# define TOK_EOL        1
-# define TOK_AND        2
-# define TOK_OR         3
-# define TOK_PIPE       4
-# define TOK_L_PAREN    5
-# define TOK_R_PAREN    6
-# define TOK_WORD       7
-# define TOK_OVERRIDE   8
-# define TOK_APPEND     9
-# define TOK_INPUT      10
-# define TOK_HEREDOC    11
-# define TOK_EPSILON    12
-# define TOK_SQUOTE_STR 13
-# define TOK_DQUOTE_STR 14
-# define TOK_ERROR      15
+# define TOK_EOL           1
+# define TOK_AND           2
+# define TOK_OR            3
+# define TOK_PIPE          4
+# define TOK_L_PAREN       5
+# define TOK_R_PAREN       6
+# define TOK_WORD          7
+# define TOK_OVERRIDE      8
+# define TOK_APPEND        9
+# define TOK_INPUT        10
+# define TOK_HEREDOC      11
+# define TOK_EPSILON      12
+# define TOK_SQUOTE_STR   13
+# define TOK_DQUOTE_STR   14
+# define TOK_ERROR        15
+# define TOK_SEMI         16
+# define TOK_OVERRIDE_ERR 17
+# define TOK_APPEND_ERR   18
 
 /* TOKEN is a TERMINAL, every other member is a NONTERMINAL */
 # define COMPLETE_COMMAND      1
@@ -81,7 +90,12 @@
 # define TREE_TYPE_UNKNOWN     12
 
 # define NUM_NONTERMS 10
-# define NUM_TOKENS 11
+# define NUM_TOKENS 11 // TOOD: 12 (TOK_SEMI)?
+
+# define FORCE_ANSI_C_QUOTING1 "\001\002\003\004\005\006\a\b\t\v\f\r\016\017"
+# define FORCE_ANSI_C_QUOTING2 "\020\021\022\023\024\025\026\027\030\031\032"
+# define FORCE_ANSI_C_QUOTING3 "\033\034\035\036\037\177"
+# define FORCE_SINGLE_QUOTING " !'\"#$&()*;<>?[\\]^`{|}~"
 
 /********************* FORWARD DECLARATIONS *********************/
 typedef struct s_token			t_token;
@@ -132,6 +146,8 @@ struct s_token
 	char								*quoting_ctx;
 	char								*expansion_ctx;
 	int									num_tokens_after_split;
+	char								*escape_ctx;
+	char								*origin;
 };
 
 struct s_fds
@@ -259,8 +275,15 @@ char									*ft_getuid(void);
 char									*ft_geteuid(void);
 char									*ft_getpid(void);
 char									*ft_getppid(void);
+int										ft_getumask(void);
 char									*get_ifs(void);
 char									*repeat_string(char *str, size_t n);
 bool									shopt_enabled(char opt);
+bool									force_ansi_c_quoting(char *s);
+bool									force_single_quoting(char *s);
+char									*quote_single(char *s);
+char									*quote_double(char *s);
+char									*quote_ansi_c(char *s,
+											bool bare_declare);
 
 #endif /* minishell.h. */

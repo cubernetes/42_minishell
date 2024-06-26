@@ -96,7 +96,7 @@ t_tree	*return_example_ast(void)
 							new_tree_m_token(TOK_WORD, "somefile"), \
 						NULL})), \
 						new_tree_nonterm(IO_REDIRECT, creat_new_children((t_children){\
-							new_tree_m_token(TOK_OVERRIDE, ">"), \
+							new_tree_m_token(TOK_OVERRIDE_ERR, "2>"), \
 							new_tree_m_token(TOK_WORD, "anotherfile"), \
 						NULL})), \
 					NULL})), \
@@ -109,7 +109,7 @@ t_tree	*return_example_ast(void)
 				new_tree_m_token(TOK_WORD, "grep"), \
 				new_tree_m_token(TOK_WORD, "h"), \
 				new_tree_nonterm(IO_REDIRECT, creat_new_children((t_children){\
-					new_tree_m_token(TOK_APPEND, ">>"), \
+					new_tree_m_token(TOK_APPEND_ERR, "2>>"), \
 					new_tree_m_token(TOK_WORD, "appendfile.txt"), \
 				NULL})), \
 			NULL})), \

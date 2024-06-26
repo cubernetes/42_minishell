@@ -86,40 +86,54 @@ void	handle_redirect_input(char *file_path, t_tree *simple_command)
 	}
 }
 
-void	handle_redirect_append(char *file_path, t_tree *simple_command)
+void	handle_redirect_append(char *file_path, t_tree *simple_command, bool red_err)
 {
 	int		fd;
-	int		sc_fd_out;
+	int		sc_fd;
 
-	fd = open(file_path, O_WRONLY | O_APPEND | O_CREAT, 0644);
+	fd = open(file_path, O_WRONLY | O_APPEND | O_CREAT, ft_getumask());
 	if (fd == -1)
 		simple_command->error = minishell_error(1, false,
 				"%s: %s", file_path, strerror(errno));
 	else
 	{
-		sc_fd_out = simple_command->fd_out;
-		if (sc_fd_out != -2)
-			close(sc_fd_out);
-		simple_command->fd_out = fd;
+		if (red_err)
+			sc_fd = simple_command->fd_err;
+		else
+			sc_fd = simple_command->fd_out;
+		if (sc_fd != -2)
+			close(sc_fd);
+		if (red_err)
+			simple_command->fd_err = fd;
+		else
+			simple_command->fd_out = fd;
 		simple_command->error = 0;
 	}
 }
 
-void	handle_redirect_override(char *file_path, t_tree *simple_command)
+void	handle_redirect_override(char *file_path, t_tree *simple_command, bool red_err)
 {
 	int		fd;
-	int		sc_fd_out;
+	int		sc_fd;
 
-	fd = open(file_path, O_WRONLY | O_TRUNC | O_CREAT, 0644);
+	if (shopt_enabled('C'))
+		; // TODO: Implement
+	fd = open(file_path, O_WRONLY | O_TRUNC | O_CREAT, ft_getumask());
 	if (fd == -1)
 		simple_command->error = minishell_error(1, false,
 				"%s: %s", file_path, strerror(errno));
 	else
 	{
-		sc_fd_out = simple_command->fd_out;
-		if (sc_fd_out != -2)
-			close(sc_fd_out);
-		simple_command->fd_out = fd;
+		if (red_err)
+			sc_fd = simple_command->fd_err;
+		else
+			sc_fd = simple_command->fd_out;
+		if (sc_fd != -2)
+			close(sc_fd);
+		if (red_err)
+			simple_command->fd_err = fd;
+		else
+			simple_command->fd_out = fd;
 		simple_command->error = 0;
 	}
 }
@@ -132,13 +146,17 @@ int	handle_io_redirect(t_tree *io_redirect, t_tree *simple_command)
 	type = io_redirect->children->first->as_tree->token->type;
 	file_path = io_redirect->children->first->next->as_tree->token->str;
 	if (io_redirect->children->first->next->as_tree->token->num_tokens_after_split != 1)
-		return (simple_command->error = minishell_error(1, false, "%s: ambiguous redirect", "whatever"));
+		return (simple_command->error = minishell_error(1, false, "%s: ambiguous redirect", io_redirect->children->first->next->as_tree->token->origin));
 	if (type == TOK_OVERRIDE)
-		handle_redirect_override(file_path, simple_command);
+		handle_redirect_override(file_path, simple_command, false);
+	else if (type == TOK_OVERRIDE_ERR)
+		handle_redirect_override(file_path, simple_command, true);
 	else if (type == TOK_INPUT)
 		handle_redirect_input(file_path, simple_command);
 	else if (type == TOK_APPEND)
-		handle_redirect_append(file_path, simple_command);
+		handle_redirect_append(file_path, simple_command, false);
+	else if (type == TOK_APPEND_ERR)
+		handle_redirect_append(file_path, simple_command, true);
 	else if (type == TOK_HEREDOC)
 		redirect_heredoc(file_path, simple_command);
 	else
@@ -322,6 +340,15 @@ unsigned char	execute_complete_command(t_tree *node)
 				first = false;
 				if (rtn != 0)
 					rtn = execute_pipe_sequence(chldn->current->next->as_tree->children);
+				if (lnext(chldn) == NULL)
+					break ;
+			}
+			else if (chldn->current->as_tree->token->type == TOK_SEMI)
+			{
+				if (first)
+					rtn = execute_tok_or(chldn->current);
+				first = false;
+				rtn = execute_pipe_sequence(chldn->current->next->as_tree->children);
 				if (lnext(chldn) == NULL)
 					break ;
 			}

@@ -26,20 +26,28 @@ t_token_type	get_token_type(t_list *tokens)
 	if (tokens->first->as_token->type == TOK_SQUOTE_STR
 		|| tokens->first->as_token->type == TOK_DQUOTE_STR)
 		return (TOK_WORD);
+	else if (tokens->first->as_token->type == TOK_SEMI)
+		return (TOK_AND);
+	else if (tokens->first->as_token->type == TOK_OVERRIDE_ERR)
+		return (TOK_OVERRIDE);
+	else if (tokens->first->as_token->type == TOK_APPEND_ERR)
+		return (TOK_APPEND);
 	return (tokens->first->as_token->type);
 }
 
 /* TODO: Not required: hashtable */
 const char	*token_type_to_string(t_token_type type)
 {
-	if (type == TOK_OR)
-		return (STR_TOK_OR);
-	else if (type == TOK_OVERRIDE)
+	if (type == TOK_OVERRIDE)
 		return (STR_TOK_OVERRIDE);
+	if (type == TOK_OVERRIDE_ERR)
+		return (STR_TOK_OVERRIDE_ERR);
 	else if (type == TOK_INPUT)
 		return (STR_TOK_INPUT);
 	else if (type == TOK_APPEND)
 		return (STR_TOK_APPEND);
+	else if (type == TOK_APPEND_ERR)
+		return (STR_TOK_APPEND_ERR);
 	else if (type == TOK_HEREDOC)
 		return (STR_TOK_HEREDOC);
 	else if (type == TOK_PIPE)
@@ -48,6 +56,8 @@ const char	*token_type_to_string(t_token_type type)
 		return (STR_TOK_AND);
 	else if (type == TOK_OR)
 		return (STR_TOK_OR);
+	else if (type == TOK_SEMI)
+		return (STR_TOK_SEMI);
 	else if (type == TOK_L_PAREN)
 		return (STR_TOK_L_PAREN);
 	else if (type == TOK_R_PAREN)
@@ -87,11 +97,11 @@ void	print_token_debug(t_data data, int n)
 	else
 		clr = "\033[33m";
 	if (n == 0)
-		ft_printf("<\033[31m%s\033[m>%s%s%s\033[m%s%d%s<%s>%s<%s>", token->str, sep, clr,
-			token_type_to_string(token->type), sep, token->num_tokens_after_split, sep, token->expansion_ctx, sep, token->quoting_ctx);
+		ft_printf("<\033[31m%s\033[m>%s%s%s\033[m%s%d%s<%s>%s<%s>%s<%s>%s<%s>", token->str, sep, clr,
+			token_type_to_string(token->type), sep, token->num_tokens_after_split, sep, token->expansion_ctx, sep, token->quoting_ctx, sep, token->escape_ctx, sep, token->origin);
 	else
-		ft_printf("\n<\033[31m%s\033[m>%s%s%s\033[m%s%d%s<%s>%s<%s>", token->str, sep, clr,
-			token_type_to_string(token->type), sep, token->num_tokens_after_split, sep, token->expansion_ctx, sep, token->quoting_ctx);
+		ft_printf("\n<\033[31m%s\033[m>%s%s%s\033[m%s%d%s<%s>%s<%s>%s<%s>%s<%s>", token->str, sep, clr,
+			token_type_to_string(token->type), sep, token->num_tokens_after_split, sep, token->expansion_ctx, sep, token->quoting_ctx, sep, token->escape_ctx, sep, token->origin);
 }
 
 void	print_token(t_data data, int n)
@@ -144,13 +154,90 @@ void	*new_token(char *str, t_token_type type, bool is_last_token)
 			.is_last_token = is_last_token,
 			.quoting_ctx = repeat_string(was_quoted(type), ft_strlen(str)),
 			.expansion_ctx = repeat_string("0", ft_strlen(str)),
-			.num_tokens_after_split = s
+			.num_tokens_after_split = s,
+			.escape_ctx = repeat_string("0", ft_strlen(str) + 1),
+			.origin = ""
 		},
 		sizeof(t_token)
 	));
 }
 
-/* TODO: TODO: FIX PARSING BUG!!!: Update: possibly done */
+static char	*process_backslashes(char *str, t_token_type type, char **escape_ctx)
+{
+	t_list	*result_chars;
+	t_list	*escape_ctx_chars;
+
+	result_chars = lnew();
+	escape_ctx_chars = lnew();
+	if (type == TOK_DQUOTE_STR)
+	{
+		while (*str)
+		{
+			if (*str == '\\')
+			{
+				if (str[1])
+				{
+					if (!ft_strchr("\"$\\", str[1]))
+					{
+						lpush(result_chars, as_str("\\"));
+						lpush(escape_ctx_chars, as_str("0"));
+					}
+					lpush(escape_ctx_chars, as_str("1"));
+					lpush(result_chars, as_str(ft_strndup(str + 1, 1)));
+					++str;
+				}
+				else
+				{
+					lpush(escape_ctx_chars, as_str("1"));
+					// TODO: Handle line continuations
+				}
+			}
+			else
+			{
+				lpush(result_chars, as_str(ft_strndup(str, 1)));
+				lpush(escape_ctx_chars, as_str("0"));
+			}
+			++str;
+		}
+		if (escape_ctx_chars->len == result_chars->len)
+			lpush(escape_ctx_chars, as_str("0"));
+		*escape_ctx = ljoin(escape_ctx_chars, "");
+		return (ljoin(result_chars, ""));
+	}
+	else if (type == TOK_WORD)
+	{
+		while (*str)
+		{
+			if (*str == '\\')
+			{
+				if (str[1])
+				{
+					lpush(result_chars, as_str(ft_strndup(str + 1, 1)));
+					lpush(escape_ctx_chars, as_str("1"));
+					++str;
+				}
+				else
+				{
+					lpush(escape_ctx_chars, as_str("1"));
+					// TODO: Handle line continuations
+				}
+			}
+			else
+			{
+				lpush(result_chars, as_str(ft_strndup(str, 1)));
+				lpush(escape_ctx_chars, as_str("0"));
+			}
+			++str;
+		}
+		if (escape_ctx_chars->len == result_chars->len)
+			lpush(escape_ctx_chars, as_str("0"));
+		*escape_ctx = ljoin(escape_ctx_chars, "");
+		return (ljoin(result_chars, ""));
+	}
+	else
+		return (str);
+}
+
 bool	push_token(const char **line, t_list *tokens, size_t token_len,
 	t_token_type type)
 {
@@ -159,8 +246,10 @@ bool	push_token(const char **line, t_list *tokens, size_t token_len,
 	bool	is_str_tok;
 	bool	is_last;
 	bool	is_last_quote;
+	t_token	*token;
+	char	*escape_ctx;
 
-	str = ft_strndup(*line, token_len);
+	str = process_backslashes(ft_strndup(*line, token_len), type, &escape_ctx);
 	is_str_tok = type == TOK_SQUOTE_STR || type == TOK_DQUOTE_STR
 		|| type == TOK_WORD;
 	is_last = ft_isspace((*line)[token_len]) || type == TOK_EOL
@@ -173,7 +262,10 @@ bool	push_token(const char **line, t_list *tokens, size_t token_len,
 		is_last_token = true;
 	else
 		is_last_token = false;
-	lpush(tokens, as_token(new_token(str, type, is_last_token)));
+	token = new_token(str, type, is_last_token);
+	token->escape_ctx = escape_ctx;
+	token->origin = ft_strndup(*line, token_len);
+	lpush(tokens, as_token(token));
 	*line += token_len;
 	return (true);
 }
@@ -186,6 +278,10 @@ bool	tokenize_fixed_len_tokens(const char **line, t_list *tokens)
 	pushed = false;
 	if (**line == '\0')
 		pushed = push_token(line, tokens, 0, TOK_EOL);
+	else if (**line == '2' && *(*line + 1) == '>' && *(*line + 2) == '>')
+		pushed = push_token(line, tokens, 3, TOK_APPEND_ERR);
+	else if (**line == '2' && *(*line + 1) == '>')
+		pushed = push_token(line, tokens, 2, TOK_OVERRIDE_ERR);
 	else if (**line == '>' && *(*line + 1) == '>')
 		pushed = push_token(line, tokens, 2, TOK_APPEND);
 	else if (**line == '<' && *(*line + 1) == '<')
@@ -194,6 +290,8 @@ bool	tokenize_fixed_len_tokens(const char **line, t_list *tokens)
 		pushed = push_token(line, tokens, 2, TOK_AND);
 	else if (**line == '|' && *(*line + 1) == '|')
 		pushed = push_token(line, tokens, 2, TOK_OR);
+	else if (**line == ';')
+		pushed = push_token(line, tokens, 1, TOK_SEMI);
 	else if (**line == '>')
 		pushed = push_token(line, tokens, 1, TOK_OVERRIDE);
 	else if (**line == '<')
@@ -238,13 +336,19 @@ bool	tokenize_double_quoted_string(const char **line, t_list *tokens)
 {
 	size_t		len;
 	const char	*tmp;
+	bool		escaped;
 
 	if (**line == '"')
 	{
 		len = 0;
 		tmp = *line + 1;
-		while (*tmp != '"' && *tmp != '\0')
+		escaped = false;
+		while ((escaped || *tmp != '"') && *tmp != '\0')
 		{
+			if (escaped == true)
+				escaped = false;
+			else if (*tmp == '\\')
+				escaped = true;
 			++tmp;
 			++len;
 		}
@@ -266,7 +370,7 @@ bool	is_word_char(char c)
 {
 	return ((bool)(
 		c
-		&& !ft_isspace(c)
+		&& c != ' ' && c != '\t'
 		&& !ft_strchr("><()'\"|", c)
 	));
 }
@@ -289,7 +393,7 @@ bool	tokenize_word(const char **line, t_list *tokens)
 		len = 0;
 		tmp = *line;
 		escaped = false;
-		while (escaped || (is_word_char(*tmp) && is_not_and_and(tmp)))
+		while ((escaped || (is_word_char(*tmp) && is_not_and_and(tmp))) && *tmp != '\0')
 		{
 			if (escaped == true)
 				escaped = false;
@@ -322,68 +426,68 @@ bool	tokenize_variable_len_tokens(const char **line, t_list *tokens)
 /* context = 0 -> not quoted */
 /* context = 1 -> double quoted */
 /* context = 2 -> single quoted */
-static char	*process_backslashes(const char *line)
-{
-	int		context;
-	t_list	*result_chars;
-	int		idx;
-
-	context = 0;
-	result_chars = lnew();
-	idx = -1;
-	while (line[++idx])
-	{
-		if (line[idx] == '\\')
-		{
-			if (context == 2)
-				lpush(result_chars, as_str("\\"));
-			else if (context == 1)
-			{
-				if (ft_strchr("\"$\\", line[idx + 1]))
-				{
-					lpush(result_chars, as_str("\"'"));
-					lpush(result_chars, as_str(ft_strndup(&line[idx + 1], 1)));
-					lpush(result_chars, as_str("'\""));
-					++idx;
-				}
-				else
-					lpush(result_chars, as_str("\\"));
-			}
-			else
-			{
-				if (line[idx + 1] == '\'')
-					lpush(result_chars, as_str("\"'\""));
-				else
-				{
-					lpush(result_chars, as_str("'"));
-					lpush(result_chars, as_str(ft_strndup(&line[idx + 1], 1)));
-					lpush(result_chars, as_str("'"));
-				}
-				++idx;
-			}
-		}
-		else
-		{
-			lpush(result_chars, as_str(ft_strndup(&line[idx], 1)));
-			if (context == 0 && line[idx] == '\'')
-				context = 2;
-			else if (context == 0 && line[idx] == '"')
-				context = 1;
-			else if (context == 1 && line[idx] == '"')
-				context = 0;
-			else if (context == 2 && line[idx] == '\'')
-				context = 0;
-		}
-	}
-	return (ljoin(result_chars, ""));
-}
+/* static char	*process_backslashes_old(const char *line) */
+/* { */
+	/* int		context; */
+	/* t_list	*result_chars; */
+	/* int		idx; */
+/*  */
+	/* context = 0; */
+	/* result_chars = lnew(); */
+	/* idx = -1; */
+	/* while (line[++idx]) */
+	/* { */
+		/* if (line[idx] == '\\') */
+		/* { */
+			/* if (context == 2) */
+				/* lpush(result_chars, as_str("\\")); */
+			/* else if (context == 1) */
+			/* { */
+				/* if (ft_strchr("\"$\\", line[idx + 1])) */
+				/* { */
+					/* lpush(result_chars, as_str("\"'")); */
+					/* lpush(result_chars, as_str(ft_strndup(&line[idx + 1], 1))); */
+					/* lpush(result_chars, as_str("'\"")); */
+					/* ++idx; */
+				/* } */
+				/* else */
+					/* lpush(result_chars, as_str("\\")); */
+			/* } */
+			/* else */
+			/* { */
+				/* if (line[idx + 1] == '\'') */
+					/* lpush(result_chars, as_str("\"'\"")); */
+				/* else */
+				/* { */
+					/* lpush(result_chars, as_str("'")); */
+					/* lpush(result_chars, as_str(ft_strndup(&line[idx + 1], 1))); */
+					/* lpush(result_chars, as_str("'")); */
+				/* } */
+				/* ++idx; */
+			/* } */
+		/* } */
+		/* else */
+		/* { */
+			/* lpush(result_chars, as_str(ft_strndup(&line[idx], 1))); */
+			/* if (context == 0 && line[idx] == '\'') */
+				/* context = 2; */
+			/* else if (context == 0 && line[idx] == '"') */
+				/* context = 1; */
+			/* else if (context == 1 && line[idx] == '"') */
+				/* context = 0; */
+			/* else if (context == 2 && line[idx] == '\'') */
+				/* context = 0; */
+		/* } */
+	/* } */
+	/* return (ljoin(result_chars, "")); */
+/* } */
 
 /* TODO: set is_last_token member for each token */
 t_list	*tokenize(const char *line)
 {
 	t_list	*tokens;
 
-	/* line = process_backslashes(line); */
+	/* line = process_backslashes_old(line); */
 	tokens = lnew();
 	skip_space_tab(&line);
 	while (true)

@@ -11,12 +11,7 @@ int		add_var_flags(char key[static 1],
 			t_var *orig_var);
 char	*flags_to_str(t_var *var);
 
-#define FORCE_ANSI_C_QUOTING1 "\001\002\003\004\005\006\a\b\t\v\f\r\016\017\020"
-#define FORCE_ANSI_C_QUOTING2 "\021\022\023\024\025\026\027\030\031\032\033\034"
-#define FORCE_ANSI_C_QUOTING3 "\035\036\037\177"
-#define FORCE_SINGLE_QUOTING " !'\"#$&()*;<>?[\\]^`{|}~"
-
-static bool	force_ansi_c_quoting(char *s)
+bool	force_ansi_c_quoting(char *s)
 {
 	static const char	*force_ansi_c_quoting = FORCE_ANSI_C_QUOTING1 \
 											FORCE_ANSI_C_QUOTING2 \
@@ -28,7 +23,7 @@ static bool	force_ansi_c_quoting(char *s)
 	return (false);
 }
 
-static bool	force_single_quoting(char *s)
+bool	force_single_quoting(char *s)
 {
 	while (*s)
 		if (ft_strchr(FORCE_SINGLE_QUOTING, *s++))
@@ -36,7 +31,7 @@ static bool	force_single_quoting(char *s)
 	return (false);
 }
 
-static char	*quote_single(char *s)
+char	*quote_single(char *s)
 {
 	char	*ret;
 
@@ -53,7 +48,7 @@ static char	*quote_single(char *s)
 }
 /* Runs in quadratic time... */
 
-static char	*quote_double(char *s)
+char	*quote_double(char *s)
 {
 	char	*ret;
 
@@ -74,7 +69,8 @@ static char	*quote_double(char *s)
 /* $ is not backslash escaped, since not required */
 /* Runs in quadratic time... */
 
-static char	*quote_ansi_c(char *s, bool bare_declare)
+/* TODO: Remove bare declare param */
+char	*quote_ansi_c(char *s, bool bare_declare)
 {
 	if (bare_declare)
 		return (quote_single(s));

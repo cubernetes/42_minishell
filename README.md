@@ -27,7 +27,7 @@
 - shell (unexported) variables (`declare A=1`)
 - readonly variables (`declare -r A=1`, `readonly B=1`)
 - unset, yet declared variables (`declare A`, `export X`)
-- different prompts (`PS0`, `PS1`, `PS2`)
+- different prompts (`PS0`, `PS1`, `PS2`, `PS4`)
 - prompt expansion (`\u, \w, \W, \h, \H, \$`)
 - fallback mechanisms for username resolution in prompt
     1. manual parsing of the binary Kerberos credential cache file (`/tmp/krb5cc_$EUID_...`)
@@ -94,6 +94,8 @@
 - the semicolon control operator (`;`)
 - handling of backslash-escaping in unquoted and double-quoted contexts
 - ANSI C quoting
+- Error redirection using `2>` and `2>>`
+- inheriting and respecting of umask (tho you can't change it :P)
 <!-- TODO: Finish -->
 
 ## Notable implementation details

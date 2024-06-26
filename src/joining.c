@@ -32,6 +32,7 @@ void	join_tokens(t_list *tokens)
 			}
 			word_token->num_tokens_after_split = ft_max(word_token->num_tokens_after_split, token->num_tokens_after_split);
 			word_token->str = ft_strjoin(word_token->str, token->str);
+			word_token->origin = ft_strjoin(word_token->origin, token->origin);
 			word_token->quoting_ctx = ft_strjoin(word_token->quoting_ctx, token->quoting_ctx);
 			word_token->expansion_ctx = ft_strjoin(word_token->expansion_ctx, token->expansion_ctx);
 		}
@@ -45,6 +46,7 @@ void	join_tokens(t_list *tokens)
 			}
 			word_token->num_tokens_after_split = ft_max(word_token->num_tokens_after_split, token->num_tokens_after_split);
 			word_token->str = ft_strjoin(word_token->str, token->str);
+			word_token->origin = ft_strjoin(word_token->origin, token->origin);
 			word_token->quoting_ctx = ft_strjoin(word_token->quoting_ctx, token->quoting_ctx);
 			word_token->expansion_ctx = ft_strjoin(word_token->expansion_ctx, token->expansion_ctx);
 			lpush(new_tokens, as_token(word_token));
@@ -63,7 +65,8 @@ void	join_tokens(t_list *tokens)
 	cleaned_tokens = lnew();
 	liter(new_tokens);
 	while (lnext(new_tokens))
-		if (new_tokens->current->as_token->str[0] != '\0' || new_tokens->current->as_token->type == TOK_EOL)
+		if (new_tokens->current->as_token->num_tokens_after_split != 0
+			|| new_tokens->current->as_token->type == TOK_EOL)
 			lpush(cleaned_tokens, as_data(new_tokens->current));
 	tokens->first = cleaned_tokens->first;
 	tokens->last = cleaned_tokens->last;

@@ -155,6 +155,7 @@ void	expand_prompts(void)
 	set_var("PS0", expand_prompt(PS0), get_flags("PS0"));
 	set_var("PS1", expand_prompt(PS1), get_flags("PS1"));
 	set_var("PS2", expand_prompt(PS2), get_flags("PS2"));
+	set_var("PS4", expand_prompt(PS4), get_flags("PS4"));
 }
 
 /* read-eval-print-loop */
@@ -213,6 +214,9 @@ void	set_initial_shell_variables(char *argv[], char *envp[])
 	inherit_environment(envp);
 	set_argv(argv);
 	set_var("?", "0", (t_flags){.special = true});
+	unset_var("MINISHELL_XTRACEFD"); // TODO: If it has a value and is unset or set to a new value, the fd corresponding to the old value shall be closed.
+	set_var("$", ft_getpid(), (t_flags){.special = true});
+	set_var("PPID", ft_getppid(), (t_flags){.readonly = true});
 	set_pwd();
 }
 
@@ -291,8 +295,6 @@ static void	set_shell_options(char *const argv[])
 			if (!ft_strchr(opts, 'i'))
 				opts = ft_strjoin(opts, "i");
 	}
-	set_var("$", ft_getpid(), (t_flags){.special = true});
-	set_var("PPID", ft_getppid(), (t_flags){.readonly = true});
 	set_var("-", opts, (t_flags){.special = true});
 	set_var("0", argv[0], (t_flags){.special = true});
 	argv += optind;
@@ -383,6 +385,7 @@ void	init(char *argv[], char *envp[])
 /* TODO: shift builtin */
 /* TODO: ; control operator */
 /* TODO: ASSIGNMENT_WORDS */
+/* TODO: PS0, PS4 */
 int	main(int argc, char *argv[], char *envp[])
 {
 	/* close(3); close(63); */
@@ -390,5 +393,5 @@ int	main(int argc, char *argv[], char *envp[])
 	init(argv, envp);
 	repl();
 	finish(true);
-	return (0);
+	return (get_last_exit_status());
 }

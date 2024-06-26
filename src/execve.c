@@ -170,6 +170,31 @@ int	handle_builtin_wrapper(char	*argv[], t_tree *simple_command)
 	return (exit_status);
 }
 
+static void	msh_xtrace(char *const argv[])
+{
+	t_list	*args;
+	char	*xtrace_fd_str;
+	int		xtrace_fd;
+
+	args = lnew();
+	while (*argv)
+	{
+		if (force_ansi_c_quoting(*argv))
+			lpush(args, as_str(quote_ansi_c(*argv, false)));
+		else if (force_single_quoting(*argv))
+			lpush(args, as_str(quote_single(*argv)));
+		else
+			lpush(args, as_str(*argv));
+		++argv;
+	}
+	xtrace_fd_str = var_lookup("MINISHELL_XTRACEFD");
+	if (xtrace_fd_str[0] == '\0')
+		xtrace_fd_str = ft_itoa(MINISHELL_DEFAULT_XTRACEFD);
+	xtrace_fd = ft_atoi(xtrace_fd_str);
+	ft_dprintf(xtrace_fd, ft_strjoin(var_lookup("PS4"), ljoin(args, " ")));
+	ft_dprintf(xtrace_fd, "\n");
+}
+
 /* TODO: Protect all system calls (dup2, fork, close, open, execve, ...) */
 pid_t	execute_simple_command(t_tree *simple_command, t_list *commands)
 {
@@ -181,6 +206,8 @@ pid_t	execute_simple_command(t_tree *simple_command, t_list *commands)
 
 	path_parts = ft_split(var_lookup("PATH"), ':'); // TOOD: what about empty PATH
 	argv = make_argv(simple_command);
+	if (shopt_enabled('x'))
+		msh_xtrace(argv);
 	if (argv[0] == NULL)
 		return (close_fds(simple_command), -257);
 	if (is_builtin(argv[0]) && simple_command->fd_in == -2 && simple_command->fd_out == -2)

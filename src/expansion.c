@@ -195,7 +195,7 @@ t_list	*expand_subwords(t_list	*words)
 	liter(words);
 	while (lnext(words))
 	{
-		if (words->current->as_token->str[0] == '$')
+		if (words->current->as_token->str[0] == '$' && words->current->as_token->escape_ctx[0] == '0')
 		{
 			if (words->current->as_token->str[1] == '\0')
 				lpush(new_words, as_data(words->current));
@@ -203,6 +203,7 @@ t_list	*expand_subwords(t_list	*words)
 			{
 				expanded_token = new_token(var_lookup(words->current->as_token->str + 1), TOK_WORD, true);
 				expanded_token->expansion_ctx = repeat_string("1", ft_strlen(expanded_token->str));
+				expanded_token->escape_ctx = repeat_string("0", ft_strlen(expanded_token->str) + 1);
 				lpush(new_words, as_token(expanded_token));
 			}
 		}
@@ -215,46 +216,57 @@ t_list	*expand_subwords(t_list	*words)
 	return (new_words);
 }
 
-t_list	*split_into_subwords(const char *str)
+t_list	*split_into_subwords(t_token *token)
 {
 	t_list	*subwords;
 	int		idx;
 	int		start;
 	int		parse_param;
+	t_token	*tok;
 
 	subwords = lnew();
 	idx = -1;
 	start = 0;
 	parse_param = 0;
-	while (str[++idx])
+	while (token->str[++idx])
 	{
-		if (str[idx] == '$' && parse_param == 0)
+		if (token->str[idx] == '$' && parse_param == 0 && token->escape_ctx[idx] == '0')
 		{
-			lpush(subwords, as_token(new_token(ft_strndup(str + start, (size_t)(idx - start)), TOK_WORD, true)));
+			tok = new_token(ft_strndup(token->str + start, (size_t)(idx - start)), TOK_WORD, true);
+			tok->escape_ctx = ft_strndup(token->escape_ctx + start, (size_t)(idx - start + 1));
+			lpush(subwords, as_token(tok));
 			start = idx;
 			parse_param = 1;
 		}
 		else if (parse_param > 0)
 		{
-			if (parse_param == 1 && (ft_isalpha(str[idx]) || str[idx] == '_'))
+			if (token->escape_ctx[idx] == '1')
+				parse_param = 0;
+			if (parse_param == 1 && (ft_isalpha(token->str[idx]) || token->str[idx] == '_'))
 				++parse_param;
-			else if (parse_param == 1 && ft_strchr("?$-0123456789@*#", str[idx]))
+			else if (parse_param == 1 && ft_strchr("?$-0123456789@*#", token->str[idx]))
 			{
-				lpush(subwords, as_token(new_token(ft_strndup(str + start, (size_t)(idx - start + 1)), TOK_WORD, true)));
+				tok = new_token(ft_strndup(token->str + start, (size_t)(idx - start + 1)), TOK_WORD, true);
+				tok->escape_ctx = ft_strndup(token->escape_ctx + start, (size_t)(idx - start + 2));
+				lpush(subwords, as_token(tok));
 				start = idx + 1;
 				parse_param = 0;
 			}
-			else if (parse_param > 1 && (ft_isalpha(str[idx]) || ft_isdigit(str[idx]) || str[idx] == '_'))
+			else if (parse_param > 1 && (ft_isalpha(token->str[idx]) || ft_isdigit(token->str[idx]) || token->str[idx] == '_'))
 				++parse_param;
 			else
 			{
-				lpush(subwords, as_token(new_token(ft_strndup(str + start, (size_t)(idx - start)), TOK_WORD, true)));
+				tok = new_token(ft_strndup(token->str + start, (size_t)(idx - start)), TOK_WORD, true);
+				tok->escape_ctx = ft_strndup(token->escape_ctx + start, (size_t)(idx - start + 1));
+				lpush(subwords, as_token(tok));
 				start = idx;
 				parse_param = 0;
 			}
 		}
 	}
-	lpush(subwords, as_token(new_token(ft_strndup(str + start, (size_t)(idx - start)), TOK_WORD, true)));
+	tok = new_token(ft_strndup(token->str + start, (size_t)(idx - start)), TOK_WORD, true);
+	tok->escape_ctx = ft_strndup(token->escape_ctx + start, (size_t)(idx - start + 1));
+	lpush(subwords, as_token(tok));
 	return (subwords);
 }
 
@@ -266,6 +278,7 @@ static t_token	*new_word_token(t_token *token, int start, int end)
 	new_tok = new_token(ft_strndup(token->str + start, (size_t)(end - start)), TOK_WORD, true);
 	new_tok->quoting_ctx = ft_strndup(token->quoting_ctx + start, (size_t)(end - start));
 	new_tok->expansion_ctx = ft_strndup(token->expansion_ctx + start, (size_t)(end - start));
+	new_tok->escape_ctx = ft_strndup(token->escape_ctx + start, (size_t)(end - start) + 1);
 	return (new_tok);
 }
 
@@ -366,25 +379,31 @@ t_list	*expand_tokens(t_list *tokens)
 			lpush(new_tokens, as_data(tokens->current));
 			continue ;
 		}
-		subwords = split_into_subwords(tokens->current->as_token->str);
+		subwords = split_into_subwords(tokens->current->as_token);
 		subwords = expand_subwords(subwords);
 		subwords = liter(remove_empty_words(subwords));
 		joined_token = new_token("", TOK_WORD, true);
 		joined_token->expansion_ctx = "";
+		joined_token->escape_ctx = "";
 		while (lnext(subwords))
 		{
 			joined_token->str = ft_strjoin(joined_token->str, subwords->current->as_token->str);
 			joined_token->expansion_ctx = ft_strjoin(joined_token->expansion_ctx, subwords->current->as_token->expansion_ctx);
 			joined_token->quoting_ctx = ft_strjoin(joined_token->quoting_ctx, subwords->current->as_token->quoting_ctx);
+			joined_token->escape_ctx = ft_strjoin(ft_strndup(joined_token->escape_ctx, ft_strlen(joined_token->escape_ctx) - 1), subwords->current->as_token->escape_ctx);
 		}
 		if (tokens->current->as_token->type == TOK_WORD)
 		{
 			if (joined_token->str[0] != '\0' && ft_strchr(get_ifs(), joined_token->str[0]))
 				if (new_tokens->last != NULL && new_tokens->last->as_token->is_last_token == false)
 					new_tokens->last->as_token->is_last_token = true;
-			split_tokens = split_into_words(joined_token);
+			split_tokens = liter(split_into_words(joined_token));
+			while (lnext(split_tokens))
+				split_tokens->current->as_token->origin = tokens->current->as_token->origin;
 			lextend(new_tokens, lcopy(split_tokens));
-			if (split_tokens->last->as_token->num_tokens_after_split == 0 || !ft_strchr(get_ifs(), joined_token->str[ft_strlen(joined_token->str) - 1]))
+			if (split_tokens->last->as_token->num_tokens_after_split == 0
+				|| !ft_strchr(get_ifs(), joined_token->str[ft_strlen(joined_token->str) - 1])
+				|| joined_token->escape_ctx[ft_strlen(joined_token->str) - 1] == '1')
 				if (tokens->current->as_token->is_last_token == false)
 					new_tokens->last->as_token->is_last_token = false;
 		}
@@ -392,6 +411,7 @@ t_list	*expand_tokens(t_list *tokens)
 		{
 			joined_token->type = TOK_DQUOTE_STR;
 			joined_token->quoting_ctx = repeat_string("1", ft_strlen(joined_token->str));
+			joined_token->origin = tokens->current->as_token->origin;
 			lpush(new_tokens, as_token(joined_token));
 			if (tokens->current->as_token->is_last_token == false)
 				new_tokens->last->as_token->is_last_token = false;
