@@ -54,23 +54,27 @@ void	set_fds(t_tree *command)
 		dup2(err, STDERR_FILENO);
 }
 
-static char	*search_executable(char *program, char **path_parts) // TODO: Not correct, not searching for executables, maybe use stat instead
+static char	*search_executable(char *program, t_list *path_parts) // TODO: Not correct, not searching for executables, maybe use stat instead
 {
 	char	*path;
 	char	*executable_path;
 
+	if (!program || !*program)
+		return (NULL);
 	if (ft_strchr(program, '/'))
 		return (program);
 	executable_path = NULL;
-	while (program && *program && *path_parts)
+	liter(path_parts);
+	while (lnext(path_parts))
 	{
-		path = ft_strjoin(*path_parts, "/");
+		if (*path_parts->current->as_str == '\0')
+			path_parts->current->as_str = ".";
+		path = ft_strjoin(path_parts->current->as_str, "/");
 		executable_path = ft_strjoin(path, program);
 		if (!access(executable_path, X_OK)
 			&& open(executable_path, O_DIRECTORY) == -1)
 			break ;
 		executable_path = NULL;
-		++path_parts;
 	}
 	return (executable_path);
 }
@@ -104,8 +108,9 @@ void	close_other_command_fds(t_list *commands)
 		close_fds(commands->current->as_tree);
 }
 
-/* deliberately disable env, since wtf, env should NOT be a builtin */
-/* pedago fu'ed up here */
+/* deliberately disable env, since wtf, env should NOT be a builtin. */
+/* pedago fu'ed up here. what if you want to check if _ is working? CAN'T DO IT */
+/* quoteth the bible (POSIX): "The env UTILITY shall obtain the current environment" */
 		/* || ft_strcmp(word, "env") == 0 */
 bool	is_builtin(char	*word)
 {
@@ -118,6 +123,7 @@ bool	is_builtin(char	*word)
 		|| ft_strcmp(word, "declare") == 0
 		|| ft_strcmp(word, "source") == 0
 		|| ft_strcmp(word, ".") == 0
+		|| ft_strcmp(word, "shift") == 0
 		|| ft_strcmp(word, "unset") == 0);
 }
 
@@ -147,6 +153,8 @@ int	handle_builtin(char	*argv[], t_fds fds)
 		return (builtin_source(argv, fds));
 	else if (ft_strcmp(*argv, ".") == 0)
 		return (builtin_source(argv, fds));
+	else if (ft_strcmp(*argv, "shift") == 0)
+		return (builtin_shift(argv, fds));
 	return (1);
 }
 
@@ -288,7 +296,7 @@ static bool	is_only_assigment_words(t_tree *simple_command)
 pid_t	execute_simple_command(t_tree *simple_command, t_list *commands)
 {
 	pid_t	pid;
-	char	**path_parts;
+	t_list	*path_parts;
 	char	**argv;
 	char	*program;
 	int		exit_status;
@@ -297,7 +305,7 @@ pid_t	execute_simple_command(t_tree *simple_command, t_list *commands)
 		argv = transform_for_declare(simple_command);
 	else
 		argv = make_argv(simple_command);
-	path_parts = ft_split(var_lookup("PATH"), ':'); // TOOD: what about empty PATH
+	path_parts = lsplit(var_lookup("PATH"), ":"); // TOOD: what about empty PATH
 	if (shopt_enabled('x'))
 		msh_xtrace(argv);
 	if (argv[0] == NULL)

@@ -38,7 +38,7 @@ int	builtin_source(char **argv, t_fds fds) // TODO: use fds
 
 	if (argv[1] == NULL)
 		return (minishell_error(2, false, false, "%s: filename argument required\n%s: usage: source filename [arguments]", argv[0], argv[0]));
-	path_parts = ft_split(var_lookup("PATH"), ':'); // TODO: what about empty PATH // TODO: empty path means include CWD
+	path_parts = ft_split(ft_strjoin(".:", var_lookup("PATH")), ':'); // TODO: what about empty PATH // TODO: empty path means include CWD
 	file_path = search_executable(argv[1], path_parts);
 	if (!file_path)
 	{

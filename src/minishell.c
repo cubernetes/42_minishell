@@ -277,6 +277,7 @@ void	set_initial_shell_variables(char *argv[], char *envp[])
 	set_var("PS1", PS1, (t_flags){0});
 	set_var("PS2", PS2, (t_flags){0});
 	set_var("PS4", PS4, (t_flags){0});
+	set_var("IFS", DEFAULT_IFS, (t_flags){0});
 	set_var("MINISHELL_SOURCE_EXECUTION_STRING", NULL, (t_flags){.readonly = true});
 	set_pwd();
 }
@@ -480,6 +481,8 @@ void	init(char *argv[], char *envp[])
 /* TODO: Usage infos for builtins */
 /* TODO: help builtin */
 /* TODO: shift builtin */
+/* TODO: get SHLVL right */
+/* TODO: get sourcing right */
 int	main(int argc, char *argv[], char *envp[])
 {
 	/* close(3); close(63); */ /* valgrind */

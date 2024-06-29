@@ -245,6 +245,7 @@ int										builtin_declare(char **argv, t_fds fds);
 int										builtin_pwd(char **argv, t_fds fds);
 int										builtin_unset(char **argv, t_fds fds);
 int										builtin_source(char **argv, t_fds fds);
+int										builtin_shift(char **argv, t_fds fds);
 char									*ft_gethostname(void);
 char									*ft_getusername(void);
 char									*ft_getcwd(void);

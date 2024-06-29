@@ -6,7 +6,7 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:02:16 by tischmid          #+#    #+#              #
-#    Updated: 2024/06/26 15:07:39 by tischmid         ###   ########.fr        #
+#    Updated: 2024/06/29 20:43:59 by tosuman          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -52,6 +52,7 @@ _SRC += pwd.c
 _SRC += env.c
 _SRC += exit.c
 _SRC += cd.c
+_SRC += shift.c
 _SRC += declare.c
 _SRC += declare_utils.c
 _SRC += readonly.c

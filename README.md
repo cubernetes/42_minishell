@@ -56,7 +56,7 @@
     5. 🟥 `$*` expanding to all positional argument, joining with `IFS[0]` when quoted
 - 🟩 default (and automatic/special) variables
     - 🟩 PPID, _, MINISHELL_EXECUTION_STRING, LINENO/CURRENT_LINE, SHLVL
-- 🟥 shift builtin
+- 🟩 shift builtin without arguments
 - 🟩 source builtin
 - 🟩 `cd` with `-` argument
 - 🟩 correct handling of:
@@ -99,17 +99,18 @@
 - 🟩 Error redirection using `2>` and `2>>`
 - 🟩 inheriting and respecting of umask (tho you can't change it :P)
 - 🟩 assignment words (basic implementation, not allowed with non-assignment-words)
+    - try `A=1 B=2 C=3 ; declare -p A B C`
 - 🟥 heredocs in the history
 
 ## 🟩 Notable implementation details
 - 🟩 optional(!) garbage collection with custom(!) contexts
-- 🟩 use of hashtables (`fnv-1a`)
-- 🟩 0-declaration (reverse-)iterators for the circular deques (besides hashtable the only datastructure being used)
+- 🟩 use of hashtables (`fnv-1a` hash algorithm)
+- 🟩 0-declaration iterators for the circular deques (the main datastructure)
 - 🟩 ft_getopt (including `+` options) (try `declare -prxxx +x +r -xrpxprpxp -- VAR=1 X`)
 - 🟩 LL(1) grammar and parser
 - 🟩 AST with tagged unions
 - 🟩 generic deque implementation using tagged unions
-- 🟩 custom implementation of mktemp (for heredoc tmp files) using `/dev/urandom`
+- 🟩 functions similar to mktemp, gethostname, getpid, getuid, getusername, getumask
 - 🟩 Not inheriting IFS to prevent exploits
 
 # 🟩 Generate locale-specific whitespace
