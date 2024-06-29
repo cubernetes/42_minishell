@@ -320,7 +320,7 @@ static void	set_shell_options(char *const argv[])
 			opts = ft_strjoin(opts, "s");
 			implicit_s = true;
 		}
-		if (isatty(STDIN_FILENO))
+		if (isatty(STDIN_FILENO) && isatty(STDERR_FILENO))
 			if (!ft_strchr(opts, 'i'))
 				opts = ft_strjoin(opts, "i");
 	}
@@ -354,17 +354,20 @@ static void	set_shell_options(char *const argv[])
 	}
 }
 
-static int	msh_getc(FILE *stream)
-{
-	int	c;
-
-	c = getc(stream);
-	if (!isatty(STDERR_FILENO))
-		ft_dprintf(0, "%c", c);
-	if (c == '\r' && !isatty(STDERR_FILENO))
-		ft_dprintf(0 ,"\n");
-	return (c);
-}
+/* static int	msh_getc(FILE *stream) */
+/* { */
+	/* char	c; */
+/*  */
+	/* read(1, &c, 1); */
+	/* if (isatty(STDERR_FILENO)) */
+		/* return (c); */
+	/* ft_dprintf(0, "%c", c); */
+	/* if (c == '\x7f') */
+		/* ft_dprintf(0 ,"\b \b"); */
+	/* if (c == '\r') */
+		/* ft_dprintf(0 ,"\n"); */
+	/* return (c); */
+/* } */
 
 void	init(char *argv[], char *envp[])
 {
@@ -373,7 +376,7 @@ void	init(char *argv[], char *envp[])
 	set_initial_shell_variables(argv, envp);
 	set_shell_options(argv);
 	rl_event_hook = noop;
-	rl_getc_function = msh_getc;
+	/* rl_getc_function = msh_getc; */
 }
 
 /* TODO: remove DEBUG macros */
