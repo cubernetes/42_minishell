@@ -59,10 +59,11 @@
 - 🟥 shift builtin
 - 🟥 source builtin
 - 🟩 `cd` with `-` argument
-- 🟩 correct handling (using `rl_getc_function`) of:
+- 🟩 correct handling of:
     - 🟩 `./minishell 2>/dev/null`
     - 🟩 `./minishell 1>/dev/null`
     - 🟩 `./minishell | ./minishell | ...`
+    - 🟩 `./minishell -i 2>/dev/null`
 - 🟧 the following shell options (exactly like bash) and their negations (using `+`) if applicable:
     - 🟩 `-c` for an execution string with positional arguments afterwards (`$0`, `$1`, ...)
     - 🟩 `-s` to specify positional arguments (`$1`, `$2`, ...)

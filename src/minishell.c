@@ -9,6 +9,8 @@
 #include <string.h>
 #include <unistd.h>            /* STDERR_FILENO */
 #include <stdbool.h>
+#include <fcntl.h>
+#include <errno.h>
 
 int	minishell_error(int exit_code, bool do_exit, bool syntax_error, const char *fmt, ...)
 {
@@ -145,16 +147,39 @@ t_list	*get_lines(int fd)
 	char		*input;
 	char		*ps1;
 	static char	*prev_input = "";
+	int			tty;
+	int			old;
+	bool		restore;
 
 	if (shopt_enabled('c'))
 		return (lsplit(var_lookup("MINISHELL_EXECUTION_STRING"), "\n"));
 	ps1 = expand_prompt(get_var("PS1")->value); // TOOD: Can we ensure that there's always PS1?
 	if (isatty(STDIN_FILENO))
 	{
+		restore = false;
+		if (!isatty(STDERR_FILENO))
+		{
+			restore = true;
+			tty = open("/dev/tty", O_WRONLY);
+			if (tty == -1)
+				(void)minishell_error(1, false, false, "/dev/tty: ", strerror(errno));
+			else
+			{
+				old = dup(STDERR_FILENO);
+				dup2(tty, STDERR_FILENO);
+				close(tty);
+			}
+			if (!shopt_enabled('i'))
+				ps1 = "";
+		}
 		interactive_signals();
-		rl_outstream = stderr;
 		input = readline(ps1);
 		noninteractive_signals();
+		if (restore)
+		{
+			dup2(old, STDERR_FILENO);
+			close(old);
+		}
 		gc_add(input);
 	}
 	else
@@ -282,6 +307,7 @@ static void	set_shell_options(char *const argv[])
 	char	*opts;
 	int		i;
 	bool	implicit_s;
+	int		tty;
 
 	implicit_s = false;
 	has_c = false;
@@ -312,6 +338,17 @@ static void	set_shell_options(char *const argv[])
 		else if (!ft_strchr(opts, (char)options->current->as_getopt_arg) && (char)options->current->as_getopt_arg != 'l')
 			opts = ft_strjoin(opts, ft_strndup(&(char){(char)options->current->as_getopt_arg}, 1));
 
+	}
+	if (ft_strchr(opts, 'i'))
+	{
+		tty = open("/dev/tty", O_WRONLY);
+		if (tty == -1)
+			(void)minishell_error(1, false, false, "/dev/tty: ", strerror(errno));
+		else
+		{
+			dup2(tty, STDERR_FILENO);
+			close(tty);
+		}
 	}
 	if (!ft_strchr(opts, 'c'))
 	{
@@ -376,6 +413,7 @@ void	init(char *argv[], char *envp[])
 	set_initial_shell_variables(argv, envp);
 	set_shell_options(argv);
 	rl_event_hook = noop;
+	rl_outstream = stderr;
 	/* rl_getc_function = msh_getc; */
 }
 
@@ -420,7 +458,7 @@ void	init(char *argv[], char *envp[])
 /* TODO: PS0, PS4 */
 int	main(int argc, char *argv[], char *envp[])
 {
-	/* close(3); close(63); */
+	/* close(3); close(63); */ /* valgrind */
 	(void)argc;
 	init(argv, envp);
 	repl();
