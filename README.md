@@ -80,9 +80,9 @@
     - 🟥 `-C` to disallow overwriting of existing regular files via redirections (noclobber)
 - 🟥 set builtin that can set all of the options from above (except `-s`, `-c`, `-l`, and `-i`) and set positional arguments
 - 🟥 execution of scripts via arguments
-- 🟥 sourcing of $HOME/.mshrc if it exists
-- 🟥 when invoked with `-l` or the first character of argv0 is a hyphen (`-`) (login shell)
-    - 🟥 sourcing of $HOME/.msh_profile if it exists
+- 🟩 sourcing of $HOME/.mshrc if it exists
+- 🟩 when invoked with `-l` or the first character of argv0 is a hyphen (`-`) (login shell)
+    - 🟩 sourcing of $HOME/.msh_profile if it exists
 - 🟥 handling of line continuations in the following contexts:
     - 🟥 unfinished single quote
     - 🟥 unfinished double quote
