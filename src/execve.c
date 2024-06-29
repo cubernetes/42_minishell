@@ -215,6 +215,75 @@ static void	msh_xtrace(char *const argv[])
 	ft_dprintf(xtrace_fd, "\n");
 }
 
+static char	**transform_for_declare(t_tree *simple_command)
+{
+	char	**argv;
+	t_list	*d_argv;
+	int		i;
+
+	d_argv = lnew();
+	lpush(d_argv, as_str("declare"));
+	lpush(d_argv, as_str("--"));
+	liter(simple_command->children);
+	while (lnext(simple_command->children))
+		if (simple_command->children->current->as_tree->type == TOKEN)
+			lpush(d_argv, as_str(simple_command->children->current->as_tree->token->str));
+	argv = ft_malloc(sizeof(*argv) * (d_argv->len + 1));
+	i = 0;
+	liter(d_argv);
+	while (lnext(d_argv))
+		argv[i++] = d_argv->current->as_str;
+	argv[i] = NULL;
+	// if (i > 0)
+	// 	set_var("_", argv[i - 1], (t_flags){0});
+	return (argv);
+}
+
+static bool	is_only_assigment_words(t_tree *simple_command)
+{
+	t_list	*split_token;
+	char	*word;
+	int		idx;
+	t_token	*token;
+	int		assignment_words;
+
+	assignment_words = 0;
+	liter(simple_command->children);
+	while (lnext(simple_command->children))
+	{
+		if (simple_command->children->current->as_tree->type == TOKEN)
+		{
+			token = simple_command->children->current->as_tree->token;
+			split_token = lsplit(token->str, "=");
+			if (split_token->len > 1)
+			{
+				word = split_token->first->as_str;
+				idx = -1;
+				while (word[++idx]) // word is always shorter than escape_ctx, quoting_ctx, and expansion_ctx
+				{
+					if (token->escape_ctx[idx] == '1')
+						return (false);
+					else if (token->quoting_ctx[idx] == '1')
+						return (false);
+					else if (token->expansion_ctx[idx] == '1')
+						return (false);
+					else if (ft_isalnum(word[idx]) || word[idx] == '_')
+					{
+						if (idx == 0 && ft_isdigit(word[idx]))
+							return (false);
+					}
+					else
+						return (false);
+				}
+				++assignment_words;
+			}
+			else
+				return (false);
+		}
+	}
+	return ((bool)assignment_words);
+}
+
 /* TODO: Protect all system calls (dup2, fork, close, open, execve, ...) */
 pid_t	execute_simple_command(t_tree *simple_command, t_list *commands)
 {
@@ -224,8 +293,11 @@ pid_t	execute_simple_command(t_tree *simple_command, t_list *commands)
 	char	*program;
 	int		exit_status;
 
+	if (is_only_assigment_words(simple_command))
+		argv = transform_for_declare(simple_command);
+	else
+		argv = make_argv(simple_command);
 	path_parts = ft_split(var_lookup("PATH"), ':'); // TOOD: what about empty PATH
-	argv = make_argv(simple_command);
 	if (shopt_enabled('x'))
 		msh_xtrace(argv);
 	if (argv[0] == NULL)

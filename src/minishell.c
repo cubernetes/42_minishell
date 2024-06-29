@@ -1,3 +1,4 @@
+#define _POSIX_C_SOURCE 200809L
 #include "minishell.h"
 #include "libft.h"
 
@@ -123,17 +124,17 @@ void	interpret_lines(t_list *lines)
 
 	while (lines->len > 0)
 	{
+		if (get_var("MINISHELL_SOURCE_EXECUTION_STRING") && get_var("MINISHELL_SOURCE_EXECUTION_STRING")->value)
+		{
+			lextend_left(lines, lsplit(var_lookup("MINISHELL_SOURCE_EXECUTION_STRING"), "\n"));
+			set_var("MINISHELL_SOURCE_EXECUTION_STRING", NULL, get_flags("MINISHELL_SOURCE_EXECUTION_STRING"));
+		}
 		set_var("CURRENT_LINE", lines->first->as_str, (t_flags){0});
 		tree = parse(lines->first->as_str);
 		if (heredoc_aborted(-1) == false || tree == NULL)
 			exec(tree);
 		set_var("LINENO", ft_itoa(ft_atoi(var_lookup("LINENO")) + 1), get_flags("LINENO"));
 		lpop_left(lines);
-		if (get_var("MINISHELL_SOURCE_EXECUTION_STRING") && get_var("MINISHELL_SOURCE_EXECUTION_STRING")->value)
-		{
-			lextend(lines, lsplit(var_lookup("MINISHELL_SOURCE_EXECUTION_STRING"), "\n"));
-			set_var("MINISHELL_SOURCE_EXECUTION_STRING", NULL, get_flags("MINISHELL_SOURCE_EXECUTION_STRING"));
-		}
 	}
 }
 
@@ -153,6 +154,8 @@ t_list	*get_lines(int fd)
 
 	if (shopt_enabled('c'))
 		return (lsplit(var_lookup("MINISHELL_EXECUTION_STRING"), "\n"));
+	if (var_lookup("MINISHELL_SOURCE_EXECUTION_STRING")[0])
+		return (lsplit("", "\n"));
 	ps1 = expand_prompt(get_var("PS1")->value); // TOOD: Can we ensure that there's always PS1?
 	if (isatty(STDIN_FILENO))
 	{
@@ -299,18 +302,17 @@ static int	noop(void)
 // + - does matter, last one counts
 // aefintuvxC
 
-static void	set_shell_options(char *const argv[])
+static int	set_shell_options(char *const argv[])
 {
 	t_list	*options;
-	bool	has_c;
 	char	erropt;
 	char	*opts;
 	int		i;
 	bool	implicit_s;
 	int		tty;
+	int		is_login_shell;
 
 	implicit_s = false;
-	has_c = false;
 	options = liter(ft_getopt_plus(argv, "acefilnstuvxC", &erropt, &optind));
 	if (erropt)
 	{
@@ -320,6 +322,7 @@ static void	set_shell_options(char *const argv[])
 		exit(2);
 	}
 	opts = "";
+	is_login_shell = false;
 	liter(options);
 	while (lnext(options))
 	{
@@ -337,7 +340,8 @@ static void	set_shell_options(char *const argv[])
 			opts = ljoin(lsplit(opts, ft_strndup(&(char){(char)options->current->as_getopt_arg}, 1)), "");
 		else if (!ft_strchr(opts, (char)options->current->as_getopt_arg) && (char)options->current->as_getopt_arg != 'l')
 			opts = ft_strjoin(opts, ft_strndup(&(char){(char)options->current->as_getopt_arg}, 1));
-
+		else if ((char)options->current->as_getopt_arg == 'l')
+			is_login_shell = true;
 	}
 	if (ft_strchr(opts, 'i'))
 	{
@@ -389,6 +393,7 @@ static void	set_shell_options(char *const argv[])
 		ft_printf("Not implemented yet...\n");
 		// run/source script or smth
 	}
+	return (is_login_shell);
 }
 
 /* static int	msh_getc(FILE *stream) */
@@ -406,15 +411,35 @@ static void	set_shell_options(char *const argv[])
 	/* return (c); */
 /* } */
 
+static void	read_init_files(bool is_login_shell)
+{
+	char	*profile;
+	char	*rc;
+
+	profile = ft_strjoin(var_lookup("HOME"), "/.msh_profile");
+	rc = ft_strjoin(var_lookup("HOME"), "/.mshrc");
+	if (is_login_shell)
+	{
+		if (!access(profile, R_OK) && open(profile, O_DIRECTORY) == -1)
+			set_var("MINISHELL_SOURCE_EXECUTION_STRING", "source \"$HOME/.msh_profile\"", get_flags("MINISHELL_SOURCE_EXECUTION_STRING"));
+	}
+	else if (shopt_enabled('i'))
+		if (!access(rc, R_OK) && open(rc, O_DIRECTORY) == -1)
+			set_var("MINISHELL_SOURCE_EXECUTION_STRING", "source \"$HOME/.mshrc\"", get_flags("MINISHELL_SOURCE_EXECUTION_STRING"));
+}
+
 void	init(char *argv[], char *envp[])
 {
+	bool	is_login_shell;
+
 	set_allocator(gc_malloc);
 	gc_set_context("DEFAULT");
 	set_initial_shell_variables(argv, envp);
-	set_shell_options(argv);
+	is_login_shell = set_shell_options(argv);
 	rl_event_hook = noop;
 	rl_outstream = stderr;
 	/* rl_getc_function = msh_getc; */
+	read_init_files(is_login_shell);
 }
 
 /* TODO: remove DEBUG macros */
@@ -440,10 +465,8 @@ void	init(char *argv[], char *envp[])
 /* TODO: Remove asserts */
 /* TODO: builtin simple_command vs simple_command in a pipeline */
 /* TODO: test executing directories */
-/* TODO: ambiguous redirect */
 /* TODO: add default PATH */
 /* TODO: heredoc history */
-/* TODO: unlink heredoc */
 /* TODO: set default ifs, do not inherit */
 /* TODO: set default hostname to localhost in ft_gethostname */
 /* TODO: Empty IFS? */
@@ -451,11 +474,7 @@ void	init(char *argv[], char *envp[])
 /* TODO: Empty delimiter with lsplit? */
 /* TODO: Usage infos for builtins */
 /* TODO: help builtin */
-/* TODO: Source builtin */
 /* TODO: shift builtin */
-/* TODO: ; control operator */
-/* TODO: ASSIGNMENT_WORDS */
-/* TODO: PS0, PS4 */
 int	main(int argc, char *argv[], char *envp[])
 {
 	/* close(3); close(63); */ /* valgrind */

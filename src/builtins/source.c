@@ -45,6 +45,8 @@ int	builtin_source(char **argv, t_fds fds) // TODO: use fds
 		errno = ENOENT;
 		return (minishell_error(1, false, false, "%s: %s", argv[1], strerror(errno)));
 	}
+	else if (open(file_path, O_DIRECTORY) != -1)
+		return (minishell_error(1, false, false, "%s: %s: is a directory", argv[0], lsplit(file_path, "/")->last->as_str));
 	fd = open(file_path, O_RDONLY);
 	lines = "";
 	while (1)

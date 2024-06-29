@@ -82,7 +82,7 @@
 - 🟥 execution of scripts via arguments
 - 🟥 sourcing of $HOME/.mshrc if it exists
 - 🟥 when invoked with `-l` or the first character of argv0 is a hyphen (`-`) (login shell)
-    - 🟥 sourcing of $HOME/.msh_profile if it exists, otherwise $HOME/.profile if it exists
+    - 🟥 sourcing of $HOME/.msh_profile if it exists
 - 🟥 handling of line continuations in the following contexts:
     - 🟥 unfinished single quote
     - 🟥 unfinished double quote
@@ -98,6 +98,7 @@
 - 🟥 ANSI C quoting
 - 🟩 Error redirection using `2>` and `2>>`
 - 🟩 inheriting and respecting of umask (tho you can't change it :P)
+- 🟩 assignment words (basic implementation, not allowed with non-assignment-words)
 
 ## 🟩 Notable implementation details
 - 🟩 optional(!) garbage collection with custom(!) contexts
