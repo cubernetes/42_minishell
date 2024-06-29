@@ -388,6 +388,8 @@ bool	tokenize_word(const char **line, t_list *tokens)
 	const char	*tmp;
 	bool		escaped;
 
+	if (**line == '#')
+		return (push_token(line, tokens, 0, TOK_EOL));
 	if (is_word_char(**line) && is_not_and_and(*line))
 	{
 		len = 0;

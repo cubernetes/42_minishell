@@ -22,7 +22,7 @@
     - 🟩 try one of `unset IFS`, `declare IFS=`, `declare IFS=:`, `declare IFS=": "`
     - 🟩 then `declare A=" :one     two  three:::::four:   " && /bin/printf '"%s"\n' $A-one-$A-two-$A`
 - 🟩 declare (also with `-p`) and readonly builtin
-- 🟧 declare, readonly, and export without args, with correct(!) (ansi-)quoting
+- 🟧 declare, readonly, and export without args, with correct(!) (ANSI-C-)quoting
     - 🟩 try `declare A='cd "$HOME" && echo "Changed dir!" || echo "Sorry $USER, no changing :("' && declare -p A`
 - 🟩 shell (unexported) variables (`declare A=1`)
 - 🟩 readonly variables (`declare -r A=1`, `readonly B=1`)
@@ -92,13 +92,14 @@
     - 🟥 unfinished control operator (`&&`, `||`)
     - 🟥 here-documents
 - 🟥 The exlamation point (`!`) reserved word for negation of the exit status of a pipeline
-- 🟥 comments using the hash symbol (`#`)
+- 🟩 comments using the hash symbol (`#`)
 - 🟩 the semicolon control operator (`;`)
 - 🟩 handling of backslash-escaping in unquoted and double-quoted contexts
 - 🟥 ANSI C quoting
 - 🟩 Error redirection using `2>` and `2>>`
 - 🟩 inheriting and respecting of umask (tho you can't change it :P)
 - 🟩 assignment words (basic implementation, not allowed with non-assignment-words)
+- 🟥 heredocs in the history
 
 ## 🟩 Notable implementation details
 - 🟩 optional(!) garbage collection with custom(!) contexts
