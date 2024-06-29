@@ -19,12 +19,12 @@
 
 ## 🟧 Additional features (not required by the subject)
 - 🟩 Wordsplitting after parameter expansion using multicharacter IFS (exactly like bash)
-    - 🟩 try one of `unset IFS`, `declare IFS=`, `declare IFS=:`, `declare IFS=": "`
-    - 🟩 then `declare A=" :one     two  three:::::four:   " && /bin/printf '"%s"\n' $A-one-$A-two-$A`
+    - 🟩 try one of `unset IFS`, `IFS=`, `IFS=:`, `IFS=": "`
+    - 🟩 then `A=" :one     two  three:::::four:   " && /bin/printf '"%s"\n' $A-one-$A-two-$A`
 - 🟩 declare (also with `-p`) and readonly builtin
 - 🟧 declare, readonly, and export without args, with correct(!) (ANSI-C-)quoting
-    - 🟩 try `declare A='cd "$HOME" && echo "Changed dir!" || echo "Sorry $USER, no changing :("' && declare -p A`
-- 🟩 shell (unexported) variables (`declare A=1`)
+    - 🟩 try `A='cd "$HOME" && echo "Changed dir!" || echo "Sorry $USER, no changing :("' && declare -p A`
+- 🟩 normal shell variables (no flags) (`declare A=1`, `A=1`)
 - 🟩 readonly variables (`declare -r A=1`, `readonly B=1`)
 - 🟩 unset, yet declared variables (`declare A`, `export X`)
 - 🟩 different prompts (`PS0`, `PS1`, `PS2`, `PS4`)
@@ -36,8 +36,8 @@
     3. 🟩 `EUID` env var
 - 🟩 fallback mechanisms for hostname resolution in prompt (`/etc/hostname`, then `/proc/sys/kernel/hostname`)
 - 🟩 creation of subshells when using parenthesis
-- 🟩 sequential expansion of lists (try `export A=1 && echo $A`)
-- 🟩 sequential expansion of heredocs from lists (try `export A=1 && cat << EOF\nA: $A\nEOF`)
+- 🟩 sequential expansion of lists (try `A=1 && echo $A`)
+- 🟩 sequential expansion of heredocs from lists (try `A=1 && cat << EOF\nA: $A\nEOF`)
 - 🟩 correct handling of non-tty stdin, also for heredocs(!) (try `printf '<<EOF cat\nline\nEOF' | ./minishell`)
 - 🟩 correct handling of multiline input
 - 🟩 correct handling of multiline prompt
@@ -45,7 +45,7 @@
     - 🟩 try `exit 9223372036854775808 1` vs. `exit 9223372036854775807 1` vs. `exit word 1`
     - 🟩 try `bash -c 'exit 42'`; `exit 1 1`; `echo $?` vs. `true`; `exit 1 1`; `echo $?`
 - 🟩 handling of ambiguous redirects
-- 🟥 the weird export/declare/readonly edge case (`export l='ls -al' e=export && export newls=$l || true && $e newls2=$l || true && echo $newls && echo $newls2`).
+- 🟥 the weird export/declare/readonly edge case (`l="ls -al" e=export ; export newls=$l ; $e newls2=$l ; echo "newls:$newls" ; echo "newls2:$newls2"`).
 - 🟩 `?` glob character
 - 🟩 additional special parameters:
     1. 🟩 `$-` expanding to the active shell options
