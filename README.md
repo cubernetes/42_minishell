@@ -57,7 +57,7 @@
 - 🟩 default (and automatic/special) variables
     - 🟩 PPID, _, MINISHELL_EXECUTION_STRING, LINENO/CURRENT_LINE, SHLVL
 - 🟥 shift builtin
-- 🟥 source builtin
+- 🟩 source builtin
 - 🟩 `cd` with `-` argument
 - 🟩 correct handling of:
     - 🟩 `./minishell 2>/dev/null`
@@ -67,17 +67,17 @@
 - 🟧 the following shell options (exactly like bash) and their negations (using `+`) if applicable:
     - 🟩 `-c` for an execution string with positional arguments afterwards (`$0`, `$1`, ...)
     - 🟩 `-s` to specify positional arguments (`$1`, `$2`, ...)
-    - 🟥 `-l` to make minishell act as if it had been invoked as a login shell
+    - 🟩 `-l` to make minishell act as if it had been invoked as a login shell
     - 🟩 `-i` to force interactive mode (except when using `-c`)
-    - 🟥 `-a` to autoexport variable assignments
-    - 🟥 `-e` to exit when a pipeline fails with a non-zero exit status
-    - 🟥 `-f` to disable pathname expansion (globbing)
-    - 🟥 `-n` to only read command, not execute them
-    - 🟥 `-t` to exit after executing the first command line
-    - 🟥 `-u` to treat expansion of unset parameters an error
-    - 🟥 `-v` to print every input line after it's read
-    - 🟥 `-x` to print the arguments of a command before it's executed
-    - 🟥 `-C` to disallow overwriting of existing regular files via redirections
+    - 🟥 `-a` to autoexport variable assignments (allexport)
+    - 🟥 `-e` to exit when a pipeline fails with a non-zero exit status (errexit)
+    - 🟥 `-f` to disable pathname expansion (noglob)
+    - 🟥 `-n` to only read command, not execute them (noexec)
+    - 🟥 `-t` to exit after executing the first command line (onecmd)
+    - 🟥 `-u` to treat expansion of unset parameters an error (nounset)
+    - 🟩 `-v` to print every input line after it's read (verbose)
+    - 🟩 `-x` to print the arguments of a command before it's executed (xtrace)
+    - 🟥 `-C` to disallow overwriting of existing regular files via redirections (noclobber)
 - 🟥 set builtin that can set all of the options from above (except `-s`, `-c`, `-l`, and `-i`) and set positional arguments
 - 🟥 execution of scripts via arguments
 - 🟥 sourcing of $HOME/.mshrc if it exists

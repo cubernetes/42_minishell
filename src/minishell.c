@@ -130,6 +130,8 @@ void	interpret_lines(t_list *lines)
 			set_var("MINISHELL_SOURCE_EXECUTION_STRING", NULL, get_flags("MINISHELL_SOURCE_EXECUTION_STRING"));
 		}
 		set_var("CURRENT_LINE", lines->first->as_str, (t_flags){0});
+		if (shopt_enabled('v'))
+			ft_dprintf(STDERR_FILENO, "%s\n", lines->first->as_str);
 		tree = parse(lines->first->as_str);
 		if (heredoc_aborted(-1) == false || tree == NULL)
 			exec(tree);
@@ -154,8 +156,12 @@ t_list	*get_lines(int fd)
 
 	if (shopt_enabled('c'))
 		return (lsplit(var_lookup("MINISHELL_EXECUTION_STRING"), "\n"));
-	if (var_lookup("MINISHELL_SOURCE_EXECUTION_STRING")[0])
-		return (lsplit("", "\n"));
+	else if (get_var("MINISHELL_SOURCE_EXECUTION_STRING") && get_var("MINISHELL_SOURCE_EXECUTION_STRING")->value)
+	{
+		input = var_lookup("MINISHELL_SOURCE_EXECUTION_STRING");
+		set_var("MINISHELL_SOURCE_EXECUTION_STRING", NULL, get_flags("MINISHELL_SOURCE_EXECUTION_STRING"));
+		return (lsplit(input, "\n"));
+	}
 	ps1 = expand_prompt(get_var("PS1")->value); // TOOD: Can we ensure that there's always PS1?
 	if (isatty(STDIN_FILENO))
 	{
@@ -195,11 +201,9 @@ t_list	*get_lines(int fd)
 			ft_dprintf(STDERR_FILENO, "%s", ps1);
 	}
 	if (input == NULL)
-		return (lnew());
+		return (NULL);
 	if (*input && ft_strcmp(input, prev_input))
 		add_history(input);
-	if (shopt_enabled('n'))
-		ft_dprintf(STDERR_FILENO, "%s\n", input);
 	ft_dprintf(STDERR_FILENO, "%s", var_lookup("PS0"));
 	gc_start_context("POST");
 	prev_input = ft_strdup(input);
@@ -215,7 +219,7 @@ void	repl(void)
 	while (true)
 	{
 		lines = get_lines(STDIN_FILENO);
-		if (lines->len == 0)
+		if (lines == NULL)
 			break ;
 		interpret_lines(lines);
 		if (shopt_enabled('c'))
@@ -367,6 +371,7 @@ static int	set_shell_options(char *const argv[])
 	}
 	set_var("-", opts, (t_flags){.special = true});
 	set_var("0", argv[0], (t_flags){.special = true});
+	is_login_shell |= argv[0][0] == '-';
 	argv += optind;
 	if (ft_strchr(opts, 'c'))
 	{

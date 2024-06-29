@@ -57,6 +57,8 @@ int	builtin_source(char **argv, t_fds fds) // TODO: use fds
 		lines = ft_strjoin(lines, line);
 	}
 	close(fd);
+	if (lines[ft_strlen(lines) - 1] == '\n')
+		lines[ft_strlen(lines) - 1] = '\0';
 	set_var("MINISHELL_SOURCE_EXECUTION_STRING", lines, get_flags("MINISHELL_SOURCE_EXECUTION_STRING"));
 	return (0);
 }
