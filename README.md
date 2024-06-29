@@ -3,13 +3,13 @@
 ## 🟩 Mandatory Features
 - 🟩 input prompt with history (readline, non-persistent)
 - 🟩 program execution based on `PATH`
-- 🟩 single quote and double quotes
+- 🟩 single quotes and double quotes
 - 🟩 parameter expansion (`$name` format), also in double quotes
 - 🟩 redirections (`<, >, <<, >>`)
 - 🟩 anonymous pipes (`|`)
 - 🟩 `$?` special parameter for the exit status of the most recent pipeline
 - 🟩 handling of `SIGINT` (`C-c`), `SIGQUIT` (`C-\`), and `EOT` (`C-d`) in all modes
-- 🟩 some builtins (`cho with -n, cd, pwd, export, unset, exit, env`)
+- 🟩 some builtins (`echo with -n, cd, pwd, export, unset, exit, env`)
 - 🟩 0 memory/fd leaks and memory corruptions
 
 ## 🟩 Bonus features
