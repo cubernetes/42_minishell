@@ -60,7 +60,7 @@ Compile with `make`, recompile with `make re`, remove objects with `make clean`.
 - 🟩 correct handling of non-tty stdin, also for <ins><b>heredocs</b></ins> (try `printf '<<EOF cat\nline\nEOF' | ./minishell`)
 - 🟩 <ins><b>correct</b></ins> handling of multiline input
 - 🟩 <ins><b>correct</b></ins> handling of multiline prompt
-- 🟩 bash-identical implementation of the very <ins><b>quirky</b></ins> `exit` special builtin
+- 🟩 bash-identical implementation of the <ins><b>very quirky</b></ins> `exit` special builtin
     - 🟩 try `exit 9223372036854775808 1` vs. `exit 9223372036854775807 1` vs. `exit word 1`
     - 🟩 try `bash -c 'exit 42'`; `exit 1 1`; `echo $?` vs. `true`; `exit 1 1`; `echo $?`
 - 🟩 handling of csh-like ambiguous <ins><b>redirects</b></ins> (with <ins><b>correct</b></ins> error reporting)
@@ -76,7 +76,7 @@ Compile with `make`, recompile with `make re`, remove objects with `make clean`.
 - 🟩 default (and automatic/special) variables
     - 🟩 PPID, _, MINISHELL_EXECUTION_STRING, LINENO/CURRENT_LINE, SHLVL
 - 🟩 shift special builtin without arguments
-- 🟧 source special <ins><b>builtin</b></ins>
+- 🟧 <ins><b>source special builtin</b></ins>
 - 🟩 : special builtin (colon, null utility, aka null command)
 - 🟩 `cd` with `-` argument
 - 🟩 <ins><b>correct</b></ins> handling of:
