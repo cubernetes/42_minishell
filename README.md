@@ -33,15 +33,15 @@ Compile with `make`, recompile with `make re`, remove objects with `make clean`.
 - 🟩 globbing (`*`) for the current working directory
 
 ## 🟧 Additional features (not required by the subject)
-❗ Features marked with ❗ seemed easy to implement, but turned out to be significantly harder
+❗ Features decorated as bold and underlined seemed easy to implement, but turned out to be significantly harder
 
 ❗ Occasionally, they might also mark features that are almost always implemented "incorrectly"
 
-- 🟩 [Wordsplitting](https://www.gnu.org/software/bash/manual/bash.html#Word-Splitting) after parameter expansion using multicharacter❗ IFS (<ins>exactly</ins> like bash)
+- 🟩 [Wordsplitting](https://www.gnu.org/software/bash/manual/bash.html#Word-Splitting) after parameter expansion using <ins><b>multicharacter</b></ins> IFS (<ins><b>exactly</b></ins> like bash)
     - 🟩 try one of `unset IFS`, `IFS=`, `IFS=:`, `IFS=": "`
     - 🟩 then `A=" :one     two  three:::::four:   " && /bin/printf '"%s"\n' $A-one-$A-two-$A`
 - 🟩 declare (also with `-p`) and readonly (special) builtin
-- 🟧 declare, readonly, and export without args, with correct❗ (ANSI-C-)quoting
+- 🟧 declare, readonly, and export without args, with <ins><b>correct</b></ins> (ANSI-C-)quoting
     - 🟩 try `A='cd "$HOME" && echo "Changed dir!" || echo "Sorry $USER, no changing :("' && declare -p A`
 - 🟩 normal shell variables (no flags) (`declare A=1`, `A=1`)
 - 🟩 readonly variables (`declare -r A=1`, `readonly B=1`)
@@ -49,37 +49,37 @@ Compile with `make`, recompile with `make re`, remove objects with `make clean`.
 - 🟩 different prompts (`PS0`, `PS1`, `PS2`, `PS4`)
 - 🟩 prompt expansion (`\u, \w, \W, \h, \H, \$`)
 - 🟩 fallback mechanisms for username resolution in prompt
-    1. 🟩 manual❗ parsing of the binary [Kerberos credential cache](https://web.mit.edu/kerberos/www/krb5-latest/doc/formats/ccache_file_format.html) file (`/tmp/krb5cc_$EUID_...`)
+    1. 🟩 <ins><b>manual</b></ins> parsing of the binary [Kerberos credential cache](https://web.mit.edu/kerberos/www/krb5-latest/doc/formats/ccache_file_format.html) file (`/tmp/krb5cc_$EUID_...`)
         - 🟩 `EUID` retrieved via manual parsing of [`/proc/self/status`](https://man7.org/linux/man-pages/man5/proc_pid_status.5.html)
     2. 🟩 manual parsing of `/etc/passwd`
     3. 🟩 `EUID` env var
 - 🟩 fallback mechanisms for hostname resolution in prompt (`/etc/hostname`, then `/proc/sys/kernel/hostname`)
 - 🟩 creation of subshells when using parenthesis
-- 🟩 sequential❗ expansion of lists (try `A=1 && echo $A`)
-- 🟩 sequential❗ expansion of heredocs from lists (try `A=1 && cat << EOF\nA: $A\nEOF`)
-- 🟩 correct handling of non-tty stdin, also for heredocs❗ (try `printf '<<EOF cat\nline\nEOF' | ./minishell`)
-- 🟩 correct❗ handling of multiline input
-- 🟩 correct❗ handling of multiline prompt
-- 🟩 bash-identical implementation of the very quirky❗ `exit` special builtin
+- 🟩 <ins><b>sequential</b></ins> expansion of lists (try `A=1 && echo $A`)
+- 🟩 <ins><b>sequential</b></ins> expansion of heredocs from lists (try `A=1 && cat << EOF\nA: $A\nEOF`)
+- 🟩 correct handling of non-tty stdin, also for <ins><b>heredocs</b></ins> (try `printf '<<EOF cat\nline\nEOF' | ./minishell`)
+- 🟩 <ins><b>correct</b></ins> handling of multiline input
+- 🟩 <ins><b>correct</b></ins> handling of multiline prompt
+- 🟩 bash-identical implementation of the very <ins><b>quirky</b></ins> `exit` special builtin
     - 🟩 try `exit 9223372036854775808 1` vs. `exit 9223372036854775807 1` vs. `exit word 1`
     - 🟩 try `bash -c 'exit 42'`; `exit 1 1`; `echo $?` vs. `true`; `exit 1 1`; `echo $?`
-- 🟩 handling of csh-like ambiguous redirects❗ (with correct❗ error reporting)
-- 🟥 [the weird export/declare/readonly edge case](https://unix.stackexchange.com/a/599170)❗ (`l="ls -al" e=export ; export newls=$l ; $e newls2=$l ; echo "newls:$newls" ; echo "newls2:$newls2"`).
+- 🟩 handling of csh-like ambiguous <ins><b>redirects</b></ins> (with <ins><b>correct</b></ins> error reporting)
+- 🟥 <ins><b>[the weird export/declare/readonly edge case](https://unix.stackexchange.com/a/599170)</b></ins> (`l="ls -al" e=export ; export newls=$l ; $e newls2=$l ; echo "newls:$newls" ; echo "newls2:$newls2"`).
 - 🟩 `?` glob character
 - 🟩 additional special parameters:
     1. 🟩 `$-` expanding to the active shell options
     2. 🟩 `$$` expanding to the the current PID of the shell
     3. 🟩 `$0` to `$9` expanding to the positional arguments of minishell (specified after `-c`)
     3. 🟩 `$#` expanding to the number of positional argument
-    4. 🟥 `$@` expanding to all positional argument, with word splitting when quoted❗
+    4. 🟥 `$@` expanding to all positional argument, with word splitting when <ins><b>quoted</b></ins>
     5. 🟥 `$*` expanding to all positional argument, joining with `IFS[0]` when quoted
 - 🟩 default (and automatic/special) variables
     - 🟩 PPID, _, MINISHELL_EXECUTION_STRING, LINENO/CURRENT_LINE, SHLVL
 - 🟩 shift special builtin without arguments
-- 🟧 source special builtin❗
+- 🟧 source special <ins><b>builtin</b></ins>
 - 🟩 : special builtin (colon, null utility, aka null command)
 - 🟩 `cd` with `-` argument
-- 🟩 correct❗ handling of:
+- 🟩 <ins><b>correct</b></ins> handling of:
     - 🟩 `./minishell 2>/dev/null`
     - 🟩 `./minishell 1>/dev/null`
     - 🟩 `./minishell | ./minishell | ...`
@@ -122,17 +122,17 @@ Compile with `make`, recompile with `make re`, remove objects with `make clean`.
 - 🟩 assignment words (basic implementation, not allowed with non-assignment-words)
     - try `A=1 B=2 C=3 ; declare -p A B C`
 - 🟥 heredocs in the history
-- 🟥 [ANSI C quoting](https://www.gnu.org/software/bash/manual/bash.html#ANSI_002dC-Quoting)❗
+- 🟥 <ins><b>[ANSI C quoting](https://www.gnu.org/software/bash/manual/bash.html#ANSI_002dC-Quoting)</b></ins>
 
 ## 🟩 Notable implementation details
-- 🟩 optional garbage collection with arbitrary❗ contexts
-- 🟩 use of hashtables❗ (`fnv-1a` hash algorithm)
-- 🟩 0-declaration❗ iterators for the circular deques (the main datastructure)
-- 🟩 [ft_getopt](https://www.man7.org/linux/man-pages/man3/getopt.3.html)❗ (including `+` options) (try `declare -prxxx +x +r -xrpxprpxp -- VAR=1 X`)
+- 🟩 optional garbage collection with <ins><b>arbitrary</b></ins> contexts
+- 🟩 use of <ins><b>hashtables</b></ins> (`fnv-1a` hash algorithm)
+- 🟩 <ins><b>0-declaration</b></ins> iterators for the circular deques (the main datastructure)
+- 🟩 <ins><b>[ft_getopt](https://www.man7.org/linux/man-pages/man3/getopt.3.html)</b></ins> (including `+` options) (try `declare -prxxx +x +r -xrpxprpxp -- VAR=1 X`)
 - 🟩 LL(1) grammar and parser
 - 🟩 AST with [tagged unions](https://www.wikiwand.com/en/Tagged_union)
 - 🟩 generic deque implementation using tagged unions
-- 🟩 functions similar to mktemp, gethostname, getpid, getuid, getusername❗, getumask
+- 🟩 functions similar to mktemp, gethostname, getpid, getuid, <ins><b>getusername</b></ins>, getumask
 - 🟩 Not inheriting IFS to [prevent exploits](https://unix.stackexchange.com/questions/583596/security-shell-scripts-to-reset-the-ifs-variable-against-misuse)
 
 # 🟩 Generate locale-specific whitespace
