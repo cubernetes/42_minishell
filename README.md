@@ -1,4 +1,7 @@
 # Minishell -- Feature summary
+The [subject](minishell_subject.pdf).
+
+The usual 42 style guidelines (aka "norm") apply (functions <= 25 lines, <= 4 params, <= 5 vars, <= 80 cols, max 5 funcs per file, 4 space-tab indent & align, no globals)
 
 ## 🟩 Mandatory Features
 - 🟩 input prompt with history (readline, non-persistent)
