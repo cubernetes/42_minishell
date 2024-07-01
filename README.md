@@ -69,15 +69,15 @@
     - 🟩 `-s` to specify positional arguments (`$1`, `$2`, ...)
     - 🟩 `-l` to make minishell act as if it had been invoked as a login shell
     - 🟩 `-i` to force interactive mode (except when using `-c`)
-    - 🟥 `-a` to autoexport variable assignments (allexport)
+    - 🟩 `-a` to autoexport variable assignments (allexport)
     - 🟥 `-e` to exit when a pipeline fails with a non-zero exit status (errexit)
-    - 🟥 `-f` to disable pathname expansion (noglob)
+    - 🟩 `-f` to disable pathname expansion (noglob)
     - 🟥 `-n` to only read command, not execute them (noexec)
     - 🟥 `-t` to exit after executing the first command line (onecmd)
-    - 🟥 `-u` to treat expansion of unset parameters an error (nounset)
+    - 🟩 `-u` to treat expansion of unset parameters an error (nounset)
     - 🟩 `-v` to print every input line after it's read (verbose)
     - 🟩 `-x` to print the arguments of a command before it's executed (xtrace)
-    - 🟥 `-C` to disallow overwriting of existing regular files via redirections (noclobber)
+    - 🟩 `-C` to disallow overwriting of existing regular files via redirections (noclobber)
 - 🟥 set builtin that can set all of the options from above (except `-s`, `-c`, `-l`, and `-i`) and set positional arguments
 - 🟥 execution of scripts via arguments
 - 🟩 sourcing of $HOME/.mshrc if it exists

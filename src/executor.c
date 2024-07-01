@@ -115,13 +115,22 @@ void	handle_redirect_override(char *file_path, t_tree *simple_command, bool red_
 {
 	int		fd;
 	int		sc_fd;
+	int		oflag;
+	char	*msg;
 
+	oflag = O_WRONLY | O_TRUNC | O_CREAT;
 	if (shopt_enabled('C'))
-		; // TODO: Implement
-	fd = open(file_path, O_WRONLY | O_TRUNC | O_CREAT, 0666 & ~ft_getumask());
+		oflag |= O_EXCL;
+	fd = open(file_path, oflag, 0666 & ~ft_getumask());
 	if (fd == -1)
+	{
+		if (shopt_enabled('C'))
+			msg = "cannot overwrite existing file";
+		else
+			msg = strerror(errno);
 		simple_command->error = minishell_error(1, false, false,
-				"%s: %s", file_path, strerror(errno));
+				"%s: %s", file_path, msg);
+	}
 	else
 	{
 		if (red_err)
@@ -185,8 +194,11 @@ pid_t	execute_simple_command_wrapper(t_tree *simple_command,
 	}
 	lpush(new_children, as_token(new_token("", TOK_EOL, true)));
 	new_children = expand_tokens(new_children);
+	if (new_children == NULL)
+		return (-256); // err code 1
 	join_tokens(new_children);
-	glob_tokens(new_children);
+	if (!shopt_enabled('f'))
+		glob_tokens(new_children);
 	if (new_children->len <= 1)
 		return (close_fds(simple_command), -258);
 	new_children = build_ast(new_children, false)->children->first->as_tree->children->first->as_tree->children;

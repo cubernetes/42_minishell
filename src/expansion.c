@@ -190,6 +190,8 @@ t_list	*expand_subwords(t_list	*words)
 {
 	t_list	*new_words;
 	t_token	*expanded_token;
+	t_var	*var;
+	char	*var_str;
 
 	new_words = lnew();
 	liter(words);
@@ -201,7 +203,14 @@ t_list	*expand_subwords(t_list	*words)
 				lpush(new_words, as_data(words->current));
 			else
 			{
-				expanded_token = new_token(var_lookup(words->current->as_token->str + 1), TOK_WORD, true);
+				var = get_var(words->current->as_token->str + 1);
+				if (var && var->value)
+					var_str = var->value;
+				else if (shopt_enabled('u'))
+					return (minishell_error(1, false, false, "%s: unbound variable", words->current->as_token->str + 1), NULL);
+				else
+					var_str = "";
+				expanded_token = new_token(var_str, TOK_WORD, true);
 				expanded_token->expansion_ctx = repeat_string("1", ft_strlen(expanded_token->str));
 				expanded_token->escape_ctx = repeat_string("0", ft_strlen(expanded_token->str) + 1);
 				lpush(new_words, as_token(expanded_token));
@@ -402,6 +411,8 @@ t_list	*expand_tokens(t_list *tokens)
 		}
 		subwords = split_into_subwords(tilde_expand(tokens->current->as_token));
 		subwords = expand_subwords(subwords);
+		if (subwords == NULL)
+			return (NULL);
 		subwords = liter(remove_empty_words(subwords));
 		joined_token = new_token("", TOK_WORD, true);
 		joined_token->expansion_ctx = "";
