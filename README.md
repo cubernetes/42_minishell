@@ -19,6 +19,7 @@
 
 ## 🟧 Additional features (not required by the subject)
 ❗ Features marked with (❗) seemed easy to implement, but turned out to be significantly harder
+
 ❗ Occasionally, they might also mark features that are almost always implemented incorrectly
 
 - 🟩 Wordsplitting after parameter expansion using multicharacter(❗) IFS (exactly(❗) like bash)
