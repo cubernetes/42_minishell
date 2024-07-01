@@ -17,9 +17,9 @@ static t_tree	*build_parse_tree(t_list tokens[static 1])
 
 	stack = lnew();
 	lpush(stack, as_tree(production_part_to_child(\
-		(t_tree){COMPLETE_COMMAND, {0}, 0, {{0}}})));
+		(t_tree){COMPLETE_COMMAND, {0}, 0, false, {{0}}})));
 	lpush(stack, as_tree(production_part_to_child(\
-		(t_tree){TOKEN, {.token = &(t_token){TOK_EOL, "", true, "", "", 0, "0", ""}}, 0, {{0}}})));
+		(t_tree){TOKEN, {.token = &(t_token){TOK_EOL, "", true, "", "", 0, "0", ""}}, 0, false, {{0}}})));
 	tree = new_tree_nonterm(COMPLETE_COMMAND, NULL);
 	tree_root = tree;
 	while (1)
@@ -27,6 +27,30 @@ static t_tree	*build_parse_tree(t_list tokens[static 1])
 		top = lpop_left(stack)->as_tree;
 		if (top->type != TOKEN)
 		{
+			while (top->type == PIPE_SEQUENCE
+				&& tokens->first->as_token->type == TOK_WORD
+				&& !ft_strcmp(tokens->first->as_token->str, "!")
+				&& tokens->first->as_token->expansion_ctx[0] == '0'
+				&& tokens->first->as_token->quoting_ctx[0] == '0'
+				&& tokens->first->as_token->escape_ctx[0] == '0')
+			{
+				tree->negated = !tree->negated;
+				lrotate(tokens, 1);
+			}
+			if (top->type == PIPE_SEQUENCE
+				&& (tokens->first->as_token->type == TOK_SEMI
+					|| tokens->first->as_token->type == TOK_AND
+					|| tokens->first->as_token->type == TOK_OR
+					|| tokens->first->as_token->type == TOK_EOL
+					|| tokens->first->as_token->type == TOK_R_PAREN))
+				lpush_left(tokens, as_token(new_token(":", TOK_WORD, true)));
+			else if (top->type != PIPE_SEQUENCE && top->type != COMPLETE_COMMAND
+				&& tokens->first->as_token->type == TOK_WORD
+				&& !ft_strcmp(tokens->first->as_token->str, "!")
+				&& tokens->first->as_token->expansion_ctx[0] == '0'
+				&& tokens->first->as_token->quoting_ctx[0] == '0'
+				&& tokens->first->as_token->escape_ctx[0] == '0')
+				return (set_last_exit_status(minishell_error(2, !option_enabled('i'), true, "syntax error near unexpected token `!'")), NULL);
 			production = get_production(top->type, tokens->first->as_token);
 			if (production == NULL)
 				return (NULL);
@@ -51,13 +75,13 @@ static t_tree	*build_parse_tree(t_list tokens[static 1])
 				lrotate(tokens, 1);
 			}
 			else if (get_token_type(tokens) == TOK_EOL)
-				return (minishell_error(2, !option_enabled('i'), true,
+				return (set_last_exit_status(minishell_error(2, !option_enabled('i'), true,
 					"syntax error near unexpected token `%s'",
-					get_token_str_nl(tokens)), NULL);
+					get_token_str_nl(tokens))), NULL);
 			else
-				return (minishell_error(2, !option_enabled('i'), true,
+				return (set_last_exit_status(minishell_error(2, !option_enabled('i'), true,
 					"syntax error near unexpected token `%s'",
-					get_token_str_nl(tokens)), NULL);
+					get_token_str_nl(tokens))), NULL);
 		}
 	}
 	return (tree_root);

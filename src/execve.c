@@ -123,6 +123,7 @@ bool	is_builtin(char	*word)
 		|| ft_strcmp(word, "declare") == 0
 		|| ft_strcmp(word, "source") == 0
 		|| ft_strcmp(word, ".") == 0
+		|| ft_strcmp(word, ":") == 0
 		|| ft_strcmp(word, "shift") == 0
 		|| ft_strcmp(word, "unset") == 0);
 }
@@ -153,6 +154,8 @@ int	handle_builtin(char	*argv[], t_fds fds)
 		return (builtin_source(argv, fds));
 	else if (ft_strcmp(*argv, ".") == 0)
 		return (builtin_source(argv, fds));
+	else if (ft_strcmp(*argv, ":") == 0)
+		return (builtin_colon(argv, fds));
 	else if (ft_strcmp(*argv, "shift") == 0)
 		return (builtin_shift(argv, fds));
 	return (1);

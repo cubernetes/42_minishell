@@ -15,6 +15,7 @@ t_tree	gen_production(char *token_str)
 				sizeof(t_token) \
 			), \
 			0, \
+			false, \
 			{{0}} \
 		},
 		sizeof(t_tree)

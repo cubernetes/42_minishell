@@ -7,6 +7,7 @@ t_tree	*new_tree_token(t_token_type type, char *str)
 			.type = TOKEN,
 			{.token = new_token(str, type, true)},
 			0,
+			false,
 			{{0}}
 		},
 		sizeof(t_tree)

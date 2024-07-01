@@ -15,7 +15,10 @@ unsigned char	set_last_exit_status(int new_exit_status)
 	static unsigned char	exit_status = 0;
 
 	if (new_exit_status >= 0)
+	{
 		exit_status = (unsigned char)new_exit_status;
+		set_var("?", ft_itoa(exit_status), (t_flags){.special = true});
+	}
 	return (exit_status);
 }
 

@@ -283,9 +283,10 @@ void	setup_pipes(t_list *commands)
 pid_t	execute_complete_command_wrapper(t_tree *complete_command,
 	t_list *commands);
 
-unsigned char	execute_pipe_sequence(t_list *commands)
+unsigned char	execute_pipe_sequence(t_list *commands, bool negated)
 {
 	t_list			*pids;
+	unsigned char	exit_status;
 
 	setup_pipes(commands);
 	pids = lnew();
@@ -299,7 +300,10 @@ unsigned char	execute_pipe_sequence(t_list *commands)
 			lpush(pids, as_pid_t(execute_simple_command_wrapper(
 						commands->current->as_tree, commands)));
 	}
-	return (wait_pipe_sequence(pids));
+	exit_status = wait_pipe_sequence(pids);
+	if (negated)
+		return (!(bool)exit_status);
+	if (exit_status);
 }
 
 unsigned char	execute_tok_and(t_list_node *tok_and)
@@ -307,7 +311,7 @@ unsigned char	execute_tok_and(t_list_node *tok_and)
 	t_tree	*left;
 
 	left = tok_and->prev->as_tree;
-	return (execute_pipe_sequence(left->children));
+	return (execute_pipe_sequence(left->children, left->negated));
 }
 
 unsigned char	execute_tok_or(t_list_node *tok_or)
@@ -315,7 +319,7 @@ unsigned char	execute_tok_or(t_list_node *tok_or)
 	t_tree	*left;
 
 	left = tok_or->prev->as_tree;
-	return (execute_pipe_sequence(left->children));
+	return (execute_pipe_sequence(left->children, left->negated));
 }
 
 /* return value for TOK_AND & TOK_OR to see if command was succesfully executed */
@@ -332,7 +336,7 @@ unsigned char	execute_complete_command(t_tree *node)
 	{
 		if (chldn->current->as_tree->type == PIPE_SEQUENCE
 			&& chldn->current->next->as_tree->type != TOKEN)
-			rtn = execute_pipe_sequence(chldn->current->as_tree->children);
+			rtn = execute_pipe_sequence(chldn->current->as_tree->children, chldn->current->as_tree->negated);
 		else if (chldn->current->as_tree->type == TOKEN)
 		{
 			if (chldn->current->as_tree->token->type == TOK_AND)
@@ -341,7 +345,7 @@ unsigned char	execute_complete_command(t_tree *node)
 					rtn = execute_tok_and(chldn->current);
 				first = false;
 				if (rtn == 0)
-					rtn = execute_pipe_sequence(chldn->current->next->as_tree->children);
+					rtn = execute_pipe_sequence(chldn->current->next->as_tree->children, chldn->current->next->as_tree->negated);
 				if (lnext(chldn) == NULL)
 					break ;
 			}
@@ -351,7 +355,7 @@ unsigned char	execute_complete_command(t_tree *node)
 					rtn = execute_tok_or(chldn->current);
 				first = false;
 				if (rtn != 0)
-					rtn = execute_pipe_sequence(chldn->current->next->as_tree->children);
+					rtn = execute_pipe_sequence(chldn->current->next->as_tree->children, chldn->current->next->as_tree->negated);
 				if (lnext(chldn) == NULL)
 					break ;
 			}
@@ -362,7 +366,7 @@ unsigned char	execute_complete_command(t_tree *node)
 				if (rtn != 0 && option_enabled('e'))
 					break ;
 				first = false;
-				rtn = execute_pipe_sequence(chldn->current->next->as_tree->children);
+				rtn = execute_pipe_sequence(chldn->current->next->as_tree->children, chldn->current->next->as_tree);
 				if (lnext(chldn) == NULL)
 					break ;
 			}

@@ -6,7 +6,7 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:02:16 by tischmid          #+#    #+#              #
-#    Updated: 2024/06/29 20:43:59 by tosuman          ###   ########.fr        #
+#    Updated: 2024/07/01 12:30:16 by tosuman          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -57,6 +57,7 @@ _SRC += declare.c
 _SRC += declare_utils.c
 _SRC += readonly.c
 _SRC += source.c
+_SRC += colon.c
 _SRC += export.c
 _SRC += environment.c
 _SRC += ft_mktemp.c

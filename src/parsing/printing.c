@@ -7,11 +7,17 @@ void	tree_print_with_depth(t_tree *tree, int n)
 	if (tree->type != TOKEN)
 	{
 		if (tree->type == SIMPLE_COMMAND)
-			ft_printf("- <%s> (%d children, in: %d, out: %d)\n",
+			ft_printf("- <%s> (%d children, in: %d, out: %d, err: %d)\n",
 				tree_type_to_string(tree->type),
 				tree->children->len,
 				tree->fd_in,
-				tree->fd_out);
+				tree->fd_out,
+				tree->fd_err);
+		else if (tree->type == PIPE_SEQUENCE)
+			ft_printf("- <%s> (%d children, negated: %s)\n",
+				tree_type_to_string(tree->type),
+				tree->children->len,
+				(char *[]){"false", "true"}[tree->negated]);
 		else
 			ft_printf("- <%s> (%d children)\n",
 				tree_type_to_string(tree->type),
@@ -21,10 +27,12 @@ void	tree_print_with_depth(t_tree *tree, int n)
 			tree_print_with_depth(tree->children->current->as_tree, n + 1);
 	}
 	else
-		ft_printf("- %s (\033[31m%s, %d\033[m)\n",
+		ft_printf("- %s (\033[31m%s\033[m, splitnum: %d, is_last: %s, origin: %s)\n",
 			token_type_to_string(tree->token->type),
 			tree->token->str,
-			tree->token->num_tokens_after_split
+			tree->token->num_tokens_after_split,
+			(char *[]){"false", "true"}[tree->token->is_last_token],
+			tree->token->origin
 			);
 }
 

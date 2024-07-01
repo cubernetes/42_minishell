@@ -58,6 +58,7 @@
     - 🟩 PPID, _, MINISHELL_EXECUTION_STRING, LINENO/CURRENT_LINE, SHLVL
 - 🟩 shift builtin without arguments
 - 🟩 source builtin
+- 🟩 : builtin (colon, null utility, aka null command)
 - 🟩 `cd` with `-` argument
 - 🟩 correct handling of:
     - 🟩 `./minishell 2>/dev/null`
@@ -92,15 +93,17 @@
     - 🟥 unfinished control operator (`&&`, `||`)
     - 🟥 here-documents
 - 🟥 The exlamation point (`!`) reserved word for negation of the exit status of a pipeline
+    - work categorically, i.e. also in && constructs, unlike bash
+    - allows for empty pipelines (i.e. `! || ! ! ; !`)
 - 🟩 comments using the hash symbol (`#`)
 - 🟩 the semicolon control operator (`;`)
 - 🟩 handling of backslash-escaping in unquoted and double-quoted contexts
-- 🟥 ANSI C quoting
 - 🟩 Error redirection using `2>` and `2>>`
 - 🟩 inheriting and respecting of umask (tho you can't change it :P)
 - 🟩 assignment words (basic implementation, not allowed with non-assignment-words)
     - try `A=1 B=2 C=3 ; declare -p A B C`
 - 🟥 heredocs in the history
+- 🟥 ANSI C quoting
 
 ## 🟩 Notable implementation details
 - 🟩 optional(!) garbage collection with custom(!) contexts
