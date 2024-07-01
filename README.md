@@ -64,7 +64,7 @@
     - 🟩 `./minishell 1>/dev/null`
     - 🟩 `./minishell | ./minishell | ...`
     - 🟩 `./minishell -i 2>/dev/null`
-- 🟧 the following shell options (exactly like bash) and their negations (using `+`) if applicable:
+- 🟩 the following shell options (exactly like bash) and their negations (using `+`) if applicable:
     - 🟩 `-c` for an execution string with positional arguments afterwards (`$0`, `$1`, ...)
     - 🟩 `-s` to specify positional arguments (`$1`, `$2`, ...)
     - 🟩 `-l` to make minishell act as if it had been invoked as a login shell
