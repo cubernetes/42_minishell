@@ -306,7 +306,7 @@ pid_t	execute_simple_command(t_tree *simple_command, t_list *commands)
 	else
 		argv = make_argv(simple_command);
 	path_parts = lsplit(var_lookup("PATH"), ":"); // TOOD: what about empty PATH
-	if (shopt_enabled('x'))
+	if (option_enabled('x'))
 		msh_xtrace(argv);
 	if (argv[0] == NULL)
 		return (close_fds(simple_command), -257);

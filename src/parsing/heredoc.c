@@ -32,7 +32,7 @@ char	*create_heredoc(char *delimiter)
 	fd = open(heredoc_file, O_CREAT | O_TRUNC | O_WRONLY, 0600);
 	while (1)
 	{
-		if (shopt_enabled('i'))
+		if (option_enabled('i'))
 		{
 			ps2 = expand_prompt(get_var("PS2")->value); // TODO: Can we ensure that there's always PS2?
 			interactive_signals();

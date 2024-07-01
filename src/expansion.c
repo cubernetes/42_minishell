@@ -206,7 +206,7 @@ t_list	*expand_subwords(t_list	*words)
 				var = get_var(words->current->as_token->str + 1);
 				if (var && var->value)
 					var_str = var->value;
-				else if (shopt_enabled('u'))
+				else if (option_enabled('u'))
 					return (minishell_error(1, false, false, "%s: unbound variable", words->current->as_token->str + 1), NULL);
 				else
 					var_str = "";

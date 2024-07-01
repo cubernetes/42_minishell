@@ -280,7 +280,7 @@ char									*ft_getppid(void);
 int										ft_getumask(void);
 char									*get_ifs(void);
 char									*repeat_string(char *str, size_t n);
-bool									shopt_enabled(char opt);
+bool									option_enabled(char opt);
 bool									force_ansi_c_quoting(char *s);
 bool									force_single_quoting(char *s);
 char									*quote_single(char *s);

@@ -49,7 +49,7 @@ int	add_var_flags(char key[static 1],
 	int		exit_status;
 
 	readonly = orig_var && orig_var->readonly;
-	export = (orig_var && orig_var->exp) || shopt_enabled('a');
+	export = (orig_var && orig_var->exp) || option_enabled('a');
 	exit_status = 0;
 	if (readonly && ft_nullable_strcmp(value, orig_var->value))
 		exit_status = minishell_error(1, false, false,

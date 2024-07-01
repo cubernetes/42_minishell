@@ -51,11 +51,11 @@ static t_tree	*build_parse_tree(t_list tokens[static 1])
 				lrotate(tokens, 1);
 			}
 			else if (get_token_type(tokens) == TOK_EOL)
-				return (minishell_error(2, !shopt_enabled('i'), true,
+				return (minishell_error(2, !option_enabled('i'), true,
 					"syntax error near unexpected token `%s'",
 					get_token_str_nl(tokens)), NULL);
 			else
-				return (minishell_error(2, !shopt_enabled('i'), true,
+				return (minishell_error(2, !option_enabled('i'), true,
 					"syntax error near unexpected token `%s'",
 					get_token_str_nl(tokens)), NULL);
 		}

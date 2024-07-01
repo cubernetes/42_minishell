@@ -19,14 +19,14 @@ int	minishell_error(int exit_code, bool do_exit, bool syntax_error, const char *
 	char	*errfmt;
 	char	*err;
 
-	if (shopt_enabled('i') && do_exit)
+	if (option_enabled('i') && do_exit)
 		ft_dprintf(STDERR_FILENO, "exit\n");
 	va_start(ap, fmt);
 	errfmt = ft_strjoin(var_lookup("0"), ": ");
 	/* errfmt = ft_strjoin("bash", ": "); */
-	if (!shopt_enabled('i'))
+	if (!option_enabled('i'))
 	{
-		if (shopt_enabled('c') && syntax_error)
+		if (option_enabled('c') && syntax_error)
 			errfmt = ft_strjoin(errfmt, "-c: ");
 		errfmt = ft_strjoin(errfmt, ft_strjoin("line ",
 					ft_strjoin(var_lookup("LINENO"), ": ")));
@@ -36,7 +36,7 @@ int	minishell_error(int exit_code, bool do_exit, bool syntax_error, const char *
 	err = ft_strjoin(err, "\n");
 	ft_vdprintf(STDERR_FILENO, err, ap);
 	va_end(ap);
-	if (!shopt_enabled('i') && syntax_error)
+	if (!option_enabled('i') && syntax_error)
 	{
 		err = ft_strjoin(errfmt, "`%s'\n");
 		ft_dprintf(STDERR_FILENO, err, var_lookup("CURRENT_LINE"));
@@ -107,7 +107,7 @@ t_tree	*parse(char *line)
 	return (tree);
 }
 
-void	exec(t_tree *tree)
+unsigned char	exec(t_tree *tree)
 {
 	unsigned char	exit_status;
 
@@ -116,12 +116,15 @@ void	exec(t_tree *tree)
 	else
 		exit_status = execute_complete_command(tree);
 	set_var("?", ft_itoa(exit_status), (t_flags){.special = true});
+	return (exit_status);
 }
 
-void	interpret_lines(t_list *lines)
+unsigned char	interpret_lines(t_list *lines)
 {
-	t_tree	*tree;
+	t_tree			*tree;
+	unsigned char	exit_status;
 
+	exit_status = get_last_exit_status();
 	while (lines->len > 0)
 	{
 		if (get_var("MINISHELL_SOURCE_EXECUTION_STRING") && get_var("MINISHELL_SOURCE_EXECUTION_STRING")->value)
@@ -130,17 +133,20 @@ void	interpret_lines(t_list *lines)
 			set_var("MINISHELL_SOURCE_EXECUTION_STRING", NULL, get_flags("MINISHELL_SOURCE_EXECUTION_STRING"));
 		}
 		set_var("CURRENT_LINE", lines->first->as_str, (t_flags){0});
-		if (shopt_enabled('v'))
+		if (option_enabled('v'))
 			ft_dprintf(STDERR_FILENO, "%s\n", lines->first->as_str);
 		tree = parse(lines->first->as_str);
-		if (heredoc_aborted(-1) == false || tree == NULL)
-			exec(tree);
+		if ((heredoc_aborted(-1) == false || tree == NULL) && !option_enabled('n'))
+			exit_status = exec(tree);
 		set_var("LINENO", ft_itoa(ft_atoi(var_lookup("LINENO")) + 1), get_flags("LINENO"));
 		lpop_left(lines);
+		if (exit_status != 0 && option_enabled('e'))
+			break ;
 	}
+	return (exit_status);
 }
 
-bool	shopt_enabled(char opt)
+bool	option_enabled(char opt)
 {
 	return (ft_strchr(var_lookup("-"), opt) != NULL);
 }
@@ -154,7 +160,7 @@ t_list	*get_lines(int fd)
 	int			old;
 	bool		restore;
 
-	if (shopt_enabled('c'))
+	if (option_enabled('c'))
 		return (lsplit(var_lookup("MINISHELL_EXECUTION_STRING"), "\n"));
 	else if (get_var("MINISHELL_SOURCE_EXECUTION_STRING") && get_var("MINISHELL_SOURCE_EXECUTION_STRING")->value)
 	{
@@ -178,7 +184,7 @@ t_list	*get_lines(int fd)
 				dup2(tty, STDERR_FILENO);
 				close(tty);
 			}
-			if (!shopt_enabled('i'))
+			if (!option_enabled('i'))
 				ps1 = "";
 		}
 		interactive_signals();
@@ -195,9 +201,9 @@ t_list	*get_lines(int fd)
 	{
 		noninteractive_signals();
 		input = get_next_line(fd);
-		if (shopt_enabled('i') && input != NULL)
+		if (option_enabled('i') && input != NULL)
 			ft_dprintf(STDERR_FILENO, "%s", ft_strjoin(ps1, input));
-		else if (shopt_enabled('i'))
+		else if (option_enabled('i'))
 			ft_dprintf(STDERR_FILENO, "%s", ps1);
 	}
 	if (input == NULL)
@@ -214,15 +220,22 @@ t_list	*get_lines(int fd)
 /* read-eval-print-loop */
 void	repl(void)
 {
-	t_list	*lines;
+	t_list			*lines;
+	t_list			*real_lines;
+	unsigned char	exit_status;
 
 	while (true)
 	{
 		lines = get_lines(STDIN_FILENO);
+		real_lines = lnew();
 		if (lines == NULL)
 			break ;
-		interpret_lines(lines);
-		if (shopt_enabled('c'))
+		if (option_enabled('t'))
+			lpush(real_lines, as_data(lines->first));
+		else
+			lextend(real_lines, lines);
+		exit_status = interpret_lines(real_lines);
+		if (option_enabled('t') || option_enabled('c') || (exit_status != 0 && option_enabled('e')))
 			break ;
 		gc_free("DEFAULT");
 	}
@@ -230,7 +243,7 @@ void	repl(void)
 
 void	finish(bool print_exit)
 {
-	if (print_exit && (shopt_enabled('i') && !shopt_enabled('c')))
+	if (print_exit && !option_enabled('t') && option_enabled('i') && !option_enabled('c') && !(get_last_exit_status() != 0 && option_enabled('e')))
 		ft_dprintf(STDERR_FILENO, "exit\n");
 	rl_clear_history();
 	(void)gc_free_all();
@@ -429,7 +442,7 @@ static void	read_init_files(bool is_login_shell)
 		if (!access(profile, R_OK) && open(profile, O_DIRECTORY) == -1)
 			set_var("MINISHELL_SOURCE_EXECUTION_STRING", "source \"$HOME/.msh_profile\"", get_flags("MINISHELL_SOURCE_EXECUTION_STRING"));
 	}
-	else if (shopt_enabled('i'))
+	else if (option_enabled('i'))
 		if (!access(rc, R_OK) && open(rc, O_DIRECTORY) == -1)
 			set_var("MINISHELL_SOURCE_EXECUTION_STRING", "source \"$HOME/.mshrc\"", get_flags("MINISHELL_SOURCE_EXECUTION_STRING"));
 }
@@ -483,6 +496,8 @@ void	init(char *argv[], char *envp[])
 /* TODO: shift builtin */
 /* TODO: get SHLVL right */
 /* TODO: get sourcing right */
+/* TODO: improve sourcing (source in the middle of a line? sourcing when -n is enabled?) */
+/* TODO: Fix -t with sourcing */
 int	main(int argc, char *argv[], char *envp[])
 {
 	/* close(3); close(63); */ /* valgrind */

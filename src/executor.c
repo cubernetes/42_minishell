@@ -119,12 +119,12 @@ void	handle_redirect_override(char *file_path, t_tree *simple_command, bool red_
 	char	*msg;
 
 	oflag = O_WRONLY | O_TRUNC | O_CREAT;
-	if (shopt_enabled('C'))
+	if (option_enabled('C'))
 		oflag |= O_EXCL;
 	fd = open(file_path, oflag, 0666 & ~ft_getumask());
 	if (fd == -1)
 	{
-		if (shopt_enabled('C'))
+		if (option_enabled('C'))
 			msg = "cannot overwrite existing file";
 		else
 			msg = strerror(errno);
@@ -197,7 +197,7 @@ pid_t	execute_simple_command_wrapper(t_tree *simple_command,
 	if (new_children == NULL)
 		return (-256); // err code 1
 	join_tokens(new_children);
-	if (!shopt_enabled('f'))
+	if (!option_enabled('f'))
 		glob_tokens(new_children);
 	if (new_children->len <= 1)
 		return (close_fds(simple_command), -258);
@@ -359,6 +359,8 @@ unsigned char	execute_complete_command(t_tree *node)
 			{
 				if (first)
 					rtn = execute_tok_or(chldn->current);
+				if (rtn != 0 && option_enabled('e'))
+					break ;
 				first = false;
 				rtn = execute_pipe_sequence(chldn->current->next->as_tree->children);
 				if (lnext(chldn) == NULL)
