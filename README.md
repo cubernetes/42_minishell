@@ -1,7 +1,7 @@
 # Minishell -- Feature summary
 The [subject](minishell_subject.pdf).
 
-The usual 42 style guidelines (aka "norm") apply (functions <= 25 lines, <= 4 params, <= 5 vars, <= 80 cols, max 5 funcs per file, 4 space-tab indent & align, no globals)
+The usual 42 style guidelines (aka "norm") apply (functions <= 25 lines, <= 4 params, <= 5 vars, <= 80 cols, separate declaration, 1 instruction per line, max 5 funcs per file, 4 space-tab indent & align, no globals, constant macros, -Wall -Wextra -Werror, no memory/fd leaks, no memory corruptions)
 
 ## 🟩 Mandatory Features
 - 🟩 input prompt with history (readline, non-persistent)
@@ -21,7 +21,6 @@ The usual 42 style guidelines (aka "norm") apply (functions <= 25 lines, <= 4 pa
     - `export`
     - `unset`
     - `exit`
-- 🟩 no memory/fd leaks and memory corruptions
 
 ## 🟩 Bonus features
 - 🟩 AND (`&&` and OR (`||`) lists
