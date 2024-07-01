@@ -18,7 +18,7 @@
 - 🟩 globbing (`*`) for the current working directory
 
 ## 🟧 Additional features (not required by the subject)
-❗ features marked with (!) posed to be of significant challenge
+❗ Features marked with `(!)` seemed easy to implement, but turned out to be significantly harder
 - 🟩 Wordsplitting after parameter expansion using multicharacter IFS (exactly like bash)
     - 🟩 try one of `unset IFS`, `IFS=`, `IFS=:`, `IFS=": "`
     - 🟩 then `A=" :one     two  three:::::four:   " && /bin/printf '"%s"\n' $A-one-$A-two-$A`
