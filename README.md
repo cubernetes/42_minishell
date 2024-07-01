@@ -37,7 +37,7 @@ Compile with `make`, recompile with `make re`, remove objects with `make clean`.
 
 ❗ Occasionally, they might also mark features that are almost always implemented "incorrectly"
 
-- 🟩 [Wordsplitting](https://www.gnu.org/software/bash/manual/bash.html#Word-Splitting) after parameter expansion using multicharacter❗ IFS (exactly❗ like bash)
+- 🟩 [Wordsplitting](https://www.gnu.org/software/bash/manual/bash.html#Word-Splitting) after parameter expansion using multicharacter❗ IFS (<ins>exactly</ins> like bash)
     - 🟩 try one of `unset IFS`, `IFS=`, `IFS=:`, `IFS=": "`
     - 🟩 then `A=" :one     two  three:::::four:   " && /bin/printf '"%s"\n' $A-one-$A-two-$A`
 - 🟩 declare (also with `-p`) and readonly (special) builtin
