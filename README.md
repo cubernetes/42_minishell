@@ -8,9 +8,17 @@
 - 🟩 redirections (`<, >, <<, >>`)
 - 🟩 anonymous pipes (`|`)
 - 🟩 `$?` special parameter for the exit status of the most recent pipeline
-- 🟩 handling of `SIGINT` (`C-c`), `SIGQUIT` (`C-\`), and `EOT` (`C-d`) in all modes
-- 🟩 some builtins (`echo with -n, cd, pwd, export, unset, exit, env`)
-- 🟩 0 memory/fd leaks and memory corruptions
+- 🟩 handling of `SIGINT` (`intr = ^C`), `SIGQUIT` (`quit = ^\`), and `EOF` (`eof = ^D`) in all contexts
+- 🟩 the following regular builtins
+    - `echo` with -n option
+    - `cd`
+    - `pwd`
+    - `env` (not a builtin in any shell, but subject requires it...)
+- 🟩 the following special builtins
+    - `export`
+    - `unset`
+    - `exit`
+- 🟩 no memory/fd leaks and memory corruptions
 
 ## 🟩 Bonus features
 - 🟩 AND (`&&` and OR (`||`) lists
