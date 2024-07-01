@@ -1,4 +1,4 @@
-# Minishell -- Feature summary (not exhaustive)
+# Minishell -- Feature summary
 
 ## 🟩 Mandatory Features
 - 🟩 input prompt with history (readline, non-persistent)
@@ -18,6 +18,7 @@
 - 🟩 globbing (`*`) for the current working directory
 
 ## 🟧 Additional features (not required by the subject)
+### features marked with (!) posed to be of significant challenge
 - 🟩 Wordsplitting after parameter expansion using multicharacter IFS (exactly like bash)
     - 🟩 try one of `unset IFS`, `IFS=`, `IFS=:`, `IFS=": "`
     - 🟩 then `A=" :one     two  three:::::four:   " && /bin/printf '"%s"\n' $A-one-$A-two-$A`
@@ -44,7 +45,7 @@
 - 🟩 bash-identical implementation of the very quirky(!) `exit` builtin
     - 🟩 try `exit 9223372036854775808 1` vs. `exit 9223372036854775807 1` vs. `exit word 1`
     - 🟩 try `bash -c 'exit 42'`; `exit 1 1`; `echo $?` vs. `true`; `exit 1 1`; `echo $?`
-- 🟩 handling of ambiguous redirects
+- 🟩 handling of csh-like ambiguous redirects (with correct(!) error reporting)
 - 🟥 the weird export/declare/readonly edge case (`l="ls -al" e=export ; export newls=$l ; $e newls2=$l ; echo "newls:$newls" ; echo "newls2:$newls2"`).
 - 🟩 `?` glob character
 - 🟩 additional special parameters:
@@ -57,7 +58,7 @@
 - 🟩 default (and automatic/special) variables
     - 🟩 PPID, _, MINISHELL_EXECUTION_STRING, LINENO/CURRENT_LINE, SHLVL
 - 🟩 shift builtin without arguments
-- 🟩 source builtin
+- 🟧 source builtin
 - 🟩 : builtin (colon, null utility, aka null command)
 - 🟩 `cd` with `-` argument
 - 🟩 correct handling of:
