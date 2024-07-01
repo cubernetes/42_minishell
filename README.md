@@ -92,7 +92,7 @@
     - 🟥 unfinished pipeline
     - 🟥 unfinished control operator (`&&`, `||`)
     - 🟥 here-documents
-- 🟥 The exlamation point (`!`) reserved word for negation of the exit status of a pipeline
+- 🟩 The exlamation point (`!`) reserved word for negation of the exit status of a pipeline
     - work categorically, i.e. also in && constructs, unlike bash
     - allows for empty pipelines (i.e. `! || ! ! ; !`)
 - 🟩 comments using the hash symbol (`#`)
