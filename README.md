@@ -1,9 +1,14 @@
-# Minishell -- Feature summary
+# Disclaimer
+If you are a 42 student, do not take the following ("additional") features as a requirement for your own project. This is not what minishell, the project, is about. Evaluators ought NOT to fail you for not implementing some things exactly as they are in bash (notably: `export` without arguments (have you considered ANSI-C-quoting and "unset-but-declared" variables?, does the evaluator even know the purpose/use cases of export without arguments (reproducibility of environment, ssh, ...)?), `exit`'s argument handling (have you considered MAX_LONG overflow or its exit status considering it's a [special builtin](https://www.gnu.org/software/bash/manual/html_node/Special-Builtins.html)?), `pwd` (have you considered symbolically linked directory preservation after `cd` (inode checking)?), have you considered ambiguous redirects (a csh-inspired bash feature) for globbing and parameter expansion?, are you including the CWD when PATH contains the empty string?, are you printing the line on error when run in non-interactive mode?, etc...)
+
+# Minishell – Feature summary
 The [subject](minishell_subject.pdf).
 
-The usual 42 style guidelines (aka "norm") apply (functions <= 25 lines, <= 4 params, <= 5 vars, <= 80 cols, separate declaration, 1 instruction per line, max 5 funcs per file, 4 space-tab indent & align, no globals, constant macros, -Wall -Wextra -Werror, no memory/fd leaks, no memory corruptions)
+The usual 42 style guidelines (aka "norm") apply (functions <= 25 lines, <= 4 params, <= 5 vars, <= 80 cols, separate declaration, 1 instruction per line, max 5 funcs per file, 4 space-tab indent & align, no globals, constant macros, -Wall -Wextra -Werror, no memory/fd leaks, no memory corruptions, etc.)
 
-## 🟩 Mandatory Features
+Compile with `make`, recompile with `make re`, remove objects with `make clean`.
+
+## 🟩 Mandatory Features (see subject)
 - 🟩 input prompt with history (readline, non-persistent)
 - 🟩 program execution based on `PATH`
 - 🟩 single quotes and double quotes
@@ -22,7 +27,7 @@ The usual 42 style guidelines (aka "norm") apply (functions <= 25 lines, <= 4 pa
     - `unset`
     - `exit`
 
-## 🟩 Bonus features
+## 🟩 Bonus features (see subject)
 - 🟩 AND (`&&` and OR (`||`) lists
 - 🟩 parenthesis (`(` and `)`) for priorities
 - 🟩 globbing (`*`) for the current working directory
@@ -30,7 +35,7 @@ The usual 42 style guidelines (aka "norm") apply (functions <= 25 lines, <= 4 pa
 ## 🟧 Additional features (not required by the subject)
 ❗ Features marked with ❗ seemed easy to implement, but turned out to be significantly harder
 
-❗ Occasionally, they might also mark features that are almost always implemented incorrectly
+❗ Occasionally, they might also mark features that are almost always implemented "incorrectly"
 
 - 🟩 [Wordsplitting](https://www.gnu.org/software/bash/manual/bash.html#Word-Splitting) after parameter expansion using multicharacter❗ IFS (exactly❗ like bash)
     - 🟩 try one of `unset IFS`, `IFS=`, `IFS=:`, `IFS=": "`
