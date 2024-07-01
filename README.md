@@ -22,7 +22,7 @@
 
 ❗ Occasionally, they might also mark features that are almost always implemented incorrectly
 
-- 🟩 Wordsplitting after parameter expansion using multicharacter❗ IFS (exactly❗ like bash)
+- 🟩 [Wordsplitting](https://www.gnu.org/software/bash/manual/bash.html#Word-Splitting) after parameter expansion using multicharacter❗ IFS (exactly❗ like bash)
     - 🟩 try one of `unset IFS`, `IFS=`, `IFS=:`, `IFS=": "`
     - 🟩 then `A=" :one     two  three:::::four:   " && /bin/printf '"%s"\n' $A-one-$A-two-$A`
 - 🟩 declare (also with `-p`) and readonly (special) builtin
@@ -34,8 +34,8 @@
 - 🟩 different prompts (`PS0`, `PS1`, `PS2`, `PS4`)
 - 🟩 prompt expansion (`\u, \w, \W, \h, \H, \$`)
 - 🟩 fallback mechanisms for username resolution in prompt
-    1. 🟩 manual❗ parsing of the binary Kerberos credential cache file (`/tmp/krb5cc_$EUID_...`)
-        - 🟩 `EUID` retrieved via manual parsing of `/proc/self/status`
+    1. 🟩 manual❗ parsing of the binary [Kerberos credential cache](https://web.mit.edu/kerberos/www/krb5-latest/doc/formats/ccache_file_format.html) file (`/tmp/krb5cc_$EUID_...`)
+        - 🟩 `EUID` retrieved via manual parsing of [`/proc/self/status`](https://man7.org/linux/man-pages/man5/proc_pid_status.5.html)
     2. 🟩 manual parsing of `/etc/passwd`
     3. 🟩 `EUID` env var
 - 🟩 fallback mechanisms for hostname resolution in prompt (`/etc/hostname`, then `/proc/sys/kernel/hostname`)
@@ -49,14 +49,14 @@
     - 🟩 try `exit 9223372036854775808 1` vs. `exit 9223372036854775807 1` vs. `exit word 1`
     - 🟩 try `bash -c 'exit 42'`; `exit 1 1`; `echo $?` vs. `true`; `exit 1 1`; `echo $?`
 - 🟩 handling of csh-like ambiguous redirects❗ (with correct❗ error reporting)
-- 🟥 the weird export/declare/readonly edge case❗ (`l="ls -al" e=export ; export newls=$l ; $e newls2=$l ; echo "newls:$newls" ; echo "newls2:$newls2"`).
+- 🟥 [the weird export/declare/readonly edge case](https://unix.stackexchange.com/a/599170)❗ (`l="ls -al" e=export ; export newls=$l ; $e newls2=$l ; echo "newls:$newls" ; echo "newls2:$newls2"`).
 - 🟩 `?` glob character
 - 🟩 additional special parameters:
     1. 🟩 `$-` expanding to the active shell options
     2. 🟩 `$$` expanding to the the current PID of the shell
     3. 🟩 `$0` to `$9` expanding to the positional arguments of minishell (specified after `-c`)
     3. 🟩 `$#` expanding to the number of positional argument
-    4. 🟥 `$@` expanding to all positional argument, with word splitting when quoted
+    4. 🟥 `$@` expanding to all positional argument, with word splitting when quoted❗
     5. 🟥 `$*` expanding to all positional argument, joining with `IFS[0]` when quoted
 - 🟩 default (and automatic/special) variables
     - 🟩 PPID, _, MINISHELL_EXECUTION_STRING, LINENO/CURRENT_LINE, SHLVL
@@ -107,18 +107,18 @@
 - 🟩 assignment words (basic implementation, not allowed with non-assignment-words)
     - try `A=1 B=2 C=3 ; declare -p A B C`
 - 🟥 heredocs in the history
-- 🟥 ANSI C quoting❗
+- 🟥 [ANSI C quoting](https://www.gnu.org/software/bash/manual/bash.html#ANSI_002dC-Quoting)❗
 
 ## 🟩 Notable implementation details
 - 🟩 optional garbage collection with arbitrary❗ contexts
 - 🟩 use of hashtables❗ (`fnv-1a` hash algorithm)
 - 🟩 0-declaration❗ iterators for the circular deques (the main datastructure)
-- 🟩 ft_getopt❗ (including `+` options) (try `declare -prxxx +x +r -xrpxprpxp -- VAR=1 X`)
+- 🟩 [ft_getopt](https://www.man7.org/linux/man-pages/man3/getopt.3.html)❗ (including `+` options) (try `declare -prxxx +x +r -xrpxprpxp -- VAR=1 X`)
 - 🟩 LL(1) grammar and parser
-- 🟩 AST with tagged unions
+- 🟩 AST with [tagged unions](https://www.wikiwand.com/en/Tagged_union)
 - 🟩 generic deque implementation using tagged unions
 - 🟩 functions similar to mktemp, gethostname, getpid, getuid, getusername❗, getumask
-- 🟩 Not inheriting IFS to prevent exploits
+- 🟩 Not inheriting IFS to [prevent exploits](https://unix.stackexchange.com/questions/583596/security-shell-scripts-to-reset-the-ifs-variable-against-misuse)
 
 # 🟩 Generate locale-specific whitespace
 The requirements for this project disallow the use of `isspace(3)`, which respects
