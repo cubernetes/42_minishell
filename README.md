@@ -37,7 +37,7 @@ Compile with `make`, recompile with `make re`, remove objects with `make clean`.
 
 ❗ Occasionally, they might also mark features that are almost always implemented "incorrectly"
 
-- 🟩 [Wordsplitting](https://www.gnu.org/software/bash/manual/bash.html#Word-Splitting) after parameter expansion using <ins><b>multicharacter</b></ins> IFS (<ins><b>exactly</b></ins> like bash)
+- 🟩 [Wordsplitting](https://www.gnu.org/software/bash/manual/bash.html#Word-Splitting) after parameter expansion using <ins><b>multicharacter</b></ins> IFS ([<ins><b>exactly</b></ins>](https://www.reddit.com/r/bash/comments/1dnqswy) like bash)
     - 🟩 try one of `unset IFS`, `IFS=`, `IFS=:`, `IFS=": "`
     - 🟩 then `A=" :one     two  three:::::four:   " && /bin/printf '"%s"\n' $A-one-$A-two-$A`
 - 🟩 declare (also with `-p`) and readonly (special) builtin
@@ -60,7 +60,7 @@ Compile with `make`, recompile with `make re`, remove objects with `make clean`.
 - 🟩 correct handling of non-tty stdin, also for <ins><b>heredocs</b></ins> (try `printf '<<EOF cat\nline\nEOF' | ./minishell`)
 - 🟩 <ins><b>correct</b></ins> handling of multiline input
 - 🟩 <ins><b>correct</b></ins> handling of multiline prompt
-- 🟩 bash-identical implementation of the <ins><b>very quirky</b></ins> `exit` special builtin
+- 🟩 bash-identical implementation of the [<ins><b>very quirky</b></ins>](https://www.reddit.com/r/bash/comments/1de0a3n/weird_exit_status_behaviour/) `exit` special builtin
     - 🟩 try `exit 9223372036854775808 1` vs. `exit 9223372036854775807 1` vs. `exit word 1`
     - 🟩 try `bash -c 'exit 42'`; `exit 1 1`; `echo $?` vs. `true`; `exit 1 1`; `echo $?`
 - 🟩 handling of csh-like ambiguous <ins><b>redirects</b></ins> (with <ins><b>correct</b></ins> error reporting)
