@@ -35,7 +35,7 @@ Compile with `make`, recompile with `make re`, remove objects with `make clean`.
 ## 🟧 Additional features (not required by the subject)
 ❗ Features decorated as bold and underlined seemed easy to implement, but turned out to be significantly harder
 
-❗ Occasionally, they might also mark features that are almost always implemented "incorrectly"
+❗ Occasionally, they might also mark features that are almost always implemented "incorrectly" (in other minishell projects), where I see "correct" with reference to it being "useful"/"sensible" to do it this way (i.e. bash does it this way too). This is opinionated, as (e.g.) ambiguous redirects are counterintuitive and raise more eyebrows than not.
 
 - 🟩 [Wordsplitting](https://www.gnu.org/software/bash/manual/bash.html#Word-Splitting) after parameter expansion using <ins><b>multicharacter</b></ins> IFS ([<ins><b>exactly</b></ins>](https://www.reddit.com/r/bash/comments/1dnqswy) like bash)
     - 🟩 try one of `unset IFS`, `IFS=`, `IFS=:`, `IFS=": "`
