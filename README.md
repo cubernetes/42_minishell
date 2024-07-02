@@ -41,7 +41,7 @@ Compile with `make`, recompile with `make re`, remove objects with `make clean`.
     - 🟩 try one of `unset IFS`, `IFS=`, `IFS=:`, `IFS=": "`
     - 🟩 then `A=" :one     two  three:::::four:   " && /bin/printf '"%s"\n' $A-one-$A-two-$A`
 - 🟩 declare (also with `-p`) and readonly (special) builtin
-- 🟧 declare, readonly, and export without args, with <ins><b>correct</b></ins> (ANSI-C-)quoting
+- 🟧 declare, readonly, and export without args (no ANSI-C-quoting) <!-- TODO: Use correct ANSI-C-quoting -->
     - 🟩 try `A='cd "$HOME" && echo "Changed dir!" || echo "Sorry $USER, no changing :("' && declare -p A`
 - 🟩 normal shell variables (no flags) (`declare A=1`, `A=1`)
 - 🟩 readonly variables (`declare -r A=1`, `readonly B=1`)
@@ -70,9 +70,7 @@ Compile with `make`, recompile with `make re`, remove objects with `make clean`.
     1. 🟩 `$-` expanding to the active shell options
     2. 🟩 `$$` expanding to the the current PID of the shell
     3. 🟩 `$0` to `$9` expanding to the positional arguments of minishell (specified after `-c`)
-    3. 🟩 `$#` expanding to the number of positional argument
-    4. 🟥 `$@` expanding to all positional argument, with word splitting when <ins><b>quoted</b></ins>
-    5. 🟥 `$*` expanding to all positional argument, joining with `IFS[0]` when quoted
+    3. 🟩 `$#` expanding to the number of positional argument <!--    4. 🟥 `$@` expanding to all positional argument, with word splitting when <ins><b>quoted</b></ins> --> <!--    5. 🟥 `$*` expanding to all positional argument, joining with `IFS[0]` when quoted -->
 - 🟩 default (and automatic/special) variables
     - 🟩 PPID, _, MINISHELL_EXECUTION_STRING, LINENO/CURRENT_LINE, SHLVL
 - 🟩 shift special builtin without arguments
@@ -97,8 +95,7 @@ Compile with `make`, recompile with `make re`, remove objects with `make clean`.
     - 🟩 `-u` to treat expansion of unset parameters an error (nounset)
     - 🟩 `-v` to print every input line after it's read (verbose)
     - 🟩 `-x` to print the arguments of a command before it's executed (xtrace)
-    - 🟩 `-C` to disallow overwriting of existing regular files via redirections (noclobber)
-- 🟥 set special builtin that can set all of the options from above (except `-s`, `-c`, `-l`, and `-i`) and set positional arguments
+    - 🟩 `-C` to disallow overwriting of existing regular files via redirections (noclobber) <!-- - 🟥 set special builtin that can set all of the options from above (except `-s`, `-c`, `-l`, and `-i`) and set positional arguments -->
 - 🟥 execution of scripts via arguments
 - 🟩 sourcing of $HOME/.mshrc if it exists
 - 🟩 when invoked with `-l` or the first character of argv0 is a hyphen (`-`) (login shell)
@@ -122,8 +119,7 @@ Compile with `make`, recompile with `make re`, remove objects with `make clean`.
 - 🟩 assignment words (basic implementation, not allowed with non-assignment-words)
     - try `A=1 B=2 C=3 ; declare -p A B C`
 - 🟥 heredocs in the history
-- 🟥 <ins><b>[ANSI C quoting](https://www.gnu.org/software/bash/manual/bash.html#ANSI_002dC-Quoting)</b></ins>
-
+<!-- - 🟥 <ins><b>[ANSI C quoting](https://www.gnu.org/software/bash/manual/bash.html#ANSI_002dC-Quoting)</b></ins> -->
 ## 🟩 Notable implementation details
 - 🟩 optional garbage collection with <ins><b>arbitrary</b></ins> contexts
 - 🟩 use of <ins><b>hashtables</b></ins> (`fnv-1a` hash algorithm)
