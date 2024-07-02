@@ -46,6 +46,15 @@ void	redirect_heredoc(char *file_path, t_tree *simple_command)
 			tokens = lnew();
 			lpush(tokens, as_token(new_token(strip_nul(line.data, line.size), TOK_DQUOTE_STR, true)));
 			tokens = expand_tokens(tokens);
+			if (tokens == NULL)
+			{
+				close(new_hd_fd);
+				close(fd);
+				unlink(new_hd);
+				unlink(file_path);
+				simple_command->error = 1;
+				return ;
+			}
 			ft_dprintf(new_hd_fd, "%s", tokens->first->as_token->str);
 		}
 		close(new_hd_fd);
@@ -303,7 +312,7 @@ unsigned char	execute_pipe_sequence(t_list *commands, bool negated)
 	exit_status = wait_pipe_sequence(pids);
 	if (negated)
 		return (!(bool)exit_status);
-	if (exit_status);
+	return (exit_status);
 }
 
 unsigned char	execute_tok_and(t_list_node *tok_and)

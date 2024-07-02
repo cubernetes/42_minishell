@@ -33,9 +33,9 @@ Compile with `make`, recompile with `make re`, remove objects with `make clean`.
 - 🟩 globbing (`*`) for the current working directory
 
 ## 🟧 Additional features (not required by the subject)
-❗ Features decorated as bold and underlined seemed easy to implement, but turned out to be significantly harder
+❗ Features decorated as <ins><b>bold and underlined</b></ins> seemed easy to implement, but turned out to be significantly harder
 
-❗ Occasionally, they might also mark features that are almost always implemented "incorrectly" (in other minishell projects), where I see "correct" with reference to it being "useful"/"sensible" to do it this way (i.e. bash does it this way too). This is opinionated, as (e.g.) ambiguous redirects are counterintuitive and raise more eyebrows than not.
+❗ Occasionally, they might also mark features that are almost always implemented "incorrectly" (in other minishell projects), where I see "correct" with reference to it being "useful"/"sensible" to do it this way (i.e. bash does it this way too). This is opinionated, as (e.g.) ambiguous redirects are counterintuitive and raise more eyebrows than not (they are not implemented in these Bourne like shells: ksh, dash, ash, yash, yash -o posix, bash -o posix, mksh, pdksh, posh, pbosh, mrsh, (zsh, fish)).
 
 - 🟩 [Wordsplitting](https://www.gnu.org/software/bash/manual/bash.html#Word-Splitting) after parameter expansion using <ins><b>multicharacter</b></ins> IFS ([<ins><b>exactly</b></ins>](https://www.reddit.com/r/bash/comments/1dnqswy) like bash)
     - 🟩 try one of `unset IFS`, `IFS=`, `IFS=:`, `IFS=": "`
@@ -118,8 +118,7 @@ Compile with `make`, recompile with `make re`, remove objects with `make clean`.
 - 🟩 inheriting and respecting of umask (tho you can't change it :P)
 - 🟩 assignment words (basic implementation, not allowed with non-assignment-words)
     - try `A=1 B=2 C=3 ; declare -p A B C`
-- 🟥 heredocs in the history
-<!-- - 🟥 <ins><b>[ANSI C quoting](https://www.gnu.org/software/bash/manual/bash.html#ANSI_002dC-Quoting)</b></ins> -->
+<!-- - 🟥 heredocs in the history --> <!-- - 🟥 <ins><b>[ANSI C quoting](https://www.gnu.org/software/bash/manual/bash.html#ANSI_002dC-Quoting)</b></ins> -->
 ## 🟩 Notable implementation details
 - 🟩 optional garbage collection with <ins><b>arbitrary</b></ins> contexts
 - 🟩 use of <ins><b>hashtables</b></ins> (`fnv-1a` hash algorithm)

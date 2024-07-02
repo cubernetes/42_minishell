@@ -114,10 +114,7 @@ unsigned char	exec(t_tree *tree)
 	if (tree == NULL)
 		exit_status = 0;
 	else
-	{
-		tree_print(tree);
 		exit_status = execute_complete_command(tree);
-	}
 	return (exit_status);
 }
 
