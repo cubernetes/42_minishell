@@ -1,4 +1,4 @@
-- Errors part : For next tests, you will need : \\\033[0;33mall built-in, redirections (normal and stderror) and semicolons (;).
+- Errors part : For next tests, you will need : \\\033[0;33mall built-in, redirections (normal and stderror) and semicolons (;).\\\033[m
 test
 | test
 echo > <

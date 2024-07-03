@@ -1,4 +1,4 @@
-- Export part : For next tests, you will need : \\\033[0;33munset, env, echo, pipes, execve and semicolons (;).
+- Export part : For next tests, you will need : \\\033[0;33munset, env, echo, pipes, execve and semicolons (;).\\\033[0m
 env | grep "_="
 export | grep "SHLVL"
 export | grep "OLDPWD"

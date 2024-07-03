@@ -59,6 +59,8 @@ static char	*search_executable(char *program, t_list *path_parts) // TODO: Not c
 	char	*path;
 	char	*executable_path;
 
+	if (path_parts == NULL)
+		return (NULL);
 	if (!program || !*program)
 		return (NULL);
 	if (ft_strchr(program, '/'))
@@ -171,12 +173,28 @@ static void	set_underscore(char *const argv[])
 	set_var("_", *argv, (t_flags){0});
 }
 
+static char	**copy_argv(char *const argv[])
+{
+	int		i;
+	char	**new_argv;
+
+	i = 0;
+	while (argv[i])
+		++i;
+	new_argv = ft_malloc(sizeof(*new_argv) * (i + 1));
+	i = -1;
+	while (argv[++i])
+		new_argv[i] = argv[i];
+	new_argv[i] = NULL;
+	return (new_argv);
+}
+
 int	handle_builtin_wrapper(char	*argv[], t_tree *simple_command)
 {
-	int	exit_status;
-	int	orig_in;
-	int	orig_out;
-	int	orig_err;
+	int		exit_status;
+	int		orig_in;
+	int		orig_out;
+	int		orig_err;
 
 	orig_in = simple_command->fd_in;
 	orig_out = simple_command->fd_out;
@@ -187,7 +205,7 @@ int	handle_builtin_wrapper(char	*argv[], t_tree *simple_command)
 		simple_command->fd_out = STDOUT_FILENO;
 	if (simple_command->fd_err == -2)
 		simple_command->fd_err = STDERR_FILENO;
-	exit_status = handle_builtin(argv, simple_command->fds);
+	exit_status = handle_builtin(copy_argv(argv), simple_command->fds);
 	if (orig_in != -2)
 		close(orig_in);
 	if (orig_out != -2)
@@ -308,7 +326,10 @@ pid_t	execute_simple_command(t_tree *simple_command, t_list *commands)
 		argv = transform_for_declare(simple_command);
 	else
 		argv = make_argv(simple_command);
-	path_parts = lsplit(var_lookup("PATH"), ":"); // TOOD: what about empty PATH
+	if (var_lookup("PATH")[0] == '\0')
+		path_parts = NULL;
+	else
+		path_parts = lsplit(var_lookup("PATH"), ":");
 	if (option_enabled('x'))
 		msh_xtrace(argv);
 	if (argv[0] == NULL)
@@ -318,8 +339,11 @@ pid_t	execute_simple_command(t_tree *simple_command, t_list *commands)
 	program = search_executable(argv[0], path_parts);
 	if (!program && !is_builtin(argv[0]))
 	{
-		/*close_fds(simple_command),*/
-		minishell_error(EXIT_COMMAND_NOT_FOUND, false, false, "%s: command not found", argv[0]);
+		close_fds(simple_command);
+		if (path_parts == NULL)
+			minishell_error(EXIT_COMMAND_NOT_FOUND, false, false, "%s: No such file or directory", argv[0]);
+		else
+			minishell_error(EXIT_COMMAND_NOT_FOUND, false, false, "%s: command not found", argv[0]);
 		if (simple_command->fd_in == -2 && simple_command->fd_out == -2) // only set underscore in foreground cmds
 			set_underscore(argv);
 		return (-1);

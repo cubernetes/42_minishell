@@ -1,3 +1,4 @@
+#include "libft.h"
 #include "minishell.h"
 
 #include <unistd.h>
@@ -24,12 +25,31 @@ static char	*normalize(char *path)
 	return (ft_strjoin("/", ljoin(new_parts, "/")));
 }
 
+char	*set_saved_cwd(char *cwd)
+{
+	static char	*_cwd;
+
+	if (cwd != NULL)
+	{
+		gc_start_context("POST");
+		_cwd = ft_strdup(cwd);
+		gc_end_context();
+	}
+	return (_cwd);
+}
+
+char	*get_saved_cwd(void)
+{
+	return (set_saved_cwd(NULL));
+}
+
 int	builtin_cd(char **argv, t_fds fds)
 {
 	char	*var;
 	int		status;
 	char	*name;
-	char	*pwd;
+	char	*cwd;
+	char	*real_cwd;
 
 	name = *argv++;
 	if (argv[1] != NULL)
@@ -53,21 +73,34 @@ int	builtin_cd(char **argv, t_fds fds)
 		ft_dprintf(fds.fd_out, "%s\n", get_var("OLDPWD")->value);
 		status = chdir(get_var("OLDPWD")->value);
 	}
+	else if (**argv == '\0')
+		status = chdir(".");
 	else
 		status = chdir(*argv);
-	if (status == -1)
+
+	if (status != 0)
 		return (minishell_error(1, false, false, "%s: %s: %s", name, *argv, strerror(errno)));
 	else
 	{
-		if (get_var("PWD") == NULL)
-			pwd = gc_add_str(getcwd(NULL, 0));
-		else
-			pwd = get_var("PWD")->value;
-		set_var("OLDPWD", pwd, get_flags("OLDPWD"));
+		real_cwd = getcwd(NULL, 0);
+		if (real_cwd == NULL)
+		{
+			minishell_error(0, false, false, "!%s: error retrieving current directory: getcwd: cannot access parent directories: %s", name, strerror(errno));
+			status = 1;
+		}
+		cwd = get_saved_cwd();
+		set_var("OLDPWD", cwd, get_flags("OLDPWD"));
 		if (**argv == '/' || (argv[1] && !ft_strcmp(argv[1], "-")))
-			set_var("PWD", normalize(*argv), get_flags("PWD"));
+			cwd = normalize(*argv);
+		else if (status == 0)
+			cwd = normalize(ft_strjoin(cwd, ft_strjoin("/", *argv)));
+		else if (access(cwd, F_OK))
+			cwd = ft_strjoin(cwd, ft_strjoin("/", *argv));
 		else
-			set_var("PWD", normalize(ft_strjoin(pwd, ft_strjoin("/", *argv))), get_flags("PWD"));
+			cwd = *argv;
+		set_saved_cwd(cwd);
+		set_var("PWD", cwd, get_flags("PWD"));
+		return (0);
 	}
-	return (0);
 }
+/* TODO: cd with null argument is same as cd . */

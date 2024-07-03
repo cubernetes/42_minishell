@@ -12,6 +12,7 @@
 #include <stdbool.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <sys/stat.h>
 
 int	minishell_error(int exit_code, bool do_exit, bool syntax_error, const char *fmt, ...)
 {
@@ -23,7 +24,6 @@ int	minishell_error(int exit_code, bool do_exit, bool syntax_error, const char *
 		ft_dprintf(STDERR_FILENO, "exit\n");
 	va_start(ap, fmt);
 	errfmt = ft_strjoin(var_lookup("0"), ": ");
-	/* errfmt = ft_strjoin("bash", ": "); */
 	if (!option_enabled('i'))
 	{
 		if (option_enabled('c') && syntax_error)
@@ -31,12 +31,18 @@ int	minishell_error(int exit_code, bool do_exit, bool syntax_error, const char *
 		errfmt = ft_strjoin(errfmt, ft_strjoin("line ",
 					ft_strjoin(var_lookup("LINENO"), ": ")));
 	}
-	errfmt = ft_replace_all(errfmt, "%", "%%");
+	if (fmt[0] != '!')
+		errfmt = ft_replace_all(errfmt, "%", "%%");
+	else
+	{
+		errfmt = "";
+		++fmt;
+	}
 	err = ft_strjoin(errfmt, fmt);
 	err = ft_strjoin(err, "\n");
 	ft_vdprintf(STDERR_FILENO, err, ap);
 	va_end(ap);
-	if (!option_enabled('i') && syntax_error)
+	if (!option_enabled('i') && syntax_error && fmt[0] != '!')
 	{
 		err = ft_strjoin(errfmt, "`%s'\n");
 		ft_dprintf(STDERR_FILENO, err, var_lookup("CURRENT_LINE"));
@@ -65,8 +71,8 @@ char	*expand_prompt(char *prompt_string)
 
 	replacements = lnew();
 	lpush(replacements, as_str_pair(&(t_str_pair){"\\u", ft_getusername()}));
-	lpush(replacements, as_str_pair(&(t_str_pair){"\\w", ft_getcwd()}));
-	lpush(replacements, as_str_pair(&(t_str_pair){"\\W", lsplit(ft_getcwd(), "/")->last->as_str}));
+	lpush(replacements, as_str_pair(&(t_str_pair){"\\w", get_cwd_for_prompt()}));
+	lpush(replacements, as_str_pair(&(t_str_pair){"\\W", lsplit(get_cwd_for_prompt(), "/")->last->as_str}));
 	lpush(replacements, as_str_pair(&(t_str_pair){"\\h", ft_gethostname()}));
 	lpush(replacements, as_str_pair(&(t_str_pair){"\\H", ft_split(ft_gethostname(), '.')[0]}));
 	lpush(replacements, as_str_pair(&(t_str_pair){"\\$", get_dollar_prompt()}));
@@ -248,6 +254,95 @@ void	finish(bool print_exit)
 	(void)gc_free_all();
 }
 
+/* wtf */
+static void	setup_pwd(void)
+{
+	unsigned long	cwd_inode;
+	unsigned long	real_cwd_inode;
+	t_var			*cwd_path;
+	char			*real_path;
+	struct stat		cwd_stat;
+	struct stat		real_cwd_stat;
+
+	cwd_path = get_var("PWD");
+	if (cwd_path != NULL)
+	{
+		if (stat(cwd_path->value, &cwd_stat) < 0)
+		{
+			/* minishell_error(1, false, false, "error getting stat of pwd: %s", cwd_path->value); */
+			real_path = gc_add_str(getcwd(NULL, 0));
+			if (real_path == NULL)
+			{
+				minishell_error(0, false, false, "!shell-init: error retrieving current directory: getcwd: cannot access parent directory: %s", strerror(errno));
+				set_var("PWD", cwd_path->value, (t_flags){.exp = true}); // subsequent cd must set PWD to .. or smth
+				set_saved_cwd(cwd_path->value); // subsequent pwd must fail and cd should PWD change it to . or .. or smth afterwards
+			}
+			else
+			{
+				set_var("PWD", real_path, (t_flags){.exp = true});
+				set_saved_cwd(real_path);
+			}
+		}
+		else
+		{
+			cwd_inode = cwd_stat.st_ino;
+			real_path = gc_add_str(getcwd(NULL, 0));
+			if (real_path == NULL)
+			{
+				minishell_error(0, false, false, "!shell-init: error retrieving current directory: getcwd: cannot access parent directory: %s", strerror(errno));
+				set_var("PWD", cwd_path->value, (t_flags){.exp = true}); // subsequent cd must set PWD to .. or smth
+				set_saved_cwd(""); // subsequent pwd must fail and cd should PWD change it to . or .. or smth afterwards
+			}
+			else
+			{
+				if (stat(real_path, &real_cwd_stat) < 0)
+				{
+					/* minishell_error(1, false, false, "error getting stat of real_path: %s", cwd_path->value); */
+					set_var("PWD", real_path, (t_flags){.exp = true});
+					set_saved_cwd(real_path);
+				}
+				else
+				{
+					real_cwd_inode = real_cwd_stat.st_ino;
+					if (real_cwd_inode != cwd_inode)
+					{
+						set_var("PWD", real_path, (t_flags){.exp = true});
+						set_saved_cwd(real_path);
+					}
+					else
+					{
+						if (!access(real_path, X_OK))
+						{
+							set_var("PWD", cwd_path->value, (t_flags){.exp = true});
+							set_saved_cwd(cwd_path->value);
+						}
+						else
+						{
+							set_var("PWD", real_path, (t_flags){.exp = true});
+							set_saved_cwd(real_path);
+						}
+					}
+				}
+			}
+		}
+	}
+	else
+	{
+		real_path = gc_add_str(getcwd(NULL, 0));
+		if (real_path == NULL)
+		{
+			minishell_error(0, false, false, "!shell-init: error retrieving current directory: getcwd: cannot access parent directory: %s", strerror(errno));
+			set_saved_cwd(""); // subsequent pwd must fail and cd should PWD change it to . or .. or smth afterwards
+								// PWD stays empty, \w expands to ""
+		}
+		else
+		{
+			set_var("PWD", real_path, (t_flags){.exp = true}); // subsequent pwd must fail and cd should PWD change it to . or .. or smth afterwards
+			set_saved_cwd(real_path); // PWD gets set, \w expands to PWD
+		}
+	}
+}
+
 /* TODO: make logic correct */
 void	set_pwd(void)
 {
@@ -276,6 +371,7 @@ void	set_pwd(void)
 void	set_initial_shell_variables(char *argv[], char *envp[])
 {
 	inherit_environment(envp);
+	setup_pwd();
 	set_argv(argv);
 	set_var("?", "0", (t_flags){.special = true});
 	unset_var("MINISHELL_XTRACEFD"); // TODO: If it has a value and is unset or set to a new value, the fd corresponding to the old value shall be closed.
@@ -291,7 +387,7 @@ void	set_initial_shell_variables(char *argv[], char *envp[])
 	set_var("PS4", PS4, (t_flags){0});
 	set_var("IFS", DEFAULT_IFS, (t_flags){0});
 	set_var("MINISHELL_SOURCE_EXECUTION_STRING", NULL, (t_flags){.readonly = true});
-	set_pwd();
+	/* set_pwd(); */
 }
 
 static int	noop(void)

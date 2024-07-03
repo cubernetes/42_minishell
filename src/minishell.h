@@ -250,7 +250,7 @@ int										builtin_colon(char **argv, t_fds fds);
 int										builtin_shift(char **argv, t_fds fds);
 char									*ft_gethostname(void);
 char									*ft_getusername(void);
-char									*ft_getcwd(void);
+char									*get_cwd_for_prompt(void);
 t_list									*production_to_children(
 											t_tree *production);
 t_tree									*production_part_to_child(t_tree production);
@@ -290,5 +290,7 @@ char									*quote_double(char *s);
 char									*quote_ansi_c(char *s,
 											bool bare_declare);
 char									*expand_prompt(char *prompt_string);
+char									*set_saved_cwd(char *cwd);
+char									*get_saved_cwd(void);
 
 #endif /* minishell.h. */

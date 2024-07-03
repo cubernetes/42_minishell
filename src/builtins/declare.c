@@ -181,8 +181,13 @@ static int	declare_set(char *name, char **argv, t_declare_flags flags)
 		key_value = lsplit_n(*argv, "=", 1);
 		key = key_value->first->as_str;
 		value = key_value->first->next->as_str;
-		orig_var = get_var(key);
-		if (!valid_name(key))
+		if (key[ft_strlen(key) - 1] == '+')
+			orig_var = get_var(ft_strndup(key, ft_strlen(key) - 1));
+		else
+			orig_var = get_var(key);
+		if (!ft_strcmp(key, "") || !ft_strcmp(key, "+"))
+			exit_status = minishell_error(1, false, false, "%s: `%s': not a valid identifier", name, *argv);
+		else if ((key[ft_strlen(key) - 1] != '+' && !valid_name(key)) || (key[ft_strlen(key) - 1] == '+' && !valid_name(ft_strndup(key, ft_strlen(key) - 1))))
 			exit_status = minishell_error(1, false, false, "%s: `%s': not a valid identifier", name, key);
 		else if (key_value->len == 2)
 		{
@@ -192,6 +197,10 @@ static int	declare_set(char *name, char **argv, t_declare_flags flags)
 						"%s: %s: readonly variable", name, key);
 				value = orig_var->value;
 			}
+			else if (key[ft_strlen(key) - 1] == '+' && orig_var && orig_var->value)
+				value = ft_strjoin(orig_var->value, value);
+			if (key[ft_strlen(key) - 1] == '+')
+				key = ft_strndup(key, ft_strlen(key) - 1);
 			exit_status = add_var_flags(key, value, flags, orig_var);
 		}
 		else if (key_value->len == 1 && orig_var)
@@ -219,16 +228,38 @@ static int	declare_print_set_vars(t_fds fds)
 	return (0);
 }
 
-int	builtin_declare(char **argv, t_fds fds)
+static t_list	*get_opts(char *const argv[])
 {
 	t_list			*opts;
 	char			erropt;
-	t_declare_flags	flags;
 
-	opts = liter(ft_getopt_plus(argv, "pxr", &erropt, &optind));
+	if (!ft_strcmp(argv[0], "export"))
+	{
+		opts = ft_getopt(argv, "p", &erropt, &optind);
+		lpush(opts, as_getopt_arg('x'));
+	}
+	else if (!ft_strcmp(argv[0], "readonly"))
+	{
+		opts = ft_getopt(argv, "p", &erropt, &optind);
+		lpush(opts, as_getopt_arg('r'));
+	}
+	else
+		opts = ft_getopt_plus(argv, "pxr", &erropt, &optind);
+	liter(opts);
 	if (erropt)
 		return (llast(opts), minishell_error(1, false, false,
-				"%s: -%c: invalid option", argv[0], erropt));
+				"%s: -%c: invalid option", argv[0], erropt), NULL);
+	return (opts);
+}
+
+int	builtin_declare(char **argv, t_fds fds)
+{
+	t_list			*opts;
+	t_declare_flags	flags;
+
+	opts = get_opts(argv);
+	if (opts == NULL)
+		return (2);
 	flags = (struct s_declare_flags){0};
 	while (lnext(opts))
 	{

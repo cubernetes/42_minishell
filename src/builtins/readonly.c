@@ -10,11 +10,11 @@ int	builtin_readonly(char **argv, t_fds fds)
 		return (builtin_declare((char *[]){"declare", "-pr", NULL}, fds));
 	args = ft_malloc(sizeof(*args) * (3 + ft_arrlen(argv)));
 	args[0] = "readonly";
-	args[1] = "-r";
-	args[2] = "--";
 	i = 0;
+	if (ft_strcmp(argv[i], "--"))
+		++argv;
 	while (argv[++i])
-		args[2 + i] = argv[i];
-	args[2 + i] = NULL;
+		args[i] = argv[i];
+	args[i] = NULL;
 	return (builtin_declare(args, fds));
 }

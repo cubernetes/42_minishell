@@ -352,6 +352,7 @@ unsigned char	execute_complete_command(t_tree *node)
 			{
 				if (first)
 					rtn = execute_tok_and(chldn->current);
+				set_last_exit_status(rtn);
 				first = false;
 				if (rtn == 0)
 					rtn = execute_pipe_sequence(chldn->current->next->as_tree->children, chldn->current->next->as_tree->negated);
@@ -362,6 +363,7 @@ unsigned char	execute_complete_command(t_tree *node)
 			{
 				if (first)
 					rtn = execute_tok_or(chldn->current);
+				set_last_exit_status(rtn);
 				first = false;
 				if (rtn != 0)
 					rtn = execute_pipe_sequence(chldn->current->next->as_tree->children, chldn->current->next->as_tree->negated);
@@ -372,10 +374,11 @@ unsigned char	execute_complete_command(t_tree *node)
 			{
 				if (first)
 					rtn = execute_tok_or(chldn->current);
+				set_last_exit_status(rtn);
 				if (rtn != 0 && option_enabled('e'))
 					break ;
 				first = false;
-				rtn = execute_pipe_sequence(chldn->current->next->as_tree->children, chldn->current->next->as_tree);
+				rtn = execute_pipe_sequence(chldn->current->next->as_tree->children, chldn->current->next->as_tree->negated);
 				if (lnext(chldn) == NULL)
 					break ;
 			}

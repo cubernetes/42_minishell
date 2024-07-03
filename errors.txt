@@ -3,3 +3,4 @@ $ /a
 $ echo | ( nl ) | ( echo hi ) | echo hi>/dev/null
 $ echo hi | a | exit | ok | grep h | cat /dev/urandom | head -1
 $ pritnf "$A" | hexdump -CI (before that: declare A="1 ")
+$ segfault on cd - sometimes

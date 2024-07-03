@@ -1,4 +1,4 @@
-- Unset part : For next tests, you will need : \\\033[0;33m export, echo, cd, execve and semicolons (;).
+- Unset part : For next tests, you will need : \\\033[0;33m export, echo, cd, execve and semicolons (;).\\\033[m
 unset
 export TEST=100
 unset doesntexist

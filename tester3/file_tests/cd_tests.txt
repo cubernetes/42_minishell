@@ -1,4 +1,4 @@
-- CD part : For next tests, you will need : \\\033[0;33mecho, pwd, unset, redirections (normal and stderror) and semicolons (;).
+- CD part : For next tests, you will need : \\\033[0;33mecho, pwd, unset, redirections (normal and stderror) and semicolons (;).\\\033[m
 cd 
 cd .. 
 cd . 

@@ -1,4 +1,4 @@
-- Export part : For next tests, you will need : \\\033[0;33m echo and semicolons (;).
+- Export part : For next tests, you will need : \\\033[0;33m echo and semicolons (;).\\\033[m
 exit 0 0
 exit 42 42
 exit -42 -24

@@ -6,7 +6,7 @@
 #    By: thallard <thallard@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/01/13 20:16:23 by thallard          #+#    #+#              #
-#    Updated: 2021/06/23 14:47:54 by thallard         ###   ########lyon.fr    #
+#    Updated: 2024/07/02 08:58:20 by tosuman          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -186,11 +186,11 @@ if [ "$RUN" == "1" ]; then
 						if [ "$SHORT" == "1" ]; then
 							printf "\033[?25l\033[J${GREEN}$i: $line\033[0m\r"
 						else
-							printf "${GREEN}$i: $line\n"
+							printf "${GREEN}$i: $line\033[m\n\n\033[90m"
 						fi
 						echo $line >> tmp/valid
 					else
-						printf "${RED}$i: [$line]\n"
+						printf "ERROR: ${RED}$i: [$line]\033[m\n\n\033[90m"
 						echo $line >> tofix/tofix_tests.txt
 					fi
 				fi
