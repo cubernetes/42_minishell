@@ -59,12 +59,16 @@ static char	*search_executable(char *program, t_list *path_parts) // TODO: Not c
 	char	*path;
 	char	*executable_path;
 
-	if (path_parts == NULL)
-		return (NULL);
 	if (!program || !*program)
 		return (NULL);
 	if (ft_strchr(program, '/'))
 		return (program);
+	if (path_parts == NULL)
+	{
+		if (!ft_strcmp(program, ".."))
+			return (program);
+		return (NULL);
+	}
 	executable_path = NULL;
 	liter(path_parts);
 	while (lnext(path_parts))

@@ -5,7 +5,6 @@ void	join_tokens(t_list *tokens)
 {
 	t_list_node	*first;
 	t_list		*new_tokens;
-	t_list		*cleaned_tokens;
 	t_token		*token;
 	t_token		*word_token;
 
@@ -62,13 +61,7 @@ void	join_tokens(t_list *tokens)
 			lpush(new_tokens, as_token(token));
 		}
 	}
-	cleaned_tokens = lnew();
-	liter(new_tokens);
-	while (lnext(new_tokens))
-		if (new_tokens->current->as_token->num_tokens_after_split != 0
-			|| new_tokens->current->as_token->type == TOK_EOL)
-			lpush(cleaned_tokens, as_data(new_tokens->current));
-	tokens->first = cleaned_tokens->first;
-	tokens->last = cleaned_tokens->last;
-	tokens->len = cleaned_tokens->len;
+	tokens->first = new_tokens->first;
+	tokens->last = new_tokens->last;
+	tokens->len = new_tokens->len;
 }

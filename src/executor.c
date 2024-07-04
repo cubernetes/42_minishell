@@ -163,8 +163,6 @@ int	handle_io_redirect(t_tree *io_redirect, t_tree *simple_command)
 
 	type = io_redirect->children->first->as_tree->token->type;
 	file_path = io_redirect->children->first->next->as_tree->token->str;
-	if (io_redirect->children->first->next->as_tree->token->num_tokens_after_split != 1)
-		return (simple_command->error = minishell_error(1, false, false, "%s: ambiguous redirect", io_redirect->children->first->next->as_tree->token->origin));
 	if (type == TOK_OVERRIDE)
 		handle_redirect_override(file_path, simple_command, false);
 	else if (type == TOK_OVERRIDE_ERR)
@@ -179,6 +177,7 @@ int	handle_io_redirect(t_tree *io_redirect, t_tree *simple_command)
 		redirect_heredoc(file_path, simple_command);
 	else
 	{
+		// ???
 	}
 	return (simple_command->error);
 }
@@ -189,7 +188,7 @@ pid_t	execute_simple_command_wrapper(t_tree *simple_command,
 	t_list *commands)
 {
 	t_list	*new_children; // TODO: Shadows function new_children
-
+	t_list	*cleaned_tokens;
 	new_children = lnew();
 	liter(simple_command->children);
 	while (lnext(simple_command->children))
@@ -208,8 +207,28 @@ pid_t	execute_simple_command_wrapper(t_tree *simple_command,
 	join_tokens(new_children);
 	if (!option_enabled('f'))
 		glob_tokens(new_children);
+
+	cleaned_tokens = lnew();
+	liter(new_children);
+	while (lnext(new_children))
+	{
+		if ((new_children->current->as_token->type == TOK_INPUT
+			|| new_children->current->as_token->type == TOK_OVERRIDE
+			|| new_children->current->as_token->type == TOK_APPEND
+			|| new_children->current->as_token->type == TOK_HEREDOC)
+			&& new_children->current->next->as_token->type == TOK_WORD
+			&& new_children->current->next->as_token->num_tokens_after_split == 0)
+			return (close_fds(simple_command), minishell_error(1, false, false, "%s: ambiguous redirect", new_children->current->next->as_token->origin) - 257);
+		if (new_children->current->as_token->num_tokens_after_split != 0
+			|| new_children->current->as_token->type == TOK_EOL)
+			lpush(cleaned_tokens, as_data(new_children->current));
+	}
+	new_children->first = cleaned_tokens->first;
+	new_children->last = cleaned_tokens->last;
+	new_children->len = cleaned_tokens->len;
+
 	if (new_children->len <= 1)
-		return (close_fds(simple_command), -258);
+		return (close_fds(simple_command), -258); // empty command
 	new_children = build_ast(new_children, false)->children->first->as_tree->children->first->as_tree->children;
 	simple_command->children = new_children;
 	liter(simple_command->children);
