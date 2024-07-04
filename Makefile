@@ -6,7 +6,7 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:02:16 by tischmid          #+#    #+#              #
-#    Updated: 2024/07/04 16:00:05 by tischmid         ###   ########.fr        #
+#    Updated: 2024/07/04 18:59:48 by tischmid         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -38,9 +38,13 @@ _SRC += tokenize.c
 _SRC += printing.c
 _SRC += new_tree_tokens.c
 _SRC += helper.c
+_SRC += get_production_idx.c
 _SRC += hashtable.c
-_SRC += productions.c
-_SRC += build_ast.c
+_SRC += productions1.c
+_SRC += productions2.c
+_SRC += build_ast1.c
+_SRC += build_ast2.c
+_SRC += build_ast3.c
 _SRC += executor.c
 _SRC += shell_vars.c
 _SRC += glob.c
@@ -61,6 +65,7 @@ _SRC += export.c
 _SRC += environment.c
 _SRC += ft_mktemp.c
 _SRC += heredoc.c
+_SRC += heredoc_helper.c
 
 vpath %.c             \
 	src               \

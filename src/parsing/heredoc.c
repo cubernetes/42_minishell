@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 17:34:17 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/04 18:41:59 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/04 18:45:26 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,17 +18,6 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <errno.h>
-
-bool	heredoc_aborted(int op)
-{
-	static bool	aborted = false;
-
-	if (op == 1)
-		aborted = true;
-	else if (op == 0)
-		aborted = false;
-	return (aborted);
-}
 
 static bool	_redirect_err(int *old, char *ps2[static 1])
 {
