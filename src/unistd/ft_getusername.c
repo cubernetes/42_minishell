@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_getusername.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/07/05 01:50:57 by tischmid          #+#    #+#             */
+/*   Updated: 2024/07/05 01:53:07 by tischmid         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 #include "libft.h"
 
@@ -21,7 +33,9 @@ static char	*get_username_from_etc_passwd(char *uid)
 		line = get_next_line(fd);
 		if (line == NULL)
 			break ;
-		if (ft_strnstr(line, ft_strjoin("x:", ft_strjoin(uid, ":")), ft_strlen(line)) || ft_strnstr(line, ft_strjoin("*:", ft_strjoin(uid, ":")), ft_strlen(line)))
+		if (ft_strnstr(line, ft_strjoin("x:", ft_strjoin(uid, ":")),
+				ft_strlen(line)) || ft_strnstr(line, ft_strjoin("*:",
+					ft_strjoin(uid, ":")), ft_strlen(line)))
 			return (close(fd), lsplit(line, ":")->first->as_str);
 	}
 	close(fd);
@@ -132,7 +146,7 @@ char	*ft_getusername(void)
 	int		fd;
 	char	*uid;
 	char	*username;
-	
+
 	username = "";
 	uid = ft_getuid();
 	if (*uid == '\0')

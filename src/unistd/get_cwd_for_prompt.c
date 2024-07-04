@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_cwd_for_prompt.c                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/07/05 01:52:49 by tischmid          #+#    #+#             */
+/*   Updated: 2024/07/05 01:52:54 by tischmid         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 #include "libft.h"
 
@@ -7,8 +19,8 @@
 /** Return the current working directory, replacing the home directory
  *  (determined from the HOME environment variable) with a tilde ("~").
  *
- *  @returns: the current working directory where the home directory (determined from
- *            the HOME environment variable) is replaced with a tilde.
+ *  @returns: the current working directory where the home directory
+ *  (determined from the HOME environment variable) is replaced with a tilde.
  */
 char	*get_cwd_for_prompt(void)
 {

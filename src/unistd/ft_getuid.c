@@ -1,10 +1,22 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_getuid.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/07/05 01:50:34 by tischmid          #+#    #+#             */
+/*   Updated: 2024/07/05 01:50:42 by tischmid         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 #include "libft.h"
 
 #include <fcntl.h>
 #include <unistd.h>
 
-/* Return UID (0=real, effective, set saved, 3=filesystem) from /proc/self/status */
+//Return UID (0=real, effective, set saved, 3=filesystem) from /proc/self/status
 char	*ft_get_specific_uid(int uid_type)
 {
 	char	*line;

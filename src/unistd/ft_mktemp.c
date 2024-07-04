@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_mktemp.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/07/05 01:51:58 by tischmid          #+#    #+#             */
+/*   Updated: 2024/07/05 01:52:36 by tischmid         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "libft.h"
 
 #include <fcntl.h>
@@ -33,30 +45,28 @@ static void	mktemp_error(const char *fmt, ...)
 char	*ft_mktemp(char *prefix)
 {
 	int			rd_fd;
-	char		*random_bytes;
+	char		*rndm_bytes;
 	static int	heredoc_idx;
 	int			idx;
 	char		*str;
 
-	random_bytes = ft_malloc(sizeof(*random_bytes) * (ft_strlen(prefix) + 16));
-	ft_strlcpy((char *)random_bytes, ft_strjoin("/tmp/", prefix),
+	rndm_bytes = ft_malloc(sizeof(*rndm_bytes) * (ft_strlen(prefix) + 16));
+	ft_strlcpy((char *)rndm_bytes, ft_strjoin("/tmp/", prefix),
 		6 + ft_strlen(prefix));
 	rd_fd = open("/dev/urandom", O_RDONLY);
-	if (read(rd_fd, random_bytes + 5 + ft_strlen(prefix), 10) != 10)
+	if (read(rd_fd, rndm_bytes + 5 + ft_strlen(prefix), 10) != 10)
 	{
 		close(rd_fd);
 		mktemp_error("ft_mktemp: couldn't gather randomness from /dev/urandom, "
 			"creating heredoc file with name '/tmp/tmp.heredoc%d'",
 			heredoc_idx);
 		str = ft_strjoin("heredoc", ft_itoa(heredoc_idx++));
-		ft_strlcpy(random_bytes + 5 + ft_strlen(prefix),
-			str, ft_strlen(str) + 1);
-		return (ft_strdup(random_bytes));
+		ft_strlcpy(rndm_bytes + 5 + ft_strlen(prefix), str, ft_strlen(str) + 1);
+		return (ft_strdup(rndm_bytes));
 	}
-	close(rd_fd);
-	idx = (int)ft_strlen(prefix) + 4;
+	(close(rd_fd), idx = (int)ft_strlen(prefix) + 4);
 	while (++idx < (int)ft_strlen(prefix) + 15)
-		random_bytes[idx] = translate_to_alnum(random_bytes[idx]);
-	random_bytes[ft_strlen(prefix) + 15] = 0;
-	return (ft_strdup(random_bytes));
+		rndm_bytes[idx] = translate_to_alnum(rndm_bytes[idx]);
+	rndm_bytes[ft_strlen(prefix) + 15] = 0;
+	return (ft_strdup(rndm_bytes));
 }
