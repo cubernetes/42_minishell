@@ -6,11 +6,11 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 17:34:17 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/04 18:30:19 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/04 18:41:59 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
+#include "minishell.h"
 #include "libft.h"
 
 #include <stdio.h>

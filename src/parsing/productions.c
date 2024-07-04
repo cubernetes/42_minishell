@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   productions.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/07/04 18:36:10 by tischmid          #+#    #+#             */
+/*   Updated: 2024/07/04 18:40:44 by tischmid         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 #include "libft.h"
 
@@ -25,10 +37,10 @@ t_tree	gen_production(char *token_str)
 t_tree	**initialize_productions(const char *grammar)
 {
 	t_tree	**productions;
-	char		**lines;
-	char		**tokens;
-	int			i;
-	int			j;
+	char	**lines;
+	char	**tokens;
+	int		i;
+	int		j;
 
 	gc_start_context("POST");
 	productions = ft_malloc(sizeof(*productions) * 20);
@@ -50,33 +62,39 @@ t_tree	**initialize_productions(const char *grammar)
 	return (productions);
 }
 
+static char	*_get_grammar(void)
+{
+	static char	*grammar = \
+		"<pipe_sequence> <complete_command_tail>"			"\n" \
+		"TOK_EPSILON"										"\n" \
+		"<and_or> <pipe_sequence> <complete_command_tail>"	"\n" \
+		"&&"												"\n" \
+		"||"												"\n" \
+		"<command> <pipe_sequence_tail>"					"\n" \
+		"TOK_EPSILON"										"\n" \
+		"| <command> <pipe_sequence_tail>"					"\n" \
+		"<simple_command>"									"\n" \
+		"<compound_command>"								"\n" \
+		"( <complete_command> )"							"\n" \
+		"<io_redirect> TOK_WORD <simple_command_tail>"		"\n" \
+		"TOK_EPSILON"										"\n" \
+		"<io_redirect> TOK_WORD <simple_command_tail>"		"\n" \
+		"TOK_EPSILON"										"\n" \
+		">>" "\n"	"<<" "\n"	">" "\n"	"<" "\n"			\
+		"TOK_EPSILON";
+
+	return (grammar);
+}
+
 /* TODO: Don't use 0 as NULL */
 /* tabsize: 4 */
 t_tree	*get_production(t_tree_type nonterm, t_token *token)
 {
 	static t_tree		**productions = NULL;
-	static const char	*grammar = \
-		"<pipe_sequence> <complete_command_tail>"			"\n"	\
-		"TOK_EPSILON"										"\n"	\
-		"<and_or> <pipe_sequence> <complete_command_tail>"	"\n"	\
-		"&&"												"\n"	\
-		"||"												"\n"	\
-		"<command> <pipe_sequence_tail>"					"\n"	\
-		"TOK_EPSILON"										"\n"	\
-		"| <command> <pipe_sequence_tail>"					"\n"	\
-		"<simple_command>"									"\n"	\
-		"<compound_command>"								"\n"	\
-		"( <complete_command> )"							"\n"	\
-		"<io_redirect> TOK_WORD <simple_command_tail>"		"\n"	\
-		"TOK_EPSILON"										"\n"	\
-		"<io_redirect> TOK_WORD <simple_command_tail>"		"\n"	\
-		"TOK_EPSILON"										"\n"	\
-		">>" "\n"	"<<" "\n"	">" "\n"	"<" "\n"				\
-		"TOK_EPSILON";
 	int					idx;
 
 	if (productions == NULL)
-		productions = initialize_productions(grammar);
+		productions = initialize_productions(_get_grammar());
 	idx = get_production_idx(nonterm, token);
 	if (idx != -1)
 		return (productions[idx]);
