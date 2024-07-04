@@ -132,6 +132,7 @@ unsigned char	interpret_lines(t_list *lines)
 	exit_status = get_last_exit_status();
 	while (lines->len > 0)
 	{
+		set_var("LINENO", ft_itoa(ft_atoi(var_lookup("LINENO")) + 1), get_flags("LINENO"));
 		if (get_var("MINISHELL_SOURCE_EXECUTION_STRING") && get_var("MINISHELL_SOURCE_EXECUTION_STRING")->value)
 		{
 			lextend_left(lines, lsplit(var_lookup("MINISHELL_SOURCE_EXECUTION_STRING"), "\n"));
@@ -143,7 +144,6 @@ unsigned char	interpret_lines(t_list *lines)
 		tree = parse(lines->first->as_str);
 		if ((heredoc_aborted(-1) == false || tree == NULL) && !option_enabled('n'))
 			exit_status = exec(tree);
-		set_var("LINENO", ft_itoa(ft_atoi(var_lookup("LINENO")) + 1), get_flags("LINENO"));
 		lpop_left(lines);
 		if (exit_status != 0 && option_enabled('e'))
 			break ;
@@ -207,9 +207,15 @@ t_list	*get_lines(int fd)
 		noninteractive_signals();
 		input = get_next_line(fd);
 		if (option_enabled('i') && input != NULL)
+		{
 			ft_dprintf(STDERR_FILENO, "%s", ft_strjoin(ps1, input));
+			if (input != NULL && input[ft_strlen(input) - 1] != '\n')
+				ft_dprintf(STDERR_FILENO, "%s", "\n");
+		}
 		else if (option_enabled('i'))
 			ft_dprintf(STDERR_FILENO, "%s", ps1);
+		if (input != NULL && input[ft_strlen(input) - 1] == '\n')
+			input[ft_strlen(input) - 1] = '\0';
 	}
 	if (input == NULL)
 		return (NULL);
@@ -377,7 +383,7 @@ void	set_initial_shell_variables(char *argv[], char *envp[])
 	unset_var("MINISHELL_XTRACEFD"); // TODO: If it has a value and is unset or set to a new value, the fd corresponding to the old value shall be closed.
 	set_var("$", ft_getpid(), (t_flags){.special = true});
 	set_var("PPID", ft_getppid(), (t_flags){.readonly = true});
-	set_var("LINENO", "1", (t_flags){0});
+	set_var("LINENO", "0", (t_flags){0});
 	// TODO: Depends on if interactive or not
 	set_var("SHLVL", ft_itoa(ft_atoi(var_lookup("SHLVL")) + 1), (t_flags){.exp = true});
 	set_var("_", argv[0], (t_flags){0});
@@ -593,6 +599,7 @@ void	init(char *argv[], char *envp[])
 /* TODO: get sourcing right */
 /* TODO: improve sourcing (source in the middle of a line? sourcing when -n is enabled?) */
 /* TODO: Fix -t with sourcing */
+/* TODO: Seperate lines error msgs for heredoc */
 int	main(int argc, char *argv[], char *envp[])
 {
 	/* close(3); close(63); */ /* valgrind */
