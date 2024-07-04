@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 01:50:57 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/05 01:53:07 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/05 01:53:54 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,18 +48,18 @@ static int	parse_header(int fd)
 	short	length;
 	char	*buffer;
 
-	if (read(fd, &version, 1) < 1) // 5
+	if (read(fd, &version, 1) < 1)
 		return (1);
-	if (read(fd, &version, 1) < 1) // version
+	if (read(fd, &version, 1) < 1)
 		return (2);
 	if (version != 4)
 		return (3);
-	if (read(fd, (char *)&length + 1, 1) < 1) // length of header lsb
+	if (read(fd, (char *)&length + 1, 1) < 1)
 		return (4);
-	if (read(fd, (char *)&length + 0, 1) < 1) // msb
+	if (read(fd, (char *)&length + 0, 1) < 1)
 		return (5);
 	buffer = ft_malloc(sizeof(char) * (size_t)length);
-	if (read(fd, buffer, (size_t)length) < length) // header
+	if (read(fd, buffer, (size_t)length) < length)
 		return (6);
 	return (0);
 }
@@ -69,11 +69,11 @@ static int	parse_till_real(int fd)
 	int		length;
 	char	*buffer;
 
-	if (read(fd, &length, 4) < 4) // name
+	if (read(fd, &length, 4) < 4)
 		return (1);
-	if (read(fd, &length, 4) < 4) // count of components -- should be one
+	if (read(fd, &length, 4) < 4)
 		return (2);
-	if (read(fd, (char *)&length + 3, 1) < 1) // length of realm
+	if (read(fd, (char *)&length + 3, 1) < 1)
 		return (3);
 	if (read(fd, (char *)&length + 2, 1) < 1)
 		return (4);
@@ -82,7 +82,7 @@ static int	parse_till_real(int fd)
 	if (read(fd, (char *)&length + 0, 1) < 1)
 		return (6);
 	buffer = ft_malloc(sizeof(char) * (size_t)length);
-	if (read(fd, buffer, (size_t)length) < length) // realm
+	if (read(fd, buffer, (size_t)length) < length)
 		return (7);
 	return (0);
 }
@@ -126,7 +126,7 @@ static char	*get_username_from_krb_file(int fd)
 		return (close(fd), "");
 	if (parse_till_real(fd))
 		return (close(fd), "");
-	if (read(fd, (char *)&length + 3, 1) < 1) // length of component1
+	if (read(fd, (char *)&length + 3, 1) < 1)
 		return (close(fd), "");
 	if (read(fd, (char *)&length + 2, 1) < 1)
 		return (close(fd), "");
@@ -136,7 +136,7 @@ static char	*get_username_from_krb_file(int fd)
 		return (close(fd), "");
 	buffer = ft_malloc(sizeof(char) * (size_t)(length + 1));
 	buffer[length] = 0;
-	if (read(fd, buffer, (size_t)length) < length) // component1
+	if (read(fd, buffer, (size_t)length) < length)
 		return (close(fd), "");
 	return (close(fd), buffer);
 }
