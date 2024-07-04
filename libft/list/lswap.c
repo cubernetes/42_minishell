@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   lswap.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/07/05 00:59:50 by tischmid          #+#    #+#             */
+/*   Updated: 2024/07/05 00:59:58 by tischmid         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "libft.h"
 
 /* TODO: Document */
@@ -26,8 +38,7 @@ void	lswap(t_list *list)
 	orig_next->next = orig_first;
 	orig_next->prev = orig_prev;
 	orig_next_next->prev = orig_first;
-
-	/* TODO: Check that last and current pointers are correct */
 	list->last->next = list->first;
 	list->current = list->first;
 }
+/* TODO: Check that last and current pointers are correct */

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   liter_rev.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/07/05 00:59:17 by tischmid          #+#    #+#             */
+/*   Updated: 2024/07/05 00:59:25 by tischmid         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "libft.h"
 #include "libft.h"
 
@@ -8,12 +20,12 @@
  */
 t_list	*liter_rev(t_list list[static 1])
 {
-	(void)lpush(list->_iterator_stack, as_literator(ft_memdup(&(t_literator){
-			.current = list->current,
-			.current_idx = list->current_idx,
-			.method = list->_method
-		},
-		sizeof(t_literator)
+	(void)lpush(list->_iterator_stack, as_literator(ft_memdup(&(t_literator){\
+			.current = list->current, \
+			.current_idx = list->current_idx, \
+			.method = list->_method \
+		}, \
+		sizeof(t_literator) \
 	)));
 	if (list->last)
 		list->current = list->last->next;

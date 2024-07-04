@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/11 06:53:13 by tischmid          #+#    #+#             */
-/*   Updated: 2024/05/11 06:54:45 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/05 01:06:44 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,4 +30,3 @@ void	ft_putstr_n_clr(const char *str, int n, bool color)
 			ft_putstr("\033[m");
 	}
 }
-

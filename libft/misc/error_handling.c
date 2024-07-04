@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   error_handling.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/07/05 01:02:12 by tischmid          #+#    #+#             */
+/*   Updated: 2024/07/05 01:02:47 by tischmid         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "libft.h"
 #include <stdlib.h>
 #include <execinfo.h>
@@ -29,12 +41,16 @@ void	print_callstack(void)
 	void	*callstack[MAX_CALLSTACK_SIZE];
 	int		frames;
 	char	**symbols;
-	/* ft_printf("Oh no! Not implemented! Forbidden functions!\n"); */
-	frames = backtrace(callstack, MAX_CALLSTACK_SIZE);
-	symbols = backtrace_symbols(callstack, frames);
-	frames -= 3;
-	while (--frames)
-		print_stackframe(symbols[frames]);
-	free(symbols);
-	ft_printf("\n");
+
+	(void)frames;
+	(void)symbols;
+	(void)callstack;
+	ft_printf("Oh no! Not implemented! Forbidden functions!\n");
 }
+	/* frames = backtrace(callstack, MAX_CALLSTACK_SIZE); */
+	/* symbols = backtrace_symbols(callstack, frames); */
+	/* frames -= 3; */
+	/* while (--frames) */
+		/* print_stackframe(symbols[frames]); */
+	/* free(symbols); */
+	/* ft_printf("\n"); */

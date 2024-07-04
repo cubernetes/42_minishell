@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 15:08:37 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/02 09:57:00 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/07/05 01:06:28 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ static long	ft_atol_status_pos(char const *nptr, int *status)
 /* status == 2 -> doesn't end with nul */
 /* status == 4 -> doesn't end with only whitespace */
 /* status == 8 -> empty argument */
-long ft_atol_status(char const *nptr, int *status)
+long	ft_atol_status(char const *nptr, int *status)
 {
 	*status = 0;
 	while (ft_isspace(*nptr))

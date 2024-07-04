@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   lbackward.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/07/05 00:59:41 by tischmid          #+#    #+#             */
+/*   Updated: 2024/07/05 00:59:45 by tischmid         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "libft.h"
 
 /** Backwards-advance the iterator of a list.
@@ -14,7 +26,8 @@ t_list_node	*lbackward(t_list list[static 1])
 	if (list->current_idx == list->len - 1)
 	{
 		list->current = list->_iterator_stack->last->as_literator->current;
-		list->current_idx = list->_iterator_stack->last->as_literator->current_idx;
+		list->current_idx
+			= list->_iterator_stack->last->as_literator->current_idx;
 		list->_method = list->_iterator_stack->last->as_literator->method;
 		(void)lpop(list->_iterator_stack);
 		return (NULL);

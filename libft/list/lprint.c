@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   lprint.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/07/05 00:54:06 by tischmid          #+#    #+#             */
+/*   Updated: 2024/07/05 00:54:10 by tischmid         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "libft.h"
 
 #include <stdbool.h>
@@ -34,8 +46,8 @@ void	lprint(t_list *list, void (print)(t_data data, int n))
 			current_last);
 		print(as_data(list->current), (int)list->current_idx);
 		if (list->current == current_first
-				|| list->current == current_current
-				|| list->current == current_last)
+			|| list->current == current_current
+			|| list->current == current_last)
 			ft_printf("\033[m");
 	}
 	if (list->first == NULL)
