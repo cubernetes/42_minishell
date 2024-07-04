@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   libft.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/07/04 20:07:51 by tosuman           #+#    #+#             */
+/*   Updated: 2024/07/04 20:07:51 by tosuman          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef LIBFT_H
 # define LIBFT_H 1
 
@@ -217,7 +229,8 @@ char							*gc_get_context_name(void);
 t_list							*gc_set_context(char *new_ctx_name);
 char							*gc_start_context(char *new_ctx_name);
 char							*gc_end_context(void);
-t_ctx_meta						gc_ctx_manager(t_method method, char *_ctx_name);
+t_ctx_meta						gc_ctx_manager(t_method method,
+									char *_ctx_name);
 void							*ft_malloc(size_t size);
 void							*gc_malloc(size_t size);
 void							*(*get_allocator(void))(size_t size);
@@ -282,7 +295,7 @@ bool							cmp_int_desc(int a, int b);
 char							*ft_itoa(int n);
 int								ft_atoi(char const *nptr);
 int								ft_atoi_status(char const *nptr, int *status);
-long 							ft_atol_status(char const *nptr, int *status);
+long							ft_atol_status(char const *nptr, int *status);
 double							ft_atof(const char *s);
 unsigned int					ft_abs(int n);
 int								ft_max(int a, int b);
