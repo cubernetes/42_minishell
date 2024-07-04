@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/07/04 19:10:58 by tischmid          #+#    #+#             */
+/*   Updated: 2024/07/04 19:13:46 by tischmid         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef MINISHELL_H
 # define MINISHELL_H 1
 
@@ -186,8 +198,9 @@ struct									s_tree
 void									interactive_signals(void);
 void									interactive_signals_heredoc(void);
 void									noninteractive_signals(void);
-t_list									*tokenize(const char *line); /* static 1 ? */
-t_tree									*build_ast(t_list *tokens, bool create_heredocs);
+t_list									*tokenize(const char line[static 1]);
+t_tree									*build_ast(t_list *tokens,
+											bool create_heredocs);
 void									tree_print(t_tree *tree);
 void									print_token(t_data data, int n);
 void									print_token_debug(t_data data, int n);
@@ -253,7 +266,8 @@ char									*ft_getusername(void);
 char									*get_cwd_for_prompt(void);
 t_list									*production_to_children(
 											t_tree *production);
-t_tree									*production_part_to_child(t_tree production);
+t_tree									*production_part_to_child(
+											t_tree production);
 bool									tree_is_null(t_tree *tree);
 t_tree									*new_tree_token(t_token_type type,
 											char *str);

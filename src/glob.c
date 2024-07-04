@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   glob.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/07/04 19:14:43 by tischmid          #+#    #+#             */
+/*   Updated: 2024/07/04 19:14:43 by tischmid         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 #include "libft.h"
 
@@ -68,7 +80,8 @@ t_list	*glob_token(t_token *token)
 	dp = readdir(dirp);
 	while (dp != NULL)
 	{
-		if (glob_match(token->str, token->quoting_ctx, dp->d_name) && ft_strcmp(dp->d_name, ".") && ft_strcmp(dp->d_name, ".."))
+		if (glob_match(token->str, token->quoting_ctx, dp->d_name)
+			&& ft_strcmp(dp->d_name, ".") && ft_strcmp(dp->d_name, ".."))
 			lpush(tokens,
 				as_token(new_token(ft_strdup(dp->d_name), TOK_WORD, true)));
 		dp = readdir(dirp);
@@ -76,10 +89,10 @@ t_list	*glob_token(t_token *token)
 	closedir(dirp);
 	if (tokens->len == 0)
 		lpush(tokens, as_token(token));
-	lsort(tokens, ft_strcmp2);
-	tokens = liter(dotglob(tokens, token));
+	(lsort(tokens, ft_strcmp2), tokens = liter(dotglob(tokens, token)));
 	while (lnext(tokens))
-		tokens->current->as_token->num_tokens_after_split = (int)tokens->len + token->num_tokens_after_split - 1;
+		tokens->current->as_token->num_tokens_after_split
+			= (int)tokens->len + token->num_tokens_after_split - 1;
 	return (tokens);
 }
 

@@ -6,7 +6,7 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:02:16 by tischmid          #+#    #+#              #
-#    Updated: 2024/07/04 18:59:48 by tischmid         ###   ########.fr        #
+#    Updated: 2024/07/04 19:10:14 by tischmid         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,7 +24,8 @@ LIBFT           := libft.a
 LIBFT_          := $(patsubst lib%,%,$(patsubst %.a,%,$(LIBFT)))
 
 unexport _SRC
-_SRC += signals.c
+_SRC += signals1.c
+_SRC += signals2.c
 _SRC += get_cwd_for_prompt.c
 _SRC += ft_gethostname.c
 _SRC += ft_getuid.c
