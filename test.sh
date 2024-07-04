@@ -1,6 +1,9 @@
 #!/bin/sh
 
 cd -- "$(git rev-parse --show-toplevel)"
+
+make re
+
 cd tester4
 ./tester
 read -p "Press enter to continue" choice

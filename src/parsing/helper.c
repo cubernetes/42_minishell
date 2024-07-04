@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   helper.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/07/04 17:30:41 by tischmid          #+#    #+#             */
+/*   Updated: 2024/07/04 17:34:25 by tischmid         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 #include "libft.h"
 
@@ -51,6 +63,30 @@ t_list	*creat_new_children(t_tree **children)
 	return (new_children);
 }
 
+static t_token_type	_adjust_type(t_token_type type)
+{
+	if (type == TOK_DQUOTE_STR || type == TOK_SQUOTE_STR)
+		type = TOK_WORD;
+	else if (type == TOK_SEMI)
+		type = TOK_AND;
+	else if (type == TOK_OVERRIDE_ERR)
+		type = TOK_OVERRIDE;
+	else if (type == TOK_APPEND_ERR)
+		type = TOK_APPEND;
+	return (type);
+}
+
+static void	_handle_syntax_error(t_token *token)
+{
+	if (!*token->str)
+		set_last_exit_status(minishell_error(2, !option_enabled('i'), true,
+				"syntax error near unexpected token `newline'"));
+	else
+		set_last_exit_status(minishell_error(2, !option_enabled('i'), true,
+				"syntax error near unexpected token `%s'",
+				token->str));
+}
+
 /* return the index of the production to use */
 /* TODO: fix error handling */
 /* TODO: Not required: Make transition table adaptive (quite a lot of work) */
@@ -71,24 +107,9 @@ int	get_production_idx(t_tree_type nonterm, t_token *token)
 	int				production_idx;
 	t_token_type	type;
 
-	type = token->type;
-	if (type == TOK_DQUOTE_STR || type == TOK_SQUOTE_STR)
-		type = TOK_WORD;
-	else if (type == TOK_SEMI)
-		type = TOK_AND;
-	else if (type == TOK_OVERRIDE_ERR)
-		type = TOK_OVERRIDE;
-	else if (type == TOK_APPEND_ERR)
-		type = TOK_APPEND;
+	type = _adjust_type(token->type);
 	production_idx = transition_table[nonterm - 1][type - 1];
 	if (production_idx == -1)
-	{
-		if (!*token->str)
-			set_last_exit_status(minishell_error(2, !option_enabled('i'), true,
-				"syntax error near unexpected token `newline'"));
-		else
-			set_last_exit_status(minishell_error(2, !option_enabled('i'), true, "syntax error near unexpected token `%s'",
-				token->str));
-	}
+		_handle_syntax_error(token);
 	return (production_idx);
 }

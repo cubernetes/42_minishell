@@ -1,4 +1,16 @@
-#include "minishell.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   heredoc.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/07/04 17:34:17 by tischmid          #+#    #+#             */
+/*   Updated: 2024/07/04 17:36:56 by tischmid         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../minishell.h"
 
 #include <stdio.h>
 #include <readline/readline.h>
@@ -14,6 +26,10 @@ bool	heredoc_aborted(int op)
 	else if (op == 0)
 		aborted = false;
 	return (aborted);
+}
+
+static void	_handle_interactive_heredoc()
+{
 }
 
 /* TODO: Check for error on write, open */
@@ -34,7 +50,7 @@ char	*create_heredoc(char *delimiter)
 	{
 		if (option_enabled('i'))
 		{
-			ps2 = expand_prompt(get_var("PS2")->value); // TODO: Can we ensure that there's always PS2?
+			ps2 = expand_prompt(var_lookup("PS2")); // TODO: Can we ensure that there's always PS2?
 			interactive_signals();
 			input = readline(ps2);
 			noninteractive_signals();

@@ -6,7 +6,7 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:02:16 by tischmid          #+#    #+#              #
-#    Updated: 2024/07/02 19:34:55 by tosuman          ###   ########.fr        #
+#    Updated: 2024/07/04 16:00:05 by tischmid         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -40,7 +40,6 @@ _SRC += new_tree_tokens.c
 _SRC += helper.c
 _SRC += hashtable.c
 _SRC += productions.c
-_SRC += example_trees.c
 _SRC += build_ast.c
 _SRC += executor.c
 _SRC += shell_vars.c
