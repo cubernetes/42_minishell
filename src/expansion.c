@@ -6,13 +6,12 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 02:08:35 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/05 02:11:51 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/05 03:55:05 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include "libft.h"
-#include <math.h>
 
 char	*var_lookup(char *key)
 {
@@ -24,7 +23,7 @@ char	*var_lookup(char *key)
 	return ("");
 }
 
-char	*get_ifs(void)
+static char	*_get_ifs(void)
 {
 	t_var	*ifs_var;
 
@@ -34,7 +33,7 @@ char	*get_ifs(void)
 	return (ifs_var->value);
 }
 
-t_list	*remove_empty_words(t_list	*words)
+static t_list	*_remove_empty_words(t_list	*words)
 {
 	t_list	*new_words;
 
@@ -48,12 +47,38 @@ t_list	*remove_empty_words(t_list	*words)
 	return (new_words);
 }
 
+static bool	_expand_parameter(t_list *words, t_list *new_words)
+{
+	t_var	*var;
+	char	*var_str;
+	t_token	*expanded_token;
+
+	if (words->current->as_token->str[1] == '\0')
+		lpush(new_words, as_data(words->current));
+	else
+	{
+		var = get_var(words->current->as_token->str + 1);
+		if (var && var->value)
+			var_str = var->value;
+		else if (option_enabled('u'))
+			return (minishell_error(1, false, false,
+					"%s: unbound variable",
+					words->current->as_token->str + 1), false);
+		else
+			var_str = "";
+		expanded_token = new_token(var_str, TOK_WORD, true);
+		expanded_token->expansion_ctx = repeat_string("1",
+				ft_strlen(expanded_token->str));
+		expanded_token->escape_ctx = repeat_string("0",
+				ft_strlen(expanded_token->str) + 1);
+		lpush(new_words, as_token(expanded_token));
+	}
+	return (true);
+}
+
 t_list	*expand_subwords(t_list	*words)
 {
 	t_list	*new_words;
-	t_token	*expanded_token;
-	t_var	*var;
-	char	*var_str;
 
 	new_words = lnew();
 	liter(words);
@@ -62,26 +87,8 @@ t_list	*expand_subwords(t_list	*words)
 		if (words->current->as_token->str[0] == '$'
 			&& words->current->as_token->escape_ctx[0] == '0')
 		{
-			if (words->current->as_token->str[1] == '\0')
-				lpush(new_words, as_data(words->current));
-			else
-			{
-				var = get_var(words->current->as_token->str + 1);
-				if (var && var->value)
-					var_str = var->value;
-				else if (option_enabled('u'))
-					return (minishell_error(1, false, false,
-							"%s: unbound variable",
-							words->current->as_token->str + 1), NULL);
-				else
-					var_str = "";
-				expanded_token = new_token(var_str, TOK_WORD, true);
-				expanded_token->expansion_ctx = repeat_string("1",
-						ft_strlen(expanded_token->str));
-				expanded_token->escape_ctx = repeat_string("0",
-						ft_strlen(expanded_token->str) + 1);
-				lpush(new_words, as_token(expanded_token));
-			}
+			if (_expand_parameter(words, new_words) == false)
+				return (NULL);
 		}
 		else
 		{
@@ -93,7 +100,7 @@ t_list	*expand_subwords(t_list	*words)
 	return (new_words);
 }
 
-t_list	*split_into_subwords(t_token *token)
+static t_list	*_split_into_subwords(t_token *token)
 {
 	t_list	*subwords;
 	int		idx;
@@ -160,7 +167,7 @@ t_list	*split_into_subwords(t_token *token)
 }
 
 /* start inclusive, end exclusive */
-static t_token	*new_word_token(t_token *token, int start, int end)
+static t_token	*_new_word_token(t_token *token, int start, int end)
 {
 	t_token	*new_tok;
 
@@ -177,7 +184,7 @@ static t_token	*new_word_token(t_token *token, int start, int end)
 
 /* shit... */
 /* probably the most complex function in the entire codebase */
-t_list	*split_into_words(t_token *token)
+static t_list	*_split_into_words(t_token *token)
 {
 	t_list	*words;
 	char	*ifs;
@@ -186,7 +193,7 @@ t_list	*split_into_words(t_token *token)
 	bool	push;
 
 	words = lnew();
-	ifs = get_ifs();
+	ifs = _get_ifs();
 	idx = -1;
 	start = -1;
 	push = false;
@@ -201,7 +208,7 @@ t_list	*split_into_words(t_token *token)
 					if (push == true)
 					{
 						lpush(words,
-							as_token(new_word_token(token, start, idx)));
+							as_token(_new_word_token(token, start, idx)));
 						push = false;
 					}
 				}
@@ -210,7 +217,7 @@ t_list	*split_into_words(t_token *token)
 					if (push == true)
 					{
 						lpush(words,
-							as_token(new_word_token(token, start, idx)));
+							as_token(_new_word_token(token, start, idx)));
 						start = idx;
 						push = false;
 					}
@@ -246,7 +253,7 @@ t_list	*split_into_words(t_token *token)
 	}
 	if (start != -1 && push == true && (token->expansion_ctx[start] == '0'
 			|| !ft_strchr(ifs, token->str[start])))
-		lpush(words, as_token(new_word_token(token, start, idx)));
+		lpush(words, as_token(_new_word_token(token, start, idx)));
 	if (words->len == 0)
 	{
 		token = new_token("", TOK_WORD, true);
@@ -300,11 +307,11 @@ t_list	*expand_tokens(t_list *tokens)
 			lpush(new_tokens, as_data(tokens->current));
 			continue ;
 		}
-		subwords = split_into_subwords(tilde_expand(tokens->current->as_token));
+		subwords = _split_into_subwords(tilde_expand(tokens->current->as_token));
 		subwords = expand_subwords(subwords);
 		if (subwords == NULL)
 			return (NULL);
-		subwords = liter(remove_empty_words(subwords));
+		subwords = liter(_remove_empty_words(subwords));
 		joined_token = new_token("", TOK_WORD, true);
 		joined_token->expansion_ctx = "";
 		joined_token->escape_ctx = "";
@@ -324,18 +331,18 @@ t_list	*expand_tokens(t_list *tokens)
 		}
 		if (tokens->current->as_token->type == TOK_WORD)
 		{
-			if (joined_token->str[0] != '\0' && ft_strchr(get_ifs(),
+			if (joined_token->str[0] != '\0' && ft_strchr(_get_ifs(),
 					joined_token->str[0]))
 				if (new_tokens->last != NULL
 					&& new_tokens->last->as_token->is_last_token == false)
 					new_tokens->last->as_token->is_last_token = true;
-			split_tokens = liter(split_into_words(joined_token));
+			split_tokens = liter(_split_into_words(joined_token));
 			while (lnext(split_tokens))
 				split_tokens->current->as_token->origin
 					= tokens->current->as_token->origin;
 			lextend(new_tokens, lcopy(split_tokens));
 			if (split_tokens->last->as_token->num_tokens_after_split == 0
-				|| !ft_strchr(get_ifs(),
+				|| !ft_strchr(_get_ifs(),
 					joined_token->str[ft_strlen(joined_token->str) - 1])
 				|| joined_token->escape_ctx[ft_strlen(joined_token->str) - 1]
 				== '1')

@@ -36,6 +36,7 @@ int	builtin_source(char **argv, t_fds fds) // TODO: use fds
 	char	*lines;
 	char	*line;
 
+	(void)fds;
 	if (argv[1] == NULL)
 		return (minishell_error(2, false, false, "%s: filename argument required\n%s: usage: %s filename [arguments]", argv[0], argv[0], argv[0]));
 	path_parts = ft_split(ft_strjoin(".:", var_lookup("PATH")), ':'); // TODO: what about empty PATH // TODO: empty path means include CWD

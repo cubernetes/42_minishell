@@ -6,6 +6,8 @@ int	builtin_shift(char **argv, t_fds fds) // TODO: use fds
 	int	num_args;
 	int	idx;
 
+	(void)argv;
+	(void)fds;
 	num_args = ft_atoi(var_lookup("#"));
 	idx = 1;
 	while (idx <= num_args)

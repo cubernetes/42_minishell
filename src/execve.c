@@ -185,7 +185,7 @@ static char	**copy_argv(char *const argv[])
 	i = 0;
 	while (argv[i])
 		++i;
-	new_argv = ft_malloc(sizeof(*new_argv) * (i + 1));
+	new_argv = ft_malloc(sizeof(*new_argv) * ((size_t)i + 1));
 	i = -1;
 	while (argv[++i])
 		new_argv[i] = argv[i];
