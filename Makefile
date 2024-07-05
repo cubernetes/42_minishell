@@ -6,7 +6,7 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:02:16 by tischmid          #+#    #+#              #
-#    Updated: 2024/07/05 00:29:23 by tosuman          ###   ########.fr        #
+#    Updated: 2024/07/05 02:06:39 by tischmid         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,6 +30,7 @@ _SRC += get_cwd_for_prompt.c
 _SRC += ft_gethostname.c
 _SRC += ft_getuid.c
 _SRC += ft_getusername.c
+_SRC += get_username_from_krb.c
 _SRC += ft_getpid.c
 _SRC += ft_getumask.c
 _SRC += expansion.c
