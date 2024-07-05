@@ -6,7 +6,7 @@
 #    By: pgrussin <pgrussin@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:02:16 by tischmid          #+#    #+#              #
-#    Updated: 2024/07/05 16:53:31 by pgrussin         ###   ########.fr        #
+#    Updated: 2024/07/05 17:04:56 by pgrussin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -60,6 +60,8 @@ _SRC += cd.c
 _SRC += cd2.c
 _SRC += shift.c
 _SRC += declare.c
+_SRC += declare2.c
+_SRC += declare3.c
 _SRC += declare_utils.c
 _SRC += readonly.c
 _SRC += source.c

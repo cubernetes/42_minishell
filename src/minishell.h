@@ -6,7 +6,7 @@
 /*   By: pgrussin <pgrussin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 19:10:58 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/05 16:57:26 by pgrussin         ###   ########.fr       */
+/*   Updated: 2024/07/05 17:05:47 by pgrussin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -308,4 +308,10 @@ char									*set_saved_cwd(char *cwd);
 char									*get_saved_cwd(void);
 int										builtin_cd(char **argv, t_fds fds);
 char									*normalize(char *path);
+char	*quote(char *s, bool bare_declare);
+void	print_var(t_kv_pair *kv, t_fds fds);
+bool	valid_name(char *s);
+int	declare_print(char *name, char **argv, t_fds fds);
+bool	has_flag(t_var *var, t_declare_flags flags);
+int	builtin_declare(char **argv, t_fds fds);
 #endif /* minishell.h. */
