@@ -15,8 +15,10 @@ char	*normalize(char *path)
 	new_parts = lnew();
 	while (lnext(parts))
 	{
-		if (!ft_strcmp(parts->current->as_str, ""));
-		else if (!ft_strcmp(parts->current->as_str, "."));
+		if (!ft_strcmp(parts->current->as_str, ""))
+			;
+		else if (!ft_strcmp(parts->current->as_str, "."))
+			;
 		else if (!ft_strcmp(parts->current->as_str, ".."))
 			lpop(new_parts);
 		else
