@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: pgrussin <pgrussin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 19:10:58 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/04 19:13:46 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/05 16:57:26 by pgrussin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -306,5 +306,6 @@ char									*quote_ansi_c(char *s,
 char									*expand_prompt(char *prompt_string);
 char									*set_saved_cwd(char *cwd);
 char									*get_saved_cwd(void);
-
+int										builtin_cd(char **argv, t_fds fds);
+char									*normalize(char *path);
 #endif /* minishell.h. */
