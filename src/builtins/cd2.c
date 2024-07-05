@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <errno.h>
 
-int	builtin_cd3(int status, char *cwd, char **argv, char *name)
+static int	builtin_cd3(int status, char *cwd, char **argv, char *name)
 {
 	char	*real_cwd;
 
@@ -34,7 +34,7 @@ int	builtin_cd3(int status, char *cwd, char **argv, char *name)
 	return (0);
 }
 
-int	builtin_cd2(char **argv, t_fds fds, char *name)
+static int	builtin_cd2(char **argv, t_fds fds, char *name)
 {
 	if (!ft_strcmp(*argv, "-"))
 	{
