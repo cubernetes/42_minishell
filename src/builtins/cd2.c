@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   cd2.c                                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/07/08 03:31:43 by paul              #+#    #+#             */
+/*   Updated: 2024/07/08 03:31:44 by paul             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 
 #include "libft.h"
 #include "minishell.h"
@@ -15,7 +27,7 @@ static int	builtin_cd3(int status, char *cwd, char **argv, char *name)
 	if (real_cwd == NULL)
 	{
 		//TODO: changed message from "!%s: error retrieving current directory: getcwd: cannot access parent directories: %s" to "error"
-		minishell_error(0, false, false, "!%s: error: %s", 
+		minishell_error(0, false, false, "!%s: error: %s",
 			name, strerror(errno));
 		status = 1;
 	}
@@ -39,7 +51,7 @@ static int	builtin_cd2(char **argv, t_fds fds, char *name)
 	if (!ft_strcmp(*argv, "-"))
 	{
 		if (get_var("OLDPWD") == NULL)
-			return (minishell_error(1, false, false, 
+			return (minishell_error(1, false, false,
 					"%s: OLDPWD no set", name));
 		*argv = get_var("OLDPWD")->value;
 		argv[1] = "-";
@@ -76,7 +88,7 @@ int	builtin_cd(char **argv, t_fds fds)
 	}
 	status = builtin_cd2(argv, fds, name);
 	if (status != 0)
-		return (minishell_error(1, false, false, "%s: %s: %s", 
+		return (minishell_error(1, false, false, "%s: %s: %s",
 				name, *argv, strerror(errno)));
 	else
 		return (builtin_cd3(status, cwd, argv, name));

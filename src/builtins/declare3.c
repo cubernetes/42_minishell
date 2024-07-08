@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   declare3.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/07/08 03:31:59 by paul              #+#    #+#             */
+/*   Updated: 2024/07/08 03:32:09 by paul             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 
 #include "libft.h"
 #include "minishell.h"
@@ -110,6 +122,29 @@ static t_list	*get_opts(char *const argv[])
 	return (opts);
 }
 
+void set_declare_flags(t_list *opts, t_declare_flags *flags)
+{
+	while (lnext(opts))
+	{
+		if ((char)opts->current->as_getopt_arg == 'p')
+			flags->print = true;
+		if ((char)opts->current->as_getopt_arg == 'r')
+		{
+			if (opts->current->as_getopt_arg & 1 << 8)
+				flags->not_readonly = true;
+			else
+				flags->readonly = true;
+		}
+		if ((char)opts->current->as_getopt_arg == 'x')
+		{
+			if (opts->current->as_getopt_arg & 1 << 8)
+				flags->not_export = true;
+			else
+				flags->export = true;
+		}
+	}
+}
+
 int	builtin_declare(char **argv, t_fds fds)
 {
 	t_list			*opts;
@@ -119,32 +154,16 @@ int	builtin_declare(char **argv, t_fds fds)
 	if (opts == NULL)
 		return (2);
 	flags = (struct s_declare_flags){0};
-	while (lnext(opts))
-	{
-		if ((char)opts->current->as_getopt_arg == 'p')
-			flags.print = true;
-		if ((char)opts->current->as_getopt_arg == 'r')
-		{
-			if (opts->current->as_getopt_arg & 1 << 8)
-				flags.not_readonly = true;
-			else
-				flags.readonly = true;
-		}
-		if ((char)opts->current->as_getopt_arg == 'x')
-		{
-			if (opts->current->as_getopt_arg & 1 << 8)
-				flags.not_export = true;
-			else
-				flags.export = true;
-		}
-	}
+	set_declare_flags(opts, &flags);
 	if (flags.print && argv[optind] != NULL)
 		return (declare_print(argv[0], argv + optind, fds));
-	else if (flags.print || (argv[optind] == NULL && (flags.export || flags.readonly)))
+	else if (flags.print || (argv[optind] == NULL
+			&& (flags.export || flags.readonly)))
 		return (declare_print_all(flags, fds));
 	else if (argv[optind] == NULL)
 		return (declare_print_set_vars(fds));
 	else
 		return (declare_set(argv[0], argv + optind, flags));
 }
+
 /* Cannot use `+' for removing attributes */

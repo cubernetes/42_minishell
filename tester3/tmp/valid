@@ -4,3 +4,11 @@ cd .
 cd /Users
 cd //
 cd '//'
+test
+| test
+echo > <
+echo | |
+<
+|
+| | |
+hello world

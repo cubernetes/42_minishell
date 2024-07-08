@@ -150,6 +150,15 @@ struct s_var
 	char	*value;
 };
 
+typedef struct s_successful_read_params
+{
+	int		new_hd_fd;
+	int		fd;
+	char	*new_hd;
+	char	*file_path;
+	t_tree	*simple_command;
+}	t_successful_read_params;
+
 struct s_token
 {
 	t_token_type						type;
@@ -308,10 +317,14 @@ char									*set_saved_cwd(char *cwd);
 char									*get_saved_cwd(void);
 int										builtin_cd(char **argv, t_fds fds);
 char									*normalize(char *path);
-char	*quote(char *s, bool bare_declare);
-void	print_var(t_kv_pair *kv, t_fds fds);
-bool	valid_name(char *s);
-int	declare_print(char *name, char **argv, t_fds fds);
-bool	has_flag(t_var *var, t_declare_flags flags);
-int	builtin_declare(char **argv, t_fds fds);
+char									*quote(char *s, bool bare_declare);
+void									print_var(t_kv_pair *kv, t_fds fds);
+bool									valid_name(char *s);
+int										declare_print(char *name, char **argv,
+											t_fds fds);
+bool									has_flag(t_var *var,
+											t_declare_flags flags);
+int										builtin_declare(char **argv, t_fds fds);
+unsigned char 							and_or_token(t_list_node *child_current, t_token *token);
+unsigned char							execute_tok_and(t_list_node *tok_and);
 #endif /* minishell.h. */

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   declare2.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/07/08 03:31:56 by paul              #+#    #+#             */
+/*   Updated: 2024/07/08 03:32:05 by paul             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 
 #include "libft.h"
 #include "minishell.h"
@@ -36,11 +48,11 @@ char	*quote(char *s, bool bare_declare)
 void	print_var(t_kv_pair *kv, t_fds fds)
 {
 	if (kv->v.as_var->value)
-		ft_dprintf(fds.fd_out, "declare -%s %s=%s\n", 
+		ft_dprintf(fds.fd_out, "declare -%s %s=%s\n",
 			flags_to_str(kv->v.as_var), kv->k,
 			quote(kv->v.as_var->value, false));
 	else
-		ft_dprintf(fds.fd_out, "declare -%s %s\n", 
+		ft_dprintf(fds.fd_out, "declare -%s %s\n",
 			flags_to_str(kv->v.as_var), kv->k);
 }
 
@@ -71,7 +83,7 @@ int	declare_print(char *name, char **argv, t_fds fds)
 			exit_status = minishell_error(1, false, false,
 					"%s: `%s': not found", name, *argv);
 		else if (var == NULL || var->special)
-			exit_status = minishell_error(1, false, false, 
+			exit_status = minishell_error(1, false, false,
 					"%s: %s: not found", name, *argv);
 		else
 			print_var(&(t_kv_pair){.k = *argv, .v = as_var(var)}, fds);
