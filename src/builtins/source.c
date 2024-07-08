@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 03:32:33 by paul              #+#    #+#             */
-/*   Updated: 2024/07/08 03:32:34 by paul             ###   ########.fr       */
+/*   Updated: 2024/07/08 15:04:57 by paul             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 #include <unistd.h>
 #include <string.h>
 
-static char	*search_executable(char *file_path, char **path_parts) // TODO: Not correct, not searching for executables
+static char	*search_executable_src(char *file_path, char **path_parts) // TODO: Not correct, not searching for executables
 {
 	char	*path;
 	char	*executable_path;
@@ -73,7 +73,7 @@ int	builtin_source(char **argv, t_fds fds)
 	if (argv[1] == NULL)
 		return (minishell_error(2, false, false, "%s: filename argument required\n%s: usage: %s filename [arguments]", argv[0], argv[0], argv[0]));
 	path_parts = ft_split(ft_strjoin(".:", var_lookup("PATH")), ':'); // TODO: what about empty PATH // TODO: empty path means include CWD
-	file_path = search_executable(argv[1], path_parts);
+	file_path = search_executable_src(argv[1], path_parts);
 	if (!file_path)
 	{
 		errno = ENOENT;

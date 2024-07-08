@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pgrussin <pgrussin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 19:10:58 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/05 17:05:47 by pgrussin         ###   ########.fr       */
+/*   Updated: 2024/07/08 19:35:07 by paul             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -327,4 +327,7 @@ bool									has_flag(t_var *var,
 int										builtin_declare(char **argv, t_fds fds);
 unsigned char 							and_or_token(t_list_node *child_current, t_token *token);
 unsigned char							execute_tok_and(t_list_node *tok_and);
+char									**make_argv(t_tree *simple_command);
+char									*search_executable(char *program, t_list *path_parts);
+void									set_underscore(char *const argv[]);
 #endif /* minishell.h. */

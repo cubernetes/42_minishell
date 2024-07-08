@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: pgrussin <pgrussin@student.42.fr>          +#+  +:+       +#+         #
+#    By: paul <paul@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:02:16 by tischmid          #+#    #+#              #
-#    Updated: 2024/07/05 17:04:56 by pgrussin         ###   ########.fr        #
+#    Updated: 2024/07/08 18:55:57 by paul             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -36,6 +36,11 @@ _SRC += ft_getumask.c
 _SRC += expansion.c
 _SRC += joining.c
 _SRC += execve.c
+_SRC += execve2.c
+_SRC += execve3.c
+_SRC += execve4.c
+_SRC += execve5.c
+_SRC += execve6.c
 _SRC += tokenize.c
 _SRC += printing.c
 _SRC += new_tree_tokens.c
