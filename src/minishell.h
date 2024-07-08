@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 19:10:58 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/08 19:35:07 by paul             ###   ########.fr       */
+/*   Updated: 2024/07/09 00:41:16 by paul             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -330,4 +330,5 @@ unsigned char							execute_tok_and(t_list_node *tok_and);
 char									**make_argv(t_tree *simple_command);
 char									*search_executable(char *program, t_list *path_parts);
 void									set_underscore(char *const argv[]);
+bool	is_only_assignment_words(t_tree *simple_command);
 #endif /* minishell.h. */
