@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 19:10:58 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/09 23:54:37 by paul             ###   ########.fr       */
+/*   Updated: 2024/07/10 00:55:18 by paul             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,13 +143,13 @@ struct s_flags
 
 typedef struct s_token_attrs
 {
-    char *str;
-    char *escape_ctx;
-    bool is_last_token;
-    bool is_str_tok;
-    bool is_last;
-    bool is_last_quote;
-} t_token_attrs;
+	char	*str;
+	char	*escape_ctx;
+	bool	is_last_token;
+	bool	is_str_tok;
+	bool	is_last;
+	bool	is_last_quote;
+}	t_token_attrs;
 
 /* must be the same as the flags of t_flags */
 struct s_var
@@ -169,7 +169,7 @@ typedef struct s_successful_read_params
 	t_tree	*simple_command;
 }	t_successful_read_params;
 
-typedef struct	s_token
+typedef struct s_token
 {
 	t_token_type						type;
 	char								*str;
@@ -335,10 +335,12 @@ int										declare_print(char *name, char **argv,
 bool									has_flag(t_var *var,
 											t_declare_flags flags);
 int										builtin_declare(char **argv, t_fds fds);
-unsigned char 							and_or_token(t_list_node *child_current, t_token *token);
+unsigned char							and_or_token(t_list_node *child_current,
+											t_token *token);
 unsigned char							execute_tok_and(t_list_node *tok_and);
 char									**make_argv(t_tree *simple_command);
-char									*search_executable(char *program, t_list *path_parts);
+char									*search_executable(char *program,
+											t_list *path_parts);
 void									set_underscore(char *const argv[]);
 bool									is_only_assignment_words(t_tree *simple_command);
 
