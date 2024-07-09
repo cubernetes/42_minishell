@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 19:10:58 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/09 00:41:16 by paul             ###   ########.fr       */
+/*   Updated: 2024/07/09 23:54:37 by paul             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,6 +141,16 @@ struct s_flags
 	bool	unset;
 };
 
+typedef struct s_token_attrs
+{
+    char *str;
+    char *escape_ctx;
+    bool is_last_token;
+    bool is_str_tok;
+    bool is_last;
+    bool is_last_quote;
+} t_token_attrs;
+
 /* must be the same as the flags of t_flags */
 struct s_var
 {
@@ -159,7 +169,7 @@ typedef struct s_successful_read_params
 	t_tree	*simple_command;
 }	t_successful_read_params;
 
-struct s_token
+typedef struct	s_token
 {
 	t_token_type						type;
 	char								*str;
@@ -169,7 +179,7 @@ struct s_token
 	int									num_tokens_after_split;
 	char								*escape_ctx;
 	char								*origin;
-};
+}	t_token;
 
 struct s_fds
 {
@@ -330,5 +340,6 @@ unsigned char							execute_tok_and(t_list_node *tok_and);
 char									**make_argv(t_tree *simple_command);
 char									*search_executable(char *program, t_list *path_parts);
 void									set_underscore(char *const argv[]);
-bool	is_only_assignment_words(t_tree *simple_command);
+bool									is_only_assignment_words(t_tree *simple_command);
+
 #endif /* minishell.h. */

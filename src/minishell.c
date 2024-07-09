@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 03:31:26 by paul              #+#    #+#             */
-/*   Updated: 2024/07/08 03:31:27 by paul             ###   ########.fr       */
+/*   Updated: 2024/07/09 23:48:23 by paul             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 #include <errno.h>
 #include <sys/stat.h>
 
+/*TODO: what happens in nfinite loop in minishell with ctrl + c and cntr + d*/
 int	minishell_error(int exit_code, bool do_exit, bool syntax_error, const char *fmt, ...)
 {
 	va_list	ap;
