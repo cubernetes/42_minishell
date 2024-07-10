@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 17:34:17 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/10 20:10:13 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/11 00:15:23 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ bool	handle_interactive_heredoc(int fd, char *ps2, char *delimiter,
 	restore = false;
 	if (!isatty(STDERR_FILENO))
 		restore = redirect_err(&old, &ps2);
-	interactive_signals();
+	interactive_signals_heredoc();
 	*input = readline(ps2);
 	noninteractive_signals();
 	if (restore)
