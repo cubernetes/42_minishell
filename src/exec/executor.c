@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 03:30:54 by paul              #+#    #+#             */
-/*   Updated: 2024/07/10 17:53:39 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 19:19:39 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,75 +25,66 @@
 #include <sys/wait.h>
 #include <stdbool.h>
 
-void	close_fd(int fd1, int fd2, char *file_path, t_tree *simple_command)
-{
-	if (fd1 != -1)
-		close(fd1);
-	if (fd2 != -1)
-		close(fd2);
-	simple_command->error = minishell_error(1, false,
-			false, "%s: %s", file_path, strerror(errno));
-	unlink(file_path);
-}
-
-void	handle_successful_read(t_successful_read_params *params)
-{
-	t_list	*tokens;
-	int		sc_fd_in;
-
-	tokens = NULL;
-	ft_dprintf(params->new_hd_fd, "%s", tokens->first->as_token->str);
-	close(params->new_hd_fd);
-	close(params->fd);
-	params->new_hd_fd = open(params->new_hd, O_RDONLY);
-	unlink(params->new_hd);
-	unlink(params->file_path);
-	if (params->new_hd_fd == -1)
-	{
-		params->simple_command->error = minishell_error(1, false,
-				false, "%s: %s", params->file_path, strerror(errno));
-		return ;
-	}
-	sc_fd_in = params->simple_command->fd_in;
-	if (sc_fd_in != -2)
-		close(sc_fd_in);
-	params->simple_command->fd_in = params->new_hd_fd;
-	params->simple_command->error = 0;
-}
-
-void	init_read_params(t_successful_read_params *params, int new_hd_fd,
-int fd, char *new_hd)
-{
-	params->new_hd_fd = new_hd_fd;
-	params->fd = fd;
-	params->new_hd = new_hd;
-}
-
 void	redirect_heredoc(char *file_path, t_tree *simple_command)
 {
-	int							fd;
-	char						*new_hd;
-	int							new_hd_fd;
-	t_successful_read_params	read_params;
-	t_fatptr					line;
+	int			fd;
+	int			new_hd_fd;
+	int			sc_fd_in;
+	t_fatptr	line;
+	char		*new_hd;
+	t_list		*tokens;
 
 	fd = open(file_path, O_RDONLY);
 	new_hd = ft_mktemp("minishell.");
 	new_hd_fd = open(new_hd, O_CREAT | O_TRUNC | O_RDWR, 0600);
 	if (fd == -1 || new_hd_fd == -1)
-		close_fd(fd, new_hd_fd, file_path, simple_command);
+	{
+		if (fd != -1)
+			close(fd);
+		if (new_hd_fd != -1)
+			close(new_hd_fd);
+		simple_command->error = minishell_error(1, false, false,
+				"%s: %s", file_path, strerror(errno));
+		(void)unlink(new_hd);
+		(void)unlink(file_path);
+	}
 	else
 	{
-		init_read_params(&read_params, new_hd_fd, fd, new_hd);
-		read_params.simple_command = simple_command;
-		read_params.file_path = file_path;
 		while (1)
 		{
 			line = get_next_fat_line(fd);
 			if (!line.data)
 				break ;
-			handle_successful_read(&read_params);
+			tokens = lnew();
+			lpush(tokens, as_token(new_token(strip_nul(line.data, line.size), TOK_DQUOTE_STR, true)));
+			tokens = expand_tokens(tokens);
+			if (tokens == NULL)
+			{
+				close(new_hd_fd);
+				close(fd);
+				unlink(new_hd);
+				unlink(file_path);
+				simple_command->error = 1;
+				return ;
+			}
+			ft_dprintf(new_hd_fd, "%s", tokens->first->as_token->str);
 		}
+		close(new_hd_fd);
+		close(fd);
+		new_hd_fd = open(new_hd, O_RDONLY);
+		(void)unlink(new_hd);
+		(void)unlink(file_path);
+		if (new_hd_fd == -1)
+		{
+			simple_command->error = minishell_error(1, false, false,
+					"%s: %s", file_path, strerror(errno));
+			return ;
+		}
+		sc_fd_in = simple_command->fd_in;
+		if (sc_fd_in != -2)
+			close(sc_fd_in);
+		simple_command->fd_in = new_hd_fd;
+		simple_command->error = 0;
 	}
 }
 
