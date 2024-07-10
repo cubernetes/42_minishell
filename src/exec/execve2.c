@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 15:06:45 by paul              #+#    #+#             */
-/*   Updated: 2024/07/08 15:23:49 by paul             ###   ########.fr       */
+/*   Updated: 2024/07/10 17:53:41 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ bool	is_builtin(char	*word)
 		|| ft_strcmp(word, "unset") == 0);
 }
 
-static int	handle_builtin_helper(char **argv, t_fds fds)
+int	handle_builtin_helper(char **argv, t_fds fds)
 {
 	if (ft_strcmp(*argv, "source") == 0)
 		return (builtin_source(argv, fds));

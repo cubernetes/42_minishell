@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 18:36:10 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/04 18:51:30 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 17:54:21 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ t_tree	**initialize_productions(const char *grammar)
 	return (productions);
 }
 
-static char	*_get_grammar(void)
+char	*get_grammar(void)
 {
 	static char	*grammar = \
 		"<pipe_sequence> <complete_command_tail>"			"\n" \
@@ -94,7 +94,7 @@ t_tree	*get_production(t_tree_type nonterm, t_token *token)
 	int					idx;
 
 	if (productions == NULL)
-		productions = initialize_productions(_get_grammar());
+		productions = initialize_productions(get_grammar());
 	idx = get_production_idx(nonterm, token);
 	if (idx != -1)
 		return (productions[idx]);

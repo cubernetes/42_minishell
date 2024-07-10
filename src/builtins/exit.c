@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 03:32:17 by paul              #+#    #+#             */
-/*   Updated: 2024/07/08 03:32:18 by paul             ###   ########.fr       */
+/*   Updated: 2024/07/10 16:05:33 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,8 @@ int	builtin_exit(char **argv, t_fds fds)
 		if (status & 13)
 			minishell_error(2, true, false, "%s: %s: numeric argument required",
 				name, *argv);
-		if (argv[1] && minishell_error(1, false, false, "%s: too many arguments", name))
+		if (argv[1] && minishell_error(1, false, false,
+				"%s: too many arguments", name))
 		{
 			exit_status = get_last_exit_status();
 			if (exit_status)
@@ -41,8 +42,7 @@ int	builtin_exit(char **argv, t_fds fds)
 			return (1);
 		}
 	}
-	finish(true);
-	exit((unsigned char)exit_status);
+	(finish(true), exit((unsigned char)exit_status));
 	return (1);
 }
 /* On failure, bash's exit builtin sets the exit status to 1 if there was no

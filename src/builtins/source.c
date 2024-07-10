@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 03:32:33 by paul              #+#    #+#             */
-/*   Updated: 2024/07/08 15:04:57 by paul             ###   ########.fr       */
+/*   Updated: 2024/07/10 17:54:00 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 #include <unistd.h>
 #include <string.h>
 
-static char	*search_executable_src(char *file_path, char **path_parts) // TODO: Not correct, not searching for executables
+char	*search_file(char *file_path, char **path_parts)
 {
 	char	*path;
 	char	*executable_path;
@@ -63,6 +63,13 @@ char	*read_file_contents(const char *file_path)
 	return (lines);
 }
 
+int	source_error(char *const argv[])
+{
+	errno = ENOENT;
+	return (minishell_error(1, false, false,
+			"%s: %s", argv[1], strerror(errno)));
+}
+
 int	builtin_source(char **argv, t_fds fds)
 {
 	char	**path_parts;
@@ -71,15 +78,13 @@ int	builtin_source(char **argv, t_fds fds)
 
 	(void)fds;
 	if (argv[1] == NULL)
-		return (minishell_error(2, false, false, "%s: filename argument required\n%s: usage: %s filename [arguments]", argv[0], argv[0], argv[0]));
-	path_parts = ft_split(ft_strjoin(".:", var_lookup("PATH")), ':'); // TODO: what about empty PATH // TODO: empty path means include CWD
-	file_path = search_executable_src(argv[1], path_parts);
+		return (minishell_error(2, false, false, "%s: filename argument "
+				"required\n%s: usage: %s filename [arguments]",
+				argv[0], argv[0], argv[0]));
+	path_parts = ft_split(ft_strjoin(".:", var_lookup("PATH")), ':');
+	file_path = search_file(argv[1], path_parts);
 	if (!file_path)
-	{
-		errno = ENOENT;
-		return (minishell_error(1, false, false,
-				"%s: %s", argv[1], strerror(errno)));
-	}
+		return (source_error(argv));
 	else if (open(file_path, O_DIRECTORY) != -1)
 		return (minishell_error(1, false, false,
 				"%s: %s: is a directory", argv[0],
@@ -88,6 +93,7 @@ int	builtin_source(char **argv, t_fds fds)
 	if (lines == NULL)
 		return (minishell_error(1, false, false,
 				"%s: %s", file_path, strerror(errno)));
-	set_var("MINISHELL_SOURCE_EXECUTION_STRING", lines, get_flags("MINISHELL_SOURCE_EXECUTION_STRING"));
+	set_var("MINISHELL_SOURCE_EXECUTION_STRING", lines,
+		get_flags("MINISHELL_SOURCE_EXECUTION_STRING"));
 	return (0);
 }

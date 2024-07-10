@@ -6,14 +6,14 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 19:15:02 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/04 19:23:42 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 17:54:57 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include "libft.h"
 
-static void	_join_word_token(t_token *word_token[static 1], t_token *token)
+void	join_word_token(t_token *word_token[static 1], t_token *token)
 {
 	if (*word_token == NULL)
 	{
@@ -31,15 +31,15 @@ static void	_join_word_token(t_token *word_token[static 1], t_token *token)
 			token->expansion_ctx);
 }
 
-static void	_join_or_acc(t_token *token, t_list *new_tokens,
+void	join_or_acc(t_token *token, t_list *new_tokens,
 	t_token *word_token[static 1])
 {
 	if (!token->is_last_token)
-		_join_word_token(word_token, token);
+		join_word_token(word_token, token);
 	else if (token->type == TOK_WORD || token->type == TOK_SQUOTE_STR
 		|| token->type == TOK_DQUOTE_STR)
 	{
-		_join_word_token(word_token, token);
+		join_word_token(word_token, token);
 		lpush(new_tokens, as_token(*word_token));
 		*word_token = NULL;
 	}
@@ -74,7 +74,7 @@ void	join_tokens(t_list *tokens)
 	while (first->next != tokens->first)
 	{
 		first = first->next;
-		_join_or_acc(first->as_token, new_tokens, &word_token);
+		join_or_acc(first->as_token, new_tokens, &word_token);
 	}
 	tokens->first = new_tokens->first;
 	tokens->last = new_tokens->last;

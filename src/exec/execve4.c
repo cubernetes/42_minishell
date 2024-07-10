@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 15:24:58 by paul              #+#    #+#             */
-/*   Updated: 2024/07/08 18:32:57 by paul             ###   ########.fr       */
+/*   Updated: 2024/07/10 17:53:48 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ char	**transform_for_declare(t_tree *simple_command)
 	return (argv);
 }
 
-static bool	is_valid_assignment_word(t_token *token, char *word)
+bool	is_valid_assignment_word(t_token *token, char *word)
 {
 	int		idx;
 	char	quoting_ctx;
@@ -104,7 +104,7 @@ static bool	is_valid_assignment_word(t_token *token, char *word)
 	return (true);
 }
 
-static bool	is_assignment_word(t_token *token)
+bool	is_assignment_word(t_token *token)
 {
 	t_list	*split_token;
 	char	*word;

@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 01:50:57 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/05 02:06:07 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 17:54:38 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 char	*get_krb_ticket_file(char *uid);
 char	*get_username_from_krb_file(int fd);
 
-static char	*_get_username_from_etc_passwd(char *uid)
+char	*get_username_from_etc_passwd(char *uid)
 {
 	int		fd;
 	char	*line;
@@ -55,7 +55,7 @@ char	*ft_getusername(void)
 	{
 		fd = open(get_krb_ticket_file(uid), O_RDONLY);
 		if (fd < 0)
-			username = _get_username_from_etc_passwd(uid);
+			username = get_username_from_etc_passwd(uid);
 		else
 		{
 			username = get_username_from_krb_file(fd);

@@ -6,14 +6,14 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 18:54:40 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/04 18:59:34 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 17:37:13 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include "libft.h"
 
-void	_prepare_stack(t_list *stack[static 1])
+void	prepare_stack(t_list *stack[static 1])
 {
 	*stack = lnew();
 	lpush(*stack, as_tree(production_part_to_child((t_tree){\
@@ -37,7 +37,7 @@ void	_prepare_stack(t_list *stack[static 1])
 	})));
 }
 
-bool	_starts_with_bang(t_list *tokens)
+bool	starts_with_bang(t_list *tokens)
 {
 	if (tokens->first->as_token->type == TOK_WORD
 		&& !ft_strcmp(tokens->first->as_token->str, "!")
@@ -48,7 +48,7 @@ bool	_starts_with_bang(t_list *tokens)
 	return (false);
 }
 
-bool	_terminates_pipe_sequence(t_list *tokens)
+bool	terminates_pipe_sequence(t_list *tokens)
 {
 	if (tokens->first->as_token->type == TOK_SEMI
 		|| tokens->first->as_token->type == TOK_AND
@@ -59,7 +59,7 @@ bool	_terminates_pipe_sequence(t_list *tokens)
 	return (false);
 }
 
-bool	_handle_ast_node(
+bool	handle_ast_node(
 	t_tree *tree[static 1],
 	t_tree top[static 1],
 	t_list tokens[static 1],
@@ -68,16 +68,16 @@ bool	_handle_ast_node(
 	t_list	*children;
 	t_tree	*production;
 
-	while (top->type == PIPE_SEQUENCE && _starts_with_bang(tokens))
+	while (top->type == PIPE_SEQUENCE && starts_with_bang(tokens))
 	{
 		(*tree)->negated = !(*tree)->negated;
 		lrotate(tokens, 1);
 	}
 	if (top->type == PIPE_SEQUENCE
-		&& _terminates_pipe_sequence(tokens))
+		&& terminates_pipe_sequence(tokens))
 		lpush_left(tokens, as_token(new_token(":", TOK_WORD, true)));
 	else if (top->type != PIPE_SEQUENCE && top->type != COMPLETE_COMMAND
-		&& _starts_with_bang(tokens))
+		&& starts_with_bang(tokens))
 		return (set_last_exit_status(minishell_error(2,
 					!option_enabled('i'), true,
 					"syntax error near unexpected token `!'")), false);
@@ -91,7 +91,7 @@ bool	_handle_ast_node(
 	return (true);
 }
 
-int	_handle_token(
+int	handle_token(
 	t_tree *tree[static 1],
 	t_tree top[static 1],
 	t_list tokens[static 1],

@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 17:34:17 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/04 18:45:26 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 17:59:35 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 #include <unistd.h>
 #include <errno.h>
 
-static bool	_redirect_err(int *old, char *ps2[static 1])
+bool	redirect_err(int *old, char *ps2[static 1])
 {
 	int			tty;
 
@@ -38,7 +38,7 @@ static bool	_redirect_err(int *old, char *ps2[static 1])
 	return (true);
 }
 
-static bool	_handle_interactive_heredoc(int fd, char *ps2, char *delimiter,
+bool	handle_interactive_heredoc(int fd, char *ps2, char *delimiter,
 	char *input[static 1])
 {
 	bool		restore;
@@ -46,7 +46,7 @@ static bool	_handle_interactive_heredoc(int fd, char *ps2, char *delimiter,
 
 	restore = false;
 	if (!isatty(STDERR_FILENO))
-		restore = _redirect_err(&old, &ps2);
+		restore = redirect_err(&old, &ps2);
 	interactive_signals();
 	*input = readline(ps2);
 	noninteractive_signals();
@@ -63,7 +63,7 @@ static bool	_handle_interactive_heredoc(int fd, char *ps2, char *delimiter,
 	return (false);
 }
 
-static bool	_handle_noninteractive_heredoc(int fd, char *ps2, char *delimiter,
+bool	handle_noninteractive_heredoc(int fd, char *ps2, char *delimiter,
 	char *input[static 1])
 {
 	t_fatptr	input_gnl;
@@ -92,7 +92,7 @@ static bool	_handle_noninteractive_heredoc(int fd, char *ps2, char *delimiter,
 	return (false);
 }
 
-static void	_handle_error(char *delimiter)
+void	handle_hd_error(char *delimiter)
 {
 	minishell_error(0, false, false,
 		"warning: here-document at line %d delimited by "
@@ -119,14 +119,14 @@ char	*create_heredoc(char *delimiter)
 	{
 		ps2 = expand_prompt(var_lookup("PS2"));
 		if (isatty(STDIN_FILENO))
-			brk = _handle_interactive_heredoc(fd, ps2, delimiter, &input);
+			brk = handle_interactive_heredoc(fd, ps2, delimiter, &input);
 		else
-			brk = _handle_noninteractive_heredoc(fd, ps2, delimiter, &input);
+			brk = handle_noninteractive_heredoc(fd, ps2, delimiter, &input);
 		if (brk)
 			break ;
 	}
 	close(fd);
 	if (input == NULL)
-		_handle_error(delimiter);
+		handle_hd_error(delimiter);
 	return (heredoc_file);
 }

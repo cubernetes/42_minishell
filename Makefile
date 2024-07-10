@@ -6,7 +6,7 @@
 #    By: paul <paul@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:02:16 by tischmid          #+#    #+#              #
-#    Updated: 2024/07/10 00:43:10 by paul             ###   ########.fr        #
+#    Updated: 2024/07/10 16:24:04 by tischmid         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -33,7 +33,11 @@ _SRC += ft_getusername.c
 _SRC += get_username_from_krb.c
 _SRC += ft_getpid.c
 _SRC += ft_getumask.c
-_SRC += expansion.c
+_SRC += expansion1.c
+_SRC += expansion2.c
+_SRC += expansion3.c
+_SRC += expansion4.c
+_SRC += expansion5.c
 _SRC += joining.c
 _SRC += execve.c
 _SRC += execve2.c
@@ -73,10 +77,11 @@ _SRC += exit.c
 _SRC += cd.c
 _SRC += cd2.c
 _SRC += shift.c
-_SRC += declare.c
+_SRC += declare1.c
 _SRC += declare2.c
 _SRC += declare3.c
-_SRC += declare_utils.c
+_SRC += declare4.c
+_SRC += declare5.c
 _SRC += readonly.c
 _SRC += source.c
 _SRC += colon.c
@@ -86,11 +91,14 @@ _SRC += ft_mktemp.c
 _SRC += heredoc.c
 _SRC += heredoc_helper.c
 
-vpath %.c             \
-	src               \
-	src/parsing/      \
-	src/tokenization/ \
-	src/builtins/     \
+vpath %.c                \
+	src                  \
+	src/parsing/         \
+	src/tokenization/    \
+	src/expansion/       \
+	src/exec/            \
+	src/builtins/        \
+	src/builtins/declare \
 	src/unistd/
 
 _OBJ             := $(_SRC:.c=.o)

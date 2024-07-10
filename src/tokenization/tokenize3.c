@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 13:43:20 by paul              #+#    #+#             */
-/*   Updated: 2024/07/10 00:04:46 by paul             ###   ########.fr       */
+/*   Updated: 2024/07/10 17:53:34 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 #include <unistd.h>
 #include <stdbool.h>
 
-static void	process_backslash(t_list *result_chars, t_list *escape_ctx_chars,
+void	process_backslash(t_list *result_chars, t_list *escape_ctx_chars,
 const char **str, char terminator)
 {
 	if ((*str)[1])
@@ -37,14 +37,14 @@ const char **str, char terminator)
 		// TODO: Handle line continuations
 }
 
-static void	process_char(t_list *result_chars, t_list *escape_ctx_chars,
+void	process_char(t_list *result_chars, t_list *escape_ctx_chars,
 const char **str)
 {
 	lpush(result_chars, as_str(ft_strndup(*str, 1)));
 	lpush(escape_ctx_chars, as_str("0"));
 }
 
-static char	*process_backslashes_helper(char *str, char terminator,
+char	*process_backslashes_helper(char *str, char terminator,
 char **escape_ctx)
 {
 	t_list	*result_chars;
@@ -67,7 +67,7 @@ char **escape_ctx)
 	return (ljoin(result_chars, ""));
 }
 
-static char	*process_backslashes(char *str, t_token_type type,
+char	*process_backslashes(char *str, t_token_type type,
 char **escape_ctx)
 {
 	if (type == TOK_DQUOTE_STR)

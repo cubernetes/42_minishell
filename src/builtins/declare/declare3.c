@@ -6,38 +6,16 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 03:31:59 by paul              #+#    #+#             */
-/*   Updated: 2024/07/08 03:32:09 by paul             ###   ########.fr       */
+/*   Updated: 2024/07/10 17:54:05 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 
 #include "libft.h"
 #include "minishell.h"
 
 #include <unistd.h>
 
-bool	sort_vars(t_data data1, t_data data2);
-int		add_var_flags(char key[static 1],
-			char *value,
-			t_declare_flags flags,
-			t_var *orig_var);
-char	*flags_to_str(t_var *var);
-
-static int	declare_print_all(t_declare_flags flags, t_fds fds)
-{
-	t_list	*vars;
-
-	vars = liter(lsort(ht_to_list(get_vars()), sort_vars));
-	while (lnext(vars))
-	{
-		if (has_flag(vars->current->as_kv_pair->v.as_var, flags)
-			&& !vars->current->as_kv_pair->v.as_var->special)
-			print_var(vars->current->as_kv_pair, fds);
-	}
-	return (0);
-}
-
-static int	declare_set(char *name, char **argv, t_declare_flags flags)
+int	declare_set(char *name, char **argv, t_declare_flags flags)
 {
 	t_list	*key_value;
 	char	*key;
@@ -56,33 +34,17 @@ static int	declare_set(char *name, char **argv, t_declare_flags flags)
 		else
 			orig_var = get_var(key);
 		if (!ft_strcmp(key, "") || !ft_strcmp(key, "+"))
-			exit_status = minishell_error(1, false, false, "%s: `%s': not a valid identifier", name, *argv);
-		else if ((key[ft_strlen(key) - 1] != '+' && !valid_name(key)) || (key[ft_strlen(key) - 1] == '+' && !valid_name(ft_strndup(key, ft_strlen(key) - 1))))
-			exit_status = minishell_error(1, false, false, "%s: `%s': not a valid identifier", name, key);
-		else if (key_value->len == 2)
-		{
-			if (orig_var && orig_var->readonly)
-			{
-				exit_status = minishell_error(1, false, false,
-						"%s: %s: readonly variable", name, key);
-				value = orig_var->value;
-			}
-			else if (key[ft_strlen(key) - 1] == '+' && orig_var && orig_var->value)
-				value = ft_strjoin(orig_var->value, value);
-			if (key[ft_strlen(key) - 1] == '+')
-				key = ft_strndup(key, ft_strlen(key) - 1);
-			exit_status = add_var_flags(key, value, flags, orig_var);
-		}
-		else if (key_value->len == 1 && orig_var)
-			exit_status = add_var_flags(key, orig_var->value, flags, orig_var);
-		else if (key_value->len == 1)
-			exit_status = add_var_flags(key, NULL, flags, orig_var); // TODO: Must not change value of readonly var!
+			exit_status = minishell_error(1, false, false,
+					"%s: `%s': not a valid identifier", name, *argv);
+		else
+			exit_status = declare_set_helper(&(t_declare_args){orig_var,
+					&value, &key, flags, name, key_value});
 		++argv;
 	}
 	return (exit_status);
 }
 
-static int	declare_print_set_vars(t_fds fds)
+int	declare_print_set_vars(t_fds fds)
 {
 	t_list	*vars;
 
@@ -98,7 +60,7 @@ static int	declare_print_set_vars(t_fds fds)
 	return (0);
 }
 
-static t_list	*get_opts(char *const argv[])
+t_list	*get_opts(char *const argv[])
 {
 	t_list			*opts;
 	char			erropt;
@@ -122,7 +84,7 @@ static t_list	*get_opts(char *const argv[])
 	return (opts);
 }
 
-void set_declare_flags(t_list *opts, t_declare_flags *flags)
+void	set_declare_flags(t_list *opts, t_declare_flags *flags)
 {
 	while (lnext(opts))
 	{

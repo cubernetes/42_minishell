@@ -6,14 +6,14 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 18:43:59 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/04 18:44:23 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 17:54:23 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include "libft.h"
 
-static t_token_type	_adjust_type(t_token_type type)
+t_token_type	adjust_type(t_token_type type)
 {
 	if (type == TOK_DQUOTE_STR || type == TOK_SQUOTE_STR)
 		type = TOK_WORD;
@@ -26,7 +26,7 @@ static t_token_type	_adjust_type(t_token_type type)
 	return (type);
 }
 
-static void	_handle_syntax_error(t_token *token)
+void	handle_syntax_error(t_token *token)
 {
 	if (!*token->str)
 		set_last_exit_status(minishell_error(2, !option_enabled('i'), true,
@@ -57,9 +57,9 @@ int	get_production_idx(t_tree_type nonterm, t_token *token)
 	int				production_idx;
 	t_token_type	type;
 
-	type = _adjust_type(token->type);
+	type = adjust_type(token->type);
 	production_idx = transition_table[nonterm - 1][type - 1];
 	if (production_idx == -1)
-		_handle_syntax_error(token);
+		handle_syntax_error(token);
 	return (production_idx);
 }

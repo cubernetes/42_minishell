@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 03:31:03 by paul              #+#    #+#             */
-/*   Updated: 2024/07/08 03:31:04 by paul             ###   ########.fr       */
+/*   Updated: 2024/07/10 17:53:38 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@
 /* return last status */
 /* TODO: Exit code 126 -> chmod -x */
 /* TODO: Clean up this mess */
-static int	wait_pipe_sequence_helper(t_list *pids)
+int	wait_pipe_sequence_helper(t_list *pids)
 {
 	int	status;
 

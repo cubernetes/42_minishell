@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 13:37:46 by paul              #+#    #+#             */
-/*   Updated: 2024/07/09 13:44:30 by paul             ###   ########.fr       */
+/*   Updated: 2024/07/10 17:53:18 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ void	print_token(t_data data, int n)
 			token_type_to_string(token->type));
 }
 
-static char	*was_quoted(t_token_type type)
+char	*was_quoted(t_token_type type)
 {
 	if (type == TOK_SQUOTE_STR || type == TOK_DQUOTE_STR)
 		return ("1");

@@ -6,10 +6,9 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 03:31:43 by paul              #+#    #+#             */
-/*   Updated: 2024/07/08 03:31:44 by paul             ###   ########.fr       */
+/*   Updated: 2024/07/10 17:54:10 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 
 #include "libft.h"
 #include "minishell.h"
@@ -19,15 +18,15 @@
 #include <stdlib.h>
 #include <errno.h>
 
-static int	builtin_cd3(int status, char *cwd, char **argv, char *name)
+int	builtin_cd3(int status, char *cwd, char **argv, char *name)
 {
 	char	*real_cwd;
 
 	real_cwd = getcwd(NULL, 0);
 	if (real_cwd == NULL)
 	{
-		//TODO: changed message from "!%s: error retrieving current directory: getcwd: cannot access parent directories: %s" to "error"
-		minishell_error(0, false, false, "!%s: error: %s",
+		minishell_error(0, false, false, "!%s: error retrieving current "\
+				"directory: getcwd: cannot access parent directories: %s",
 			name, strerror(errno));
 		status = 1;
 	}
@@ -46,7 +45,7 @@ static int	builtin_cd3(int status, char *cwd, char **argv, char *name)
 	return (0);
 }
 
-static int	builtin_cd2(char **argv, t_fds fds, char *name)
+int	builtin_cd2(char **argv, t_fds fds, char *name)
 {
 	if (!ft_strcmp(*argv, "-"))
 	{
@@ -68,29 +67,28 @@ int	builtin_cd(char **argv, t_fds fds)
 {
 	char	*var;
 	int		status;
-	char	*name;
+	char	*nm;
 	char	*cwd;
 
-	name = *argv++;
+	nm = *argv++;
 	cwd = NULL;
 	if (argv[1] != NULL)
-	//TODO: changed from "%s: too many arguments" to "w"
-		return (minishell_error(1, false, false, "%s: w", name));
+		return (minishell_error(1, false, false, "%s: too many arguments", nm));
 	if (*argv == NULL)
 	{
 		var = NULL;
 		if (get_var("HOME") != NULL)
 			var = get_var("HOME")->value;
 		if (!var)
-			return (minishell_error(1, false, false, "%s: HOME not set", name));
+			return (minishell_error(1, false, false, "%s: HOME not set", nm));
 		*argv = var;
 		status = chdir(var);
 	}
-	status = builtin_cd2(argv, fds, name);
+	status = builtin_cd2(argv, fds, nm);
 	if (status != 0)
 		return (minishell_error(1, false, false, "%s: %s: %s",
-				name, *argv, strerror(errno)));
+				nm, *argv, strerror(errno)));
 	else
-		return (builtin_cd3(status, cwd, argv, name));
+		return (builtin_cd3(status, cwd, argv, nm));
 }
 /* TODO: cd with null argument is same as cd . */

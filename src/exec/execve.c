@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 03:31:17 by paul              #+#    #+#             */
-/*   Updated: 2024/07/08 15:01:17 by paul             ###   ########.fr       */
+/*   Updated: 2024/07/10 15:37:44 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ void	set_fds(t_tree *command)
 		dup2(err, STDERR_FILENO);
 }
 
-char	*search_executable(char *program, t_list *path_parts) // TODO: Not correct, not searching for executables, maybe use stat instead
+char	*search_executable(char *program, t_list *path_parts)
 {
 	char	*executable_path;
 

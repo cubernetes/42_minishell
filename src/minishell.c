@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 03:31:26 by paul              #+#    #+#             */
-/*   Updated: 2024/07/09 23:48:23 by paul             ###   ########.fr       */
+/*   Updated: 2024/07/10 17:54:55 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ int	minishell_error(int exit_code, bool do_exit, bool syntax_error, const char *
 	return (exit_code);
 }
 
-static char	*get_dollar_prompt(void)
+char	*get_dollar_prompt(void)
 {
 	if (!ft_strcmp(ft_geteuid(), "0"))
 		return ("#");
@@ -274,7 +274,7 @@ void	finish(bool print_exit)
 }
 
 /* wtf */
-static void	setup_pwd(void)
+void	setup_pwd(void)
 {
 	unsigned long	cwd_inode;
 	unsigned long	real_cwd_inode;
@@ -409,7 +409,7 @@ void	set_initial_shell_variables(char *argv[], char *envp[])
 	/* set_pwd(); */
 }
 
-static int	noop(void)
+int	noop(void)
 {
 	return (0);
 }
@@ -434,7 +434,7 @@ static int	noop(void)
 // + - does matter, last one counts
 // aefintuvxC
 
-static int	set_shell_options(char *const argv[])
+int	set_shell_options(char *const argv[])
 {
 	t_list	*options;
 	char	erropt;
@@ -544,7 +544,7 @@ static int	set_shell_options(char *const argv[])
 	/* return (c); */
 /* } */
 
-static void	read_init_files(bool is_login_shell)
+void	read_init_files(bool is_login_shell)
 {
 	char	*profile;
 	char	*rc;

@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 19:14:43 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/04 19:14:43 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 17:54:58 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-static bool	glob_match(const char *pattern, const char *quoting_ctx,
+bool	glob_match(const char *pattern, const char *quoting_ctx,
 	const char *str)
 {
 	if (*pattern == '\0')
@@ -37,12 +37,12 @@ static bool	glob_match(const char *pattern, const char *quoting_ctx,
 	return (false);
 }
 
-static bool	ft_strcmp2(t_data str1, t_data str2)
+bool	ft_strcmp2(t_data str1, t_data str2)
 {
 	return ((bool) !ft_strcmp(str1.as_str, str2.as_str));
 }
 
-static t_list	*dotglob(t_list *tokens, t_token *token)
+t_list	*dotglob(t_list *tokens, t_token *token)
 {
 	t_list	*new_tokens;
 	bool	do_dotglob;
