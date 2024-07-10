@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 17:34:17 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/10 17:59:35 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 20:10:13 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ bool	redirect_err(int *old, char *ps2[static 1])
 
 	tty = open("/dev/tty", O_WRONLY);
 	if (tty == -1)
-		(void)minishell_error(1, false, false, "/dev/tty: ",
+		(void)minishell_error(1, 0, "/dev/tty: ",
 			strerror(errno));
 	else
 	{
@@ -94,7 +94,7 @@ bool	handle_noninteractive_heredoc(int fd, char *ps2, char *delimiter,
 
 void	handle_hd_error(char *delimiter)
 {
-	minishell_error(0, false, false,
+	minishell_error(0, 0,
 		"warning: here-document at line %d delimited by "
 		"end-of-file (wanted `%s')",
 		ft_atoi(var_lookup("LINENO")),

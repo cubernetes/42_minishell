@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 18:43:59 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/10 17:54:23 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 20:19:59 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,10 +29,12 @@ t_token_type	adjust_type(t_token_type type)
 void	handle_syntax_error(t_token *token)
 {
 	if (!*token->str)
-		set_last_exit_status(minishell_error(2, !option_enabled('i'), true,
+		set_last_exit_status(minishell_error(2,
+				mk_err_flags(!option_enabled('i'), true),
 				"syntax error near unexpected token `newline'"));
 	else
-		set_last_exit_status(minishell_error(2, !option_enabled('i'), true,
+		set_last_exit_status(minishell_error(2,
+				mk_err_flags(!option_enabled('i'), true),
 				"syntax error near unexpected token `%s'",
 				token->str));
 }

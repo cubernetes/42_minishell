@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 03:32:37 by paul              #+#    #+#             */
-/*   Updated: 2024/07/08 03:32:38 by paul             ###   ########.fr       */
+/*   Updated: 2024/07/10 20:14:13 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,14 +25,14 @@ int	builtin_unset(char **argv, t_fds fds)
 	ft_getopt(argv, "", &erropt, &optind);
 	name = *argv++;
 	if (erropt)
-		return (minishell_error(2, true, false,
+		return (minishell_error(2, 1,
 				"%s: -%c: invalid option\n%s: usage: unset [name ...]",
 				name, erropt, name));
 	exit_status = 0;
 	while (*argv)
 	{
 		if (!unset_var(*argv))
-			exit_status = minishell_error(1, false, false,
+			exit_status = minishell_error(1, 0,
 					"%s: %s: cannot unset: readonly variable",
 					name, *argv);
 		++argv;

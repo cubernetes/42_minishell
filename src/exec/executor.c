@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 03:30:54 by paul              #+#    #+#             */
-/*   Updated: 2024/07/10 19:29:12 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 20:09:13 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ void	redirect_heredoc(char *file_path, t_tree *simple_command)
 			close(fd);
 		if (new_hd_fd != -1)
 			close(new_hd_fd);
-		simple_command->error = minishell_error(1, false, false,
+		simple_command->error = minishell_error(1, 0,
 				"%s: %s", file_path, strerror(errno));
 		(void)unlink(new_hd);
 		(void)unlink(file_path);
@@ -56,7 +56,8 @@ void	redirect_heredoc(char *file_path, t_tree *simple_command)
 			if (!line.data)
 				break ;
 			tokens = lnew();
-			lpush(tokens, as_token(new_token(strip_nul(line.data, line.size), TOK_DQUOTE_STR, true)));
+			lpush(tokens, as_token(new_token(strip_nul(line.data, line.size),
+						TOK_DQUOTE_STR, true)));
 			tokens = expand_tokens(tokens);
 			if (tokens == NULL)
 			{
@@ -76,7 +77,7 @@ void	redirect_heredoc(char *file_path, t_tree *simple_command)
 		(void)unlink(file_path);
 		if (new_hd_fd == -1)
 		{
-			simple_command->error = minishell_error(1, false, false,
+			simple_command->error = minishell_error(1, 0,
 					"%s: %s", file_path, strerror(errno));
 			return ;
 		}
@@ -95,7 +96,7 @@ void	handle_redirect_input(char *file_path, t_tree *simple_command)
 
 	fd = open(file_path, O_RDONLY);
 	if (fd == -1)
-		simple_command->error = minishell_error(1, false, false,
+		simple_command->error = minishell_error(1, 0,
 				"%s: %s", file_path, strerror(errno));
 	else
 	{

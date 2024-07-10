@@ -6,7 +6,7 @@
 /*   By: pgrussin <pgrussin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 18:00:43 by pgrussin          #+#    #+#             */
-/*   Updated: 2024/07/10 19:00:01 by pgrussin         ###   ########.fr       */
+/*   Updated: 2024/07/10 20:14:11 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ static int	set_shell_options(char *const argv[])
 	options = liter(ft_getopt_plus(argv, "acefilnstuvxC", &erropt, &optind));
 	if (erropt)
 	{
-		(void)minishell_error(2, false, false, "-%c: invalid option", erropt);
+		(void)minishell_error(2, 0, "-%c: invalid option", erropt);
 		ft_dprintf(STDERR_FILENO, "Usage:\t%s [option] ...\n\t%s [option] script-file ...\nShell options:\n\t-ils or -c command (invocation only)\n\t-aefnstuvxC\n", MINISHELL_NAME, MINISHELL_NAME);
 		finish(false);
 		exit(2);
@@ -97,7 +97,7 @@ static int	set_shell_options(char *const argv[])
 	{
 		tty = open("/dev/tty", O_WRONLY);
 		if (tty == -1)
-			(void)minishell_error(1, false, false, "/dev/tty: ", strerror(errno));
+			(void)minishell_error(1, 0, "/dev/tty: ", strerror(errno));
 		else
 		{
 			dup2(tty, STDERR_FILENO);
@@ -122,7 +122,7 @@ static int	set_shell_options(char *const argv[])
 	if (ft_strchr(opts, 'c'))
 	{
 		if (*argv == NULL)
-			minishell_error(2, true, false, "-c: option requires an argument");
+			minishell_error(2, 1, "-c: option requires an argument");
 		set_var("MINISHELL_EXECUTION_STRING", *argv, (t_flags){0});
 		++argv;
 	}
@@ -146,21 +146,6 @@ static int	set_shell_options(char *const argv[])
 	}
 	return (is_login_shell);
 }
-
-/* static int	msh_getc(FILE *stream) */
-/* { */
-	/* char	c; */
-/*  */
-	/* read(1, &c, 1); */
-	/* if (isatty(STDERR_FILENO)) */
-		/* return (c); */
-	/* ft_dprintf(0, "%c", c); */
-	/* if (c == '\x7f') */
-		/* ft_dprintf(0 ,"\b \b"); */
-	/* if (c == '\r') */
-		/* ft_dprintf(0 ,"\n"); */
-	/* return (c); */
-/* } */
 
 static void	read_init_files(bool is_login_shell)
 {
@@ -193,7 +178,6 @@ void	init(char *argv[], char *envp[])
 	is_login_shell = set_shell_options(argv);
 	rl_event_hook = noop;
 	rl_outstream = stderr;
-	/* rl_getc_function = msh_getc; */
 	read_init_files(is_login_shell);
 }
 
@@ -214,7 +198,8 @@ void	init(char *argv[], char *envp[])
 /* TODO: use ptr[static 1] where needed */
 /* TOOD: Not required: think about flexible array members? */
 /* TODO: Not required: Implement ./minishell -c '' functionality */
-/* TODO: check that where next is called, in case of early return, that llast is called */
+/* TODO: check that where next is called, in case of early return,
+ * that llast is called */
 /* TODO: rigorously test list functions */
 /* TODO: (void) cast all functions where return value is not used */
 /* TODO: Remove asserts */

@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 03:31:03 by paul              #+#    #+#             */
-/*   Updated: 2024/07/10 19:29:24 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 20:09:05 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,14 +61,14 @@ unsigned char	wait_pipe_sequence(t_list *pids)
 		noninteractive_signals();
 		rtn = waitpid(pids->current->as_pid_t, &status, 0);
 		if (rtn == -1)
-			minishell_error(EXIT_WAIT_ERROR, false, false, "wait error: %s",
+			minishell_error(EXIT_WAIT_ERROR, 0, "wait error: %s",
 				strerror(errno));
 		if (WIFEXITED(status))
 			status = WEXITSTATUS(status);
 		else if (WIFSIGNALED(status))
 			status = 128 + WTERMSIG(status);
 		else
-			minishell_error(EXIT_WAIT_ERROR, false, false,
+			minishell_error(EXIT_WAIT_ERROR, 0,
 				"process ended unexpectedly", strerror(errno));
 	}
 	return ((unsigned char)status);

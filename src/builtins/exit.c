@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 03:32:17 by paul              #+#    #+#             */
-/*   Updated: 2024/07/10 16:05:33 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 20:14:15 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,9 +31,9 @@ int	builtin_exit(char **argv, t_fds fds)
 	{
 		exit_status = ft_atol_status(*argv, &status);
 		if (status & 13)
-			minishell_error(2, true, false, "%s: %s: numeric argument required",
+			minishell_error(2, 1, "%s: %s: numeric argument required",
 				name, *argv);
-		if (argv[1] && minishell_error(1, false, false,
+		if (argv[1] && minishell_error(1, 0,
 				"%s: too many arguments", name))
 		{
 			exit_status = get_last_exit_status();

@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 03:31:14 by paul              #+#    #+#             */
-/*   Updated: 2024/07/08 03:31:15 by paul             ###   ########.fr       */
+/*   Updated: 2024/07/10 20:13:51 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ t_list *commands)
 
 	pid = fork();
 	if (pid < 0)
-		minishell_error(EXIT_FORK_ERROR, true, false, "%s", strerror(errno));
+		minishell_error(EXIT_FORK_ERROR, 1, "%s", strerror(errno));
 	else if (pid > 0)
 		return (close_fds(complete_command), pid);
 	set_fds(complete_command);

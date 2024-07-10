@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 03:31:59 by paul              #+#    #+#             */
-/*   Updated: 2024/07/10 17:54:05 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 20:09:46 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ int	declare_set(char *name, char **argv, t_declare_flags flags)
 		else
 			orig_var = get_var(key);
 		if (!ft_strcmp(key, "") || !ft_strcmp(key, "+"))
-			exit_status = minishell_error(1, false, false,
+			exit_status = minishell_error(1, 0,
 					"%s: `%s': not a valid identifier", name, *argv);
 		else
 			exit_status = declare_set_helper(&(t_declare_args){orig_var,
@@ -79,7 +79,7 @@ t_list	*get_opts(char *const argv[])
 		opts = ft_getopt_plus(argv, "pxr", &erropt, &optind);
 	liter(opts);
 	if (erropt)
-		return (llast(opts), minishell_error(1, false, false,
+		return (llast(opts), minishell_error(1, 0,
 				"%s: -%c: invalid option", argv[0], erropt), NULL);
 	return (opts);
 }

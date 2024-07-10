@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 03:32:33 by paul              #+#    #+#             */
-/*   Updated: 2024/07/10 17:54:00 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 20:10:00 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ char	*read_file_contents(const char *file_path)
 int	source_error(char *const argv[])
 {
 	errno = ENOENT;
-	return (minishell_error(1, false, false,
+	return (minishell_error(1, 0,
 			"%s: %s", argv[1], strerror(errno)));
 }
 
@@ -78,7 +78,7 @@ int	builtin_source(char **argv, t_fds fds)
 
 	(void)fds;
 	if (argv[1] == NULL)
-		return (minishell_error(2, false, false, "%s: filename argument "
+		return (minishell_error(2, 0, "%s: filename argument "
 				"required\n%s: usage: %s filename [arguments]",
 				argv[0], argv[0], argv[0]));
 	path_parts = ft_split(ft_strjoin(".:", var_lookup("PATH")), ':');
@@ -86,12 +86,12 @@ int	builtin_source(char **argv, t_fds fds)
 	if (!file_path)
 		return (source_error(argv));
 	else if (open(file_path, O_DIRECTORY) != -1)
-		return (minishell_error(1, false, false,
+		return (minishell_error(1, 0,
 				"%s: %s: is a directory", argv[0],
 				lsplit(file_path, "/")->last->as_str));
 	lines = read_file_contents(file_path);
 	if (lines == NULL)
-		return (minishell_error(1, false, false,
+		return (minishell_error(1, 0,
 				"%s: %s", file_path, strerror(errno)));
 	set_var("MINISHELL_SOURCE_EXECUTION_STRING", lines,
 		get_flags("MINISHELL_SOURCE_EXECUTION_STRING"));

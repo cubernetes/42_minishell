@@ -6,7 +6,7 @@
 /*   By: pgrussin <pgrussin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 14:20:50 by pgrussin          #+#    #+#             */
-/*   Updated: 2024/07/10 15:03:41 by pgrussin         ###   ########.fr       */
+/*   Updated: 2024/07/10 20:08:35 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ int *helper)
 		restore = true;
 		*helper = open("/dev/tty", O_WRONLY);
 		if (*helper == -1)
-			minishell_error(1, false, false, "/dev/tty: ", strerror(errno));
+			minishell_error(1, 0, "/dev/tty: ", strerror(errno));
 		else
 		{
 			dup2(*helper, STDERR_FILENO);
@@ -98,7 +98,7 @@ t_list	*get_lines(int fd)
 	else if (get_var("MINISHELL_SOURCE_EXECUTION_STRING")
 		&& get_var("MINISHELL_SOURCE_EXECUTION_STRING")->value)
 		return (get_lines_helper3);
-	ps1 = expand_prompt(get_var("PS1")->value); // TOOD: Can we ensure that there's always PS1?
+	ps1 = expand_prompt(var_lookup("PS1"));
 	if (isatty(STDIN_FILENO))
 		get_lines_helper(&input, &ps1, &helper);
 	else

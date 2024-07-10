@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 15:17:41 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/10 17:38:14 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 20:07:05 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,8 +61,7 @@ bool	expand_parameter(t_list *words, t_list *new_words)
 		if (var && var->value)
 			var_str = var->value;
 		else if (option_enabled('u'))
-			return (minishell_error(1, false, false,
-					"%s: unbound variable",
+			return (minishell_error(1, 0, "%s: unbound variable",
 					words->current->as_token->str + 1), false);
 		else
 			var_str = "";

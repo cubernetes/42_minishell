@@ -6,7 +6,7 @@
 /*   By: pgrussin <pgrussin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 15:04:12 by pgrussin          #+#    #+#             */
-/*   Updated: 2024/07/10 17:57:12 by pgrussin         ###   ########.fr       */
+/*   Updated: 2024/07/10 20:09:20 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,9 @@ void	handle_pwd_missing(void)
 	real_path = gc_add_str(getcwd(NULL, 0));
 	if (real_path == NULL)
 	{
-		minishell_error(0, false, false, "!shell-init: error retrieving current directory: getcwd: cannot access parent directory: %s", strerror(errno));
+		minishell_error(0, 0, "!shell-init: error retrieving "
+			"current directory: getcwd: cannot access "
+			"parent directory: %s", strerror(errno));
 		set_saved_cwd("");
 	}
 	else

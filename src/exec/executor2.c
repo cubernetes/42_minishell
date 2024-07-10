@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 03:31:00 by paul              #+#    #+#             */
-/*   Updated: 2024/07/10 18:13:26 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 20:09:17 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ t_tree *simple_command, bool red_err)
 
 	fd = open(file_path, O_WRONLY | O_APPEND | O_CREAT, 0666 & ~ft_getumask());
 	if (fd == -1)
-		simple_command->error = minishell_error(1, false, false,
+		simple_command->error = minishell_error(1, 0,
 				"%s: %s", file_path, strerror(errno));
 	else
 	{
@@ -85,7 +85,7 @@ bool red_err)
 			msg = "cannot overwrite existing file";
 		else
 			msg = strerror(errno);
-		simple_command->error = minishell_error(1, false, false,
+		simple_command->error = minishell_error(1, 0,
 				"%s: %s", file_path, msg);
 	}
 	else
@@ -152,7 +152,7 @@ pid_t	execute_simple_command_wrapper(t_tree *simple_command,
 				|| new_chldn->current->as_token->type == TOK_HEREDOC)
 			&& new_chldn->current->next->as_token->type == TOK_WORD
 			&& new_chldn->current->next->as_token->num_tokens_after_split == 0)
-			return (close_fds(simple_command), minishell_error(1, false, false,
+			return (close_fds(simple_command), minishell_error(1, 0,
 					"%s: ambiguous redirect",
 					new_chldn->current->next->as_token->origin) - 257);
 		if (new_chldn->current->as_token->num_tokens_after_split != 0

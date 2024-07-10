@@ -6,7 +6,7 @@
 /*   By: pgrussin <pgrussin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 17:48:22 by pgrussin          #+#    #+#             */
-/*   Updated: 2024/07/10 18:00:31 by pgrussin         ###   ########.fr       */
+/*   Updated: 2024/07/10 20:09:28 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,15 +62,18 @@ static void	handle_pwd_existing(t_var *cwd_path, struct stat cwd_stat)
 	cwd_inode = cwd_stat.st_ino;
 	if (real_path == NULL)
 	{
-		minishell_error(0, false, false,
-			"!shell-init: error retrieving current directory: getcwd: cannot access parent directory: %s", strerror(errno));
+		minishell_error(0, 0,
+			"!shell-init: error retrieving current directory: getcwd: cannot "
+			"access parent directory: %s", strerror(errno));
 		set_var("PWD", cwd_path->value, (t_flags){.exp = true});
 		set_saved_cwd(cwd_path->value);
 		return ;
 	}
 	if (stat(real_path, &real_cwd_stat) < 0)
 	{
-		minishell_error(0, false, false, "!shell-init: error retrieving current directory: getcwd: cannot access parent directory: %s", strerror(errno));
+		minishell_error(0, 0, "!shell-init: error retrieving "
+			"current directory: getcwd: cannot access parent directory: "
+			"%s", strerror(errno));
 		set_var("PWD", cwd_path->value, (t_flags){.exp = true});
 		set_saved_cwd(cwd_path->value);
 		return ;
@@ -81,7 +84,6 @@ static void	handle_pwd_existing(t_var *cwd_path, struct stat cwd_stat)
 void	setup_pwd(void)
 {
 	t_var		*cwd_path;
-	/*TODO: was stat?*/
 	struct stat	cwd_stat;
 
 	cwd_path = get_var("PWD");
@@ -96,42 +98,16 @@ void	setup_pwd(void)
 		handle_pwd_missing();
 }
 
-/* TODO: make logic correct */
-void	set_pwd(void)
-{
-	t_var	*pwd_var;
-
-	pwd_var = get_var("PWD");
-	if (pwd_var == NULL)
-	{
-		pwd_var = ft_malloc(sizeof(*pwd_var));
-		pwd_var->value = NULL;
-	}
-	if (pwd_var->value == NULL)
-	{
-		pwd_var->value = getcwd(NULL, 0);
-		gc_add(pwd_var->value);
-	}
-	set_var("PWD", pwd_var->value, (t_flags){.exp = true});
-}
-/* On startup, bash sets the value of PWD to getcwd(2) when it is unset.
- * However, when it is set already (through inheritance), then it is not
- * updated until the next chdir(2) UNLESS the directory described by PWD
- * does not exist, does not refer to the same inode number as the directory
- * described by getcwd(2), in which case it is set to getcwd(2).
- */
-
 void	set_initial_shell_variables(char *argv[], char *envp[])
 {
 	inherit_environment(envp);
 	setup_pwd();
 	set_argv(argv);
 	set_var("?", "0", (t_flags){.special = true});
-	unset_var("MINISHELL_XTRACEFD"); // TODO: If it has a value and is unset or set to a new value, the fd corresponding to the old value shall be closed.
+	unset_var("MINISHELL_XTRACEFD");
 	set_var("$", ft_getpid(), (t_flags){.special = true});
 	set_var("PPID", ft_getppid(), (t_flags){.readonly = true});
 	set_var("LINENO", "0", (t_flags){0});
-	// TODO: Depends on if interactive or not
 	set_var("SHLVL", ft_itoa(ft_atoi(var_lookup("SHLVL")) + 1),
 		(t_flags){.exp = true});
 	set_var("_", argv[0], (t_flags){0});
@@ -142,5 +118,7 @@ void	set_initial_shell_variables(char *argv[], char *envp[])
 	set_var("IFS", DEFAULT_IFS, (t_flags){0});
 	set_var("MINISHELL_SOURCE_EXECUTION_STRING", NULL,
 		(t_flags){.readonly = true});
-	/* set_pwd(); */
 }
+// TODO: If it has a value and is unset or set to a new value, 
+// the fd corresponding to the old value shall be closed.
+// TODO: SHLVL: Depends on if interactive or not

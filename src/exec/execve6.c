@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 00:07:58 by paul              #+#    #+#             */
-/*   Updated: 2024/07/09 01:45:22 by paul             ###   ########.fr       */
+/*   Updated: 2024/07/10 20:14:08 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,10 +32,10 @@ void	handle_error(t_tree *simple_command, char **argv, t_list *path_parts)
 {
 	close_fds(simple_command);
 	if (path_parts == NULL)
-		minishell_error(EXIT_COMMAND_NOT_FOUND, false, false,
+		minishell_error(EXIT_COMMAND_NOT_FOUND, 0,
 			"%s: No such file or directory", argv[0]);
 	else
-		minishell_error(EXIT_COMMAND_NOT_FOUND, false, false,
+		minishell_error(EXIT_COMMAND_NOT_FOUND, 0,
 			"%s: command not found", argv[0]);
 	if (simple_command->fd_in == -2 && simple_command->fd_out == -2)
 		set_underscore(argv);
@@ -58,10 +58,10 @@ t_list *commands)
 	execve(program, argv, get_env(program));
 	exit_status = errno;
 	if (open(program, O_DIRECTORY) != -1)
-		minishell_error(EXECVE_ERR, false, false, "%s: %s",
+		minishell_error(EXECVE_ERR, 0, "%s: %s",
 			program, "Is a directory");
 	else
-		minishell_error(EXECVE_ERR, false, false, "%s: %s",
+		minishell_error(EXECVE_ERR, 0, "%s: %s",
 			program, strerror(exit_status));
 	finish(false);
 	if (exit_status == EACCES)
@@ -111,7 +111,7 @@ pid_t	execute_simple_command(t_tree *simple_command, t_list *commands)
 	if (pid < 0)
 	{
 		close_fds(simple_command);
-		minishell_error(FORK_ERROR, true, false, "%s", strerror(errno));
+		minishell_error(FORK_ERROR, 1, "%s", strerror(errno));
 	}
 	if (pid > 0)
 		return (close_fds(simple_command), pid);

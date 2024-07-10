@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 18:54:40 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/10 17:37:13 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 20:19:20 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,18 @@ bool	terminates_pipe_sequence(t_list *tokens)
 	return (false);
 }
 
+int	mk_err_flags(bool do_exit, bool syntax_error)
+{
+	int	res;
+
+	res = 0;
+	if (do_exit)
+		res |= DO_EXIT;
+	if (syntax_error)
+		res |= SYNTAX_ERROR;
+	return (res);
+}
+
 bool	handle_ast_node(
 	t_tree *tree[static 1],
 	t_tree top[static 1],
@@ -79,7 +91,7 @@ bool	handle_ast_node(
 	else if (top->type != PIPE_SEQUENCE && top->type != COMPLETE_COMMAND
 		&& starts_with_bang(tokens))
 		return (set_last_exit_status(minishell_error(2,
-					!option_enabled('i'), true,
+					mk_err_flags(!option_enabled('i'), true),
 					"syntax error near unexpected token `!'")), false);
 	production = get_production(top->type, tokens->first->as_token);
 	if (production == NULL)
@@ -112,12 +124,12 @@ int	handle_token(
 	}
 	else if (get_token_type(tokens) == TOK_EOL)
 		return (set_last_exit_status(minishell_error(2,
-					!option_enabled('i'), true,
+					mk_err_flags(!option_enabled('i'), true),
 					"syntax error near unexpected token `%s'",
 					get_token_str_nl(tokens))), 3);
 	else
 		return (set_last_exit_status(minishell_error(2,
-					!option_enabled('i'), true,
+					mk_err_flags(!option_enabled('i'), true),
 					"syntax error near unexpected token `%s'",
 					get_token_str_nl(tokens))), 3);
 	return (0);

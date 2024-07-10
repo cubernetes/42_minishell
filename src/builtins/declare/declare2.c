@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 03:31:56 by paul              #+#    #+#             */
-/*   Updated: 2024/07/10 15:59:04 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 20:09:44 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,10 +79,10 @@ int	declare_print(char *name, char **argv, t_fds fds)
 	{
 		var = get_var(*argv);
 		if (!valid_name(*argv))
-			exit_status = minishell_error(1, false, false,
+			exit_status = minishell_error(1, 0,
 					"%s: `%s': not found", name, *argv);
 		else if (var == NULL || var->special)
-			exit_status = minishell_error(1, false, false,
+			exit_status = minishell_error(1, 0,
 					"%s: %s: not found", name, *argv);
 		else
 			print_var(&(t_kv_pair){.k = *argv, .v = as_var(var)}, fds);

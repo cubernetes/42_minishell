@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 00:31:27 by paul              #+#    #+#             */
-/*   Updated: 2024/07/10 18:09:03 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 20:10:15 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ bool	tokenize_variable_len_tokens(const char **line, t_list *tokens)
 	pushed |= tokenize_double_quoted_string(line, tokens);
 	pushed |= tokenize_word(line, tokens);
 	if (!pushed)
-		return (minishell_error(EXIT_FAILURE, false, false,
+		return (minishell_error(EXIT_FAILURE, 0,
 				"could not tokenize `%s'",
 				get_token_str(tokens)), false);
 	return (true);

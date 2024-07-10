@@ -6,7 +6,7 @@
 /*   By: pgrussin <pgrussin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 14:00:35 by pgrussin          #+#    #+#             */
-/*   Updated: 2024/07/10 14:20:30 by pgrussin         ###   ########.fr       */
+/*   Updated: 2024/07/10 19:39:29 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ unsigned char	setup_initial_conditions(t_list *lines)
 		set_var("MINISHELL_SOURCE_EXECUTION_STRING",
 			NULL, get_flags("MINISHELL_SOURCE_EXECUTION_STRING"));
 	}
-	return (0); // Assuming the initial setup always succeeds
+	return (0);
 }
 
 unsigned char	process_lines(t_list *lines)

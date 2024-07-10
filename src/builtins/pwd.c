@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 03:32:24 by paul              #+#    #+#             */
-/*   Updated: 2024/07/10 16:05:07 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 20:09:52 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ int	builtin_pwd(char **argv, t_fds fds)
 		cwd = gc_add_str(getcwd(NULL, 0));
 		if (cwd == NULL)
 		{
-			minishell_error(0, false, false, "!%s: error retrieving current "
+			minishell_error(0, 0, "!%s: error retrieving current "
 				"directory: getcwd: cannot access parent directory: %s",
 				name, strerror(errno));
 			return (1);
