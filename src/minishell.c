@@ -6,7 +6,7 @@
 /*   By: pgrussin <pgrussin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 03:31:26 by paul              #+#    #+#             */
-/*   Updated: 2024/07/10 14:00:15 by pgrussin         ###   ########.fr       */
+/*   Updated: 2024/07/10 19:25:03 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ bool syntax_error, const char *fmt, ...)
 	return (exit_code);
 }
 
-static char	*get_dollar_prompt(void)
+char	*get_dollar_prompt(void)
 {
 	if (!ft_strcmp(ft_geteuid(), "0"))
 		return ("#");

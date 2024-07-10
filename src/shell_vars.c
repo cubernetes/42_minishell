@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 19:14:53 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/04 19:14:54 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 17:53:13 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@
  *                               "" if the variable is unset
  *      @returns: NULL
  */
-static t_ht	**var_manager(char *key_or_ret[static 1], char *value_or_key,
+t_ht	**var_manager(char *key_or_ret[static 1], char *value_or_key,
 	t_flags flags)
 {
 	static t_ht	*shell_vars[MAX_HT_SIZE];

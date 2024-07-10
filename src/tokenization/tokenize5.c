@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 00:23:53 by paul              #+#    #+#             */
-/*   Updated: 2024/07/10 00:46:13 by paul             ###   ########.fr       */
+/*   Updated: 2024/07/10 17:53:25 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 #include <unistd.h>
 #include <stdbool.h>
 
-static void	tokenize_double_quoted_string_helper(size_t len, const char *tmp,
+void	tokenize_double_quoted_string_helper(size_t len, const char *tmp,
 const char **line, t_list *tokens)
 {
 	if (*tmp == '"')

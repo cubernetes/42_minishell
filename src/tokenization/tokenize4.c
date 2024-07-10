@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 22:19:10 by paul              #+#    #+#             */
-/*   Updated: 2024/07/10 00:19:10 by paul             ###   ########.fr       */
+/*   Updated: 2024/07/10 17:53:31 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ t_token_type type)
 }
 
 /* TODO: Not required: hashtable */
-static bool	tokenize_2_or_3_char_tokens(const char **line, t_list *tokens)
+bool	tokenize_2_or_3_char_tokens(const char **line, t_list *tokens)
 {
 	if (**line == '2' && *(*line + 1) == '>' && *(*line + 2) == '>')
 		return (push_token(line, tokens, 3, TOK_APPEND_ERR));
@@ -51,7 +51,7 @@ static bool	tokenize_2_or_3_char_tokens(const char **line, t_list *tokens)
 	return (false);
 }
 
-static bool	tokenize_1_char_tokens(const char **line, t_list *tokens)
+bool	tokenize_1_char_tokens(const char **line, t_list *tokens)
 {
 	if (**line == ';')
 		return (push_token(line, tokens, 1, TOK_SEMI));

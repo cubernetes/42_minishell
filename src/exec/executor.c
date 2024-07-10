@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 03:30:54 by paul              #+#    #+#             */
-/*   Updated: 2024/07/08 03:30:55 by paul             ###   ########.fr       */
+/*   Updated: 2024/07/10 17:53:39 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ void	handle_successful_read(t_successful_read_params *params)
 	params->simple_command->error = 0;
 }
 
-static void	init_read_params(t_successful_read_params *params, int new_hd_fd,
+void	init_read_params(t_successful_read_params *params, int new_hd_fd,
 int fd, char *new_hd)
 {
 	params->new_hd_fd = new_hd_fd;

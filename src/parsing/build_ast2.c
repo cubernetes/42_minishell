@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 18:57:09 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/04 18:58:16 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 17:38:49 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 t_list	*build_as_recursively(t_tree *tree, bool mk_heredoc);
 
-bool	_is_unimportant_token(t_token *token)
+bool	is_unimportant_token(t_token *token)
 {
 	if (token->type != TOK_EPSILON
 		&& token->type != TOK_PIPE
@@ -25,7 +25,7 @@ bool	_is_unimportant_token(t_token *token)
 	return (false);
 }
 
-bool	_is_proper_ast_node(t_tree *tree)
+bool	is_proper_ast_node(t_tree *tree)
 {
 	if (tree->type == COMPLETE_COMMAND
 		|| tree->type == PIPE_SEQUENCE
@@ -34,7 +34,7 @@ bool	_is_proper_ast_node(t_tree *tree)
 	return (false);
 }
 
-bool	_is_improper_ast_node(t_tree *tree)
+bool	is_improper_ast_node(t_tree *tree)
 {
 	if (tree->type == COMPLETE_COMMAND_TAIL
 		|| tree->type == PIPE_SEQUENCE_TAIL
@@ -46,7 +46,7 @@ bool	_is_improper_ast_node(t_tree *tree)
 	return (false);
 }
 
-void	_flatten_redirect(t_tree *first, t_list *chldn, t_list *children,
+void	flatten_redirect(t_tree *first, t_list *chldn, t_list *children,
 	bool mk_heredoc)
 {
 	mk_heredoc &= first->children->first->as_tree->token->type == TOK_HEREDOC;
@@ -57,7 +57,7 @@ void	_flatten_redirect(t_tree *first, t_list *chldn, t_list *children,
 	(void)lpush(chldn->last->as_tree->children, as_tree(first));
 }
 
-void	_handle_proper_ast_node(t_tree *tree, t_list *flat, bool mk_heredoc)
+void	handle_proper_ast_node(t_tree *tree, t_list *flat, bool mk_heredoc)
 {
 	t_list	*children;
 	t_tree	*first;
@@ -71,6 +71,6 @@ void	_handle_proper_ast_node(t_tree *tree, t_list *flat, bool mk_heredoc)
 		if (first->type != IO_REDIRECT)
 			lextend(tree->children, build_as_recursively(first, mk_heredoc));
 		else if (first->children->first->as_tree->token->type != TOK_EPSILON)
-			_flatten_redirect(first, tree->children, children, mk_heredoc);
+			flatten_redirect(first, tree->children, children, mk_heredoc);
 	}
 }

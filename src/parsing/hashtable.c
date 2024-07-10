@@ -6,14 +6,14 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 17:28:14 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/04 17:30:17 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 17:54:17 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include "libft.h"
 
-static void	_initalize_tree_ht(t_ht *ht[MAX_HT_SIZE + 1])
+void	initalize_tree_ht(t_ht *ht[MAX_HT_SIZE + 1])
 {
 	ht_set(ht, "<pipe_sequence>", as_tree_type(PIPE_SEQUENCE));
 	ht_set(ht, "<complete_command_tail>", as_tree_type(COMPLETE_COMMAND_TAIL));
@@ -46,7 +46,7 @@ t_tree_type	tree_ht_get(char *key)
 		return (ht_get(ht, key).as_tree_type);
 	gc_start_context("POST");
 	ft_bzero(ht, sizeof(*ht) * (MAX_HT_SIZE + 1));
-	_initalize_tree_ht(ht);
+	initalize_tree_ht(ht);
 	ht[MAX_HT_SIZE] = (void *)1;
 	gc_end_context();
 	return (ht_get(ht, key).as_tree_type);

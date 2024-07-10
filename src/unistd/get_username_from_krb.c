@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 02:03:09 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/05 02:06:23 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 17:54:46 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 #include <unistd.h>
 #include <dirent.h>
 
-static int	_parse_header(int fd)
+int	parse_header(int fd)
 {
 	char	version;
 	short	length;
@@ -38,7 +38,7 @@ static int	_parse_header(int fd)
 	return (0);
 }
 
-static int	_parse_till_real(int fd)
+int	parse_till_real(int fd)
 {
 	int		length;
 	char	*buffer;
@@ -66,9 +66,9 @@ char	*get_username_from_krb_file(int fd)
 	int		length;
 	char	*buffer;
 
-	if (_parse_header(fd))
+	if (parse_header(fd))
 		return (close(fd), "");
-	if (_parse_till_real(fd))
+	if (parse_till_real(fd))
 		return (close(fd), "");
 	if (read(fd, (char *)&length + 3, 1) < 1)
 		return (close(fd), "");

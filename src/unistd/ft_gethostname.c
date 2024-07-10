@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 01:50:10 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/05 01:50:14 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 17:54:29 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-static char	*ft_gethostname_from_proc(void)
+char	*ft_gethostname_from_proc(void)
 {
 	int		fd;
 	char	*line;

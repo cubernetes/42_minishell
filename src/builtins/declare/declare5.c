@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   declare_utils.c                                    :+:      :+:    :+:   */
+/*   declare5.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 03:31:49 by paul              #+#    #+#             */
-/*   Updated: 2024/07/08 03:31:50 by paul             ###   ########.fr       */
+/*   Updated: 2024/07/10 15:42:28 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,10 +65,10 @@ int	add_var_flags(char key[static 1],
 	exit_status = 0;
 	if (readonly && ft_nullable_strcmp(value, orig_var->value))
 		exit_status = minishell_error(1, false, false,
-			"declare: %s: readonly variable", key); // TODO: This is always "declare", is it?
+				"declare: %s: readonly variable", key);
 	if (flags.not_readonly && readonly && exit_status == 0)
 		exit_status = minishell_error(1, false, false,
-			"declare: %s: readonly variable", key); // TODO: This is always "declare", is it?
+				"declare: %s: readonly variable", key);
 	else if (flags.readonly && exit_status == 0)
 		readonly = true;
 	if (flags.not_export && exit_status == 0)

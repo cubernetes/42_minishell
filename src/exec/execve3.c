@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 15:14:54 by paul              #+#    #+#             */
-/*   Updated: 2024/07/08 16:27:49 by paul             ###   ########.fr       */
+/*   Updated: 2024/07/10 17:53:49 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void	set_underscore(char *const argv[])
 	set_var("_", *argv, (t_flags){0});
 }
 
-static char	**copy_argv(char *const argv[])
+char	**copy_argv(char *const argv[])
 {
 	int		i;
 	char	**new_argv;
@@ -54,7 +54,7 @@ static char	**copy_argv(char *const argv[])
 	return (new_argv);
 }
 
-static t_fds	setup_file_descriptors(t_tree *simple_command)
+t_fds	setup_file_descriptors(t_tree *simple_command)
 {
 	t_fds	orig_fds;
 
@@ -70,7 +70,7 @@ static t_fds	setup_file_descriptors(t_tree *simple_command)
 	return (orig_fds);
 }
 
-static void	cleanup_file_descriptors(t_tree *simple_command, t_fds orig_fds)
+void	cleanup_file_descriptors(t_tree *simple_command, t_fds orig_fds)
 {
 	if (orig_fds.fd_in != -2)
 		close(orig_fds.fd_in);

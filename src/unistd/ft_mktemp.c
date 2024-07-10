@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 01:51:58 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/05 01:52:36 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 17:54:44 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-static char	translate_to_alnum(char c_)
+char	translate_to_alnum(char c_)
 {
 	unsigned char	c;
 
@@ -33,7 +33,7 @@ static char	translate_to_alnum(char c_)
 	return (translate_to_alnum((char)(c - 50)));
 }
 
-static void	mktemp_error(const char *fmt, ...)
+void	mktemp_error(const char *fmt, ...)
 {
 	va_list	ap;
 
