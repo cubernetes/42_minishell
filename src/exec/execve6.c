@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 00:07:58 by paul              #+#    #+#             */
-/*   Updated: 2024/07/10 20:14:08 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 22:22:10 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,12 +42,12 @@ void	handle_error(t_tree *simple_command, char **argv, t_list *path_parts)
 }
 
 void	handle_fork(t_tree *simple_command, char **argv, char *program,
-t_list *commands)
+	t_list *commands)
 {
 	int	exit_status;
+	int	fd;
 
-	set_var("_", argv[0], (t_flags){0});
-	set_fds(simple_command);
+	(set_var("_", argv[0], (t_flags){0}), set_fds(simple_command));
 	close_other_command_fds(commands);
 	if (is_builtin(argv[0]))
 	{
@@ -57,9 +57,10 @@ t_list *commands)
 	}
 	execve(program, argv, get_env(program));
 	exit_status = errno;
-	if (open(program, O_DIRECTORY) != -1)
-		minishell_error(EXECVE_ERR, 0, "%s: %s",
-			program, "Is a directory");
+	fd = open(program, O_DIRECTORY);
+	if (fd != -1)
+		(close(fd), minishell_error(EXECVE_ERR, 0, "%s: %s",
+				program, "Is a directory"));
 	else
 		minishell_error(EXECVE_ERR, 0, "%s: %s",
 			program, strerror(exit_status));
