@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 03:31:00 by paul              #+#    #+#             */
-/*   Updated: 2024/07/08 03:31:01 by paul             ###   ########.fr       */
+/*   Updated: 2024/07/10 18:13:26 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,10 +111,6 @@ int	handle_io_redirect(t_tree *io_redirect, t_tree *simple_command)
 		handle_redirect_append(file_path, simple_command, true);
 	else if (type == TOK_HEREDOC)
 		redirect_heredoc(file_path, simple_command);
-	else
-	{
-		// ???
-	}
 	return (simple_command->error);
 }
 
@@ -123,55 +119,59 @@ int	handle_io_redirect(t_tree *io_redirect, t_tree *simple_command)
 pid_t	execute_simple_command_wrapper(t_tree *simple_command,
 	t_list *commands)
 {
-	t_list	*new_children; // TODO: Shadows function new_children
+	t_list	*new_chldn;
 	t_list	*cleaned_tokens;
 
-	new_children = lnew();
+	new_chldn = lnew();
 	liter(simple_command->children);
 	while (lnext(simple_command->children))
 	{
 		if (simple_command->children->current->as_tree->type == IO_REDIRECT
 			&& liter(simple_command->children->current->as_tree->children))
 			while (lnext(simple_command->children->current->as_tree->children))
-				lpush(new_children, as_token(simple_command->children->current->as_tree->children->current->as_tree->token));
+				lpush(new_chldn, as_token(simple_command->children->current
+						->as_tree->children->current->as_tree->token));
 		else
-			lpush(new_children, as_token(simple_command->children->current->as_tree->token));
+			lpush(new_chldn, as_token(simple_command->children->current
+					->as_tree->token));
 	}
-	lpush(new_children, as_token(new_token("", TOK_EOL, true)));
-	new_children = expand_tokens(new_children);
-	if (new_children == NULL)
-		return (-256); // err code 1
-	join_tokens(new_children);
+	lpush(new_chldn, as_token(new_token("", TOK_EOL, true)));
+	new_chldn = expand_tokens(new_chldn);
+	if (new_chldn == NULL)
+		return (-256);
+	join_tokens(new_chldn);
 	if (!option_enabled('f'))
-		glob_tokens(new_children);
-
+		glob_tokens(new_chldn);
 	cleaned_tokens = lnew();
-	liter(new_children);
-	while (lnext(new_children))
+	liter(new_chldn);
+	while (lnext(new_chldn))
 	{
-		if ((new_children->current->as_token->type == TOK_INPUT
-			|| new_children->current->as_token->type == TOK_OVERRIDE
-			|| new_children->current->as_token->type == TOK_APPEND
-			|| new_children->current->as_token->type == TOK_HEREDOC)
-			&& new_children->current->next->as_token->type == TOK_WORD
-			&& new_children->current->next->as_token->num_tokens_after_split == 0)
-			return (close_fds(simple_command), minishell_error(1, false, false, "%s: ambiguous redirect", new_children->current->next->as_token->origin) - 257);
-		if (new_children->current->as_token->num_tokens_after_split != 0
-			|| new_children->current->as_token->type == TOK_EOL)
-			lpush(cleaned_tokens, as_data(new_children->current));
+		if ((new_chldn->current->as_token->type == TOK_INPUT
+				|| new_chldn->current->as_token->type == TOK_OVERRIDE
+				|| new_chldn->current->as_token->type == TOK_APPEND
+				|| new_chldn->current->as_token->type == TOK_HEREDOC)
+			&& new_chldn->current->next->as_token->type == TOK_WORD
+			&& new_chldn->current->next->as_token->num_tokens_after_split == 0)
+			return (close_fds(simple_command), minishell_error(1, false, false,
+					"%s: ambiguous redirect",
+					new_chldn->current->next->as_token->origin) - 257);
+		if (new_chldn->current->as_token->num_tokens_after_split != 0
+			|| new_chldn->current->as_token->type == TOK_EOL)
+			lpush(cleaned_tokens, as_data(new_chldn->current));
 	}
-	new_children->first = cleaned_tokens->first;
-	new_children->last = cleaned_tokens->last;
-	new_children->len = cleaned_tokens->len;
-
-	if (new_children->len <= 1)
-		return (close_fds(simple_command), -258); // empty command
-	new_children = build_ast(new_children, false)->children->first->as_tree->children->first->as_tree->children;
-	simple_command->children = new_children;
+	new_chldn->first = cleaned_tokens->first;
+	new_chldn->last = cleaned_tokens->last;
+	new_chldn->len = cleaned_tokens->len;
+	if (new_chldn->len <= 1)
+		return (close_fds(simple_command), -258);
+	new_chldn = build_ast(new_chldn, false)->children->first->as_tree
+		->children->first->as_tree->children;
+	simple_command->children = new_chldn;
 	liter(simple_command->children);
 	while (lnext(simple_command->children))
 		if (simple_command->children->current->as_tree->type == IO_REDIRECT)
-			if (handle_io_redirect(simple_command->children->current->as_tree, simple_command))
+			if (handle_io_redirect(simple_command->children->current->as_tree,
+					simple_command))
 				return (close_fds(simple_command), simple_command->error - 257);
 	return (execute_simple_command(simple_command, commands));
 }

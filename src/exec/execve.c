@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 03:31:17 by paul              #+#    #+#             */
-/*   Updated: 2024/07/10 15:37:44 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 19:29:32 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,10 +113,10 @@ char	**make_argv(t_tree *simple_command)
 	while (lnext(d_argv))
 		argv[i++] = d_argv->current->as_str;
 	argv[i] = NULL;
-	// if (i > 0)
-	// 	set_var("_", argv[i - 1], (t_flags){0});
 	return (argv);
 }
+	// if (i > 0)
+	// 	set_var("_", argv[i - 1], (t_flags){0});
 
 void	close_other_command_fds(t_list *commands)
 {

@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 13:37:46 by paul              #+#    #+#             */
-/*   Updated: 2024/07/10 17:53:18 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 19:30:42 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,13 +18,13 @@
 #include <unistd.h>
 #include <stdbool.h>
 
+	/* sep = "\t|\t"; */
 void	print_token_debug(t_data data, int n)
 {
 	t_token	*token;
 	char	*clr;
 	char	*sep;
 
-	/* sep = "\t|\t"; */
 	sep = "|";
 	token = data.as_token;
 	if (token->is_last_token)
@@ -38,7 +38,8 @@ void	print_token_debug(t_data data, int n)
 			token->num_tokens_after_split, sep, token->expansion_ctx, sep,
 			token->quoting_ctx, sep, token->escape_ctx, sep, token->origin);
 	else
-		ft_printf("\n<\033[31m%s\033[m>%s%s%s\033[m%s%d%s<%s>%s<%s>%s<%s>%s<%s>",
+		ft_printf("\n<\033[31m%s\033[m>%s%s%s\033[m%s%d%s<%s>%s"
+			"<%s>%s<%s>%s<%s>",
 			token->str, sep, clr,
 			token_type_to_string(token->type), sep,
 			token->num_tokens_after_split, sep, token->expansion_ctx, sep,

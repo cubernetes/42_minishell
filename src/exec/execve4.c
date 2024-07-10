@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 15:24:58 by paul              #+#    #+#             */
-/*   Updated: 2024/07/10 17:53:48 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 19:29:48 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,10 +73,10 @@ char	**transform_for_declare(t_tree *simple_command)
 	while (lnext(d_argv))
 		argv[i++] = d_argv->current->as_str;
 	argv[i] = NULL;
-	// if (i > 0)
-	// 	set_var("_", argv[i - 1], (t_flags){0});
 	return (argv);
 }
+	// if (i > 0)
+	// 	set_var("_", argv[i - 1], (t_flags){0});
 
 bool	is_valid_assignment_word(t_token *token, char *word)
 {

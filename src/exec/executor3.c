@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 03:31:03 by paul              #+#    #+#             */
-/*   Updated: 2024/07/10 17:53:38 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 19:29:24 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,9 +101,6 @@ void	setup_pipes(t_list *commands)
 		prev = commands->current->as_tree;
 	}
 }
-
-pid_t	execute_complete_command_wrapper(t_tree *complete_command,
-				t_list *commands);
 
 unsigned char	execute_pipe_sequence(t_list *commands, bool negated)
 {

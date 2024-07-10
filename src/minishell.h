@@ -6,7 +6,7 @@
 /*   By: pgrussin <pgrussin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 19:10:58 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/10 19:26:52 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 19:32:29 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 # define PS0 "" // TODO: Not required: Handle PS0
 /* # define PS1 "\033[31m\\u@\\h:\\w\033[m$ " */
 /* # define PS1 "\033[31m\\u@\\h:\\w\033[m\n❯ " */
-# define PS1 "\033[31m\\u\033[m@\033[94m\\h\033[m@\033[92mminishell\033[m [\033[32m\\w\033[m]\n\\$ "
+# define PS1 "\e[31m\\u\e[m@\e[94m\\h\e[m@\e[92mmsh\e[m [\e[32m\\w\e[m]\n\\$ "
 # define PS2 "> "
 # define PS4 "+ "
 
@@ -272,21 +272,6 @@ void			finish(bool print_exit);
 void			handle_pwd_missing(void);
 void			init(char *argv[], char *envp[]);
 int				main(int argc, char *argv[], char *envp[]);
-void			close_fd(int fd1, int fd2, char *file_path, t_tree *simple_command);
-void			handle_successful_read(t_successful_read_params *params);
-void			init_read_params(t_successful_read_params *params, int new_hd_fd,int fd, char *new_hd);
-void			redirect_heredoc(char *file_path, t_tree *simple_command);
-void			handle_redirect_input(char *file_path, t_tree *simple_command);
-void			handle_redirect_append(char *file_path,t_tree *simple_command, bool red_err);
-void			assign_fd_and_clear_error(int fd, t_tree *simple_command, bool red_err);
-void			handle_redirect_override(char *file_path, t_tree *simple_command,bool red_err);
-int				handle_io_redirect(t_tree *io_redirect, t_tree *simple_command);
-pid_t			execute_simple_command_wrapper(t_tree *simple_command, t_list *commands);
-int				wait_pipe_sequence_helper(t_list *pids);
-unsigned char	wait_pipe_sequence(t_list *pids);
-void			setup_pipes(t_list *commands);
-pid_t			execute_complete_command_wrapper(t_tree *complete_command, t_list *commands);unsigned char execute_pipe_sequence(t_list *commands, bool negated);
-unsigned char	execute_tok_and(t_list_node *tok_and);
 unsigned char	execute_tok_or(t_list_node *tok_or);
 unsigned char	execute_pipe_sequence_node(t_tree *pipe_sequence_node);
 unsigned char	execute_token_and(t_list_node *token_node);
@@ -297,6 +282,30 @@ unsigned char	execute_commands_in_node(t_list *children);
 unsigned char	execute_complete_command(t_tree *node);
 pid_t			execute_complete_command_wrapper(t_tree *complete_command,t_list *commands);
 unsigned char	execute(t_tree *node);
+void			set_underscore(char *const argv[]);
+char			**copy_argv(char *const argv[]);
+t_fds			setup_file_descriptors(t_tree *simple_command);
+void			cleanup_file_descriptors(t_tree *simple_command, t_fds orig_fds);
+int				handle_builtin_wrapper(char *argv[], t_tree *simple_command);
+bool			is_valid_assignment(char *word, t_token *token);
+bool			is_only_assigment_words(t_tree *simple_command);
+void			handle_error(t_tree *simple_command, char **argv, t_list *path_parts);
+void			handle_fork(t_tree *simple_command, char **argv, char *program,t_list *commands);
+char			**get_command_argv(t_tree *simple_command);
+t_list			*get_path_parts(void);
+pid_t			execute_simple_command(t_tree *simple_command, t_list *commands);
+void			handle_redirect_append(char *file_path,t_tree *simple_command, bool red_err);
+void			assign_fd_and_clear_error(int fd, t_tree *simple_command, bool red_err);
+void			handle_redirect_override(char *file_path, t_tree *simple_command,bool red_err);
+int				handle_io_redirect(t_tree *io_redirect, t_tree *simple_command);
+pid_t			execute_simple_command_wrapper(t_tree *simple_command, t_list *commands);
+void			redirect_heredoc(char *file_path, t_tree *simple_command);
+void			handle_redirect_input(char *file_path, t_tree *simple_command);
+int				wait_pipe_sequence_helper(t_list *pids);
+unsigned char	wait_pipe_sequence(t_list *pids);
+void			setup_pipes(t_list *commands);
+unsigned char	execute_pipe_sequence(t_list *commands, bool negated);
+unsigned char	execute_tok_and(t_list_node *tok_and);
 void			close_fds(t_tree *command);
 void			set_fds(t_tree *command);
 char			*search_executable(char *program, t_list *path_parts);
@@ -305,23 +314,11 @@ void			close_other_command_fds(t_list *commands);
 bool			is_builtin(char *word);
 int				handle_builtin_helper(char **argv, t_fds fds);
 int				handle_builtin(char *argv[], t_fds fds);
-void			set_underscore(char *const argv[]);
-char			**copy_argv(char *const argv[]);
-t_fds			setup_file_descriptors(t_tree *simple_command);
-void			cleanup_file_descriptors(t_tree *simple_command, t_fds orig_fds);
-int				handle_builtin_wrapper(char *argv[], t_tree *simple_command);
 void			msh_xtrace(char *const argv[]);
 char			**transform_for_declare(t_tree *simple_command);
 bool			is_valid_assignment_word(t_token *token, char *word);
 bool			is_assignment_word(t_token *token);
 int				count_assignment_words(t_tree *simple_command);
-bool			is_valid_assignment(char *word, t_token *token);
-bool			is_only_assigment_words(t_tree *simple_command);
-void			handle_error(t_tree *simple_command, char **argv, t_list *path_parts);
-void			handle_fork(t_tree *simple_command, char **argv, char *program,t_list *commands);
-char			**get_command_argv(t_tree *simple_command);
-t_list			*get_path_parts(void);
-pid_t			execute_simple_command(t_tree *simple_command, t_list *commands);
 bool			glob_match(const char *pattern, const char *quoting_ctx, const char *str);
 bool			ft_strcmp2(t_data str1, t_data str2);
 t_list			*dotglob(t_list *tokens, t_token *token);
@@ -437,33 +434,35 @@ int				ft_getumask(void);
 char			**set_argv(char **argv);
 char			**get_argv(void);
 char			**get_env(char *program);
-char			*get_token_str(t_list *tokens);
-char			*get_token_str_nl(t_list *tokens);
-t_token_type	get_token_type(t_list *tokens);
-const char		*token_type_to_string(t_token_type type);
-void			skip_space_tab(const char **line);
-bool			tokenize_variable_len_tokens(const char **line, t_list *tokens);
-t_list			*tokenize(const char *line);
-void			print_token_debug(t_data data, int n);
-void			print_token(t_data data, int n);
-char			*was_quoted(t_token_type type);
-char			*repeat_string(char *str, size_t n);
-void			*new_token(char *str, t_token_type type, bool is_last_token);
-void			process_backslash(t_list *result_chars, t_list *escape_ctx_chars,const char **str, char terminator);
-void			process_char(t_list *result_chars, t_list *escape_ctx_chars,const char **str);
-char			*process_backslashes_helper(char *str, char terminator,char **escape_ctx);
-char			*process_backslashes(char *str, t_token_type type,char **escape_ctx);
-void			init_token_attrs(t_token_attrs *attrs, const char *line,size_t token_len, t_token_type type);
 bool			push_token(const char **line, t_list *tokens, size_t token_len,t_token_type type);
 bool			tokenize_2_or_3_char_tokens(const char **line, t_list *tokens);
 bool			tokenize_1_char_tokens(const char **line, t_list *tokens);
 bool			tokenize_fixed_len_tokens(const char **line, t_list *tokens);
 bool			tokenize_single_quoted_string(const char **line, t_list *tokens);
+const char		*token_type_to_string_1(t_token_type type);
+const char		*token_type_to_string_2(t_token_type type);
+const char		*token_type_to_string(t_token_type type);
+void			skip_space_tab(const char **line);
+bool			tokenize_variable_len_tokens(const char **line, t_list *tokens);
+t_list			*tokenize(const char *line);
+char			*get_token_str(t_list *tokens);
+char			*get_token_str_nl(t_list *tokens);
+t_token_type	get_token_type(t_list *tokens);
+void			print_token_debug(t_data data, int n);
+void			print_token(t_data data, int n);
+char			*was_quoted(t_token_type type);
+char			*repeat_string(char *str, size_t n);
+void			*new_token(char *str, t_token_type type, bool is_last_token);
 void			tokenize_double_quoted_string_helper(size_t len, const char *tmp,const char **line, t_list *tokens);
 bool			tokenize_double_quoted_string(const char **line, t_list *tokens);
 bool			is_word_char(char c);
 bool			is_not_and_and(const char *line);
 bool			tokenize_word(const char **line, t_list *tokens);
+void			process_backslash(t_list *result_chars, t_list *escape_ctx_chars, const char **str, char terminator);
+void			process_char(t_list *result_chars, t_list *escape_ctx_chars, const char **str);
+char			*process_backslashes_helper(char *str, char terminator, char **escape_ctx);
+char			*process_backslashes(char *str, t_token_type type, char **escape_ctx);
+void			init_token_attrs(t_token_attrs *attrs, const char *line, size_t token_len, t_token_type type);
 unsigned char	exec(t_tree *tree);
 unsigned char	setup_initial_conditions(t_list *lines);
 unsigned char	process_lines(t_list *lines);
