@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 03:32:33 by paul              #+#    #+#             */
-/*   Updated: 2024/07/10 20:10:00 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 22:52:57 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,21 @@
 
 #include <errno.h>
 #include <fcntl.h>
-#include <unistd.h>
+#include <readline/history.h>
+#include <readline/readline.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 char	*search_file(char *file_path, char **path_parts)
 {
 	char	*path;
 	char	*executable_path;
+	int		fd;
 
 	if (ft_strchr(file_path, '/'))
 		return (file_path);
@@ -31,12 +39,15 @@ char	*search_file(char *file_path, char **path_parts)
 	{
 		path = ft_strjoin(*path_parts, "/");
 		executable_path = ft_strjoin(path, file_path);
+		fd = open(executable_path, O_DIRECTORY);
 		if (!access(executable_path, F_OK)
-			&& open(executable_path, O_DIRECTORY) == -1)
+			&& fd == -1)
 			break ;
+		close(fd);
 		executable_path = NULL;
 		++path_parts;
 	}
+	close(fd);
 	return (executable_path);
 }
 

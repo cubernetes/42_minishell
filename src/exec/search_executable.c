@@ -6,13 +6,17 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 22:46:03 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/10 22:46:36 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 22:54:16 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#define _POSIX_C_SOURCE 200808L
+#define _POSIX_C_SOURCE 200809L
 #include "minishell.h"
 #include "libft.h"
+
+#include <unistd.h>
+#include <fcntl.h>
+#include <stdlib.h>
 
 char	*handle_path_parts(t_list *path_parts, char *program,
 	char *executable_path)
