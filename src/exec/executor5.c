@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 03:31:14 by paul              #+#    #+#             */
-/*   Updated: 2024/07/10 20:13:51 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 23:34:38 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,16 +23,15 @@
 #include <sys/wait.h>
 #include <stdbool.h>
 
-unsigned char	and_or_token(t_list_node *child_current, t_token *token)
+void	and_or_token(t_list_node *child_current, t_token *token,
+	bool *first, unsigned char *rtn)
 {
-	unsigned char	rtn;
-
 	if (token->type == TOK_AND)
-		rtn = execute_token_and(child_current);
+		execute_token_and(child_current, first, rtn);
 	else if (token->type == TOK_OR)
-		rtn = execute_token_or(child_current);
+		execute_token_or(child_current, first, rtn);
 	else if (token->type == TOK_SEMI)
-		rtn = execute_token_semi(child_current);
+		execute_token_semi(child_current, first, rtn);
 }
 
 unsigned char	execute_commands_in_node(t_list *children)
@@ -40,7 +39,9 @@ unsigned char	execute_commands_in_node(t_list *children)
 	unsigned char	rtn;
 	t_list			*chldn;
 	t_tree			*current_tree;
+	bool			first;
 
+	first = true;
 	chldn = liter(children);
 	rtn = get_last_exit_status();
 	while (lnext(chldn))
@@ -51,7 +52,8 @@ unsigned char	execute_commands_in_node(t_list *children)
 			rtn = execute_pipe_sequence_node(current_tree);
 		else if (current_tree->type == TOKEN)
 		{
-			rtn = and_or_token(chldn->current, current_tree->token);
+			and_or_token(chldn->current, current_tree->token, &first,
+				&rtn);
 			if (lnext(chldn) == NULL)
 				break ;
 		}

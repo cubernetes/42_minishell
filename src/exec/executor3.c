@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 03:31:03 by paul              #+#    #+#             */
-/*   Updated: 2024/07/10 20:09:05 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 23:30:13 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ int	wait_pipe_sequence_helper(t_list *pids)
 {
 	int	status;
 
+	status = 0;
 	if (pids->current->as_int == -1)
 		status = 127;
 	else if (pids->current->as_int <= -2 && pids->current->as_int >= -257)

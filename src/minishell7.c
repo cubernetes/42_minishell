@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 20:25:29 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/10 21:18:18 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 23:46:36 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include <stdlib.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <string.h>
 
 void	parse_opts(t_list *options, char **opts, int *is_login_shell)
 {

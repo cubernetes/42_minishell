@@ -6,7 +6,7 @@
 /*   By: pgrussin <pgrussin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 17:48:22 by pgrussin          #+#    #+#             */
-/*   Updated: 2024/07/10 21:55:36 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 23:48:05 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,8 @@ void	set_initial_shell_variables(char *argv[], char *envp[])
 		(t_flags){.exp = true});
 	set_var("_", argv[0], (t_flags){0});
 	set_var("PS0", PS0, (t_flags){0});
-	set_var("PS1", PS1, (t_flags){0});
+	set_var("PS1", "\033[31m\\u\033[m@\033[94m\\h\033[m@\033[92mmsh\033[m "
+		"[\033[32m\\w\033[m]\n\\$ ", (t_flags){0});
 	set_var("PS2", PS2, (t_flags){0});
 	set_var("PS4", PS4, (t_flags){0});
 	set_var("IFS", DEFAULT_IFS, (t_flags){0});

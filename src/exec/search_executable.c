@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 22:46:03 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/10 22:54:16 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 23:38:06 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ char	*search_executable(char *program, t_list *path_parts)
 {
 	char	*executable_path;
 
+	executable_path = NULL;
 	if (!program || !*program)
 		return (NULL);
 	if (ft_strchr(program, '/'))

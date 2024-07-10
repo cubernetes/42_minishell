@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 15:24:58 by paul              #+#    #+#             */
-/*   Updated: 2024/07/10 19:29:48 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 23:27:53 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,12 +85,12 @@ bool	is_valid_assignment_word(t_token *token, char *word)
 	char	escape_ctx;
 	char	expansion_ctx;
 
-	quoting_ctx = token->quoting_ctx[idx];
-	expansion_ctx = token->expansion_ctx[idx];
-	escape_ctx = token->escape_ctx[idx];
 	idx = -1;
 	while (word[++idx])
 	{
+		quoting_ctx = token->quoting_ctx[idx];
+		expansion_ctx = token->expansion_ctx[idx];
+		escape_ctx = token->escape_ctx[idx];
 		if (escape_ctx == '1' || quoting_ctx == '1' || expansion_ctx == '1')
 			return (false);
 		if (ft_isalnum(word[idx]) || word[idx] == '_')

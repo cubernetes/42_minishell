@@ -6,7 +6,7 @@
 /*   By: pgrussin <pgrussin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 19:10:58 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/10 22:21:16 by pgrussin         ###   ########.fr       */
+/*   Updated: 2024/07/10 23:47:49 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,8 @@
 
 /************************** DEFINES *************************/
 # define PS0 "" // TODO: Not required: Handle PS0
-/* # define PS1 "\033[31m\\u@\\h:\\w\033[m$ " */
+# define PS1 "\033[31m\\u@\\h:\\w\033[m$ "
 /* # define PS1 "\033[31m\\u@\\h:\\w\033[m\n❯ " */
-# define PS1 "\e[31m\\u\e[m@\e[94m\\h\e[m@\e[92mmsh\e[m [\e[32m\\w\e[m]\n\\$ "
 # define PS2 "> "
 # define PS4 "+ "
 
@@ -313,11 +312,15 @@ int								main(int argc, char *argv[], char *envp[]);
 unsigned char					execute_tok_or(t_list_node *tok_or);
 unsigned char					execute_pipe_sequence_node(
 									t_tree *pipe_sequence_node);
-unsigned char					execute_token_and(t_list_node *token_node);
-unsigned char					execute_token_or(t_list_node *token_node);
-unsigned char					execute_token_semi(t_list_node *token_node);
-unsigned char					and_or_token(t_list_node *child_current,
-									t_token *token);
+void							execute_token_and(t_list_node *token_node,
+									bool *first, unsigned char *rtn);
+void							execute_token_or(t_list_node *token_node,
+									bool *first, unsigned char *rtn);
+void							execute_token_semi(t_list_node *token_node,
+									bool *first, unsigned char *rtn);
+void							and_or_token(t_list_node *child_current,
+									t_token *token, bool *first,
+									unsigned char *rtn);
 unsigned char					execute_commands_in_node(t_list *children);
 unsigned char					execute_complete_command(t_tree *node);
 pid_t							execute_complete_command_wrapper(
@@ -605,5 +608,8 @@ t_list							*get_lines(int fd);
 int								mk_err_flags(bool do_exit, bool syntax_error);
 int								set_shell_options(char *const argv[]);
 char							*set_err_fmt(int flags, const char **fmt);
+t_list							*shell_opt_init(char *const argv[],
+									bool *implicit_s,
+									char **opts, int *is_login_shell);
 
 #endif /* minishell.h. */

@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 03:31:10 by paul              #+#    #+#             */
-/*   Updated: 2024/07/08 03:31:11 by paul             ###   ########.fr       */
+/*   Updated: 2024/07/10 23:36:34 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,35 +37,36 @@ unsigned char	execute_pipe_sequence_node(t_tree *pipe_sequence_node)
 			pipe_sequence_node->negated));
 }
 
-unsigned char	execute_token_and(t_list_node *token_node)
+void	execute_token_and(t_list_node *token_node, bool *first,
+	unsigned char *rtn)
 {
-	unsigned char	rtn;
-
-	rtn = execute_tok_and(token_node);
-	set_last_exit_status(rtn);
-	if (rtn == 0)
-		rtn = execute_pipe_sequence_node(token_node->next->as_tree);
-	return (rtn);
+	if (*first)
+		*rtn = execute_tok_and(token_node);
+	set_last_exit_status(*rtn);
+	*first = false;
+	if (*rtn == 0)
+		*rtn = execute_pipe_sequence_node(token_node->next->as_tree);
 }
 
-unsigned char	execute_token_or(t_list_node *token_node)
+void	execute_token_or(t_list_node *token_node, bool *first,
+	unsigned char *rtn)
 {
-	unsigned char	rtn;
-
-	rtn = execute_tok_or(token_node);
-	set_last_exit_status(rtn);
-	if (rtn != 0)
-		rtn = execute_pipe_sequence_node(token_node->next->as_tree);
-	return (rtn);
+	if (*first)
+		*rtn = execute_tok_or(token_node);
+	set_last_exit_status(*rtn);
+	*first = false;
+	if (*rtn != 0)
+		*rtn = execute_pipe_sequence_node(token_node->next->as_tree);
 }
 
-unsigned char	execute_token_semi(t_list_node *token_node)
+void	execute_token_semi(t_list_node *token_node, bool *first,
+	unsigned char *rtn)
 {
-	unsigned char	rtn;
-
-	rtn = execute_tok_or(token_node);
-	set_last_exit_status(rtn);
-	if (rtn != 0 && option_enabled('e'))
-		return (rtn);
-	return (execute_pipe_sequence_node(token_node->next->as_tree));
+	if (*first)
+		*rtn = execute_tok_or(token_node);
+	set_last_exit_status(*rtn);
+	*first = false;
+	if (*rtn != 0 && option_enabled('e'))
+		return ;
+	*rtn = execute_pipe_sequence_node(token_node->next->as_tree);
 }

@@ -6,7 +6,7 @@
 /*   By: pgrussin <pgrussin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 14:20:50 by pgrussin          #+#    #+#             */
-/*   Updated: 2024/07/10 22:17:30 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 23:42:07 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ int *helper)
 	*input = readline(*ps1);
 	noninteractive_signals();
 	if (restore)
-		helper_func(&helper);
+		helper_func(helper);
 	gc_add(*input);
 }
 
@@ -98,12 +98,12 @@ t_list	*get_lines(int fd)
 		return (lsplit(var_lookup("MINISHELL_EXECUTION_STRING"), "\n"));
 	else if (get_var("MINISHELL_SOURCE_EXECUTION_STRING")
 		&& get_var("MINISHELL_SOURCE_EXECUTION_STRING")->value)
-		return (get_lines_helper3);
+		return (get_lines_helper3());
 	ps1 = expand_prompt(var_lookup("PS1"));
 	if (isatty(STDIN_FILENO))
 		get_lines_helper(&input, &ps1, &helper);
 	else
-		get_lines_helper2(&fd, &ps1, &input);
+		get_lines_helper2(&fd, ps1, &input);
 	if (input == NULL)
 		return (NULL);
 	if (*input && ft_strcmp(input, prev_input))
