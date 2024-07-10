@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 00:31:27 by paul              #+#    #+#             */
-/*   Updated: 2024/07/10 00:47:20 by paul             ###   ########.fr       */
+/*   Updated: 2024/07/10 18:09:03 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,6 @@ t_list	*tokenize(const char *line)
 {
 	t_list	*tokens;
 
-	/* line = process_backslashes_old(line); */
 	tokens = lnew();
 	skip_space_tab(&line);
 	while (true)

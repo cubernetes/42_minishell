@@ -6,7 +6,7 @@
 #    By: paul <paul@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:02:16 by tischmid          #+#    #+#              #
-#    Updated: 2024/07/10 16:24:04 by tischmid         ###   ########.fr        #
+#    Updated: 2024/07/10 18:08:34 by tischmid         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -45,12 +45,13 @@ _SRC += execve3.c
 _SRC += execve4.c
 _SRC += execve5.c
 _SRC += execve6.c
-_SRC += tokenize.c
+_SRC += tokenize1.c
 _SRC += tokenize2.c
 _SRC += tokenize3.c
 _SRC += tokenize4.c
 _SRC += tokenize5.c
 _SRC += tokenize6.c
+_SRC += tokenize7.c
 _SRC += printing.c
 _SRC += new_tree_tokens.c
 _SRC += helper.c

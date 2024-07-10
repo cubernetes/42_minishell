@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 13:43:20 by paul              #+#    #+#             */
-/*   Updated: 2024/07/10 17:53:34 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 18:10:01 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 #include <stdbool.h>
 
 void	process_backslash(t_list *result_chars, t_list *escape_ctx_chars,
-const char **str, char terminator)
+	const char **str, char terminator)
 {
 	if ((*str)[1])
 	{
@@ -34,18 +34,18 @@ const char **str, char terminator)
 	}
 	else
 		lpush(escape_ctx_chars, as_str("1"));
-		// TODO: Handle line continuations
 }
+// TODO: Handle line continuations
 
 void	process_char(t_list *result_chars, t_list *escape_ctx_chars,
-const char **str)
+	const char **str)
 {
 	lpush(result_chars, as_str(ft_strndup(*str, 1)));
 	lpush(escape_ctx_chars, as_str("0"));
 }
 
 char	*process_backslashes_helper(char *str, char terminator,
-char **escape_ctx)
+	char **escape_ctx)
 {
 	t_list	*result_chars;
 	t_list	*escape_ctx_chars;
@@ -68,7 +68,7 @@ char **escape_ctx)
 }
 
 char	*process_backslashes(char *str, t_token_type type,
-char **escape_ctx)
+	char **escape_ctx)
 {
 	if (type == TOK_DQUOTE_STR)
 		return (process_backslashes_helper(str, '\"', escape_ctx));
@@ -79,7 +79,7 @@ char **escape_ctx)
 }
 
 void	init_token_attrs(t_token_attrs *attrs, const char *line,
-size_t token_len, t_token_type type)
+	size_t token_len, t_token_type type)
 {
 	attrs->str = process_backslashes(ft_strndup(line, token_len), type,
 			&attrs->escape_ctx);

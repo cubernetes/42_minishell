@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 19:10:58 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/10 17:59:44 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 18:15:15 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 # define PS0 "" // TODO: Not required: Handle PS0
 /* # define PS1 "\033[31m\\u@\\h:\\w\033[m$ " */
 /* # define PS1 "\033[31m\\u@\\h:\\w\033[m\n❯ " */
-# define PS1 "\033[31m\\u\033[m@\033[94m\\h\033[m@\033[92mminishell\033[m [\033[32m\\w\033[m]\n\\$ "
+# define PS1 "\e[31m\\u\e[m@\e[94m\\h\e[m@\e[92mmsh\e[m [\e[32m\\w\e[m]\n\\$ "
 # define PS2 "> "
 # define PS4 "+ "
 
@@ -598,5 +598,7 @@ bool							unset_var(char key[static 1]);
 void							set_var(char key[static 1], char *value,
 									t_flags flags);
 t_ht							**get_vars(void);
+const char						*token_type_to_string_1(t_token_type type);
+const char						*token_type_to_string_2(t_token_type type);
 
 #endif /* minishell.h. */

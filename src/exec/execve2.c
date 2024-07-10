@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 15:06:45 by paul              #+#    #+#             */
-/*   Updated: 2024/07/10 17:53:41 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 18:13:03 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,10 @@
 #define FORK_ERROR 4
 
 /* deliberately disable env, since wtf, env should NOT be a builtin. */
-/* pedago fu'ed up here. what if you want to check if _ is working? CAN'T DO IT */
-/* quoteth the bible (POSIX): "The env UTILITY shall obtain the current environment" */
+/* pedago fu'ed up here. what if you want to check if _ is working?
+ * CAN'T DO IT */
+/* quoteth the bible (POSIX):
+ * "The env UTILITY shall obtain the current environment" */
 		/* || ft_strcmp(word, "env") == 0 */
 bool	is_builtin(char	*word)
 {

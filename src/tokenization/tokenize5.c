@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 00:23:53 by paul              #+#    #+#             */
-/*   Updated: 2024/07/10 17:53:25 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 18:10:20 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,63 +102,3 @@ bool	tokenize_word(const char **line, t_list *tokens)
 	}
 	return (false);
 }
-
-/* line will never contain a newline */
-/* context = 0 -> not quoted */
-/* context = 1 -> double quoted */
-/* context = 2 -> single quoted */
-/* static char	*process_backslashes_old(const char *line) */
-/* { */
-	/* int		context; */
-	/* t_list	*result_chars; */
-	/* int		idx; */
-/*  */
-	/* context = 0; */
-	/* result_chars = lnew(); */
-	/* idx = -1; */
-	/* while (line[++idx]) */
-	/* { */
-		/* if (line[idx] == '\\') */
-		/* { */
-			/* if (context == 2) */
-				/* lpush(result_chars, as_str("\\")); */
-			/* else if (context == 1) */
-			/* { */
-				/* if (ft_strchr("\"$\\", line[idx + 1])) */
-				/* { */
-					/* lpush(result_chars, as_str("\"'")); */
-					/* lpush(result_chars, as_str(ft_strndup(&line[idx + 1], 1))); */
-					/* lpush(result_chars, as_str("'\"")); */
-					/* ++idx; */
-				/* } */
-				/* else */
-					/* lpush(result_chars, as_str("\\")); */
-			/* } */
-			/* else */
-			/* { */
-				/* if (line[idx + 1] == '\'') */
-					/* lpush(result_chars, as_str("\"'\"")); */
-				/* else */
-				/* { */
-					/* lpush(result_chars, as_str("'")); */
-					/* lpush(result_chars, as_str(ft_strndup(&line[idx + 1], 1))); */
-					/* lpush(result_chars, as_str("'")); */
-				/* } */
-				/* ++idx; */
-			/* } */
-		/* } */
-		/* else */
-		/* { */
-			/* lpush(result_chars, as_str(ft_strndup(&line[idx], 1))); */
-			/* if (context == 0 && line[idx] == '\'') */
-				/* context = 2; */
-			/* else if (context == 0 && line[idx] == '"') */
-				/* context = 1; */
-			/* else if (context == 1 && line[idx] == '"') */
-				/* context = 0; */
-			/* else if (context == 2 && line[idx] == '\'') */
-				/* context = 0; */
-		/* } */
-	/* } */
-	/* return (ljoin(result_chars, "")); */
-/* } */

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   tokenize.c                                         :+:      :+:    :+:   */
+/*   tokenize1.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 13:36:14 by paul              #+#    #+#             */
-/*   Updated: 2024/07/09 13:37:22 by paul             ###   ########.fr       */
+/*   Updated: 2024/07/10 18:08:05 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,41 +18,11 @@
 #include <unistd.h>
 #include <stdbool.h>
 
-char	*get_token_str(t_list *tokens)
-{
-	return (tokens->first->as_token->str);
-}
-
-char	*get_token_str_nl(t_list *tokens)
-{
-	char	*str;
-
-	str = get_token_str(tokens);
-	if (!*str)
-		str = "newline";
-	return (str);
-}
-
-t_token_type	get_token_type(t_list *tokens)
-{
-	if (tokens->first->as_token->type == TOK_SQUOTE_STR
-		|| tokens->first->as_token->type == TOK_DQUOTE_STR)
-		return (TOK_WORD);
-	else if (tokens->first->as_token->type == TOK_SEMI)
-		return (TOK_AND);
-	else if (tokens->first->as_token->type == TOK_OVERRIDE_ERR)
-		return (TOK_OVERRIDE);
-	else if (tokens->first->as_token->type == TOK_APPEND_ERR)
-		return (TOK_APPEND);
-	return (tokens->first->as_token->type);
-}
-
-/* TODO: Not required: hashtable */
-const char	*token_type_to_string(t_token_type type)
+const char	*token_type_to_string_1(t_token_type type)
 {
 	if (type == TOK_OVERRIDE)
 		return (STR_TOK_OVERRIDE);
-	if (type == TOK_OVERRIDE_ERR)
+	else if (type == TOK_OVERRIDE_ERR)
 		return (STR_TOK_OVERRIDE_ERR);
 	else if (type == TOK_INPUT)
 		return (STR_TOK_INPUT);
@@ -70,7 +40,12 @@ const char	*token_type_to_string(t_token_type type)
 		return (STR_TOK_OR);
 	else if (type == TOK_SEMI)
 		return (STR_TOK_SEMI);
-	else if (type == TOK_L_PAREN)
+	return (NULL);
+}
+
+const char	*token_type_to_string_2(t_token_type type)
+{
+	if (type == TOK_L_PAREN)
 		return (STR_TOK_L_PAREN);
 	else if (type == TOK_R_PAREN)
 		return (STR_TOK_R_PAREN);
@@ -87,6 +62,18 @@ const char	*token_type_to_string(t_token_type type)
 	else if (type == TOK_ERROR)
 		return (STR_TOK_ERROR);
 	return (STR_TOK_UNKNOWN);
+}
+
+/* TODO: Not required: hashtable */
+const char	*token_type_to_string(t_token_type type)
+{
+	const char	*str_type;
+
+	str_type = token_type_to_string_1(type);
+	if (str_type)
+		return (str_type);
+	str_type = token_type_to_string_2(type);
+	return (str_type);
 }
 
 void	skip_space_tab(const char **line)
