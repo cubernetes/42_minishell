@@ -6,7 +6,7 @@
 /*   By: pgrussin <pgrussin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 03:31:26 by paul              #+#    #+#             */
-/*   Updated: 2024/07/10 21:20:48 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 21:55:51 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,6 @@ char	*get_dollar_prompt(void)
 	return ("$");
 }
 
-/* TODO: Expand variables */
 char	*expand_prompt(char *prompt_string)
 {
 	t_list	*replacements;
