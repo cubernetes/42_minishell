@@ -6,7 +6,7 @@
 /*   By: pgrussin <pgrussin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 18:00:43 by pgrussin          #+#    #+#             */
-/*   Updated: 2024/07/10 20:25:25 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 21:53:54 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,7 +113,8 @@ void	init(char *argv[], char *envp[])
 /* TODO: shift builtin */
 /* TODO: get SHLVL right */
 /* TODO: get sourcing right */
-/* TODO: improve sourcing (source in the middle of a line? sourcing when -n is enabled?) */
+/* TODO: improve sourcing (source in the middle of a line?
+ * sourcing when -n is enabled?) */
 /* TODO: Fix -t with sourcing */
 /* TODO: Seperate lines error msgs for heredoc */
 int	main(int argc, char *argv[], char *envp[])

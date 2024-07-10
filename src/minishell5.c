@@ -6,7 +6,7 @@
 /*   By: pgrussin <pgrussin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 17:48:22 by pgrussin          #+#    #+#             */
-/*   Updated: 2024/07/10 20:09:28 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 21:55:36 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,6 +119,6 @@ void	set_initial_shell_variables(char *argv[], char *envp[])
 	set_var("MINISHELL_SOURCE_EXECUTION_STRING", NULL,
 		(t_flags){.readonly = true});
 }
-// TODO: If it has a value and is unset or set to a new value, 
+// TODO: Ignore: If it has a value and is unset or set to a new value, 
 // the fd corresponding to the old value shall be closed.
-// TODO: SHLVL: Depends on if interactive or not
+// TODO: Ignore: SHLVL: Depends on if interactive or not

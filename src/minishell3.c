@@ -6,7 +6,7 @@
 /*   By: pgrussin <pgrussin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 14:20:50 by pgrussin          #+#    #+#             */
-/*   Updated: 2024/07/10 20:08:35 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 22:17:30 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ int *helper)
 {
 	bool	restore;
 
+	restore = false;
 	if (!isatty(STDERR_FILENO))
 	{
 		restore = true;

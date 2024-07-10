@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 21:20:52 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/10 21:29:44 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 21:56:22 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,6 @@ char	*set_err_fmt(int flags, const char **fmt)
 
 /*TODO: what happens in infinite loop in minishell with ctrl + c and cntr + d*/
 int	minishell_error(int exit_code, int flags, const char *fmt, ...)
-/* int	minishell_error(int exit_code, bool do_exit, */
-	/* bool syntax_error, const char *fmt, ...) */
 {
 	va_list	ap;
 	char	*errfmt;
