@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: paul <paul@student.42.fr>                  +#+  +:+       +#+         #
+#    By: pgrussin <pgrussin@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:02:16 by tischmid          #+#    #+#              #
-#    Updated: 2024/07/10 00:43:10 by paul             ###   ########.fr        #
+#    Updated: 2024/07/10 18:01:08 by pgrussin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -65,6 +65,11 @@ _SRC += executor5.c
 _SRC += shell_vars.c
 _SRC += glob.c
 _SRC += minishell.c
+_SRC += minishell2.c
+_SRC += minishell3.c
+_SRC += minishell4.c
+_SRC += minishell5.c
+_SRC += minishell6.c
 _SRC += echo.c
 _SRC += unset.c
 _SRC += pwd.c

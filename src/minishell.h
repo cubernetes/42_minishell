@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: pgrussin <pgrussin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 19:10:58 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/10 00:55:18 by paul             ###   ########.fr       */
+/*   Updated: 2024/07/10 17:56:32 by pgrussin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -343,5 +343,6 @@ char									*search_executable(char *program,
 											t_list *path_parts);
 void									set_underscore(char *const argv[]);
 bool									is_only_assignment_words(t_tree *simple_command);
-
+void									handle_pwd_missing(void);
+void setup_pwd(void);
 #endif /* minishell.h. */
