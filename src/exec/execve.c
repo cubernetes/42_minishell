@@ -6,11 +6,10 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 03:31:17 by paul              #+#    #+#             */
-/*   Updated: 2024/07/10 22:32:53 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 22:46:29 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#define _POSIX_C_SOURCE 200809L
 #include "minishell.h"
 #include "libft.h"
 
@@ -64,47 +63,6 @@ void	set_fds(t_tree *command)
 		dup2(out, STDOUT_FILENO);
 	if (err != -2)
 		dup2(err, STDERR_FILENO);
-}
-
-char	*handle_path_parts(t_list *path_parts, char *program,
-	char *executable_path)
-{
-	int	fd;
-
-	liter(path_parts);
-	while (lnext(path_parts))
-	{
-		if (*path_parts->current->as_str == '\0')
-			path_parts->current->as_str = ".";
-		executable_path = ft_strjoin(
-				ft_strjoin(path_parts->current->as_str, "/"), program);
-		fd = open(executable_path, O_DIRECTORY);
-		if (!access(executable_path, X_OK)
-			&& fd == -1)
-			break ;
-		executable_path = NULL;
-		close(fd);
-	}
-	close(fd);
-	return (executable_path);
-}
-
-char	*search_executable(char *program, t_list *path_parts)
-{
-	char	*executable_path;
-
-	if (!program || !*program)
-		return (NULL);
-	if (ft_strchr(program, '/'))
-		return (program);
-	if (path_parts == NULL)
-	{
-		if (!ft_strcmp(program, ".."))
-			return (program);
-		return (NULL);
-	}
-	executable_path = handle_path_parts(path_parts, program, executable_path);
-	return (executable_path);
 }
 
 char	**make_argv(t_tree *simple_command)
