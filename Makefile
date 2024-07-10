@@ -6,7 +6,7 @@
 #    By: pgrussin <pgrussin@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:02:16 by tischmid          #+#    #+#              #
-#    Updated: 2024/07/10 21:21:19 by tischmid         ###   ########.fr        #
+#    Updated: 2024/07/10 21:44:33 by tischmid         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -67,6 +67,7 @@ _SRC += executor2.c
 _SRC += executor3.c
 _SRC += executor4.c
 _SRC += executor5.c
+_SRC += executor6.c
 _SRC += shell_vars.c
 _SRC += glob.c
 _SRC += minishell.c
