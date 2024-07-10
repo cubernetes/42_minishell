@@ -6,7 +6,7 @@
 /*   By: pgrussin <pgrussin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 19:10:58 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/10 21:25:24 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 22:21:16 by pgrussin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,6 +190,13 @@ typedef struct s_successful_read_params
 	char						*file_path;
 	t_tree						*simple_command;
 }								t_successful_read_params;
+
+typedef struct s_heredoc_fd
+{
+	int	fd;
+	int	new_hd_fd;
+	int	sc_fd_in;	
+}	t_heredoc_fd;
 
 typedef struct s_token
 {
