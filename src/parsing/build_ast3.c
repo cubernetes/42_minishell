@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 18:54:40 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/10 20:19:20 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 20:24:32 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,18 +57,6 @@ bool	terminates_pipe_sequence(t_list *tokens)
 		|| tokens->first->as_token->type == TOK_R_PAREN)
 		return (true);
 	return (false);
-}
-
-int	mk_err_flags(bool do_exit, bool syntax_error)
-{
-	int	res;
-
-	res = 0;
-	if (do_exit)
-		res |= DO_EXIT;
-	if (syntax_error)
-		res |= SYNTAX_ERROR;
-	return (res);
 }
 
 bool	handle_ast_node(

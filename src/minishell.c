@@ -6,7 +6,7 @@
 /*   By: pgrussin <pgrussin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 03:31:26 by paul              #+#    #+#             */
-/*   Updated: 2024/07/10 20:04:56 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 21:20:48 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,50 +25,6 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <sys/stat.h>
-
-/*TODO: what happens in infinite loop in minishell with ctrl + c and cntr + d*/
-int	minishell_error(int exit_code, int flags, const char *fmt, ...)
-/* int	minishell_error(int exit_code, bool do_exit, */
-	/* bool syntax_error, const char *fmt, ...) */
-{
-	va_list	ap;
-	char	*errfmt;
-	char	*err;
-
-	if (option_enabled('i') && flags & DO_EXIT)
-		ft_dprintf(STDERR_FILENO, "exit\n");
-	va_start(ap, fmt);
-	errfmt = ft_strjoin(var_lookup("0"), ": ");
-	if (!option_enabled('i'))
-	{
-		if (option_enabled('c') && flags & SYNTAX_ERROR)
-			errfmt = ft_strjoin(errfmt, "-c: ");
-		errfmt = ft_strjoin(errfmt, ft_strjoin("line ",
-					ft_strjoin(var_lookup("LINENO"), ": ")));
-	}
-	if (fmt[0] != '!')
-		errfmt = ft_replace_all(errfmt, "%", "%%");
-	else
-	{
-		errfmt = "";
-		++fmt;
-	}
-	err = ft_strjoin(errfmt, fmt);
-	err = ft_strjoin(err, "\n");
-	ft_vdprintf(STDERR_FILENO, err, ap);
-	va_end(ap);
-	if (!option_enabled('i') && flags & SYNTAX_ERROR && fmt[0] != '!')
-	{
-		err = ft_strjoin(errfmt, "`%s'\n");
-		ft_dprintf(STDERR_FILENO, err, var_lookup("CURRENT_LINE"));
-	}
-	if (flags & DO_EXIT)
-	{
-		finish(false);
-		exit(exit_code);
-	}
-	return (exit_code);
-}
 
 char	*get_dollar_prompt(void)
 {

@@ -6,7 +6,7 @@
 /*   By: pgrussin <pgrussin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 18:00:43 by pgrussin          #+#    #+#             */
-/*   Updated: 2024/07/10 20:14:11 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 20:25:25 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,120 +31,16 @@ static int	noop(void)
 	return (0);
 }
 
-// default
-// (none)
-// default -i
-// i
-// default interactive (i cannot be removed)
-// is (adds i and s)
-// default non-interactive
-// s (adds s)
-// default -c
-// c (adds c)
-// default non-interactive with -i
-// is (adds i and s)
-// default -c with -i
-// ic (adds i and c)
-//
-// + - doesn't matter (cannot be negated)
-// cs
-// + - does matter, last one counts
-// aefintuvxC
-
-/**/
-static int	set_shell_options(char *const argv[])
+int	mk_err_flags(bool do_exit, bool syntax_error)
 {
-	t_list	*options;
-	char	erropt;
-	char	*opts;
-	int		i;
-	bool	implicit_s;
-	int		tty;
-	int		is_login_shell;
+	int	res;
 
-	implicit_s = false;
-	options = liter(ft_getopt_plus(argv, "acefilnstuvxC", &erropt, &optind));
-	if (erropt)
-	{
-		(void)minishell_error(2, 0, "-%c: invalid option", erropt);
-		ft_dprintf(STDERR_FILENO, "Usage:\t%s [option] ...\n\t%s [option] script-file ...\nShell options:\n\t-ils or -c command (invocation only)\n\t-aefnstuvxC\n", MINISHELL_NAME, MINISHELL_NAME);
-		finish(false);
-		exit(2);
-	}
-	opts = "";
-	is_login_shell = false;
-	liter(options);
-	while (lnext(options))
-	{
-		if ((char)options->current->as_getopt_arg == 'c')
-		{
-			if (!ft_strchr(opts, 'c'))
-				opts = ft_strjoin(opts, "c");
-		}
-		else if ((char)options->current->as_getopt_arg == 's')
-		{
-			if (!ft_strchr(opts, 's'))
-				opts = ft_strjoin(opts, "s");
-		}
-		else if (options->current->as_getopt_arg & 1 << 8 && ft_strchr(opts, (char)options->current->as_getopt_arg))
-			opts = ljoin(lsplit(opts, ft_strndup(&(char){(char)options->current->as_getopt_arg}, 1)), "");
-		else if (!ft_strchr(opts, (char)options->current->as_getopt_arg) && (char)options->current->as_getopt_arg != 'l')
-			opts = ft_strjoin(opts, ft_strndup(&(char){(char)options->current->as_getopt_arg}, 1));
-		else if ((char)options->current->as_getopt_arg == 'l')
-			is_login_shell = true;
-	}
-	if (ft_strchr(opts, 'i'))
-	{
-		tty = open("/dev/tty", O_WRONLY);
-		if (tty == -1)
-			(void)minishell_error(1, 0, "/dev/tty: ", strerror(errno));
-		else
-		{
-			dup2(tty, STDERR_FILENO);
-			close(tty);
-		}
-	}
-	if (!ft_strchr(opts, 'c'))
-	{
-		if (!ft_strchr(opts, 's'))
-		{
-			opts = ft_strjoin(opts, "s");
-			implicit_s = true;
-		}
-		if (isatty(STDIN_FILENO) && isatty(STDERR_FILENO))
-			if (!ft_strchr(opts, 'i'))
-				opts = ft_strjoin(opts, "i");
-	}
-	set_var("-", opts, (t_flags){.special = true});
-	set_var("0", argv[0], (t_flags){.special = true});
-	is_login_shell |= argv[0][0] == '-';
-	argv += optind;
-	if (ft_strchr(opts, 'c'))
-	{
-		if (*argv == NULL)
-			minishell_error(2, 1, "-c: option requires an argument");
-		set_var("MINISHELL_EXECUTION_STRING", *argv, (t_flags){0});
-		++argv;
-	}
-	if (ft_strchr(opts, 'c') || (ft_strchr(opts, 's') && !implicit_s))
-	{
-		i = 1;
-		if (ft_strchr(opts, 'c'))
-			i = 0;
-		while (*argv)
-		{
-			set_var(ft_itoa(i), *argv, (t_flags){.special = true});
-			++argv;
-			++i;
-		}
-		set_var("#", ft_itoa(i - 1), (t_flags){.special = true});
-	}
-	else if (*argv != NULL)
-	{
-		ft_printf("Not implemented yet...\n");
-		// run/source script or smth
-	}
-	return (is_login_shell);
+	res = 0;
+	if (do_exit)
+		res |= DO_EXIT;
+	if (syntax_error)
+		res |= SYNTAX_ERROR;
+	return (res);
 }
 
 static void	read_init_files(bool is_login_shell)

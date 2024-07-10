@@ -6,7 +6,7 @@
 /*   By: pgrussin <pgrussin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 19:10:58 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/10 20:20:58 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/10 20:52:15 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -596,5 +596,6 @@ unsigned char					interpret_lines(t_list *lines);
 bool							option_enabled(char opt);
 t_list							*get_lines(int fd);
 int								mk_err_flags(bool do_exit, bool syntax_error);
+int								set_shell_options(char *const argv[]);
 
 #endif /* minishell.h. */

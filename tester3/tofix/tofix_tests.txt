@@ -1,4 +1,0 @@
-
-
-env | grep "SHLVL"
-unset TES;T

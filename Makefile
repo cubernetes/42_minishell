@@ -6,7 +6,7 @@
 #    By: pgrussin <pgrussin@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:02:16 by tischmid          #+#    #+#              #
-#    Updated: 2024/07/10 19:28:48 by tischmid         ###   ########.fr        #
+#    Updated: 2024/07/10 21:21:19 by tischmid         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -75,6 +75,7 @@ _SRC += minishell3.c
 _SRC += minishell4.c
 _SRC += minishell5.c
 _SRC += minishell6.c
+_SRC += minishell7.c
 _SRC += echo.c
 _SRC += unset.c
 _SRC += pwd.c
@@ -96,6 +97,8 @@ _SRC += environment.c
 _SRC += ft_mktemp.c
 _SRC += heredoc.c
 _SRC += heredoc_helper.c
+_SRC += shell_opt_init.c
+_SRC += minishell_error.c
 
 vpath %.c                \
 	src                  \
