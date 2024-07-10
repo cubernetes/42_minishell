@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 03:31:43 by paul              #+#    #+#             */
-/*   Updated: 2024/07/10 20:10:09 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/11 00:53:24 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int	builtin_cd3(int status, char *cwd, char **argv, char *name)
 {
 	char	*real_cwd;
 
-	real_cwd = getcwd(NULL, 0);
+	real_cwd = gc_add_str(getcwd(NULL, 0));
 	if (real_cwd == NULL)
 	{
 		minishell_error(0, 0, "!%s: error retrieving current "\

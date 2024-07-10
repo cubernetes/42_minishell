@@ -6,7 +6,7 @@
 /*   By: pgrussin <pgrussin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 17:48:22 by pgrussin          #+#    #+#             */
-/*   Updated: 2024/07/11 00:16:47 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/11 00:38:52 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,6 +119,10 @@ void	set_initial_shell_variables(char *argv[], char *envp[])
 	set_var("IFS", DEFAULT_IFS, (t_flags){0});
 	set_var("MINISHELL_SOURCE_EXECUTION_STRING", NULL,
 		(t_flags){.readonly = true});
+	if (get_var("PATH") == NULL)
+		set_var("PATH", DFT_PATH, (t_flags){0});
+	if (get_var("OLDPWD") == NULL)
+		set_var("OLDPWD", NULL, (t_flags){.exp = true});
 }
 // TODO: Ignore: If it has a value and is unset or set to a new value, 
 // the fd corresponding to the old value shall be closed.

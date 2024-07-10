@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 03:32:33 by paul              #+#    #+#             */
-/*   Updated: 2024/07/10 22:52:57 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/11 00:46:00 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,8 @@ char	*search_file(char *file_path, char **path_parts)
 		if (!access(executable_path, F_OK)
 			&& fd == -1)
 			break ;
-		close(fd);
+		if (fd != -1)
+			close(fd);
 		executable_path = NULL;
 		++path_parts;
 	}

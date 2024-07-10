@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 22:46:03 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/10 23:38:06 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/11 00:50:46 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,11 @@ char	*handle_path_parts(t_list *path_parts, char *program,
 			&& fd == -1)
 			break ;
 		executable_path = NULL;
-		close(fd);
+		if (fd != -1)
+			close(fd);
 	}
-	close(fd);
+	if (fd != -1)
+		close(fd);
 	return (executable_path);
 }
 

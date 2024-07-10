@@ -6,7 +6,7 @@
 /*   By: pgrussin <pgrussin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 19:10:58 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/10 23:47:49 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/11 00:35:38 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@
 /* # define PS1 "\033[31m\\u@\\h:\\w\033[m\n❯ " */
 # define PS2 "> "
 # define PS4 "+ "
+
+# define DFT_PATH "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
 # define MINISHELL_DEFAULT_XTRACEFD 2
 

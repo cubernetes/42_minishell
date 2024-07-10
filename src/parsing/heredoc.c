@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 17:34:17 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/11 00:15:23 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/11 00:47:54 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,6 +115,8 @@ char	*create_heredoc(char *delimiter)
 		return ("");
 	heredoc_file = ft_mktemp("minishell.");
 	fd = open(heredoc_file, O_CREAT | O_TRUNC | O_WRONLY, 0600);
+	if (fd == -1)
+		return (minishell_error(1, 0, "failed to create heredoc"), "");
 	while (1)
 	{
 		ps2 = expand_prompt(var_lookup("PS2"));
@@ -125,8 +127,7 @@ char	*create_heredoc(char *delimiter)
 		if (brk)
 			break ;
 	}
-	close(fd);
 	if (input == NULL)
 		handle_hd_error(delimiter);
-	return (heredoc_file);
+	return (close(fd), heredoc_file);
 }
