@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 16:22:32 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/10 20:09:48 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/11 15:59:33 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,8 @@ int	declare_set_helper(t_declare_args args[static 1])
 		|| ((*args->key)[ft_strlen(*args->key) - 1] == '+'
 		&& !valid_name(ft_strndup(*args->key, ft_strlen(*args->key) - 1))))
 		exit_status = minishell_error(1, 0,
-				"%s: `%s': not a valid identifier", args->name, *args->key);
+				"%s: `%s': not a valid identifier2", args->name,
+				ft_strjoin(*args->key, ft_strjoin("=", *args->value)));
 	else if (args->key_value->len == 2)
 		exit_status = declare_assign(&(t_declare_args){args->orig_var,
 				args->value, args->key, args->flags, args->name, NULL});
