@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 19:07:26 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/11 15:26:20 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/07/11 15:44:14 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 #include <stdio.h>
 #include <readline/readline.h>
+#include <stdlib.h>
 
 void	interactive_interrupt(int sig)
 {
@@ -39,4 +40,12 @@ void	interactive_interrupt_heredoc(int sig)
 {
 	interactive_interrupt(sig);
 	heredoc_aborted(1);
+}
+
+void	sigpipe_handler(int sig)
+{
+	(void)sig;
+	rl_done = 1;
+	finish(false);
+	exit(141);
 }
