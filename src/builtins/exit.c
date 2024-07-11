@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 03:32:17 by paul              #+#    #+#             */
-/*   Updated: 2024/07/10 20:14:15 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/11 21:51:36 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,18 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
+
+static void	exit_cleanup(t_fds fds, long exit_status)
+{
+	if (fds.fd_in != -2 && fds.fd_in != 0)
+		close(fds.fd_in);
+	if (fds.fd_out != -2 && fds.fd_out != 1)
+		close(fds.fd_out);
+	if (fds.fd_err != -2 && fds.fd_err != 2)
+		close(fds.fd_err);
+	finish(true);
+	exit((unsigned char)exit_status);
+}
 
 /* TODO: make unsigned char */
 int	builtin_exit(char **argv, t_fds fds)
@@ -42,7 +54,7 @@ int	builtin_exit(char **argv, t_fds fds)
 			return (1);
 		}
 	}
-	(finish(true), exit((unsigned char)exit_status));
+	exit_cleanup(fds, exit_status);
 	return (1);
 }
 /* On failure, bash's exit builtin sets the exit status to 1 if there was no
