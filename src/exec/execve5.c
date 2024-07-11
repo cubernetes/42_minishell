@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 00:02:50 by paul              #+#    #+#             */
-/*   Updated: 2024/07/09 00:03:36 by paul             ###   ########.fr       */
+/*   Updated: 2024/07/11 23:03:50 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ bool	is_only_assigment_words(t_tree *simple_command)
 		{
 			token = simple_command->children->current->as_tree->token;
 			split_token = lsplit(token->str, "=");
-			if (split_token->len > 1)
+			if (split_token->len > 1 && split_token->first->as_str[0] != '\0')
 			{
 				word = split_token->first->as_str;
 				if (!is_valid_assignment(word, token))
