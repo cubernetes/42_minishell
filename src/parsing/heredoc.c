@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 17:34:17 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/11 00:47:54 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/11 15:32:03 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,8 +78,7 @@ bool	handle_noninteractive_heredoc(int fd, char *ps2, char *delimiter,
 	}
 	else if (option_enabled('i'))
 		ft_dprintf(STDERR_FILENO, "%s", ps2);
-	if (input_gnl.data == NULL)
-		*input = NULL;
+	*input = input_gnl.data;
 	if (*input != NULL
 		&& ((char *)input_gnl.data)[ft_strlen(input_gnl.data) - 1] == '\n')
 		((char *)input_gnl.data)[ft_strlen(input_gnl.data) - 1] = '\0';
