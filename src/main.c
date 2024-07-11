@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/11 15:34:44 by tosuman           #+#    #+#             */
-/*   Updated: 2024/07/11 15:34:58 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/07/11 21:03:58 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,6 @@
 /* TODO: Empty delimiter with lsplit? */
 /* TODO: Usage infos for builtins */
 /* TODO: help builtin */
-/* TODO: shift builtin */
 /* TODO: get SHLVL right */
 /* TODO: get sourcing right */
 /* TODO: improve sourcing (source in the middle of a line?

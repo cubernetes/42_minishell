@@ -6,7 +6,7 @@
 /*   By: pgrussin <pgrussin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 14:20:50 by pgrussin          #+#    #+#             */
-/*   Updated: 2024/07/10 23:42:07 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/11 20:55:28 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,13 +67,13 @@ static void	get_lines_helper2(int *fd, char *ps1, char **input)
 	if (*input != NULL && option_enabled('i'))
 	{
 		ft_dprintf(STDERR_FILENO, "%s", ft_strjoin(ps1, *input));
-		if ((*input)[strlen(*input) - 1] != '\n')
+		if ((*input)[ft_strlen(*input) - 1] != '\n')
 			ft_dprintf(STDERR_FILENO, "%s", "\n");
 	}
 	else if (option_enabled('i'))
 		ft_dprintf(STDERR_FILENO, "%s", ps1);
-	if (*input != NULL && (*input)[strlen(*input) - 1] == '\n')
-		(*input)[strlen(*input) - 1] = '\0';
+	if (*input != NULL && (*input)[ft_strlen(*input) - 1] == '\n')
+		(*input)[ft_strlen(*input) - 1] = '\0';
 }
 
 static t_list	*get_lines_helper3(void)
