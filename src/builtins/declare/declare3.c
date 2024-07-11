@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 03:31:59 by paul              #+#    #+#             */
-/*   Updated: 2024/07/10 20:09:46 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/11 18:30:50 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,35 +14,6 @@
 #include "minishell.h"
 
 #include <unistd.h>
-
-int	declare_set(char *name, char **argv, t_declare_flags flags)
-{
-	t_list	*key_value;
-	char	*key;
-	char	*value;
-	t_var	*orig_var;
-	int		exit_status;
-
-	exit_status = 0;
-	while (*argv)
-	{
-		key_value = lsplit_n(*argv, "=", 1);
-		key = key_value->first->as_str;
-		value = key_value->first->next->as_str;
-		if (key[ft_strlen(key) - 1] == '+')
-			orig_var = get_var(ft_strndup(key, ft_strlen(key) - 1));
-		else
-			orig_var = get_var(key);
-		if (!ft_strcmp(key, "") || !ft_strcmp(key, "+"))
-			exit_status = minishell_error(1, 0,
-					"%s: `%s': not a valid identifier", name, *argv);
-		else
-			exit_status = declare_set_helper(&(t_declare_args){orig_var,
-					&value, &key, flags, name, key_value});
-		++argv;
-	}
-	return (exit_status);
-}
 
 int	declare_print_set_vars(t_fds fds)
 {

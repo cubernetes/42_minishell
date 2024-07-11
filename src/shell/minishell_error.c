@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 21:20:52 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/10 21:56:22 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/11 18:21:46 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,13 +20,14 @@ char	*set_err_fmt(int flags, const char **fmt)
 {
 	char	*errfmt;
 
-	errfmt = ft_strjoin(var_lookup("0"), ": ");
+	/* errfmt = ft_strjoin(var_lookup("0"), ": "); */
+	errfmt = ft_strjoin("minishell", ": ");
 	if (!option_enabled('i'))
 	{
 		if (option_enabled('c') && flags & SYNTAX_ERROR)
 			errfmt = ft_strjoin(errfmt, "-c: ");
-		errfmt = ft_strjoin(errfmt, ft_strjoin("line ",
-					ft_strjoin(var_lookup("LINENO"), ": ")));
+		/* errfmt = ft_strjoin(errfmt, ft_strjoin("line ", */
+					/* ft_strjoin(var_lookup("LINENO"), ": "))); */
 	}
 	if ((*fmt)[0] != '!')
 		errfmt = ft_replace_all(errfmt, "%", "%%");

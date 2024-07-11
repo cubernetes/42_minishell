@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 18:54:40 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/10 20:24:32 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/11 18:06:28 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,24 +37,24 @@ void	prepare_stack(t_list *stack[static 1])
 	})));
 }
 
-bool	starts_with_bang(t_list *tokens)
+bool	starts_with_bang(t_token *token)
 {
-	if (tokens->first->as_token->type == TOK_WORD
-		&& !ft_strcmp(tokens->first->as_token->str, "!")
-		&& tokens->first->as_token->expansion_ctx[0] == '0'
-		&& tokens->first->as_token->quoting_ctx[0] == '0'
-		&& tokens->first->as_token->escape_ctx[0] == '0')
+	if (token->type == TOK_WORD
+		&& !ft_strcmp(token->str, "!")
+		&& token->expansion_ctx[0] == '0'
+		&& token->quoting_ctx[0] == '0'
+		&& token->escape_ctx[0] == '0')
 		return (true);
 	return (false);
 }
 
-bool	terminates_pipe_sequence(t_list *tokens)
+bool	terminates_pipe_sequence(t_token *token)
 {
-	if (tokens->first->as_token->type == TOK_SEMI
-		|| tokens->first->as_token->type == TOK_AND
-		|| tokens->first->as_token->type == TOK_OR
-		|| tokens->first->as_token->type == TOK_EOL
-		|| tokens->first->as_token->type == TOK_R_PAREN)
+	if (token->type == TOK_SEMI
+		|| token->type == TOK_AND
+		|| token->type == TOK_OR
+		|| token->type == TOK_EOL
+		|| token->type == TOK_R_PAREN)
 		return (true);
 	return (false);
 }
@@ -68,16 +68,17 @@ bool	handle_ast_node(
 	t_list	*children;
 	t_tree	*production;
 
-	while (top->type == PIPE_SEQUENCE && starts_with_bang(tokens))
+	while (top->type == PIPE_SEQUENCE && starts_with_bang(
+			tokens->first->as_token))
 	{
 		(*tree)->negated = !(*tree)->negated;
 		lrotate(tokens, 1);
 	}
 	if (top->type == PIPE_SEQUENCE
-		&& terminates_pipe_sequence(tokens))
+		&& terminates_pipe_sequence(tokens->first->as_token))
 		lpush_left(tokens, as_token(new_token(":", TOK_WORD, true)));
-	else if (top->type != PIPE_SEQUENCE && top->type != COMPLETE_COMMAND
-		&& starts_with_bang(tokens))
+	else if (top->type == PIPE_SEQUENCE_TAIL && starts_with_bang(tokens->first
+			->next->as_token) && tokens->first->as_token->type != TOK_EOL)
 		return (set_last_exit_status(minishell_error(2,
 					mk_err_flags(!option_enabled('i'), true),
 					"syntax error near unexpected token `!'")), false);

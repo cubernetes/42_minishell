@@ -6,7 +6,7 @@
 #    By: pgrussin <pgrussin@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:02:16 by tischmid          #+#    #+#              #
-#    Updated: 2024/07/11 15:36:59 by tosuman          ###   ########.fr        #
+#    Updated: 2024/07/11 18:36:34 by tosuman          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -93,6 +93,7 @@ _SRC += declare2.c
 _SRC += declare3.c
 _SRC += declare4.c
 _SRC += declare5.c
+_SRC += declare_set.c
 _SRC += readonly.c
 _SRC += source.c
 _SRC += colon.c

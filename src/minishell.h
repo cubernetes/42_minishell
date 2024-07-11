@@ -6,7 +6,7 @@
 /*   By: pgrussin <pgrussin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 19:10:58 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/11 16:11:31 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/07/11 18:15:28 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -466,8 +466,8 @@ void							print_tree_node(void *data, int n);
 t_tree							*production_part_to_child(t_tree production);
 t_list							*production_to_children(t_tree *production);
 void							prepare_stack(t_list *stack[static 1]);
-bool							starts_with_bang(t_list *tokens);
-bool							terminates_pipe_sequence(t_list *tokens);
+bool							starts_with_bang(t_token *token);
+bool							terminates_pipe_sequence(t_token *token);
 bool							handle_ast_node(t_tree *tree[static 1],
 									t_tree top[static 1],
 									t_list tokens[static 1],
@@ -501,8 +501,6 @@ void							flatten_redirect(t_tree *first, t_list *chldn,
 void							handle_proper_ast_node(t_tree *tree,
 									t_list *flat, bool mk_heredoc);
 void							prepare_stack(t_list *stack[static 1]);
-bool							starts_with_bang(t_list *tokens);
-bool							terminates_pipe_sequence(t_list *tokens);
 bool							handle_ast_node(t_tree *tree[static 1],
 									t_tree top[static 1],
 									t_list tokens[static 1],

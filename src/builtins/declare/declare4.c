@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 16:22:32 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/11 16:12:07 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/07/11 18:41:20 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,13 @@ int	declare_assign(t_declare_args args[static 1])
 	return (exit_status);
 }
 
+static char	*mk_value(t_declare_args args[static 1])
+{
+	if (args->key_value->len <= 1)
+		return ("");
+	return (ft_strjoin("=", *args->value));
+}
+
 int	declare_set_helper(t_declare_args args[static 1])
 {
 	int		exit_status;
@@ -60,7 +67,7 @@ int	declare_set_helper(t_declare_args args[static 1])
 		&& !valid_name(ft_strndup(*args->key, ft_strlen(*args->key) - 1))))
 		exit_status = minishell_error(1, 0,
 				"%s: `%s': not a valid identifier", args->name,
-				ft_strjoin(*args->key, ft_strjoin("=", *args->value)));
+				ft_strjoin(*args->key, mk_value(args)));
 	else if (args->key_value->len == 2)
 		exit_status = declare_assign(&(t_declare_args){args->orig_var,
 				args->value, args->key, args->flags, args->name, NULL});

@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 16:01:55 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/10 17:54:24 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/11 18:01:51 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,27 +15,6 @@
 
 #include <stdlib.h>
 #include <stdbool.h>
-
-void	prepare_stack(t_list *stack[static 1]);
-bool	starts_with_bang(t_list *tokens);
-bool	terminates_pipe_sequence(t_list *tokens);
-bool	handle_ast_node(
-			t_tree *tree[static 1],
-			t_tree top[static 1],
-			t_list tokens[static 1],
-			t_list stack[static 1]);
-int		handle_token(
-			t_tree *tree[static 1],
-			t_tree top[static 1],
-			t_list tokens[static 1],
-			t_list stack[static 1]);
-t_list	*build_as_recursively(t_tree *tree, bool mk_heredoc);
-bool	is_unimportant_token(t_token *token);
-bool	is_proper_ast_node(t_tree *tree);
-bool	is_improper_ast_node(t_tree *tree);
-void	flatten_redirect(t_tree *first, t_list *chldn, t_list *children,
-			bool mk_heredoc);
-void	handle_proper_ast_node(t_tree *tree, t_list *flat, bool mk_heredoc);
 
 /* LL(1) parser */
 t_tree	*build_parse_tree(t_list tokens[static 1])

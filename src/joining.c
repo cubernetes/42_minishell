@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 19:15:02 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/10 17:54:57 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/11 17:41:20 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@ void	join_word_token(t_token *word_token[static 1], t_token *token)
 			token->quoting_ctx);
 	(*word_token)->expansion_ctx = ft_strjoin((*word_token)->expansion_ctx,
 			token->expansion_ctx);
+	(*word_token)->escape_ctx = ft_strjoin(ft_strndup((*word_token)->escape_ctx,
+				ft_strlen((*word_token)->escape_ctx) - 1), token->escape_ctx);
 }
 
 void	join_or_acc(t_token *token, t_list *new_tokens,

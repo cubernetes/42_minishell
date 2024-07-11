@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 03:31:53 by paul              #+#    #+#             */
-/*   Updated: 2024/07/08 03:31:54 by paul             ###   ########.fr       */
+/*   Updated: 2024/07/11 18:25:34 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,18 +68,18 @@ char	*quote_double(char *s)
 	while (*s)
 	{
 		if (*s == '$')
-			ret = ft_strjoin(ret, "\"'$'\"");
+			ret = ft_strjoin(ret, "\\$");
 		else if (*s == '"')
-			ret = ft_strjoin(ret, "\"'\"'\"");
+			ret = ft_strjoin(ret, "\\\"");
+		else if (*s == '\\')
+			ret = ft_strjoin(ret, "\\\\");
 		else
 			ret = ft_strjoin(ret, ft_strndup(s, 1));
 		++s;
 	}
 	return (ft_strjoin(ret, "\""));
 }
-/* Rules are adapted for minishell, not bash, so ` and \ are not escaped */
-/* $ is not backslash escaped, since not required */
-/* Runs in quadratic time... */
+/* Rules are adapted for minishell, not bash, so ` is not escaped */
 
 /* TODO: Remove bare declare param */
 char	*quote_ansi_c(char *s, bool bare_declare)

@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 21:39:16 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/10 21:53:14 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/11 17:11:14 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,20 +74,23 @@ t_list	*clean_chldn(t_list *new_chldn, t_tree *simple_command)
 pid_t	execute_simple_command_wrapper(t_tree *simple_command,
 	t_list *commands)
 {
-	t_list	*new_chldn;
+	t_list	*chldn;
+	t_tree	*ast;
 
-	new_chldn = flatten_children(simple_command);
-	new_chldn = expand_join_glob(new_chldn);
-	if (new_chldn == NULL)
+	chldn = flatten_children(simple_command);
+	chldn = expand_join_glob(chldn);
+	if (chldn == NULL)
 		return (-256);
-	new_chldn = clean_chldn(new_chldn, simple_command);
-	if (new_chldn == NULL)
+	chldn = clean_chldn(chldn, simple_command);
+	if (chldn == NULL)
 		return (-256);
-	if (new_chldn->len <= 1)
+	if (chldn->len <= 1)
 		return (close_fds(simple_command), -258);
-	new_chldn = build_ast(new_chldn, false)->children->first->as_tree
-		->children->first->as_tree->children;
-	simple_command->children = new_chldn;
+	ast = build_ast(chldn, false);
+	if (ast == NULL)
+		return (close_fds(simple_command), -255);
+	chldn = ast->children->first->as_tree->children->first->as_tree->children;
+	simple_command->children = chldn;
 	liter(simple_command->children);
 	while (lnext(simple_command->children))
 		if (simple_command->children->current->as_tree->type == IO_REDIRECT)
