@@ -6,7 +6,7 @@
 #    By: pgrussin <pgrussin@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:02:16 by tischmid          #+#    #+#              #
-#    Updated: 2024/07/10 22:47:01 by tischmid         ###   ########.fr        #
+#    Updated: 2024/07/11 15:36:59 by tosuman          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,6 +24,7 @@ LIBFT           := libft.a
 LIBFT_          := $(patsubst lib%,%,$(patsubst %.a,%,$(LIBFT)))
 
 unexport _SRC
+_SRC += main.c
 _SRC += signals1.c
 _SRC += signals2.c
 _SRC += get_cwd_for_prompt.c
@@ -109,6 +110,7 @@ vpath %.c                \
 	src/tokenization/    \
 	src/expansion/       \
 	src/exec/            \
+	src/shell/           \
 	src/builtins/        \
 	src/builtins/declare \
 	src/unistd/
