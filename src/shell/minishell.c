@@ -6,7 +6,7 @@
 /*   By: pgrussin <pgrussin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 03:31:26 by paul              #+#    #+#             */
-/*   Updated: 2024/07/11 18:58:25 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/07/11 18:59:43 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,6 @@ t_tree	*parse(char *line)
 	t_tree	*tree;
 
 	tokens = tokenize(line);
-	lprint(tokens, print_token_debug);
 	tree = build_ast(tokens, true);
 	return (tree);
 }
