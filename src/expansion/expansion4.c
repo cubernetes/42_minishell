@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 15:18:59 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/10 17:39:56 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/11 16:05:21 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ t_token	*ft_tilde_expand(t_token *token)
 		return (token);
 	home_var = get_var("HOME");
 	if (home_var == NULL)
-		return (token);
+		return (minishell_error(0, 0, "HOME not set: not expanding ~"), token);
 	token->str = ft_strjoin(home_var->value, token->str + 1);
 	return (token);
 }

@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 00:07:58 by paul              #+#    #+#             */
-/*   Updated: 2024/07/10 22:22:10 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/11 16:32:12 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,10 +101,8 @@ pid_t	execute_simple_command(t_tree *simple_command, t_list *commands)
 	path_parts = get_path_parts();
 	if (argv[0] == NULL)
 		return (close_fds(simple_command), -257);
-	if (is_builtin(argv[0]) && simple_command->fd_in == -2
-		&& simple_command->fd_out == -2)
-		return (close_fds(simple_command),
-			handle_builtin_wrapper(argv, simple_command) - 257);
+	if (is_builtin(argv[0]) && commands->len == 1)
+		return (handle_builtin_wrapper(argv, simple_command) - 257);
 	program = search_executable(argv[0], path_parts);
 	if (!program && !is_builtin(argv[0]))
 		return (handle_error(simple_command, argv, path_parts), -1);

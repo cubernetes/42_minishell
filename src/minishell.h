@@ -6,7 +6,7 @@
 /*   By: pgrussin <pgrussin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 19:10:58 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/11 15:44:28 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/07/11 16:11:31 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -614,5 +614,7 @@ t_list							*shell_opt_init(char *const argv[],
 									bool *implicit_s,
 									char **opts, int *is_login_shell);
 void							sigpipe_handler(int sig);
+int								cd_error_handler(int status, char *nm,
+									char *argv[], char *cwd);
 
 #endif /* minishell.h. */
