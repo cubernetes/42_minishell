@@ -6,7 +6,7 @@
 #    By: pgrussin <pgrussin@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:02:16 by tischmid          #+#    #+#              #
-#    Updated: 2024/07/11 20:29:40 by tischmid         ###   ########.fr        #
+#    Updated: 2024/07/11 20:47:46 by tischmid         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -126,7 +126,7 @@ OBJ              := $(addprefix $(OBJDIR)/,$(_OBJ))
 MINISHELL_HEADER := $(addprefix $(SRCDIR)/,$(_HEADERS))
 
 # TODO: improve makefile
-CFLAGS           := -O2 -fPIE -Wall -Wextra -Werror \
+CFLAGS           := -O2 -Wall -Wextra -Werror \
                     -pedantic -Wconversion \
                     -Wunreachable-code -Wshadow
 CPPFLAGS         := -I$(LIBFT_DIR) -I$(SRCDIR)
