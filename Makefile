@@ -6,14 +6,13 @@
 #    By: pgrussin <pgrussin@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:02:16 by tischmid          #+#    #+#              #
-#    Updated: 2024/07/11 18:36:34 by tosuman          ###   ########.fr        #
+#    Updated: 2024/07/11 20:29:40 by tischmid         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 # TODO: adapt for MacOS
 # Makefile for [ "$(uname -s)" = "Linux" ]
 
-# TODO: Check gcc and clang
 CC             ?= cc
 RM             := /bin/rm -f
 MKDIR          := /bin/mkdir -p
@@ -127,18 +126,13 @@ OBJ              := $(addprefix $(OBJDIR)/,$(_OBJ))
 MINISHELL_HEADER := $(addprefix $(SRCDIR)/,$(_HEADERS))
 
 # TODO: improve makefile
-# TODO: change -O0 to -O3 and remove -g3
-# TOOD: add back -Werror
-# TODO: add back std=c99 if possible
-CFLAGS           := -O0 -g3 -fPIE -Wall -Wextra \
+CFLAGS           := -O2 -fPIE -Wall -Wextra -Werror \
                     -pedantic -Wconversion \
-                    -Wunreachable-code -Wshadow \
-                    -fdiagnostics-color=always
+                    -Wunreachable-code -Wshadow
 CPPFLAGS         := -I$(LIBFT_DIR) -I$(SRCDIR)
 
 LDFLAGS          := -L$(LIBFT_DIR)
-# TODO: Remove -rdynamic # for backtrace
-LDLIBS           := -l$(LIBFT_) -lreadline -rdynamic
+LDLIBS           := -l$(LIBFT_) -lreadline
 
 all: libft $(NAME)
 

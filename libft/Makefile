@@ -6,11 +6,10 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:09:11 by tischmid          #+#    #+#              #
-#    Updated: 2024/06/26 00:44:51 by tischmid         ###   ########.fr        #
+#    Updated: 2024/07/11 20:29:43 by tischmid         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-# TODO: Check gcc and clang
 CC = cc
 AR = ar rcs
 RM = /bin/rm -f
@@ -21,12 +20,9 @@ NAME = libft.a
 OBJDIR = ./obj
 SRCDIR = .
 
-# TODO: change -O0 to -03 and remove -g3
-# TODO: add back -Werror
-CFLAGS = -O0 -g3 -fPIE -Wall -Wextra \
+CFLAGS = -O2 -fPIE -Wall -Wextra -Werror \
           -pedantic -Wconversion \
-          -Wunreachable-code -Wshadow \
-          -fdiagnostics-color=always
+          -Wunreachable-code -Wshadow
 CPPFLAGS = -I$(SRCDIR)
 
 unexport SUBDIRS
