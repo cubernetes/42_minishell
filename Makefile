@@ -6,7 +6,7 @@
 #    By: pgrussin <pgrussin@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:02:16 by tischmid          #+#    #+#              #
-#    Updated: 2024/07/11 21:04:02 by tischmid         ###   ########.fr        #
+#    Updated: 2024/07/11 21:31:27 by tischmid         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -133,6 +133,8 @@ CPPFLAGS         := -I$(LIBFT_DIR) -I$(SRCDIR)
 
 LDFLAGS          := -L$(LIBFT_DIR)
 LDLIBS           := -l$(LIBFT_) -lreadline
+
+.DEFAULT_GOAL := all
 
 all: libft $(NAME)
 
