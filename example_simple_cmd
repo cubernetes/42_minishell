@@ -1,5 +1,0 @@
-#! /bin/sh -
-
-tr -d '\n' << 'CMD' | xsel --clipboard --input
-echo hello > /dev/stdout world'whut'"OK" < Makefile'hehe'"" >> $GIT_SSH_COMMAND > * >"$OK" ''
-CMD

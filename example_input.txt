@@ -1,1 +1,0 @@
-echo *.* "hello $GIT_SSH_COMMAND * world"'bla * $GIT_SSH_COMMAND'$GIT_SSH_COMMAND"another one"$GIT_SSH_COMMAND bruh $GIT_SSH_COMMAND| grep ^h && (hostname | grep bla ) | megapipe ||printf buh
