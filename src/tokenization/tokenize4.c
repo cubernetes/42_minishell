@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 22:19:10 by paul              #+#    #+#             */
-/*   Updated: 2024/07/11 18:14:21 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/07/11 18:56:01 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ t_token_type type)
 	init_token_attrs(&attrs, *line, token_len, type);
 	token = new_token(attrs.str, type, attrs.is_last_token);
 	token->origin = ft_strndup(*line, token_len);
+	token->escape_ctx = attrs.escape_ctx;
 	lpush(tokens, as_token(token));
 	*line += token_len;
 	return (true);

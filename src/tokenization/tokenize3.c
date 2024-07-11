@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 13:43:20 by paul              #+#    #+#             */
-/*   Updated: 2024/07/10 19:32:05 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/11 18:57:23 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ char	*process_backslashes(char *str, t_token_type type,
 	else if (type == TOK_WORD)
 		return (process_backslashes_helper(str, '\0', escape_ctx));
 	else
-		return (str);
+		return (*escape_ctx = repeat_string("0", ft_strlen(str) + 1), str);
 }
 
 void	init_token_attrs(t_token_attrs *attrs, const char *line,
