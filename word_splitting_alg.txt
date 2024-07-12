@@ -1,0 +1,66 @@
+########################### word splitting algorithm ###########################
+this algorithm is found in src/expansion.c. The version described here is
+simplified, as in reality, the algorithm must handle a string that has an
+"expansion context", which is an ancillary string of the same length consisting
+of either 0's or 1's, where 1 means the byte at the corresponding position in
+the real string was the result of a parameter expansion, and 0 means it wasn't.
+This is important, because a command like `echo:hello` shouldn't be split on
+the colon when IFS=":", but expansion containing a colon should.
+
+# Expample
+IFS=<space><colon>
+'   :one two    three   :: :  :   four:five :six\0'
+result should be: '', 'one', 'two', 'three', '', '', '', 'four', 'five', 'six'
+
+# Algorithm
+	- IFS= # whatever
+	- IFS_whitespace= # depends on locale
+	- str # string to split
+
+	- start = 0
+	- i = 0
+	- new_words = empty list
+	- push = false
+	- iterate over str using i until NUL '\0':
+		- is str[i] in IFS:
+			- yes:
+				- is str[i] in IFS_whitespace:
+					- yes:
+						- should we push (ie. push == true):
+							- yes:
+								- push word[start:i] (python slice syntax) to new_words
+								- updating start to i is optional (better don't)
+								- set push to false (consecutive ifs-whitespace should be ignored)
+							- no:
+								- don't do anything, just skip further
+								- do not update start to i
+					- no:
+						- should we push (ie. push == true):
+							- yes:
+								- push word[start:i] (python slice syntax) to new_words
+								- set start to i (str[start] must be this ifs-non-whitespace-character)
+								- set push to false
+									- if we now, afterwards, encounter ifs-whitespace, it must be ignored.
+									- however, if we then encounter ifs-non-whitespace, we want to push an empty word.
+									- this can be conventiently handled in the <no> branch and is dependedent on where
+									- str[start] last pointed to (either a ifs-non-whitespace-character or not)
+							- no:
+								- is str[start] in IFS and (str[start] NOT in IFS_whitespace OR start == 0):
+									- yes:
+										- push empty word
+										- updating start to i is optional
+									- no:
+										- set start to i (str[start] must be this ifs-non-whitespace-character)
+			- no:
+				- should we push (ie. push == true):
+					- yes:
+						- don't do anything, just skip further
+					- no:
+						- set start to i
+						- set push to true
+	- we reached NUL '\0'
+	- is str[start] NOT in IFS:
+		- yes:
+			- push word[start:i] (python slice syntax) to new_words
+		- no:
+			- don't do anything

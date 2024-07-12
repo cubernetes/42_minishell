@@ -1,0 +1,41 @@
+name: Test the Game
+
+on:
+  push:
+    branches:
+      - main
+      - timo
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: List files
+        run: git ls-files
+
+      - name: Run make once (clang)
+        run: CC=clang make
+
+      - name: Check if it relinks (clang)
+        run: CC=clang make
+
+      - name: Check for NAME (minishell) rule (clang)
+        run: CC=clang make minishell
+
+      - name: Check for clean rule (clang)
+        run: CC=clang make clean
+
+      - name: Check for fclean rule (clang)
+        run: CC=clang make fclean
+
+      - name: Check for re rule (clang)
+        run: CC=clang make re
+
+      - name: Check if minishell binary exists
+        run: test -x ./minishell
+
+      - name: Check if there are no TODO's
+        run: test "$(./check_todo.sh | wc -l)" -lt 2

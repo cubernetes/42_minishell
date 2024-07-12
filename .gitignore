@@ -1,0 +1,42 @@
+# TODO: uncomment below AND `git rm' it
+# .gitignore
+# TODO: uncomment below AND `git rm' it
+# suppress_readline_leak.supp
+# TODO: uncomment below AND `git rm' it
+# minishell.bnf
+# TODO: uncomment below AND `git rm' it
+# gen_table.py
+# TODO: uncomment below AND `git rm' it
+# minishell_subject.pdf
+# TODO: uncomment below AND `git rm -r' it
+# .github
+
+minishell
+obj
+libft/libft.a
+
+# compiledb
+.cache
+compile_commands.json
+
+
+# TODO: remove
+a.out
+test.c
+test.txt
+
+# TODO: remove error cases
+# open_fds_input.txt
+
+minishell_tester/
+other_minishells
+
+# timos pc
+rec1.mp4
+rec2.mp4
+
+# ends
+env/
+
+testm.sh
+
