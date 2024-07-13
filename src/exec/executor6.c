@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 21:39:16 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/11 17:11:14 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/07/14 01:16:05 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ t_list	*clean_chldn(t_list *new_chldn, t_tree *simple_command)
 				|| new_chldn->current->as_token->type == TOK_APPEND
 				|| new_chldn->current->as_token->type == TOK_HEREDOC)
 			&& new_chldn->current->next->as_token->type == TOK_WORD
-			&& new_chldn->current->next->as_token->num_tokens_after_split == 0)
+			&& new_chldn->current->next->as_token->num_tokens_after_split != 1)
 			return (close_fds(simple_command), minishell_error(1, 0,
 					"%s: ambiguous redirect",
 					new_chldn->current->next->as_token->origin), NULL);

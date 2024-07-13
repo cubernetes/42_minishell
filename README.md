@@ -1,11 +1,15 @@
 # Warning
-Currently a bit broken, due to generous refactors to adhere to the school's standards.
+Currently a bit broken, due to generous refactors to adhere to the school's standards...
 Please submit issues if you find any, as I want to use this as a basis for the 42sh project.
+## Known Issues that are Regressions
+- Ambiguous redirects are not being handled correctly (`A=one\ two; >$A`)
+- Invalid read of size 1 (`export =var`)
+- first argument to `readonly` builtin is being skipped
 
-# Disclaimer
+# Disclaimer for 42 Students
 If you are a 42 student, do not take the following ("additional") features as a requirement for your own project. This is not what minishell, the project, is about. Evaluators ought NOT to fail you for not implementing some things exactly as they are in bash (notably: `export` without arguments (have you considered ANSI-C-quoting and "unset-but-declared" variables?, does the evaluator even know the purpose/use cases of export without arguments (reproducibility of environment, ssh, ...)?), `exit`'s argument handling (have you considered MAX_LONG overflow or its exit status considering it's a [special builtin](https://www.gnu.org/software/bash/manual/html_node/Special-Builtins.html)?), `pwd` (have you considered symbolically linked directory preservation after `cd` (inode checking)?), have you considered ambiguous redirects (a csh-inspired bash feature) for globbing and parameter expansion?, are you including the CWD when PATH contains the empty string?, are you printing the line on error when run in non-interactive mode?, have you considered CDPATH (frankly, this one is more so aimed at writers of test libraries)?, etc...)
 
-# Minishell – Feature summary
+# Minishell – Feature Summary
 The [subject](minishell_subject.pdf).
 
 The usual 42 style guidelines (aka "norm") apply (functions <= 25 lines, <= 4 params, <= 5 vars, <= 80 cols, separate declaration, 1 instruction per line, max 5 funcs per file, 4 space-tab indent & align, no globals, constant macros, -Wall -Wextra -Werror, no memory/fd leaks, no memory corruptions, etc.)
