@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 22:46:03 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/11 00:50:46 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/13 17:31:28 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ char	*handle_path_parts(t_list *path_parts, char *program,
 {
 	int	fd;
 
+	fd = -1;
 	liter(path_parts);
 	while (lnext(path_parts))
 	{

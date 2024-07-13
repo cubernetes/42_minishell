@@ -6,7 +6,7 @@
 /*   By: paul <paul@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 03:32:33 by paul              #+#    #+#             */
-/*   Updated: 2024/07/11 15:26:40 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/07/13 17:31:57 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ char	*search_file(char *file_path, char **path_parts)
 	char	*executable_path;
 	int		fd;
 
+	fd = -1;
 	if (ft_strchr(file_path, '/'))
 		return (file_path);
 	executable_path = NULL;
@@ -48,7 +49,8 @@ char	*search_file(char *file_path, char **path_parts)
 		executable_path = NULL;
 		++path_parts;
 	}
-	close(fd);
+	if (fd != -1)
+		close(fd);
 	return (executable_path);
 }
 
