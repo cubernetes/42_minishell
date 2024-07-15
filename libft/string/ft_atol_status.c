@@ -6,7 +6,7 @@
 /*   By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 15:08:37 by tischmid          #+#    #+#             */
-/*   Updated: 2024/07/05 01:06:28 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/16 00:07:25 by tosuman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ static long	ft_atol_status_neg(char const *nptr, int *status)
 
 	res = 0;
 	prev_res = 0;
-	if (*nptr == '\0')
+	if (!ft_isdigit(*nptr))
 		*status |= 8;
 	while (ft_isdigit(*nptr))
 	{
@@ -52,7 +52,7 @@ static long	ft_atol_status_pos(char const *nptr, int *status)
 
 	res = 0;
 	prev_res = 0;
-	if (*nptr == '\0')
+	if (!ft_isdigit(*nptr))
 		*status |= 8;
 	while (ft_isdigit(*nptr))
 	{
