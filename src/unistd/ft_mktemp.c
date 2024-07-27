@@ -38,7 +38,7 @@ void	mktemp_error(const char *fmt, ...)
 	va_list	ap;
 
 	va_start(ap, fmt);
-	ft_vdprintf(STDERR_FILENO, ft_strjoin(fmt, "\n"), ap);
+	ft_vdprintf(STDERR_FILENO, ft_strjoin(fmt, "\n"), &ap);
 	va_end(ap);
 }
 

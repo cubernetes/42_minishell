@@ -6,14 +6,14 @@
 /*   By: tischmid <timo42@proton.me>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 05:29:04 by tischmid          #+#    #+#             */
-/*   Updated: 2023/10/05 17:09:51 by tischmid         ###   ########.fr       */
+/*   Updated: 2024/07/16 18:01:41 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 #include <stdarg.h>
 
-int	ft_vdprintf(int fd, const char *fmt, va_list ap)
+int	ft_vdprintf(int fd, const char *fmt, va_list *ap)
 {
 	int	count;
 
@@ -36,7 +36,7 @@ int	ft_dprintf(int fd, const char *fmt, ...)
 	if (!fmt)
 		return (-1);
 	va_start(ap, fmt);
-	count = ft_vdprintf(fd, fmt, ap);
+	count = ft_vdprintf(fd, fmt, &ap);
 	va_end(ap);
 	return (count);
 }

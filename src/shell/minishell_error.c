@@ -51,7 +51,7 @@ int	minishell_error(int exit_code, int flags, const char *fmt, ...)
 	errfmt = set_err_fmt(flags, &fmt);
 	err = ft_strjoin(errfmt, fmt);
 	err = ft_strjoin(err, "\n");
-	ft_vdprintf(STDERR_FILENO, err, ap);
+	ft_vdprintf(STDERR_FILENO, err, &ap);
 	va_end(ap);
 	if (!option_enabled('i') && flags & SYNTAX_ERROR && fmt[0] != '!')
 	{

@@ -321,11 +321,11 @@ int								ft_putptr(void *ptr);
 int								ft_putptr_fd(void *ptr, int fd);
 int								ft_putfmt(const char **fmt, va_list ap);
 int								ft_putfmt_fd(int fd, const char **fmt,
-									va_list ap);
+									va_list *ap);
 int								ft_vprintf(const char *fmt, va_list ap);
 int								ft_printf(const char *fmt, ...);
 int								ft_vdprintf(int fd, const char *fmt,
-									va_list ap);
+									va_list *ap);
 int								ft_dprintf(int fd, const char *fmt, ...);
 void							*ft_print_memory(void *addr, size_t size);
 

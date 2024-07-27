@@ -24,7 +24,11 @@ char	*ft_gethostname_from_proc(void)
 
 	fd = open("/proc/sys/kernel/hostname", O_RDONLY);
 	if (fd < 0)
-		return (var_lookup("HOSTNAME"));
+	{
+		if (get_var("HOSTNAME"))
+			return (var_lookup("HOSTNAME"));
+		return ("localhost");
+	}
 	line = get_next_line(fd);
 	len = ft_strlen(line);
 	if (line[len - 1] == '\n')
