@@ -6,7 +6,7 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:09:11 by tischmid          #+#    #+#              #
-#    Updated: 2024/07/27 17:03:44 by tosuman          ###   ########.fr        #
+#    Updated: 2024/07/27 19:01:53 by tosuman          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,7 +25,7 @@ MKDIR := /bin/mkdir -p
 CFLAGS := -O2 -Wall -Wextra -Werror \
           -pedantic -Wconversion \
           -Wunreachable-code -Wshadow
-CPPFLAGS := -I$(SRCDIR)
+CPPFLAGS := -MD -I$(SRCDIR)
 ifeq ($(DEBUG), 1)
 	CFLAGS += -ggdb3 -O0
 endif

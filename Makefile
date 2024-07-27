@@ -6,7 +6,7 @@
 #    By: pgrussin <pgrussin@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:02:16 by tischmid          #+#    #+#              #
-#    Updated: 2024/07/27 16:56:47 by tosuman          ###   ########.fr        #
+#    Updated: 2024/07/27 19:00:39 by tosuman          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -34,7 +34,7 @@ MKDIR := /bin/mkdir -p
 CFLAGS := -O2 -Wall -Wextra -Werror \
 		-pedantic -Wconversion \
 		-Wunreachable-code -Wshadow
-CPPFLAGS := -MMD -I$(LIBFT_DIR) -I$(SRCDIR)
+CPPFLAGS := -MD -I$(LIBFT_DIR) -I$(SRCDIR)
 LDFLAGS := -L$(LIBFT_DIR)
 LDLIBS := -lreadline -l$(LIFBT_LIB)
 ifeq ($(DEBUG), 1)
