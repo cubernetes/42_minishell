@@ -6,7 +6,7 @@
 #    By: pgrussin <pgrussin@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:02:16 by tischmid          #+#    #+#              #
-#    Updated: 2024/07/27 16:55:51 by tosuman          ###   ########.fr        #
+#    Updated: 2024/07/27 16:56:47 by tosuman          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,6 +20,10 @@ NAME := minishell
 SRCDIR := src
 OBJDIR := obj
 LIBFT_DIR := libft
+
+# libs
+LIBFT_FILE := libft.a
+LIFBT_LIB := $(patsubst lib%,%,$(patsubst %.a,%,$(LIBFT_FILE)))
 
 # tools
 CC := cc
@@ -155,10 +159,6 @@ OBJ := $(addprefix $(OBJDIR)/,$(OBJ))
 # dependencies
 DEPS := $(OBJ:.o=.d)
 -include $(DEPS)
-
-# libs
-LIBFT_FILE := libft.a
-LIFBT_LIB := $(patsubst lib%,%,$(patsubst %.a,%,$(LIBFT_FILE)))
 
 # rules
 .DEFAULT_GOAL := all

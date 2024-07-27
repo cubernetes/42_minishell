@@ -6,46 +6,47 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:09:11 by tischmid          #+#    #+#              #
-#    Updated: 2024/07/14 00:47:45 by tosuman          ###   ########.fr        #
+#    Updated: 2024/07/27 17:03:44 by tosuman          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-CC = cc
-AR = ar rcs
-RM = /bin/rm -f
-MKDIR = /bin/mkdir -p
-LN = /bin/ln -f
+# config
+NAME := libft.a
+SRCDIR := .
+OBJDIR := obj
 
-NAME = libft.a
-OBJDIR = ./obj
-SRCDIR = .
+# tools
+CC := cc
+AR := ar rcs
+RM := /bin/rm -f
+MKDIR := /bin/mkdir -p
 
-CFLAGS = -O2 -Wall -Wextra -Werror \
+# flags
+CFLAGS := -O2 -Wall -Wextra -Werror \
           -pedantic -Wconversion \
           -Wunreachable-code -Wshadow
-CPPFLAGS = -I$(SRCDIR)
+CPPFLAGS := -I$(SRCDIR)
+ifeq ($(DEBUG), 1)
+	CFLAGS += -ggdb3 -O0
+endif
 
-unexport SUBDIRS
-SUBDIRS += string
-SUBDIRS += memory
-SUBDIRS += list
-SUBDIRS += math
-SUBDIRS += io
-SUBDIRS += misc
-SUBDIRS += hashtable
-SUBDIRS += gc
-SUBDIRS += data_constructors
+ifeq ($(ASAN), 1)
+	CFLAGS += -fsanitize=address
+endif
 
-vpath %.c $(SUBDIRS)
-unexport SRC
+ifeq ($(TSAN), 1)
+	CFLAGS += -fsanitize=thread
+endif
 
-# misc
+# sources
+SRC :=
+vpath %.c misc
 SRC += ft_arrlen.c
 SRC += error_handling.c
 SRC += cmt.c
 SRC += ft_getopt.c
 
-# string
+vpath %.c string
 SRC += ft_atoi.c
 SRC += ft_atoi_status.c
 SRC += ft_atol_status.c
@@ -84,7 +85,7 @@ SRC += ft_count_all.c
 SRC += ft_replace.c
 SRC += ft_replace_all.c
 
-# memory
+vpath %.c memory
 SRC += ft_bzero.c
 SRC += ft_calloc.c
 SRC += ft_memchr.c
@@ -95,7 +96,7 @@ SRC += ft_memmove.c
 SRC += ft_memset.c
 SRC += strip_nul.c
 
-# gc
+vpath %.c gc
 SRC += set_allocator.c
 SRC += get_allocator.c
 SRC += gc_set_context.c
@@ -113,7 +114,7 @@ SRC += ft_malloc.c
 SRC += ft_free.c
 SRC += dont_free.c
 
-# io
+vpath %.c io
 SRC += get_next_line.c
 SRC += get_next_fat_line.c
 SRC += ft_putchar_fd.c
@@ -136,14 +137,14 @@ SRC += ft_printf.c
 SRC += ft_dprintf.c
 SRC += ft_print_memory.c
 
-# math
+vpath %.c math
 SRC += ft_max.c
 SRC += ft_abs.c
 SRC += ft_min.c
 SRC += cmp_int_desc.c
 SRC += cmp_int_asc.c
 
-# list
+vpath %.c list
 SRC += lswap.c
 SRC += ljoin.c
 SRC += lsplit.c
@@ -171,7 +172,7 @@ SRC += ldestroy.c
 SRC += lcopy.c
 SRC += lbackward.c
 
-# data constructors
+vpath %.c data_constructors
 SRC += as_pointer_types.c
 SRC += as_pointer_types_2.c
 SRC += as_numeric_types.c
@@ -179,7 +180,7 @@ SRC += as_numeric_types_2.c
 SRC += as_enum_types.c
 SRC += as_data.c
 
-# hashtable
+vpath %.c hashtable
 SRC += ht_unset.c
 SRC += ht_set.c
 SRC += ht_get.c
@@ -188,28 +189,31 @@ SRC += ht_destroy.c
 SRC += ht_to_list.c
 SRC += ht_hash.c
 
-_OBJ = $(SRC:.c=.o)
-OBJ = $(addprefix $(OBJDIR)/,$(_OBJ))
+# objects
+OBJ := $(SRC:.c=.o)
+OBJ := $(addprefix $(OBJDIR)/,$(OBJ))
 
-unexport _DEPS
-_DEPS += libft.h
-INCLUDE = $(addprefix $(SRCDIR)/,$(_DEPS))
+# dependencies
+DEPS := $(OBJ:.o=.d)
+-include $(DEPS)
+
+# rules
+.DEFAULT_GOAL := all
 
 all: $(NAME)
 
 $(NAME): $(OBJ)
 	$(AR) $@ $(OBJ)
 
-$(OBJDIR)/%.o: %.c $(INCLUDE) | $(OBJDIR)
-	$(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
+$(OBJDIR)/%.o: %.c | $(OBJDIR)
+	$(CC) $< -c -o $@ $(CFLAGS) $(CPPFLAGS)
 
 $(OBJDIR):
 	$(MKDIR) $@
 
-bonus: $(NAME)
-
 clean:
 	$(RM) $(OBJ)
+	$(RM) $(DEPS)
 	$(RM) -r $(OBJDIR)
 
 fclean: clean
@@ -217,4 +221,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: re fclean clean all bonus
+.PHONY: re fclean clean all
