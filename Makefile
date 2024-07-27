@@ -6,162 +6,187 @@
 #    By: pgrussin <pgrussin@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:02:16 by tischmid          #+#    #+#              #
-#    Updated: 2024/07/14 01:33:41 by tosuman          ###   ########.fr        #
+#    Updated: 2024/07/27 16:55:51 by tosuman          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
+# TODO: improve makefile
+#
 # TODO: adapt for MacOS
 # Makefile for [ "$(uname -s)" = "Linux" ]
 
-CC             ?= cc
-RM             := /bin/rm -f
-MKDIR          := /bin/mkdir -p
+# config
+NAME := minishell
+SRCDIR := src
+OBJDIR := obj
+LIBFT_DIR := libft
 
-NAME            := minishell
-BONUS           := $(NAME)
-LIBFT           := libft.a
-LIBFT_          := $(patsubst lib%,%,$(patsubst %.a,%,$(LIBFT)))
+# tools
+CC := cc
+RM := /bin/rm -f
+MKDIR := /bin/mkdir -p
 
-unexport _SRC
-_SRC += main.c
-_SRC += signals1.c
-_SRC += signals2.c
-_SRC += get_cwd_for_prompt.c
-_SRC += ft_gethostname.c
-_SRC += ft_getuid.c
-_SRC += ft_getusername.c
-_SRC += get_username_from_krb.c
-_SRC += ft_getpid.c
-_SRC += ft_getumask.c
-_SRC += expansion1.c
-_SRC += expansion2.c
-_SRC += expansion3.c
-_SRC += expansion4.c
-_SRC += expansion5.c
-_SRC += joining.c
-_SRC += execve.c
-_SRC += execve2.c
-_SRC += execve3.c
-_SRC += execve4.c
-_SRC += execve5.c
-_SRC += execve6.c
-_SRC += tokenize1.c
-_SRC += tokenize2.c
-_SRC += tokenize3.c
-_SRC += tokenize4.c
-_SRC += tokenize5.c
-_SRC += tokenize6.c
-_SRC += tokenize7.c
-_SRC += printing.c
-_SRC += new_tree_tokens.c
-_SRC += helper.c
-_SRC += get_production_idx.c
-_SRC += hashtable.c
-_SRC += productions1.c
-_SRC += productions2.c
-_SRC += build_ast1.c
-_SRC += build_ast2.c
-_SRC += build_ast3.c
-_SRC += executor.c
-_SRC += executor2.c
-_SRC += executor3.c
-_SRC += executor4.c
-_SRC += executor5.c
-_SRC += executor6.c
-_SRC += executor7.c
-_SRC += search_executable.c
-_SRC += shell_vars.c
-_SRC += glob.c
-_SRC += minishell.c
-_SRC += minishell2.c
-_SRC += minishell3.c
-_SRC += minishell4.c
-_SRC += minishell5.c
-_SRC += minishell6.c
-_SRC += minishell7.c
-_SRC += echo.c
-_SRC += unset.c
-_SRC += pwd.c
-_SRC += env.c
-_SRC += exit.c
-_SRC += cd.c
-_SRC += cd2.c
-_SRC += shift.c
-_SRC += declare1.c
-_SRC += declare2.c
-_SRC += declare3.c
-_SRC += declare4.c
-_SRC += declare5.c
-_SRC += declare_set.c
-_SRC += readonly.c
-_SRC += source.c
-_SRC += colon.c
-_SRC += export.c
-_SRC += environment.c
-_SRC += ft_mktemp.c
-_SRC += heredoc.c
-_SRC += heredoc_helper.c
-_SRC += shell_opt_init.c
-_SRC += minishell_error.c
+# flags
+CFLAGS := -O2 -Wall -Wextra -Werror \
+		-pedantic -Wconversion \
+		-Wunreachable-code -Wshadow
+CPPFLAGS := -MMD -I$(LIBFT_DIR) -I$(SRCDIR)
+LDFLAGS := -L$(LIBFT_DIR)
+LDLIBS := -lreadline -l$(LIFBT_LIB)
+ifeq ($(DEBUG), 1)
+	CFLAGS += -ggdb3 -O0
+	LDFLAGS += -ggdb3 -O0
+endif
 
-vpath %.c                \
-	src                  \
-	src/parsing/         \
-	src/tokenization/    \
-	src/expansion/       \
-	src/exec/            \
-	src/shell/           \
-	src/builtins/        \
-	src/builtins/declare \
-	src/unistd/
+ifeq ($(ASAN), 1)
+	CFLAGS += -fsanitize=address
+	LDFLAGS += -fsanitize=address
+endif
 
-_OBJ             := $(_SRC:.c=.o)
-_HEADERS         := minishell.h
+ifeq ($(TSAN), 1)
+	CFLAGS += -fsanitize=thread
+	LDFLAGS += -fsanitize=thread
+endif
 
-OBJDIR           := ./obj
-SRCDIR           := ./src
-LIBFT_DIR        := ./libft
-SRC              := $(addprefix $(SRCDIR)/,$(_SRC))
-OBJ              := $(addprefix $(OBJDIR)/,$(_OBJ))
-MINISHELL_HEADER := $(addprefix $(SRCDIR)/,$(_HEADERS))
+# sources
+SRC :=
+vpath %.c src
+SRC += main.c
+SRC += signals1.c
+SRC += signals2.c
+SRC += shell_vars.c
+SRC += shell_opt_init.c
+SRC += joining.c
+SRC += glob.c
+SRC += environment.c
 
-# TODO: improve makefile
-CFLAGS           := -O2 -Wall -Wextra -Werror \
-                    -pedantic -Wconversion \
-                    -Wunreachable-code -Wshadow
-CPPFLAGS         := -I$(LIBFT_DIR) -I$(SRCDIR)
+vpath %.c src/builtins
+SRC += echo.c
+SRC += unset.c
+SRC += pwd.c
+SRC += env.c
+SRC += exit.c
+SRC += cd.c
+SRC += cd2.c
+SRC += shift.c
+SRC += readonly.c
+SRC += source.c
+SRC += colon.c
+SRC += export.c
 
-LDFLAGS          := -L$(LIBFT_DIR)
-LDLIBS           := -l$(LIBFT_) -lreadline
+vpath %.c src/builtins/declare
+SRC += declare1.c
+SRC += declare2.c
+SRC += declare3.c
+SRC += declare4.c
+SRC += declare5.c
+SRC += declare_set.c
 
+vpath %.c src/exec
+SRC += execve.c
+SRC += execve2.c
+SRC += execve3.c
+SRC += execve4.c
+SRC += execve5.c
+SRC += execve6.c
+SRC += search_executable.c
+SRC += executor.c
+SRC += executor2.c
+SRC += executor3.c
+SRC += executor4.c
+SRC += executor5.c
+SRC += executor6.c
+SRC += executor7.c
+
+vpath %.c src/expansion
+SRC += expansion1.c
+SRC += expansion2.c
+SRC += expansion3.c
+SRC += expansion4.c
+SRC += expansion5.c
+
+vpath %.c src/parsing
+SRC += hashtable.c
+SRC += get_production_idx.c
+SRC += build_ast1.c
+SRC += build_ast2.c
+SRC += build_ast3.c
+SRC += productions1.c
+SRC += productions2.c
+SRC += printing.c
+SRC += new_tree_tokens.c
+SRC += heredoc.c
+SRC += heredoc_helper.c
+SRC += helper.c
+
+vpath %.c src/shell
+SRC += minishell.c
+SRC += minishell2.c
+SRC += minishell3.c
+SRC += minishell4.c
+SRC += minishell5.c
+SRC += minishell6.c
+SRC += minishell7.c
+SRC += minishell_error.c
+
+vpath %.c src/tokenization
+SRC += tokenize1.c
+SRC += tokenize2.c
+SRC += tokenize3.c
+SRC += tokenize4.c
+SRC += tokenize5.c
+SRC += tokenize6.c
+SRC += tokenize7.c
+
+vpath %.c src/unistd
+SRC += get_cwd_for_prompt.c
+SRC += ft_gethostname.c
+SRC += ft_getuid.c
+SRC += ft_getusername.c
+SRC += get_username_from_krb.c
+SRC += ft_getpid.c
+SRC += ft_getumask.c
+SRC += ft_mktemp.c
+
+# objects
+OBJ := $(SRC:.c=.o)
+OBJ := $(addprefix $(OBJDIR)/,$(OBJ))
+
+# dependencies
+DEPS := $(OBJ:.o=.d)
+-include $(DEPS)
+
+# libs
+LIBFT_FILE := libft.a
+LIFBT_LIB := $(patsubst lib%,%,$(patsubst %.a,%,$(LIBFT_FILE)))
+
+# rules
 .DEFAULT_GOAL := all
 
 all: libft $(NAME)
 
-$(NAME): $(LIBFT_DIR)/$(LIBFT) $(OBJ)
-	$(CC) -o $@ $(LDFLAGS) $(OBJ) $(LDLIBS)
-
 libft:
 	$(MAKE) -C $(LIBFT_DIR)
 
-$(OBJDIR)/%.o: %.c $(MINISHELL_HEADER) | $(OBJDIR)
-	$(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
+$(NAME): $(LIBFT_DIR)/$(LIBFT_FILE) $(OBJ)
+	$(CC) $(OBJ) -o $@ $(LDFLAGS) $(LDLIBS)
+
+$(OBJDIR)/%.o: %.c | $(OBJDIR)
+	$(CC) $< -c -o $@ $(CPPFLAGS) $(CFLAGS)
 
 $(OBJDIR):
 	$(MKDIR) $@
 
-bonus: $(BONUS)
-
 clean:
 	$(MAKE) -C $(LIBFT_DIR) $@
 	$(RM) $(OBJ)
+	$(RM) $(DEPS)
 	$(RM) -r $(OBJDIR)
 
 fclean: clean
 	$(MAKE) -C $(LIBFT_DIR) $@
 	$(RM) $(NAME)
-	$(RM) $(BONUS)
 
 re: fclean all
 
-.PHONY: re fclean clean all bonus libft
+.PHONY: re fclean clean all libft
