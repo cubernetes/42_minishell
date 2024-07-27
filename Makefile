@@ -6,7 +6,7 @@
 #    By: pgrussin <pgrussin@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:02:16 by tischmid          #+#    #+#              #
-#    Updated: 2024/07/27 19:00:39 by tosuman          ###   ########.fr        #
+#    Updated: 2024/07/27 20:36:07 by u0_a291          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -163,7 +163,7 @@ DEPS := $(OBJ:.o=.d)
 # rules
 .DEFAULT_GOAL := all
 
-all: libft $(NAME)
+all: libft .WAIT $(NAME)
 
 libft:
 	$(MAKE) -C $(LIBFT_DIR)
@@ -187,6 +187,6 @@ fclean: clean
 	$(MAKE) -C $(LIBFT_DIR) $@
 	$(RM) $(NAME)
 
-re: fclean all
+re: fclean .WAIT all
 
 .PHONY: re fclean clean all libft
