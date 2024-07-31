@@ -6,7 +6,7 @@
 #    By: tischmid <tischmid@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/22 15:09:11 by tischmid          #+#    #+#              #
-#    Updated: 2024/07/27 20:33:35 by u0_a291          ###   ########.fr        #
+#    Updated: 2024/07/31 06:24:07 by tosuman          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,10 +22,20 @@ RM := /bin/rm -f
 MKDIR := /bin/mkdir -p
 
 # flags
-CFLAGS := -O2 -Wall -Wextra -Werror \
-          -pedantic -Wconversion \
-          -Wunreachable-code -Wshadow
-CPPFLAGS := -MD -I$(SRCDIR)
+CFLAGS :=
+CFLAGS += -O2
+CFLAGS += -Wall
+CFLAGS += -Wextra
+CFLAGS += -Werror
+CFLAGS += -pedantic
+CFLAGS += -Wconversion
+CFLAGS += -Wunreachable-code
+CFLAGS += -Wshadow
+
+CPPFLAGS :=
+CPPFLAGS += -MD
+CPPFLAGS += -I$(SRCDIR)
+
 ifeq ($(DEBUG), 1)
 	CFLAGS += -ggdb3 -O0
 endif
@@ -219,6 +229,12 @@ clean:
 fclean: clean
 	$(RM) $(NAME)
 
-re: fclean .WAIT all
+re:
+	@$(MAKE) fclean
+	@$(MAKE) all
 
 .PHONY: re fclean clean all
+
+.SECONDARY:
+
+.DELETE_ON_ERROR:

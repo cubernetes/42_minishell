@@ -1,17 +1,4 @@
 # **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: pgrussin <pgrussin@student.42.fr>          +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2023/11/22 15:02:16 by tischmid          #+#    #+#              #
-#    Updated: 2024/07/27 20:36:07 by u0_a291          ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
-
-# TODO: improve makefile
-#
 # TODO: adapt for MacOS
 # Makefile for [ "$(uname -s)" = "Linux" ]
 
@@ -31,22 +18,40 @@ RM := /bin/rm -f
 MKDIR := /bin/mkdir -p
 
 # flags
-CFLAGS := -O2 -Wall -Wextra -Werror \
-		-pedantic -Wconversion \
-		-Wunreachable-code -Wshadow
-CPPFLAGS := -MD -I$(LIBFT_DIR) -I$(SRCDIR)
-LDFLAGS := -L$(LIBFT_DIR)
-LDLIBS := -lreadline -l$(LIFBT_LIB)
+CFLAGS := -O2
+CFLAGS += -Wall
+CFLAGS += -Wextra
+CFLAGS += -Werror
+CFLAGS += -pedantic
+CFLAGS += -Wconversion
+CFLAGS += -Wunreachable-code
+CFLAGS += -Wshadow
+
+CPPFLAGS :=
+CPPFLAGS += -MD
+CPPFLAGS += -I$(LIBFT_DIR)
+CPPFLAGS += -I$(SRCDIR)
+
+LDFLAGS :=
+LDFLAGS += -L$(LIBFT_DIR)
+
+LDLIBS :=
+LDLIBS += -lreadline
+LDLIBS += -l$(LIFBT_LIB)
+
+# DEBUG=1 make re # include debugging information in the binary
 ifeq ($(DEBUG), 1)
 	CFLAGS += -ggdb3 -O0
 	LDFLAGS += -ggdb3 -O0
 endif
 
+# DEBUG=1 make re # include debugging information in the binary
 ifeq ($(ASAN), 1)
 	CFLAGS += -fsanitize=address
 	LDFLAGS += -fsanitize=address
 endif
 
+# TSAN=1 make re # check for thread errors and data races
 ifeq ($(TSAN), 1)
 	CFLAGS += -fsanitize=thread
 	LDFLAGS += -fsanitize=thread
@@ -54,6 +59,7 @@ endif
 
 # sources
 SRC :=
+
 vpath %.c src
 SRC += main.c
 SRC += signals1.c
@@ -163,7 +169,9 @@ DEPS := $(OBJ:.o=.d)
 # rules
 .DEFAULT_GOAL := all
 
-all: libft .WAIT $(NAME)
+all:
+	@$(MAKE) libft
+	@$(MAKE) $(NAME)
 
 libft:
 	$(MAKE) -C $(LIBFT_DIR)
@@ -187,6 +195,34 @@ fclean: clean
 	$(MAKE) -C $(LIBFT_DIR) $@
 	$(RM) $(NAME)
 
-re: fclean .WAIT all
+re:
+	@$(MAKE) fclean
+	@$(MAKE) all
 
-.PHONY: re fclean clean all libft
+# This allows $(NAME) to be run using either an absolute, relative or no path.
+# You can pass arguments like this: make run ARGS="hello ' to this world ! ' ."
+run:
+	@echo
+	@PATH=".$${PATH:+:$${PATH}}" && $(NAME) $(ARGS)
+
+valrun:
+	@echo
+	@PATH=".$${PATH:+:$${PATH}}" && valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --track-fds=yes $(NAME) $(ARGS)
+
+rerun:
+	@$(MAKE) re
+	@$(MAKE) run
+
+leakcheck:
+	@$(MAKE) re
+	@$(MAKE) valrun
+
+# these targets are not files
+.PHONY: all clean fclean re run rerun leakcheck
+.PHONY: libft
+
+# keep intermediate (*.h, *.o, *.d) targets
+.SECONDARY:
+
+# delete failed targets
+.DELETE_ON_ERROR:
