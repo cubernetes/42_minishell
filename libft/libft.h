@@ -6,7 +6,7 @@
 /*   By: tosuman <timo42@proton.me>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 20:07:51 by tosuman           #+#    #+#             */
-/*   Updated: 2024/07/04 20:07:51 by tosuman          ###   ########.fr       */
+/*   Updated: 2024/08/03 18:14:57 by tischmid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -195,12 +195,12 @@ struct s_list
 	t_list			*_iterator_stack; /* internal, don't iterate this one! */
 };
 
-typedef struct s_ht
+struct s_ht
 {
 	char		*k;
 	t_data		v;
 	t_ht		*n;
-}				t_ht;
+};
 
 /***************** PROTOTYPES *****************/
 /* memory */
